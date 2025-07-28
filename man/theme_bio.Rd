@@ -2,7 +2,7 @@
 % Please edit documentation in R/theme_bio.R
 \name{theme_bio}
 \alias{theme_bio}
-\title{Professional ggplot2 theme for biological data visualization}
+\title{Professional ggplot2 theme for biological data visualization with enhanced parameters}
 \usage{
 theme_bio(
   base_size = 10,
@@ -16,7 +16,39 @@ theme_bio(
   panel_border_size = 0.8,
   strip_background_color = "#f0f0f0",
   grid_lines = FALSE,
-  axis_line = FALSE
+  axis_line = FALSE,
+  legend.position = NULL,
+  legend.text.size = NULL,
+  legend.title.size = NULL,
+  legend.title.face = NULL,
+  plot.title.color = NULL,
+  plot.title.size = NULL,
+  plot.title.hjust = NULL,
+  plot.title.face = NULL,
+  plot.subtitle.size = NULL,
+  plot.caption.size = NULL,
+  axis.text.x.angle = NULL,
+  axis.text.x.hjust = NULL,
+  axis.text.x.vjust = NULL,
+  axis.text.x.size = NULL,
+  axis.text.y.angle = NULL,
+  axis.text.y.size = NULL,
+  axis.title.x.face = NULL,
+  axis.title.x.size = NULL,
+  axis.title.x.color = NULL,
+  axis.title.y.face = NULL,
+  axis.title.y.size = NULL,
+  axis.title.y.color = NULL,
+  panel.grid.major.x = NULL,
+  panel.grid.major.y = NULL,
+  panel.grid.minor.x = NULL,
+  panel.grid.minor.y = NULL,
+  strip.text.face = NULL,
+  strip.text.size = NULL,
+  strip.text.color = NULL,
+  strip.background.fill = NULL,
+  strip.background.color = NULL,
+  ...
 )
 }
 \arguments{
@@ -55,111 +87,128 @@ Default is FALSE for a clean look.}
 
 \item{axis_line}{Logical indicating whether to show axis lines. Default 
 is FALSE (uses panel border instead).}
+
+\item{legend.position}{Character string or numeric vector specifying legend 
+position. Options: "none", "left", "right", "bottom", "top", or numeric 
+vector c(x, y). Default is NULL (uses show_legend parameter).}
+
+\item{legend.text.size}{Numeric value specifying legend text size as multiple 
+of base_size. Default is NULL (uses 1.0).}
+
+\item{legend.title.size}{Numeric value specifying legend title size as 
+multiple of base_size. Default is NULL (uses 1.0).}
+
+\item{legend.title.face}{Character string specifying legend title font face. 
+Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
+
+\item{plot.title.color}{Character string specifying plot title color. 
+Default is NULL (uses theme default).}
+
+\item{plot.title.size}{Numeric value specifying plot title size as multiple 
+of base_size. Default is NULL (uses 1.3).}
+
+\item{plot.title.hjust}{Numeric value (0-1) specifying plot title horizontal 
+justification. Default is NULL (uses 0.5).}
+
+\item{plot.title.face}{Character string specifying plot title font face. 
+Options: "plain", "bold", "italic", "bold.italic". Default is NULL (uses "bold").}
+
+\item{plot.subtitle.size}{Numeric value specifying subtitle size as multiple 
+of base_size. Default is NULL (uses 1.1).}
+
+\item{plot.caption.size}{Numeric value specifying caption size as multiple 
+of base_size. Default is NULL (uses 0.8).}
+
+\item{axis.text.x.angle}{Numeric value specifying X-axis text rotation angle 
+in degrees. Default is NULL (no rotation).}
+
+\item{axis.text.x.hjust}{Numeric value (0-1) specifying X-axis text horizontal 
+justification. Default is NULL (auto-adjusted based on angle).}
+
+\item{axis.text.x.vjust}{Numeric value (0-1) specifying X-axis text vertical 
+justification. Default is NULL (uses 0.5).}
+
+\item{axis.text.x.size}{Numeric value specifying X-axis text size as multiple 
+of base_size. Default is NULL (uses 1.0).}
+
+\item{axis.text.y.angle}{Numeric value specifying Y-axis text rotation angle 
+in degrees. Default is NULL (no rotation).}
+
+\item{axis.text.y.size}{Numeric value specifying Y-axis text size as multiple 
+of base_size. Default is NULL (uses 1.0).}
+
+\item{axis.title.x.face}{Character string specifying X-axis title font face. 
+Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
+
+\item{axis.title.x.size}{Numeric value specifying X-axis title size as 
+multiple of base_size. Default is NULL (uses 1.1).}
+
+\item{axis.title.x.color}{Character string specifying X-axis title color. 
+Default is NULL.}
+
+\item{axis.title.y.face}{Character string specifying Y-axis title font face. 
+Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
+
+\item{axis.title.y.size}{Numeric value specifying Y-axis title size as 
+multiple of base_size. Default is NULL (uses 1.1).}
+
+\item{axis.title.y.color}{Character string specifying Y-axis title color. 
+Default is NULL.}
+
+\item{panel.grid.major.x}{Grid lines for X-axis. Use element_line() or 
+element_blank(). Default is NULL.}
+
+\item{panel.grid.major.y}{Grid lines for Y-axis. Use element_line() or 
+element_blank(). Default is NULL.}
+
+\item{panel.grid.minor.x}{Minor grid lines for X-axis. Use element_line() or 
+element_blank(). Default is NULL.}
+
+\item{panel.grid.minor.y}{Minor grid lines for Y-axis. Use element_line() or 
+element_blank(). Default is NULL.}
+
+\item{strip.text.face}{Character string specifying strip text font face. 
+Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
+
+\item{strip.text.size}{Numeric value specifying strip text size as multiple 
+of base_size. Default is NULL (uses 1.0).}
+
+\item{strip.text.color}{Character string specifying strip text color. 
+Default is NULL (uses "black").}
+
+\item{strip.background.fill}{Character string specifying strip background 
+fill color. Default is NULL (uses strip_background_color parameter).}
+
+\item{strip.background.color}{Character string specifying strip background 
+border color. Default is NULL.}
+
+\item{...}{Additional theme arguments passed to \code{ggplot2::theme()}. 
+These won't have autocomplete but provide full flexibility.}
 }
 \value{
 A ggplot2 theme object that can be added to any ggplot.
 }
 \description{
 A clean and professional ggplot2 theme specifically designed for biological 
-data visualization. This theme provides publication-ready graphics with 
-customizable elements for scientific plots including research papers, 
-presentations, and reports.
-}
-\details{
-This theme provides:
-\itemize{
-  \item Clean, publication-ready appearance
-  \item Proper font sizing and spacing for readability
-  \item Professional panel borders and backgrounds
-  \item Customizable minor ticks for precise data reading
-  \item Flexible legend and strip text formatting
-  \item Optimized margins and spacing for various plot types
-}
-
-The theme is built on \code{ggthemes::theme_foundation()} and extends it 
-with biology-specific design choices. It follows the principle of maximizing 
-the data-ink ratio while maintaining visual clarity.
-}
-\note{
-\itemize{
-  \item This theme works best with a white or light background
-  \item For presentations, consider increasing base_size to 12-14
-  \item For publications, base_size of 8-10 typically works well
-  \item Minor ticks are useful for precise quantitative plots
-}
+data visualization. This enhanced version provides explicit parameters for 
+common theme modifications, enabling autocomplete functionality while 
+maintaining all original features.
 }
 \examples{
 library(dplyr)
 library(ggplot2)
 library(bioRtools)
 
-# Load example data
-data(iris)
-
-# Basic scatter plot with bio theme
-iris \%>\%
-  ggplot(aes(Sepal.Length, Sepal.Width, color = Species)) +
-  geom_point(size = 2, alpha = 0.8) +
-  labs(
-    x = "Sepal Length (cm)",
-    y = "Sepal Width (cm)", 
-    title = "Iris Sepal Measurements"
-  ) +
-  theme_bio()
-
-# Customized theme for presentations
+# Basic usage with enhanced parameters (autocomplete supported)
 iris \%>\%
   ggplot(aes(Species, Sepal.Length, fill = Species)) +
-  geom_boxplot(alpha = 0.7) +
-  stat_summary(fun = mean, geom = "point", shape = 23, size = 3) +
-  labs(
-    x = "Species",
-    y = "Sepal Length (cm)",
-    title = "Sepal Length by Species"
-  ) +
+  geom_boxplot() +
   theme_bio(
     base_size = 12,
-    show_legend = FALSE,
-    show_minor_ticks_y = TRUE
-  )
-
-# Faceted plot with italic strip text
-iris \%>\%
-  tidyr::pivot_longer(
-    cols = c(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width),
-    names_to = "measurement",
-    values_to = "value"
-  ) \%>\%
-  ggplot(aes(Species, value, fill = Species)) +
-  geom_boxplot(alpha = 0.7) +
-  facet_wrap(~measurement, scales = "free_y") +
-  labs(
-    x = "Species",
-    y = "Measurement (cm)",
-    title = "Iris Morphological Measurements"
-  ) +
-  theme_bio(
-    strip_text_italic = TRUE,
-    show_legend = FALSE
-  )
-
-# Time series plot with minor ticks
-data.frame(
-  time = 1:24,
-  expression = sin(1:24 * pi/6) + rnorm(24, 0, 0.1) + 2,
-  gene = "Gene A"
-) \%>\%
-  ggplot(aes(time, expression)) +
-  geom_line(linewidth = 1, color = "steelblue") +
-  geom_point(size = 2, color = "steelblue") +
-  labs(
-    x = "Time (hours)",
-    y = "Expression Level",
-    title = "Gene Expression Over Time"
-  ) +
-  theme_bio(
-    show_minor_ticks_x = TRUE,
-    show_minor_ticks_y = TRUE
+    legend.position = "none",
+    plot.title.color = "navy",
+    axis.text.x.angle = 45,
+    axis.title.x.face = "bold"
   )
 
 }

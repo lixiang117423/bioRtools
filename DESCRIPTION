@@ -27,7 +27,6 @@ Imports:
     agricolae,
     ape,
     broom,
-    chemhelper,
     clusterProfiler,
     DESeq2,
     dplyr,
@@ -40,15 +39,13 @@ Imports:
     ggsci,
     ggtext,
     ggthemes,
+    ggtree,
     janitor,
     lefser,
     magrittr,
-    mixOmics,
     multcomp,
-    normentR,
     purrr,
     rlang,
-    ropls,
     rstatix,
     scales,
     stats,
@@ -56,13 +53,17 @@ Imports:
     SummarizedExperiment,
     tibble,
     tidyr,
-    vegan,
     utils,
-    WGCNA
+    vegan
 Suggests: 
+    chemhelper,
     knitr,
+    mixOmics,
+    normentR,
+    ropls,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    WGCNA
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
