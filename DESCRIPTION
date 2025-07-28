@@ -1,0 +1,72 @@
+Type: Package
+Package: bioRtools
+Title: Convenience Functions for Biological Data Processing
+Version: 1.1.0
+Authors@R: 
+    person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
+Description: This package provides a comprehensive suite of convenience
+    functions for biological data analysis and visualization. It includes
+    tools for multivariate analysis (PCA, PCoA, RDA, sPLS-DA, OPLS-DA),
+    statistical testing (ANOVA with post-hoc tests, correlation analysis,
+    linear regression, PERMANOVA), differential analysis (DESeq2-based
+    differential expression and abundance analysis, LEfSe), data
+    preprocessing (rarefaction, outlier detection, heatmap reordering),
+    genomics visualization (Manhattan plots, volcano plots), microbiome
+    analysis (taxonomic composition, diversity analysis), metabolomics
+    workflows, and publication-ready plotting themes. The package
+    standardizes complex analytical workflows across omics data types and
+    provides consistent, publication-quality visualization outputs with
+    minimal code requirements.
+License: MIT + file LICENSE
+URL: https://github.com/lixiang117423/bioRtools,
+    https://lixiang117423.github.io/bioRtools/
+BugReports: https://github.com/lixiang117423/bioRtools/issues
+Depends: 
+    R (>= 2.10)
+Imports: 
+    agricolae,
+    ape,
+    broom,
+    chemhelper,
+    clusterProfiler,
+    DESeq2,
+    dplyr,
+    factoextra,
+    FactoMineR,
+    forcats,
+    ggplot2,
+    ggprism,
+    ggrepel,
+    ggsci,
+    ggtext,
+    ggthemes,
+    janitor,
+    lefser,
+    magrittr,
+    mixOmics,
+    multcomp,
+    normentR,
+    purrr,
+    rlang,
+    ropls,
+    rstatix,
+    scales,
+    stats,
+    stringr,
+    SummarizedExperiment,
+    tibble,
+    tidyr,
+    vegan,
+    utils,
+    WGCNA
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+LazyDataCompression: gzip
+RoxygenNote: 7.3.2

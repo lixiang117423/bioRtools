@@ -1,0 +1,19 @@
+---
+title: "cor_and_plot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cor_and_plot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(bioRtools)
+```

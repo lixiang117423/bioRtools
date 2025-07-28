@@ -1,0 +1,70 @@
+---
+title: "pca_in_one"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pca_in_one}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The main function of this method is to perform principal component analysis (PCA) and output the results of the transformation along with some simple plots.
+
+### Feature Value Matrix
+
+`data` is the feature value matrix in data frame format, where rows represent samples and columns represent feature values. It should only contain numeric feature values. Additionally, row names need to be provided to facilitate merging with the `sample` data frame for plotting purposes.
+
+```{r,eval=FALSE}
+#   Sepal.Length Sepal.Width Petal.Length Petal.Width
+# 1          5.1         3.5          1.4         0.2
+# 2          4.9         3.0          1.4         0.2
+# 3          4.7         3.2          1.3         0.2
+# 4          4.6         3.1          1.5         0.2
+# 5          5.0         3.6          1.4         0.2
+# 6          5.4         3.9          1.7         0.4
+```
+
+### Sample Information Table
+
+`sample` is the sample information matrix, where the first column contains the sample names. The default column name is `sample`, and there are no specific requirements for the names of the other columns.
+
+```{r,eval=FALSE}
+#   sample species
+# 1      1  setosa
+# 2      2  setosa
+# 3      3  setosa
+# 4      4  setosa
+# 5      5  setosa
+# 6      6  setosa
+```
+
+### Run PCA
+
+```{r, eval=FALSE}
+# devtools::install_github("lixiang117423/bioRtools")
+
+library(tidyverse)
+library(bioRtools)
+
+data <- iris[, 1:4]
+
+sample <- iris$Species %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "sample") %>%
+  set_names(c("sample", "species"))
+
+pca_in_one(data, sample) -> result.pca
+```
+
+The output is a list containing:
+
+-   `result.pca`: The output from `FactoMineR::PCA`, which can be called directly.
+-   `plot.pca`: The plotting results, defaulting to `PC1` and `PC2`. The output is a `ggplot` object, which can be fine-tuned using `ggplot2`.
+-   `point.data`: The data used for plotting, which users can call for their own plots or export for use in other software.
+-   `eigenvalue.pca`: The explained variance of the principal components, starting from `PC1` by default.
