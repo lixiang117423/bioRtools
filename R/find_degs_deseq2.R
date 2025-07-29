@@ -469,35 +469,74 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
                "\nThis may be due to insufficient replicates or design matrix issues."))
   })
   
-  # Extract results with specified parameters
-  tryCatch({
+  # # Extract results with specified parameters
+  # tryCatch({
+  #   if (shrink.lfc) {
+  #     # Apply LFC shrinkage for more accurate effect size estimates
+  #     results_raw <- DESeq2::lfcShrink(
+  #       dds_analyzed, 
+  #       coef = DESeq2::resultsNames(dds_analyzed)[length(DESeq2::resultsNames(dds_analyzed))],
+  #       alpha = alpha,
+  #       type = "apeglm",  # Recommended shrinkage method
+  #       quiet = TRUE
+  #     )
+  #   } else {
+  #     results_raw <- DESeq2::results(
+  #       dds_analyzed,
+  #       alpha = alpha,
+  #       independentFiltering = independent.filtering
+  #     )
+  #   }
+    
+  #   results_df <- as.data.frame(results_raw)
+  # }, error = function(e) {
+  #   # Fallback to basic results if shrinkage fails
+  #   warning("LFC shrinkage failed, using unshrunken results:", e$message)
+  #   results_raw <- DESeq2::results(
+  #     dds_analyzed,
+  #     alpha = alpha, 
+  #     independentFiltering = independent.filtering
+  #   )
+  #   results_df <- as.data.frame(results_raw)
+  # })
+  # 将 tryCatch 的结果赋值给 results_df
+  results_df <- tryCatch({
+    # 'try' 代码块，用于正常流程
     if (shrink.lfc) {
-      # Apply LFC shrinkage for more accurate effect size estimates
+      # 尝试进行 LFC shrinkage
+      message("Attempting LFC shrinkage with apeglm...")
       results_raw <- DESeq2::lfcShrink(
         dds_analyzed, 
         coef = DESeq2::resultsNames(dds_analyzed)[length(DESeq2::resultsNames(dds_analyzed))],
-        alpha = alpha,
-        type = "apeglm",  # Recommended shrinkage method
+        type = "apeglm",
         quiet = TRUE
       )
+      message("LFC shrinkage successful.")
     } else {
+      # 如果不进行 shrinkage
       results_raw <- DESeq2::results(
         dds_analyzed,
         alpha = alpha,
         independentFiltering = independent.filtering
       )
     }
+    # 如果 try 成功，将结果转换为数据框并返回
+    as.data.frame(results_raw)
     
-    results_df <- as.data.frame(results_raw)
   }, error = function(e) {
-    # Fallback to basic results if shrinkage fails
-    warning("LFC shrinkage failed, using unshrunken results:", e$message)
+    # 'error' 函数，在 try 失败时执行
+    # 打印一个更详细的警告信息
+    warning(paste("LFC shrinkage failed, using unshrunken results instead. Reason:", e$message,
+                  "\nThis can sometimes be caused by package conflicts or issues with the DESeqDataSet object."))
+    
+    # 执行备用方案
     results_raw <- DESeq2::results(
       dds_analyzed,
       alpha = alpha, 
       independentFiltering = independent.filtering
     )
-    results_df <- as.data.frame(results_raw)
+    # 将备用方案的结果转换为数据框并返回
+    as.data.frame(results_raw)
   })
   
   # Process and enhance results

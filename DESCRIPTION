@@ -1,7 +1,7 @@
 Type: Package
 Package: bioRtools
 Title: Convenience Functions for Biological Data Processing
-Version: 1.0.0
+Version: 1.0.2
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
 Description: This package provides a comprehensive suite of convenience
@@ -27,6 +27,7 @@ Imports:
     agricolae,
     ape,
     broom,
+    chemhelper,
     clusterProfiler,
     DESeq2,
     dplyr,
@@ -43,9 +44,12 @@ Imports:
     janitor,
     lefser,
     magrittr,
+    mixOmics,
     multcomp,
+    normentR,
     purrr,
     rlang,
+    ropls,
     rstatix,
     scales,
     stats,
@@ -54,16 +58,12 @@ Imports:
     tibble,
     tidyr,
     utils,
-    vegan
-Suggests: 
-    chemhelper,
-    knitr,
-    mixOmics,
-    normentR,
-    ropls,
-    rmarkdown,
-    testthat (>= 3.0.0),
+    vegan,
     WGCNA
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

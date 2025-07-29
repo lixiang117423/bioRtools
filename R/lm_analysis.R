@@ -130,7 +130,7 @@
 #' )
 #' 
 #' print("Custom analysis results:")
-#' print(results_custom$regression_results[, c("group", "slope", "r_squared", "significance")])
+#' print(results_custom$regression_results[, c("Species", "slope", "r_squared", "significance")])
 #' 
 #' # Example 3: Biological application with simulated data
 #' # Simulate dose-response relationship across treatments
@@ -174,7 +174,7 @@
 #' )
 #' 
 #' print("Dose-response analysis:")
-#' print(dose_analysis$regression_results[, c("group", "slope", "r_squared", "overall_pvalue")])
+#' print(dose_analysis$regression_results[, c("treatment", "slope", "r_squared", "overall_pvalue")])
 #' 
 #' # Enhanced plot with custom styling
 #' enhanced_plot <- dose_analysis$scatter_plot +
