@@ -353,19 +353,7 @@
 #'   ncol = 2
 #' )
 #' }
-#'
 #' 
-#' 
-readr::read_delim("F://project/09.董晓静老师转录组/最终表达量.txt") %>% 
-  dplyr::select(transcript_id, TPM, sample) %>% 
-  tidyr::pivot_wider(names_from = sample, values_from = TPM) %>% 
-  tibble::column_to_rownames(var = "transcript_id") %>% 
-  t() %>% 
-  as.data.frame() %>% 
-  replace(is.na(.), 0) -> data
-
-readxl::read_excel("D://OneDrive/NAS/01.科研相关/00.博后/02.data/10.拟南芥转录组/data/sample.xlsx") -> sample
-
 pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE, 
                         center.data = TRUE, x.axis = "PC1", y.axis = "PC2",
                         color.by = "group", shape.by = NULL, plot.type = "all",
