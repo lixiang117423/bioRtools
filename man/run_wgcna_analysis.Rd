@@ -2,16 +2,16 @@
 % Please edit documentation in R/run_wgcna.R
 \name{run_wgcna_analysis}
 \alias{run_wgcna_analysis}
-\title{WGCNA Co-expression Network Analysis}
+\title{Weighted Gene Co-expression Network Analysis (WGCNA)}
 \usage{
 run_wgcna_analysis(
-  expression_file,
-  sample_info_file,
+  expression_data,
+  sample_info,
   output_dir,
   trait_columns,
   gene_id_col = "gene_id",
   sample_col = "sample",
-  fpkm_col = "FPKM",
+  expression_col = "FPKM",
   sample_id_col = "treatment",
   min_gene_sd = 0.1,
   power_vector = 1:30,
@@ -22,87 +22,137 @@ run_wgcna_analysis(
   save_network = TRUE,
   plot_width = 12,
   plot_height = 6,
-  plot_dpi = 500
+  plot_dpi = 500,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{expression_file}{Path to the expression data file (tab-delimited)}
+\item{expression_data}{Either a file path to expression data (tab-delimited) or 
+a data frame containing expression data. Required columns: sample ID, gene ID, 
+and expression values.}
 
-\item{sample_info_file}{Path to the sample information file (Excel format)}
+\item{sample_info}{Either a file path to sample information (Excel format) or 
+a data frame containing sample metadata. Must include sample IDs and trait columns.}
 
-\item{output_dir}{Output directory for saving results and plots}
+\item{output_dir}{Character. Directory path where results and plots will be saved.}
 
-\item{trait_columns}{Character vector of column names in sample info to use for trait association}
+\item{trait_columns}{Character vector. Column names in sample_info to use for 
+module-trait association analysis.}
 
-\item{gene_id_col}{Column name containing gene IDs in expression data (default: "gene_id")}
+\item{gene_id_col}{Character. Column name containing gene IDs in expression_data.
+Default: "gene_id".}
 
-\item{sample_col}{Column name containing sample IDs in expression data (default: "sample")}
+\item{sample_col}{Character. Column name containing sample IDs in expression_data.
+Default: "sample".}
 
-\item{fpkm_col}{Column name containing expression values (default: "FPKM")}
+\item{expression_col}{Character. Column name containing expression values in 
+expression_data. Default: "FPKM".}
 
-\item{sample_id_col}{Column name containing sample IDs in sample info (default: "treatment")}
+\item{sample_id_col}{Character. Column name containing sample IDs in sample_info.
+Default: "treatment".}
 
-\item{min_gene_sd}{Minimum standard deviation threshold for gene filtering (default: 0.1)}
+\item{min_gene_sd}{Numeric. Minimum standard deviation threshold for gene filtering.
+Genes with SD <= this value will be excluded. Default: 0.1.}
 
-\item{power_vector}{Vector of powers to test for soft threshold (default: 1:30)}
+\item{power_vector}{Integer vector. Powers to test for soft threshold selection.
+Default: 1:30.}
 
-\item{min_module_size}{Minimum number of genes in a module (default: 50)}
+\item{min_module_size}{Integer. Minimum number of genes required for a module.
+Default: 50.}
 
-\item{max_block_size}{Maximum block size for module detection (default: NULL, uses all genes)}
+\item{max_block_size}{Integer. Maximum block size for module detection. If NULL,
+uses all genes in one block. Default: NULL.}
 
-\item{tom_type}{Type of TOM (Topological Overlap Matrix) to use (default: "signed")}
+\item{tom_type}{Character. Type of Topological Overlap Matrix. Options: "signed",
+"unsigned", "signed hybrid". Default: "signed".}
 
-\item{correlation_method}{Correlation method for module-trait association (default: "pearson")}
+\item{correlation_method}{Character. Correlation method for module-trait association.
+Options: "pearson", "spearman", "kendall". Default: "pearson".}
 
-\item{save_network}{Whether to save the network object as RData file (default: TRUE)}
+\item{save_network}{Logical. Whether to save the network object as RData file.
+Default: TRUE.}
 
-\item{plot_width}{Width of saved plots in inches (default: 12)}
+\item{plot_width}{Numeric. Width of saved plots in inches. Default: 12.}
 
-\item{plot_height}{Height of saved plots in inches (default: 6)}
+\item{plot_height}{Numeric. Height of saved plots in inches. Default: 6.}
 
-\item{plot_dpi}{DPI for saved plots (default: 500)}
+\item{plot_dpi}{Numeric. DPI resolution for saved plots. Default: 500.}
+
+\item{verbose}{Logical. Whether to print progress messages. Default: TRUE.}
 }
 \value{
 A list containing:
-\itemize{
-  \item \code{network}: The WGCNA network object
-  \item \code{module_colors}: Module color assignments for genes
-  \item \code{module_trait_cor}: Module-trait correlation matrix
-  \item \code{module_trait_pvalue}: Module-trait p-value matrix
-  \item \code{soft_power}: Selected soft threshold power
-  \item \code{gene_module_mapping}: Data frame mapping genes to modules
-  \item \code{module_eigengenes}: Module eigengenes matrix
+\describe{
+  \item{network}{The WGCNA network object from blockwiseModules}
+  \item{module_colors}{Character vector of module color assignments for each gene}
+  \item{module_trait_cor}{Matrix of module-trait correlations}
+  \item{module_trait_pvalue}{Matrix of module-trait correlation p-values}
+  \item{soft_power}{Selected soft threshold power value}
+  \item{gene_module_mapping}{Data frame mapping genes to modules with colors}
+  \item{module_eigengenes}{Matrix of module eigengenes}
+  \item{module_summary}{Data frame summarizing module sizes}
+  \item{expression_matrix}{Processed expression matrix used for analysis}
+  \item{trait_matrix}{Processed trait matrix used for correlation analysis}
 }
 }
 \description{
-A comprehensive function to perform WGCNA (Weighted Gene Co-expression Network Analysis)
-including data preprocessing, network construction, module identification, and 
-module-trait association analysis.
+A comprehensive function to perform WGCNA including data preprocessing, 
+network construction, module identification, and module-trait association analysis.
 }
 \details{
 This function performs a complete WGCNA pipeline:
-1. Data loading and preprocessing with log2 transformation
-2. Quality control and gene filtering based on standard deviation
-3. Soft threshold power selection for scale-free topology
-4. Network construction and module identification
-5. Module-trait association analysis
-6. Generation of various plots and output files
+\enumerate{
+  \item Data loading and preprocessing with log2(x+1) transformation
+  \item Quality control and gene filtering based on standard deviation
+  \item Soft threshold power selection for scale-free topology
+  \item Network construction using blockwiseModules
+  \item Module identification and gene assignment
+  \item Module-trait association analysis
+  \item Generation of diagnostic plots and result files
+}
+
+The function automatically creates the output directory if it doesn't exist and
+generates multiple output files including correlation matrices, gene-module 
+mappings, and visualization plots.
+}
+\note{
+Required packages: tidyverse, WGCNA, patchwork, readxl, pheatmap.
+Gene IDs containing ":" will be split and the second part will be used.
+Expression values are log2(x+1) transformed before analysis.
 }
 \examples{
 \dontrun{
-# Basic WGCNA analysis
-result <- run_wgcna_analysis(
-  expression_file = "expression_data.txt",
-  sample_info_file = "sample_info.xlsx", 
+# Using file paths
+result1 <- run_wgcna_analysis(
+  expression_data = "expression_data.txt",
+  sample_info = "sample_info.xlsx",
   output_dir = "wgcna_results",
-  trait_columns = c("time", "strain")
+  trait_columns = c("time", "treatment")
 )
 
-# View module-trait correlations
-print(result$module_trait_cor)
+# Using data frames with custom column names
+expr_df <- read.delim("expression.txt")
+sample_df <- read_excel("samples.xlsx")
 
-# Access network object
-network <- result$network
+result2 <- run_wgcna_analysis(
+  expression_data = expr_df,
+  sample_info = sample_df,
+  output_dir = "wgcna_results",
+  trait_columns = c("timepoint", "genotype"),
+  gene_id_col = "transcript_id",
+  expression_col = "TPM",
+  sample_id_col = "sample_name"
+)
+
+# Access results
+print(result1$module_trait_cor)
+head(result1$gene_module_mapping)
 }
 
+}
+\seealso{
+\code{\link[WGCNA]{blockwiseModules}}, \code{\link[WGCNA]{pickSoftThreshold}}
+}
+\author{
+Your Name
 }
