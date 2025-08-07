@@ -2,7 +2,7 @@
 
 [![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/) [![Version](https://img.shields.io/badge/version-1.3.0-green)](https://github.com/lixiang117423/bioRtools) [![License](https://img.shields.io/badge/license-MIT-yellow)](https://claude.ai/chat/LICENSE.md)
 
-[English](./README_en.md) | [中文](./README.md)
+[中文](./README_cn.md) | [English](./README_en.md)
 
 ---
 
