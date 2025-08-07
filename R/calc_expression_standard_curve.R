@@ -5,12 +5,12 @@
 #' with optional normalization to a reference gene and statistical comparisons
 #' between treatment groups.
 #'
-#' @param cq_table A data frame containing position, Cq values, and gene information.
-#'   Must contain columns: Position, Cq, Gene
+#' @param cq_table A data frame containing position and Cq values.
+#'   Must contain columns: Position, Cq
 #' @param curve_table A data frame containing standard curve parameters for each gene.
 #'   Must contain columns: Gene, Slope, Intercept, min.Cq, max.Cq
 #' @param design_table A data frame containing experimental design information.
-#'   Must contain columns: Position, Treatment (or Group)
+#'   Must contain columns: Position, Treatment (or Group), Gene
 #' @param normalize_by_reference Logical indicating whether to normalize expression
 #'   values by reference gene (default: TRUE)
 #' @param reference_gene Character string specifying the reference gene name
@@ -44,9 +44,9 @@
 #'
 #' @examples
 #' # Load example data
-#' cq_data_path <- system.file("examples", "cal.exp.curve.cq.txt", package = "qPCRtools")
-#' curve_data_path <- system.file("examples", "cal.expre.curve.sdc.txt", package = "qPCRtools")
-#' design_data_path <- system.file("examples", "cal.exp.curve.design.txt", package = "qPCRtools")
+#' cq_data_path <- system.file("extdata/qPCR", "cal.exp.curve.cq.txt", package = "bioRtools")
+#' curve_data_path <- system.file("extdata/qPCR", "cal.expre.curve.sdc.txt", package = "bioRtools")
+#' design_data_path <- system.file("extdata/qPCR", "cal.exp.curve.design.txt", package = "bioRtools")
 #' 
 #' cq_data <- read.table(cq_data_path, header = TRUE)
 #' curve_data <- read.table(curve_data_path, sep = "\t", header = TRUE)
@@ -81,12 +81,12 @@ calc_expression_standard_curve <- function(cq_table,
                                          plot_type = "box",
                                          plot_ncol = NULL) {
   
-  # Input validation
-  validate_curve_inputs(cq_table, curve_table, design_table, reference_gene, 
-                       reference_group, statistical_method, plot_type)
-  
-  # Merge data and calculate expression
+  # Merge data and calculate expression first
   expression_data <- calculate_curve_expression(cq_table, curve_table, design_table)
+  
+  # Validate merged data (after merging, not before)
+  validate_curve_inputs_fixed(expression_data, curve_table, reference_gene, 
+                              reference_group, statistical_method, plot_type)
   
   # Check for Cq values outside curve range
   curve_warnings <- check_curve_range(expression_data)
@@ -107,7 +107,7 @@ calc_expression_standard_curve <- function(cq_table,
   statistical_results <- perform_curve_statistical_analysis(expression_data, reference_group, statistical_method)
   
   # Add statistical annotations
-  summary_with_stats <- add_curve_statistical_annotations(summary_table, statistical_results)
+  summary_with_stats <- add_curve_statistical_annotations(summary_table, statistical_results, reference_group)
   
   # Create plot
   plot_result <- create_curve_expression_plot(summary_with_stats, plot_type, plot_ncol)
@@ -119,81 +119,6 @@ calc_expression_standard_curve <- function(cq_table,
     curve_warnings = curve_warnings,
     plot = plot_result
   ))
-}
-
-#' Validate input parameters for standard curve calculation
-#' @keywords internal
-validate_curve_inputs <- function(cq_table, curve_table, design_table, reference_gene, 
-                                 reference_group, statistical_method, plot_type) {
-  
-  if (!is.data.frame(cq_table)) {
-    stop("cq_table must be a data frame")
-  }
-  
-  if (!is.data.frame(curve_table)) {
-    stop("curve_table must be a data frame")
-  }
-  
-  if (!is.data.frame(design_table)) {
-    stop("design_table must be a data frame")
-  }
-  
-  # Check required columns in cq_table
-  required_cq_cols <- c("Position", "Cq", "Gene")
-  missing_cq_cols <- setdiff(required_cq_cols, names(cq_table))
-  if (length(missing_cq_cols) > 0) {
-    stop(sprintf("cq_table missing required columns: %s", 
-                paste(missing_cq_cols, collapse = ", ")))
-  }
-  
-  # Check required columns in curve_table
-  required_curve_cols <- c("Gene", "Slope", "Intercept", "min.Cq", "max.Cq")
-  missing_curve_cols <- setdiff(required_curve_cols, names(curve_table))
-  if (length(missing_curve_cols) > 0) {
-    stop(sprintf("curve_table missing required columns: %s", 
-                paste(missing_curve_cols, collapse = ", ")))
-  }
-  
-  # Check required columns in design_table (flexible naming)
-  if ("Treatment" %in% names(design_table)) {
-    design_treatment_col <- "Treatment"
-  } else if ("Group" %in% names(design_table)) {
-    design_treatment_col <- "Group"
-  } else {
-    stop("design_table must contain either 'Treatment' or 'Group' column")
-  }
-  
-  if (!"Position" %in% names(design_table)) {
-    stop("design_table must contain 'Position' column")
-  }
-  
-  # Check if reference gene exists in both tables
-  if (!reference_gene %in% cq_table$Gene) {
-    stop(sprintf("Reference gene '%s' not found in cq_table", reference_gene))
-  }
-  
-  if (!reference_gene %in% curve_table$Gene) {
-    stop(sprintf("Reference gene '%s' not found in curve_table", reference_gene))
-  }
-  
-  # Check if reference group exists
-  if (!reference_group %in% design_table[[design_treatment_col]]) {
-    stop(sprintf("Reference group '%s' not found in design_table", reference_group))
-  }
-  
-  # Validate statistical method
-  valid_methods <- c("t.test", "wilcox.test", "anova")
-  if (!statistical_method %in% valid_methods) {
-    stop(sprintf("statistical_method must be one of: %s", 
-                paste(valid_methods, collapse = ", ")))
-  }
-  
-  # Validate plot type
-  valid_plot_types <- c("box", "bar")
-  if (!plot_type %in% valid_plot_types) {
-    stop(sprintf("plot_type must be one of: %s", 
-                paste(valid_plot_types, collapse = ", ")))
-  }
 }
 
 #' Calculate expression using standard curves
@@ -230,6 +155,57 @@ calculate_curve_expression <- function(cq_table, curve_table, design_table) {
     dplyr::rename(treatment = .data$Treatment, gene = .data$Gene)
   
   return(expression_data)
+}
+
+#' Validate input parameters for standard curve calculation (after merging)
+#' @keywords internal
+validate_curve_inputs_fixed <- function(merged_data, curve_table, reference_gene, 
+                                        reference_group, statistical_method, plot_type) {
+  
+  if (nrow(merged_data) == 0) {
+    stop("No data available after merging tables. Check that Position and Gene columns match between tables.")
+  }
+  
+  # Check required columns in merged data
+  required_merged_cols <- c("Position", "treatment", "gene", "Cq", "expression")
+  missing_merged_cols <- setdiff(required_merged_cols, names(merged_data))
+  if (length(missing_merged_cols) > 0) {
+    stop(sprintf("Merged data missing required columns: %s", 
+                paste(missing_merged_cols, collapse = ", ")))
+  }
+  
+  # Check if reference gene exists in merged data
+  available_genes <- unique(merged_data$gene)
+  if (!reference_gene %in% available_genes) {
+    stop(sprintf("Reference gene '%s' not found. Available genes: %s", 
+                reference_gene, paste(available_genes, collapse = ", ")))
+  }
+  
+  # Check if reference gene has curve parameters
+  if (!reference_gene %in% curve_table$Gene) {
+    stop(sprintf("Reference gene '%s' not found in curve_table", reference_gene))
+  }
+  
+  # Check if reference group exists
+  available_groups <- unique(merged_data$treatment)
+  if (!reference_group %in% available_groups) {
+    stop(sprintf("Reference group '%s' not found. Available groups: %s", 
+                reference_group, paste(available_groups, collapse = ", ")))
+  }
+  
+  # Validate statistical method
+  valid_methods <- c("t.test", "wilcox.test", "anova")
+  if (!statistical_method %in% valid_methods) {
+    stop(sprintf("statistical_method must be one of: %s", 
+                paste(valid_methods, collapse = ", ")))
+  }
+  
+  # Validate plot type
+  valid_plot_types <- c("box", "bar")
+  if (!plot_type %in% valid_plot_types) {
+    stop(sprintf("plot_type must be one of: %s", 
+                paste(valid_plot_types, collapse = ", ")))
+  }
 }
 
 #' Check for Cq values outside curve range
@@ -304,86 +280,150 @@ calculate_curve_summary <- function(expression_data) {
 #' @keywords internal
 perform_curve_statistical_analysis <- function(expression_data, reference_group, statistical_method) {
   
-  if (statistical_method == "t.test") {
-    stat_results <- expression_data %>%
-      dplyr::group_by(.data$gene) %>%
-      rstatix::t_test(expression ~ treatment, ref.group = reference_group) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(.data$gene, .data$group2, .data$p) %>%
-      dplyr::rename(treatment = .data$group2)
-    
-  } else if (statistical_method == "wilcox.test") {
-    stat_results <- expression_data %>%
-      dplyr::group_by(.data$gene) %>%
-      rstatix::wilcox_test(expression ~ treatment, ref.group = reference_group) %>%
-      dplyr::ungroup() %>%
-      dplyr::select(.data$gene, .data$group2, .data$p) %>%
-      dplyr::rename(treatment = .data$group2)
-    
-  } else { # anova with Tukey post-hoc
-    genes <- unique(expression_data$gene)
-    results_list <- vector("list", length(genes))
-    
-    for (i in seq_along(genes)) {
-      gene_data <- expression_data %>%
-        dplyr::filter(.data$gene == genes[i]) %>%
-        dplyr::mutate(treatment = factor(.data$treatment))
+  tryCatch({
+    if (statistical_method == "t.test") {
+      stat_results <- expression_data %>%
+        dplyr::group_by(.data$gene) %>%
+        rstatix::t_test(expression ~ treatment, ref.group = reference_group) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(.data$gene, .data$group2, .data$p, .data$statistic, .data$df) %>%
+        dplyr::mutate(
+          p_value = round(.data$p, 6),
+          t_statistic = round(.data$statistic, 4)
+        ) %>%
+        dplyr::rename(treatment = .data$group2) %>%
+        dplyr::select(.data$gene, .data$treatment, .data$p_value, .data$t_statistic, .data$df)
       
-      if (length(unique(gene_data$treatment)) > 1) {
-        fit <- stats::aov(expression ~ treatment, data = gene_data)
-        tukey_test <- multcomp::glht(fit, linfct = multcomp::mcp(treatment = "Tukey"))
-        letters <- multcomp::cld(tukey_test, level = 0.95, decreasing = TRUE)
+    } else if (statistical_method == "wilcox.test") {
+      stat_results <- expression_data %>%
+        dplyr::group_by(.data$gene) %>%
+        rstatix::wilcox_test(expression ~ treatment, ref.group = reference_group) %>%
+        dplyr::ungroup() %>%
+        dplyr::select(.data$gene, .data$group2, .data$p, .data$statistic) %>%
+        dplyr::mutate(
+          p_value = round(.data$p, 6),
+          w_statistic = round(.data$statistic, 4)
+        ) %>%
+        dplyr::rename(treatment = .data$group2) %>%
+        dplyr::select(.data$gene, .data$treatment, .data$p_value, .data$w_statistic)
+      
+    } else { # anova with Tukey post-hoc
+      genes <- unique(expression_data$gene)
+      results_list <- vector("list", length(genes))
+      anova_results <- vector("list", length(genes))
+      
+      for (i in seq_along(genes)) {
+        gene_data <- expression_data %>%
+          dplyr::filter(.data$gene == genes[i]) %>%
+          dplyr::mutate(treatment = factor(.data$treatment))
         
-        results_list[[i]] <- data.frame(
-          gene = genes[i],
-          treatment = names(letters$mcletters$Letters),
-          significance_letter = as.character(letters$mcletters$Letters),
-          stringsAsFactors = FALSE
-        )
+        if (length(unique(gene_data$treatment)) > 1) {
+          # ANOVA F-test
+          fit <- stats::aov(expression ~ treatment, data = gene_data)
+          anova_summary <- summary(fit)
+          f_value <- anova_summary[[1]]["treatment", "F value"]
+          p_value <- anova_summary[[1]]["treatment", "Pr(>F)"]
+          df1 <- anova_summary[[1]]["treatment", "Df"]
+          df2 <- anova_summary[[1]]["Residuals", "Df"]
+          
+          anova_results[[i]] <- data.frame(
+            gene = genes[i],
+            f_statistic = round(f_value, 4),
+            p_value_anova = round(p_value, 6),
+            df1 = df1,
+            df2 = df2,
+            stringsAsFactors = FALSE
+          )
+          
+          # Post-hoc Tukey test
+          tukey_test <- multcomp::glht(fit, linfct = multcomp::mcp(treatment = "Tukey"))
+          letters <- multcomp::cld(tukey_test, level = 0.95, decreasing = TRUE)
+          
+          results_list[[i]] <- data.frame(
+            gene = genes[i],
+            treatment = names(letters$mcletters$Letters),
+            significance_letter = as.character(letters$mcletters$Letters),
+            stringsAsFactors = FALSE
+          )
+        }
       }
+      
+      stat_results <- list(
+        letters = do.call(rbind, results_list),
+        anova_stats = do.call(rbind, anova_results)
+      )
     }
     
-    stat_results <- do.call(rbind, results_list)
-  }
-  
-  return(stat_results)
+    return(stat_results)
+    
+  }, error = function(e) {
+    warning("Statistical analysis failed: ", e$message)
+    return(data.frame(gene = character(0), treatment = character(0), p_value = numeric(0)))
+  })
 }
 
 #' Add statistical annotations to summary table
 #' @keywords internal
-add_curve_statistical_annotations <- function(summary_table, statistical_results) {
+add_curve_statistical_annotations <- function(summary_table, statistical_results, reference_group) {
   
-  if ("significance_letter" %in% names(statistical_results)) {
+  if (is.list(statistical_results) && "letters" %in% names(statistical_results)) {
     # For ANOVA results
+    letters_data <- statistical_results$letters %>%
+      # Make reference group letter empty
+      dplyr::mutate(significance_letter = ifelse(.data$treatment == reference_group, "", .data$significance_letter))
+    
+    anova_stats <- statistical_results$anova_stats
+    
     annotated_summary <- summary_table %>%
-      dplyr::left_join(statistical_results, by = c("treatment", "gene")) %>%
+      dplyr::left_join(letters_data, by = c("treatment", "gene")) %>%
+      dplyr::left_join(anova_stats, by = "gene") %>%
       dplyr::rename(significance = .data$significance_letter)
     
-  } else {
+  } else if (nrow(statistical_results) > 0) {
     # For t-test and wilcox test results
     stat_with_significance <- statistical_results %>%
       dplyr::mutate(
         significance = dplyr::case_when(
-          .data$p < 0.001 ~ "***",
-          .data$p < 0.01 ~ "**",
-          .data$p < 0.05 ~ "*",
+          .data$p_value < 0.001 ~ "***",
+          .data$p_value < 0.01 ~ "**",
+          .data$p_value < 0.05 ~ "*",
           TRUE ~ "NS"
         )
       )
     
-    # Add reference group with no significance
+    # Add empty significance for reference group
     ref_groups <- summary_table %>%
-      dplyr::anti_join(stat_with_significance, by = c("treatment", "gene")) %>%
+      dplyr::filter(.data$treatment == reference_group) %>%
       dplyr::select(.data$treatment, .data$gene) %>%
-      dplyr::mutate(significance = "ref")
+      dplyr::mutate(
+        significance = "",
+        p_value = NA_real_
+      )
+    
+    # Add statistical columns if they exist
+    if ("t_statistic" %in% names(stat_with_significance)) {
+      ref_groups$t_statistic <- NA_real_
+      ref_groups$df <- NA_real_
+    }
+    if ("w_statistic" %in% names(stat_with_significance)) {
+      ref_groups$w_statistic <- NA_real_
+    }
     
     all_significance <- rbind(
-      stat_with_significance %>% dplyr::select(.data$treatment, .data$gene, .data$significance),
+      stat_with_significance %>% dplyr::select(.data$treatment, .data$gene, .data$significance, dplyr::everything()),
       ref_groups
     )
     
     annotated_summary <- summary_table %>%
       dplyr::left_join(all_significance, by = c("treatment", "gene"))
+      
+  } else {
+    # No statistical results
+    annotated_summary <- summary_table %>%
+      dplyr::mutate(
+        significance = ifelse(.data$treatment == reference_group, "", "NS"),
+        p_value = NA_real_
+      )
   }
   
   return(annotated_summary)
@@ -393,18 +433,29 @@ add_curve_statistical_annotations <- function(summary_table, statistical_results
 #' @keywords internal
 create_curve_expression_plot <- function(summary_data, plot_type, plot_ncol) {
   
+  if (nrow(summary_data) == 0) {
+    warning("No data available for plotting")
+    return(NULL)
+  }
+  
+  # Ensure significance column exists
+  if (!"significance" %in% names(summary_data)) {
+    summary_data$significance <- "NS"
+  }
+  
   if (plot_type == "box") {
     p <- ggplot2::ggplot(summary_data, ggplot2::aes(.data$treatment, .data$mean_expression, 
                                                     fill = .data$treatment)) +
       ggplot2::geom_col(alpha = 0.7, width = 0.6) +
       ggplot2::geom_errorbar(
-        ggplot2::aes(ymin = .data$mean_expression - .data$se_expression,
+        ggplot2::aes(ymin = pmax(0, .data$mean_expression - .data$se_expression),
                     ymax = .data$mean_expression + .data$se_expression),
         width = 0.2
       ) +
       ggplot2::geom_text(
-        ggplot2::aes(label = .data$significance),
-        vjust = -0.5,
+        ggplot2::aes(y = .data$mean_expression + .data$se_expression + max(.data$mean_expression, na.rm = TRUE) * 0.05,
+                    label = .data$significance),
+        vjust = 0,
         size = 4
       ) +
       ggplot2::facet_wrap(~ .data$gene, scales = "free_y", ncol = plot_ncol) +
@@ -426,15 +477,15 @@ create_curve_expression_plot <- function(summary_data, plot_type, plot_ncol) {
                                                     fill = .data$treatment)) +
       ggplot2::geom_bar(stat = "identity", width = 0.6, alpha = 0.7) +
       ggplot2::geom_errorbar(
-        ggplot2::aes(ymin = .data$mean_expression - .data$sd_expression,
+        ggplot2::aes(ymin = pmax(0, .data$mean_expression - .data$sd_expression),
                     ymax = .data$mean_expression + .data$sd_expression),
         width = 0.2
       ) +
       ggplot2::geom_text(
-        ggplot2::aes(y = .data$max_expression * 1.08, 
+        ggplot2::aes(y = pmax(.data$mean_expression + .data$sd_expression, .data$max_expression) * 1.08, 
                     label = .data$significance),
         size = 4,
-        color = "red"
+        color = "black"
       ) +
       ggplot2::facet_wrap(~ .data$gene, scales = "free_y", ncol = plot_ncol) +
       ggplot2::labs(
@@ -460,21 +511,72 @@ CalExpCurve <- function(cq.table, curve.table, design.table,
                        stat.method = "t.test", ref.group = "CK", 
                        fig.type = "box", fig.ncol = NULL) {
   
-  result <- calc_expression_standard_curve(
-    cq_table = cq.table,
-    curve_table = curve.table,
-    design_table = design.table,
-    normalize_by_reference = correction,
-    reference_gene = ref.gene,
-    statistical_method = stat.method,
-    reference_group = ref.group,
-    plot_type = fig.type,
-    plot_ncol = fig.ncol
-  )
-  
-  # Return in original format for compatibility
-  return(list(
-    table = result$summary_table,
-    figure = result$plot
-  ))
+  tryCatch({
+    result <- calc_expression_standard_curve(
+      cq_table = cq.table,
+      curve_table = curve.table,
+      design_table = design.table,
+      normalize_by_reference = correction,
+      reference_gene = ref.gene,
+      statistical_method = stat.method,
+      reference_group = ref.group,
+      plot_type = fig.type,
+      plot_ncol = fig.ncol
+    )
+    
+    # Return in original format for compatibility
+    return(list(
+      table = result$summary_table,
+      figure = result$plot
+    ))
+    
+  }, error = function(e) {
+    warning("Standard curve analysis failed: ", e$message)
+    return(list(
+      table = data.frame(),
+      figure = NULL
+    ))
+  })
 }
+
+# Output column explanations:
+# 
+# expression_data:
+# - treatment: Experimental treatment or condition group
+# - gene: Name of the target gene being analyzed
+# - expression: Calculated expression value (normalized if reference gene used)
+#
+# summary_table:
+# - treatment: Experimental treatment or condition group
+# - gene: Name of the target gene being analyzed
+# - n_replicates: Number of replicates per group
+# - mean_expression: Mean expression level
+# - sd_expression: Standard deviation of expression values
+# - se_expression: Standard error of expression values
+# - min_expression: Minimum expression value
+# - max_expression: Maximum expression value
+# - significance: Statistical significance annotation (*, **, ***, NS, letters; empty for reference group)
+# 
+# Additional statistical columns (depending on method):
+# For t.test:
+# - p_value: P-value from t-test (NA for reference group)
+# - t_statistic: T-statistic value (NA for reference group)
+# - df: Degrees of freedom (NA for reference group)
+# 
+# For wilcox.test:
+# - p_value: P-value from Wilcoxon test (NA for reference group)
+# - w_statistic: W-statistic value (NA for reference group)
+# 
+# For anova:
+# - f_statistic: F-statistic from ANOVA
+# - p_value_anova: P-value from ANOVA F-test
+# - df1, df2: Degrees of freedom
+# 
+# curve_warnings:
+# - out_of_range_positions: Positions with Cq values outside curve range
+# - message: Warning message about out-of-range values
+#
+# Expression calculation:
+# 1. Standard curve: expression = 10^((Cq - Intercept) / Slope)
+# 2. Reference normalization: normalized_expression = target_expression / reference_expression
+# 3. Quality control: warnings for Cq values outside calibration range

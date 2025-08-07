@@ -16,11 +16,11 @@ calc_expression_delta_delta_ct(
 )
 }
 \arguments{
-\item{cq_table}{A data frame containing position, Cq values, and gene information.
-Must contain columns: Position, Cq, Gene}
+\item{cq_table}{A data frame containing position and Cq values.
+Must contain columns: Position, Cq}
 
 \item{design_table}{A data frame containing experimental design information.
-Must contain columns: Position, Group, BioRep}
+Must contain columns: Position, Group, Gene, BioRep}
 
 \item{reference_gene}{Character string specifying the reference gene name
 (default: "OsUBQ")}
@@ -47,13 +47,13 @@ A list containing:
 }
 \description{
 This function calculates relative gene expression using the delta-delta Ct
-method (2^-ΔΔCt), which normalizes target gene expression to a reference
+method (2^-ddCt), which normalizes target gene expression to a reference
 gene and compares to a reference group.
 }
 \examples{
 # Load example data
-cq_data_path <- system.file("examples", "ddct.cq.txt", package = "qPCRtools")
-design_data_path <- system.file("examples", "ddct.design.txt", package = "qPCRtools")
+cq_data_path <- system.file("extdata/qPCR", "ddct.cq.txt", package = "bioRtools")
+design_data_path <- system.file("extdata/qPCR", "ddct.design.txt", package = "bioRtools")
 cq_data <- read.table(cq_data_path, header = TRUE)
 design_data <- read.table(design_data_path, header = TRUE)
 
@@ -65,7 +65,7 @@ result <- calc_expression_delta_delta_ct(
   reference_group = "CK",
   statistical_method = "t.test",
   remove_outliers = TRUE,
-  plot_type = "box"
+  plot_type = "bar"
 )
 
 # View results

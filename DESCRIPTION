@@ -59,7 +59,8 @@ Imports:
     tidyr,
     utils,
     vegan,
-    WGCNA
+    WGCNA,
+    ggpmisc
 Suggests: 
     knitr,
     rmarkdown,

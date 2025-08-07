@@ -17,14 +17,14 @@ calc_expression_standard_curve(
 )
 }
 \arguments{
-\item{cq_table}{A data frame containing position, Cq values, and gene information.
-Must contain columns: Position, Cq, Gene}
+\item{cq_table}{A data frame containing position and Cq values.
+Must contain columns: Position, Cq}
 
 \item{curve_table}{A data frame containing standard curve parameters for each gene.
 Must contain columns: Gene, Slope, Intercept, min.Cq, max.Cq}
 
 \item{design_table}{A data frame containing experimental design information.
-Must contain columns: Position, Treatment (or Group)}
+Must contain columns: Position, Treatment (or Group), Gene}
 
 \item{normalize_by_reference}{Logical indicating whether to normalize expression
 values by reference gene (default: TRUE)}
@@ -57,9 +57,9 @@ between treatment groups.
 }
 \examples{
 # Load example data
-cq_data_path <- system.file("examples", "cal.exp.curve.cq.txt", package = "qPCRtools")
-curve_data_path <- system.file("examples", "cal.expre.curve.sdc.txt", package = "qPCRtools")
-design_data_path <- system.file("examples", "cal.exp.curve.design.txt", package = "qPCRtools")
+cq_data_path <- system.file("extdata/qPCR", "cal.exp.curve.cq.txt", package = "bioRtools")
+curve_data_path <- system.file("extdata/qPCR", "cal.expre.curve.sdc.txt", package = "bioRtools")
+design_data_path <- system.file("extdata/qPCR", "cal.exp.curve.design.txt", package = "bioRtools")
 
 cq_data <- read.table(cq_data_path, header = TRUE)
 curve_data <- read.table(curve_data_path, sep = "\t", header = TRUE)

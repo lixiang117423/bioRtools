@@ -13,10 +13,10 @@ calc_expression_delta_ct(
 }
 \arguments{
 \item{cq_table}{A data frame containing position, Cq values, and gene information.
-Must contain columns: Position, Cq, Gene}
+Should contain columns: Position, Cq, Gene}
 
 \item{design_table}{A data frame containing experimental design information.
-Must contain columns: Position, Group, BioRep}
+Should contain columns: Position, Group, BioRep}
 
 \item{reference_gene}{Character string specifying the name of the reference gene
 (default: "Actin")}
@@ -36,8 +36,8 @@ which normalizes target gene expression to a reference gene.
 }
 \examples{
 # Load example data
-cq_data_path <- system.file("examples", "dct.cq.txt", package = "qPCRtools")
-design_data_path <- system.file("examples", "dct.design.txt", package = "qPCRtools")
+cq_data_path <- system.file("extdata/qPCR", "dct.cq.txt", package = "bioRtools")
+design_data_path <- system.file("extdata/qPCR", "dct.design.txt", package = "bioRtools")
 cq_data <- read.table(cq_data_path, sep = ",", header = TRUE)
 design_data <- read.table(design_data_path, sep = ",", header = TRUE)
 

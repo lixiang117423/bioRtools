@@ -1,150 +1,107 @@
-#' Analyze Admixture results with phylogenetic ordering and visualization
+#' Analyze Admixture results with phylogenetic ordering and ggplot2 visualization
 #'
 #' @description
 #' Process Admixture .Q files and create population structure plots ordered 
-#' according to phylogenetic tree topology. This function integrates phylogenetic 
-#' relationships with population genetic structure analysis for comprehensive 
-#' evolutionary insights.
+#' according to phylogenetic tree topology using ggplot2. This function integrates 
+#' phylogenetic relationships with population genetic structure analysis and 
+#' returns customizable ggplot2 objects.
 #'
 #' @param admixture_path Character string specifying the directory path containing 
-#'   Admixture .Q files. All .Q files in this directory will be processed.
+#'   Admixture .Q files and .fam file. All .Q files in this directory will be processed.
 #' @param tree_file Character string specifying the path to the phylogenetic tree 
 #'   file (Newick format). Sample names in the tree must match those in the 
-#'   Admixture files.
-#' @param output_dir Character string specifying the output directory for plots. 
-#'   Default is the same as admixture_path.
+#'   .fam file.
 #' @param population_info Optional data frame containing population information 
 #'   with columns 'sample' and 'population'. If provided, samples will be 
 #'   grouped by population before phylogenetic ordering. Default is NULL.
-#' @param plot_width Numeric value specifying the width of the admixture plot 
-#'   in inches. Default is 15.
-#' @param plot_height Numeric value specifying the height of the admixture plot 
-#'   in inches. Default is 1.
-#' @param tree_width Numeric value specifying the width of the phylogenetic tree 
-#'   plot in inches. Default is 3.
-#' @param tree_height Numeric value specifying the height of the phylogenetic 
-#'   tree plot in inches. Default is 15.
-#' @param dpi Numeric value specifying the resolution for output plots. 
-#'   Default is 500.
 #' @param k_range Integer vector specifying which K values to include in the 
 #'   analysis. Can be specified as a range (e.g., 2:5) or specific values 
 #'   (e.g., c(2,3,5)). If NULL, all available K values will be used. Default is NULL.
-#' @param color_palette Character vector of colors for different ancestry 
-#'   components. If NULL, uses a default color scheme. Colors will be 
-#'   dynamically adjusted based on the maximum K value in the analysis.
-#' @param show_tree_branch_length Logical indicating whether to show branch 
-#'   lengths in the phylogenetic tree. Default is FALSE.
-#' @param output_prefix Character string for output file naming prefix. 
-#'   Default is "admixture_phylo_analysis".
-#' @param align_clusters Logical indicating whether to align clusters across 
-#'   different K values. Default is TRUE.
+#' @param color_scale Character string specifying the color scale to use. 
+#'   Options: "default" (uses optimized base colors), "aaas", "npg", "lancet", 
+#'   "jco", "ucscgb", "uchicago", "simpsons", "rickandmorty", or "manual". 
+#'   Default is "default".
+#' @param manual_colors Character vector of colors for manual color scale. 
+#'   Only used when color_scale = "manual". Default is NULL.
 #' @param verbose Logical indicating whether to print progress information. 
 #'   Default is TRUE.
 #'
-#' @return A list containing six components:
-#' \describe{
-#'   \item{qlist.original}{Original Q matrices read from files.}
-#'   \item{qlist.ordered}{Q matrices reordered according to phylogenetic topology.}
-#'   \item{tree.plot}{ggplot object of the phylogenetic tree.}
-#'   \item{sample.order}{Data frame showing the final sample ordering with 
-#'     phylogenetic and population information.}
-#'   \item{summary.statistics}{Summary statistics from pophelper analysis.}
-#'   \item{output.files}{Character vector of created output file paths.}
-#' }
+#' @return A ggplot2 object of the admixture structure plot, ready for display 
+#' or further customization.
 #'
 #' @details
 #' The function workflow includes:
 #' \enumerate{
-#'   \item Reading all .Q files from the specified directory
-#'   \item Processing and summarizing admixture results
-#'   \item Aligning clusters across different K values (optional)
-#'   \item Reading phylogenetic tree and extracting tip order
-#'   \item Reordering samples based on phylogenetic relationships
-#'   \item Incorporating population structure if provided
-#'   \item Creating publication-ready plots with matching dimensions
+#'   \item Reading phylogenetic tree and extracting tip order with proper label cleaning
+#'   \item Reading .fam file to get sample information
+#'   \item Reading all .Q files and combining with sample names
+#'   \item Converting data to long format suitable for ggplot2
+#'   \item Creating publication-ready ggplot2 visualization
+#'   \item Applying phylogenetic ordering to ensure related samples are adjacent
 #' }
 #'
-#' The phylogenetic ordering ensures that:
+#' The default color palette intelligently selects colors based on the maximum K value:
 #' \itemize{
-#'   \item Closely related samples appear adjacent in plots
-#'   \item Population structure patterns can be interpreted in evolutionary context
-#'   \item Tree and admixture plots have matching sample orders for easy comparison
+#'   \item Uses a curated set of 20 distinct colors
+#'   \item Automatically extends palette if more colors are needed
+#'   \item Optimized for scientific publication and color-blind accessibility
 #' }
 #'
 #' @note
 #' \itemize{
-#'   \item Sample names must be consistent across .Q files and phylogenetic tree
-#'   \item Requires pophelper, ape, ggtree, and dplyr packages
-#'   \item Output plots are designed for easy horizontal concatenation
-#'   \item Tree plot height should match admixture plot height for alignment
+#'   \item Requires tidyverse, ape, treeio, and ggsci packages
+#'   \item Returns ggplot2 object for easy customization
+#'   \item Default styling removes axes, legends, and panel spacing for clean look
+#'   \item Sample names are automatically cleaned (quotes removed from tree labels)
+#'   \item No files are saved automatically - use ggsave() if needed
 #' }
 #'
 #' @export
-#'
 #' @examples
 #' \dontrun{
-#' # Basic analysis with specific K range
-#' result <- admixture_phylo_analysis(
+#' # Basic analysis with default colors
+#' plot <- admixture_phylo_analysis(
+#'   admixture_path = "path/to/admixture/results/",
+#'   tree_file = "path/to/phylogenetic_tree.nwk"
+#' )
+#' print(plot)
+#' 
+#' # Customize the plot further
+#' plot + 
+#'   theme(strip.text.y = element_text(size = 12)) +
+#'   labs(title = "Population Structure Analysis")
+#' 
+#' # Use ggsci color scale
+#' plot_npg <- admixture_phylo_analysis(
 #'   admixture_path = "path/to/admixture/results/",
 #'   tree_file = "path/to/phylogenetic_tree.nwk",
-#'   output_dir = "path/to/output/",
-#'   k_range = 2:5  # Only analyze K=2,3,4,5
-#' )
-#'
-#' # View the plots
-#' result$tree.plot
-#' 
-#' # Access reordered data
-#' head(result$sample.order)
-#' 
-#' # With population information and specific K values
-#' pop_info <- data.frame(
-#'   sample = c("sample1", "sample2", "sample3"),
-#'   population = c("Pop1", "Pop1", "Pop2")
+#'   color_scale = "npg",
+#'   k_range = 2:6
 #' )
 #' 
-#' result_with_pop <- admixture_phylo_analysis(
+#' # Custom colors
+#' plot_custom <- admixture_phylo_analysis(
 #'   admixture_path = "path/to/admixture/results/",
 #'   tree_file = "path/to/phylogenetic_tree.nwk",
-#'   population_info = pop_info,
-#'   k_range = c(2, 3, 5),  # Only K=2,3,5
-#'   output_dir = "path/to/output/",
-#'   plot_width = 20,
-#'   tree_width = 4
+#'   color_scale = "manual",
+#'   manual_colors = c("#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4")
 #' )
 #' 
-#' # Custom colors with automatic adjustment
-#' custom_colors <- c("#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", 
-#'                    "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F")
-#' 
-#' result_custom <- admixture_phylo_analysis(
-#'   admixture_path = "path/to/admixture/results/",
-#'   tree_file = "path/to/phylogenetic_tree.nwk",
-#'   k_range = 2:6,
-#'   color_palette = custom_colors,  # Will extend if needed
-#'   show_tree_branch_length = TRUE,
-#'   dpi = 300
-#' )
+#' # Save if needed
+#' ggsave("admixture_plot.png", plot, width = 15, height = 8, dpi = 500)
 #' }
 #'
 admixture_phylo_analysis <- function(admixture_path,
                                      tree_file,
-                                     output_dir = NULL,
                                      population_info = NULL,
                                      k_range = NULL,
-                                     plot_width = 15,
-                                     plot_height = 1,
-                                     tree_width = 3,
-                                     tree_height = 15,
-                                     dpi = 500,
-                                     color_palette = NULL,
-                                     show_tree_branch_length = FALSE,
-                                     output_prefix = "admixture_phylo_analysis",
-                                     align_clusters = TRUE,
+                                     color_scale = "default",
+                                     manual_colors = NULL,
                                      verbose = TRUE) {
   
   # Check required packages
-  required_packages <- c("pophelper", "ape", "ggtree", "dplyr", "ggplot2")
+  required_packages <- c("dplyr", "tidyr", "ggplot2", "readr", "stringr", 
+                        "purrr", "magrittr", "ape", "treeio", "ggsci")
   missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
   
   if (length(missing_packages) > 0) {
@@ -160,114 +117,94 @@ admixture_phylo_analysis <- function(admixture_path,
     stop("Tree file not found: ", tree_file)
   }
   
-  if (is.null(output_dir)) {
-    output_dir <- admixture_path
-  }
-  
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE)
-    if (verbose) message("Created output directory: ", output_dir)
-  }
-  
   if (verbose) {
     message("Starting admixture phylogenetic analysis...")
     message("Admixture path: ", admixture_path)
     message("Tree file: ", tree_file)
-    message("Output directory: ", output_dir)
+    message("Color scale: ", color_scale)
   }
   
-  # Step 1: Read admixture files
-  if (verbose) message("Reading admixture .Q files...")
-  
-  file_list <- list.files(
-    path = admixture_path,
-    pattern = "*.Q$",
-    full.names = TRUE
-  )
-  
-  if (length(file_list) == 0) {
-    stop("No .Q files found in: ", admixture_path)
-  }
-  
-  if (verbose) message("Found ", length(file_list), " .Q files")
+  # Step 1: Read phylogenetic tree and get sample order
+  if (verbose) message("Reading phylogenetic tree and extracting sample order...")
   
   tryCatch({
-    qlist_original <- pophelper::readQ(files = file_list)
-  }, error = function(e) {
-    stop("Failed to read .Q files: ", e$message)
-  })
-  
-  # Step 2: Process admixture data
-  if (verbose) message("Processing admixture data...")
-  
-  tab_result <- pophelper::tabulateQ(qlist_original)
-  sum_result <- pophelper::summariseQ(tab_result)
-  
-  # Step 3: Filter K values if specified and align clusters
-  if (!is.null(k_range)) {
-    if (verbose) message("Filtering K values: ", paste(k_range, collapse = ", "))
+    df.order.tree <- ape::read.tree(tree_file) %>% 
+      treeio::as_tibble() %>% 
+      dplyr::filter(!is.na(label)) %>% 
+      dplyr::select(node, label) %>% 
+      dplyr::mutate(sample = stringr::str_remove_all(label, "\\'")) %>% 
+      dplyr::select(sample, node) %>% 
+      dplyr::rename(order = node)
     
-    # Get K values from Q matrices
-    available_k <- sapply(qlist_original, ncol)
-    names(qlist_original) <- paste0("K", available_k)
-    
-    # Filter based on specified range
-    selected_k_names <- paste0("K", k_range)
-    available_k_names <- names(qlist_original)
-    
-    # Check which K values are available
-    missing_k <- setdiff(selected_k_names, available_k_names)
-    if (length(missing_k) > 0) {
-      warning("Requested K values not found: ", paste(gsub("K", "", missing_k), collapse = ", "))
-    }
-    
-    # Filter to available K values
-    valid_k_names <- intersect(selected_k_names, available_k_names)
-    if (length(valid_k_names) == 0) {
-      stop("None of the requested K values are available in the data")
-    }
-    
-    qlist_filtered <- qlist_original[valid_k_names]
-    if (verbose) message("Selected K values: ", paste(gsub("K", "", valid_k_names), collapse = ", "))
-  } else {
-    qlist_filtered <- qlist_original
-    if (verbose) message("Using all available K values")
-  }
-  
-  # Align clusters if requested
-  if (align_clusters) {
-    if (verbose) message("Aligning clusters across K values...")
-    qlist_aligned <- pophelper::alignK(qlist_filtered)
-  } else {
-    qlist_aligned <- qlist_filtered
-  }
-  
-  # Step 4: Read phylogenetic tree
-  if (verbose) message("Reading phylogenetic tree...")
-  
-  tryCatch({
-    tree <- ape::read.tree(tree_file)
+    if (verbose) message("Found ", nrow(df.order.tree), " samples in tree")
   }, error = function(e) {
     stop("Failed to read tree file: ", e$message)
   })
   
-  tree_order <- tree$tip.label
-  if (verbose) message("Tree contains ", length(tree_order), " tips")
+  # Step 2: Read .fam file to get sample information
+  if (verbose) message("Reading .fam file...")
   
-  # Step 5: Create sample ordering data
-  if (verbose) message("Creating phylogenetic ordering...")
+  tryCatch({
+    df.sample <- dir(admixture_path, pattern = "fam") %>% 
+      as.data.frame() %>% 
+      magrittr::set_names("file") %>% 
+      dplyr::mutate(path = file.path(admixture_path, file)) %>% 
+      dplyr::mutate(fam = purrr::map(path, ~ readr::read_delim(.x, col_names = FALSE, show_col_types = FALSE) %>% 
+                                           dplyr::select(1))) %>% 
+      tidyr::unnest(fam) %>% 
+      dplyr::select(3) %>% 
+      magrittr::set_names("sample")
+    
+    if (verbose) message("Read ", nrow(df.sample), " samples from .fam file")
+  }, error = function(e) {
+    stop("Failed to read .fam file: ", e$message)
+  })
   
-  # Get sample names from Q matrices
-  sample_names <- rownames(qlist_aligned[[1]])
+  # Step 3: Read .Q files and create admixture data
+  if (verbose) message("Reading .Q files...")
   
-  # Create base ordering data
-  phylo_data <- data.frame(
-    sample = sample_names,
-    phylo_order = match(sample_names, tree_order),
-    stringsAsFactors = FALSE
-  )
+  tryCatch({
+    q_files <- dir(admixture_path, pattern = "Q$")
+    
+    if (length(q_files) == 0) {
+      stop("No .Q files found in: ", admixture_path)
+    }
+    
+    df.admixture <- q_files %>% 
+      as.data.frame() %>% 
+      magrittr::set_names("file") %>% 
+      dplyr::mutate(k_value = stringr::str_split(file, "\\.") %>% sapply("[", 2),
+                    k_value = as.numeric(k_value),
+                    k = paste0("K = ", k_value),
+                    path = file.path(admixture_path, file)) %>% 
+      dplyr::mutate(q_matrix = purrr::map(path, ~ readr::read_delim(.x, col_names = FALSE, show_col_types = FALSE) %>% 
+                                                magrittr::set_names(paste0("Cluster", 1:ncol(.))) %>% 
+                                                dplyr::mutate(sample = df.sample$sample[1:nrow(.)]) %>% 
+                                                dplyr::select(sample, 1:(ncol(.)-1)) %>% 
+                                                tidyr::pivot_longer(cols = 2:ncol(.)))) %>% 
+      dplyr::select(k, k_value, q_matrix) %>% 
+      tidyr::unnest(q_matrix)
+    
+    if (verbose) message("Found K values: ", paste(sort(unique(df.admixture$k_value)), collapse = ", "))
+  }, error = function(e) {
+    stop("Failed to read .Q files: ", e$message)
+  })
   
-  # Add population information if provided
+  # Step 4: Filter K values if specified
+  if (!is.null(k_range)) {
+    if (verbose) message("Filtering K values: ", paste(k_range, collapse = ", "))
+    
+    df.admixture <- df.admixture %>% 
+      dplyr::filter(k_value %in% k_range)
+    
+    if (nrow(df.admixture) == 0) {
+      stop("No data found for specified K values: ", paste(k_range, collapse = ", "))
+    }
+    
+    if (verbose) message("Using K values: ", paste(sort(unique(df.admixture$k_value)), collapse = ", "))
+  }
+  
+  # Step 5: Add population information if provided
   if (!is.null(population_info)) {
     if (verbose) message("Incorporating population information...")
     
@@ -275,152 +212,131 @@ admixture_phylo_analysis <- function(admixture_path,
       stop("population_info must contain 'sample' and 'population' columns")
     }
     
-    phylo_data <- phylo_data %>%
-      dplyr::left_join(population_info, by = "sample")
-    
-    # Order by population first, then by phylogenetic order within population
-    ordered_data <- phylo_data %>%
-      dplyr::arrange(population, phylo_order) %>%
-      dplyr::filter(!is.na(phylo_order))
-  } else {
-    # Order only by phylogenetic relationships
-    ordered_data <- phylo_data %>%
-      dplyr::arrange(phylo_order) %>%
-      dplyr::filter(!is.na(phylo_order))
+    # Add population info to tree order
+    df.order.tree <- df.order.tree %>% 
+      dplyr::left_join(population_info, by = "sample") %>% 
+      dplyr::arrange(population, order)
   }
   
-  if (nrow(ordered_data) == 0) {
-    stop("No samples match between admixture files and phylogenetic tree")
+  # Step 6: Check sample matching
+  matched_samples <- intersect(df.admixture$sample, df.order.tree$sample)
+  if (length(matched_samples) == 0) {
+    cat("\n=== DEBUGGING INFORMATION ===\n")
+    cat("Admixture samples (first 10):\n")
+    print(head(unique(df.admixture$sample), 10))
+    cat("\nTree samples (first 10):\n")
+    print(head(df.order.tree$sample, 10))
+    cat("=============================\n")
+    stop("No samples match between .Q files and phylogenetic tree")
   }
   
-  if (verbose) {
-    message("Successfully matched ", nrow(ordered_data), " samples")
-    missing_samples <- setdiff(sample_names, ordered_data$sample)
-    if (length(missing_samples) > 0) {
-      message("Warning: ", length(missing_samples), " samples not found in tree: ", 
-              paste(head(missing_samples, 5), collapse = ", "))
-    }
-  }
+  if (verbose) message("Successfully matched ", length(matched_samples), " samples")
   
-  # Step 6: Reorder Q matrices
-  if (verbose) message("Reordering admixture data...")
+  # Step 7: Determine colors needed and prepare palette
+  max_clusters <- max(table(df.admixture$k, df.admixture$name))
+  max_k <- max(df.admixture$k_value)
   
-  final_order_indices <- match(ordered_data$sample, sample_names)
-  qlist_ordered <- lapply(qlist_aligned, function(x) {
-    x[final_order_indices, , drop = FALSE]
-  })
+  # Calculate total unique clusters across all K values
+  total_clusters <- length(unique(df.admixture$name))
   
-  # Step 7: Set up colors dynamically based on maximum K
-  max_k <- max(sapply(qlist_ordered, ncol))
-  if (verbose) message("Maximum K value: ", max_k)
+  if (verbose) message("Maximum K value: ", max_k, ", Total clusters needed: ", total_clusters)
   
-  if (is.null(color_palette)) {
-    # Create a comprehensive color palette
-    base_colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", 
-                     "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
-                     "#bcbd22", "#17becf", "#aec7e8", "#ffbb78",
-                     "#98df8a", "#ff9896", "#c5b0d5", "#c49c94",
-                     "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5")
-    
-    # If we need more colors than available, generate additional colors
-    if (max_k > length(base_colors)) {
-      additional_colors <- rainbow(max_k - length(base_colors))
-      color_palette <- c(base_colors, additional_colors)
-    } else {
-      color_palette <- base_colors[1:max_k]
-    }
-  } else {
-    # Ensure we have enough colors for the maximum K
-    if (length(color_palette) < max_k) {
-      warning("Color palette has fewer colors (", length(color_palette), 
-              ") than maximum K (", max_k, "). Extending with default colors.")
-      additional_colors <- rainbow(max_k - length(color_palette))
-      color_palette <- c(color_palette, additional_colors)
-    } else {
-      # Use only the needed number of colors
-      color_palette <- color_palette[1:max_k]
-    }
-  }
+  # Define base color palette (your provided colors)
+  base_colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", 
+                   "#9467bd", "#8c564b", "#e377c2", "#7f7f7f",
+                   "#bcbd22", "#17becf", "#aec7e8", "#ffbb78",
+                   "#98df8a", "#ff9896", "#c5b0d5", "#c49c94",
+                   "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5")
   
-  if (verbose) message("Using ", length(color_palette), " colors for visualization")
+  # Step 8: Create the plot
+  if (verbose) message("Creating ggplot2 visualization...")
   
-  # Step 8: Create admixture plot
-  if (verbose) message("Creating admixture structure plot...")
-  
-  admixture_output_file <- file.path(output_dir, paste0(output_prefix, "_structure"))
-  
-  tryCatch({
-    pophelper::plotQ(
-      qlist_ordered,
-      imgoutput = "join",
-      exportpath = output_dir,
-      height = plot_height,
-      width = plot_width,
-      imgtype = "png",
-      dpi = dpi,
-      clustercol = color_palette,
-      splab = paste0("K=", sapply(qlist_ordered, ncol)),
-      showyaxis = FALSE,
-      showlegend = FALSE,
-      outputfilename = basename(admixture_output_file)
-    )
-  }, error = function(e) {
-    warning("Failed to create admixture plot: ", e$message)
-  })
-  
-  # Step 9: Create phylogenetic tree plot
-  if (verbose) message("Creating phylogenetic tree plot...")
-  
-  # Reorder tree to match sample order
-  tree_subset <- ape::keep.tip(tree, ordered_data$sample)
-  
-  tree_plot <- ggtree::ggtree(tree_subset, branch.length = if(show_tree_branch_length) NULL else "none") +
+  p <- df.admixture %>% 
+    ggplot2::ggplot(ggplot2::aes(sample, value, fill = name)) +
+    ggplot2::geom_bar(stat = "identity", width = 1, position = ggplot2::position_fill()) +
+    ggplot2::scale_x_discrete(limits = df.order.tree$sample) +
+    ggplot2::facet_wrap(. ~ k, ncol = 1, strip.position = "left") +
     ggplot2::theme(
-      plot.margin = ggplot2::margin(5, 5, 5, 5, "pt")
+      # Clean appearance - no axes, ticks, or legends
+      legend.position = "none",
+      axis.title.x = ggplot2::element_blank(),
+      axis.title.y = ggplot2::element_blank(),
+      axis.text.y = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      axis.ticks.x = ggplot2::element_blank(),
+      
+      # Facet styling
+      strip.text.y = ggplot2::element_text(angle = 90),
+      strip.background = ggplot2::element_blank(),
+      panel.border = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      
+      # Minimal spacing between facets
+      panel.spacing.y = ggplot2::unit(0, "lines")
     )
   
-  tree_output_file <- file.path(output_dir, paste0(output_prefix, "_phylogeny.png"))
-  
-  tryCatch({
-    ggplot2::ggsave(
-      tree_plot,
-      filename = tree_output_file,
-      width = tree_width,
-      height = tree_height,
-      dpi = dpi,
-      bg = "white"
-    )
-  }, error = function(e) {
-    warning("Failed to save tree plot: ", e$message)
-  })
-  
-  # Step 10: Create output file list
-  output_files <- c(
-    paste0(admixture_output_file, ".png"),
-    tree_output_file
-  )
-  
-  # Filter existing files
-  output_files <- output_files[file.exists(output_files)]
-  
-  if (verbose) {
-    message("Analysis completed successfully!")
-    message("Output files created:")
-    for (file in output_files) {
-      message("  ", file)
+  # Step 9: Apply color scale
+  if (color_scale == "default") {
+    # Use base colors, extending if necessary
+    if (total_clusters <= length(base_colors)) {
+      selected_colors <- base_colors[1:total_clusters]
+    } else {
+      # Extend with additional colors if needed
+      additional_colors <- rainbow(total_clusters - length(base_colors))
+      selected_colors <- c(base_colors, additional_colors)
+      if (verbose) message("Extended color palette with ", length(additional_colors), " additional colors")
     }
+    p <- p + ggplot2::scale_fill_manual(values = selected_colors)
+    
+  } else if (color_scale == "manual") {
+    if (is.null(manual_colors)) {
+      warning("manual_colors not provided, using default colors")
+      if (total_clusters <= length(base_colors)) {
+        selected_colors <- base_colors[1:total_clusters]
+      } else {
+        additional_colors <- rainbow(total_clusters - length(base_colors))
+        selected_colors <- c(base_colors, additional_colors)
+      }
+      p <- p + ggplot2::scale_fill_manual(values = selected_colors)
+    } else {
+      # Check if enough manual colors provided
+      if (length(manual_colors) < total_clusters) {
+        warning("Not enough manual colors provided (", length(manual_colors), 
+                ") for clusters needed (", total_clusters, "). Extending with default colors.")
+        extended_colors <- c(manual_colors, base_colors[1:(total_clusters - length(manual_colors))])
+        p <- p + ggplot2::scale_fill_manual(values = extended_colors)
+      } else {
+        p <- p + ggplot2::scale_fill_manual(values = manual_colors[1:total_clusters])
+      }
+    }
+    
+  } else {
+    # Use ggsci color scales
+    p <- switch(color_scale,
+      "aaas" = p + ggsci::scale_fill_aaas(),
+      "npg" = p + ggsci::scale_fill_npg(),
+      "lancet" = p + ggsci::scale_fill_lancet(),
+      "jco" = p + ggsci::scale_fill_jco(),
+      "ucscgb" = p + ggsci::scale_fill_ucscgb(),
+      "uchicago" = p + ggsci::scale_fill_uchicago(),
+      "simpsons" = p + ggsci::scale_fill_simpsons(),
+      "rickandmorty" = p + ggsci::scale_fill_rickandmorty(),
+      {
+        warning("Unknown color scale: ", color_scale, ". Using default colors.")
+        if (total_clusters <= length(base_colors)) {
+          selected_colors <- base_colors[1:total_clusters]
+        } else {
+          additional_colors <- rainbow(total_clusters - length(base_colors))
+          selected_colors <- c(base_colors, additional_colors)
+        }
+        p + ggplot2::scale_fill_manual(values = selected_colors)
+      }
+    )
   }
   
-  # Return comprehensive results
-  return(list(
-    qlist.original = qlist_original,
-    qlist.filtered = if(!is.null(k_range)) qlist_filtered else NULL,
-    qlist.ordered = qlist_ordered,
-    tree.plot = tree_plot,
-    sample.order = ordered_data,
-    summary.statistics = sum_result,
-    k.values.used = sapply(qlist_ordered, ncol),
-    color.palette.used = color_palette,
-    output.files = output_files
-  ))
+  if (verbose) message("Analysis completed successfully! Returning ggplot2 object.")
+  
+  # Return the ggplot2 object directly
+  return(p)
 }

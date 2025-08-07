@@ -4,7 +4,11 @@
 \alias{add_curve_statistical_annotations}
 \title{Add statistical annotations to summary table}
 \usage{
-add_curve_statistical_annotations(summary_table, statistical_results)
+add_curve_statistical_annotations(
+  summary_table,
+  statistical_results,
+  reference_group
+)
 }
 \description{
 Add statistical annotations to summary table

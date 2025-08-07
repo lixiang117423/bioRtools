@@ -43,7 +43,10 @@ get_methylkit_data(
              所有与样本相关的列都将使用'样本名_数据类型'的格式进行命名。
 }
 \examples{
-# 1. 创建一个包含明确样本ID的模拟 methylRawList 对象
+\dontrun{
+library(tidyverse)
+library(methylKit)
+# 1. 创建模拟数据 (这部分代码是正确的，无需修改)
 mock_data1 <- data.frame(
   chr = "chr1", start = 1001:1005, end = 1001:1005, strand = "+",
   coverage = c(100, 120, 90, 150, 200),
@@ -59,25 +62,40 @@ mock_data2 <- data.frame(
   numTs = 0
 )
 mock_data2$numTs <- mock_data2$coverage - mock_data2$numCs
+# 步骤 A: 为第一个样本创建 methylRaw 对象
+obj1 <- methRead(
+  location = mock_data1,    # 直接读取 data.frame
+  sample.id = "CK1",
+  assembly = "hg19",
+  dbtype = "tabix",          # 推荐使用 tabix 格式，效率更高
+  dbdir = "methylDB_example" # 指定一个文件夹存放数据库文件
+)
 
-# 假设这个对象是 CpG 数据
+# 步骤 B: 为第二个样本创建 methylRaw 对象
+obj2 <- methRead(
+  location = mock_data2,
+  sample.id = "Treat1",
+  assembly = "hg19",
+  dbtype = "tabix",
+  dbdir = "methylDB_example"
+)
+
+# 步骤 C: 将创建好的对象组合成 methylRawList
 my_cpg_obj <- methylRawList(
-   methylRaw(mock_data1, sample.id = "CK1", assembly = "hg19"),
-   methylRaw(mock_data2, sample.id = "Treat1", assembly = "hg19"),
-   treatment = c(0,1)
+  obj1,
+  obj2,
+  treatment = c(0, 1) # 0 代表对照组 (CK1), 1 代表处理组 (Treat1)
 )
 
-# 2. 使用最终版函数进行处理，指定 context
-comprehensive_cpg_table <- get_methylkit_data(
-  methyl_obj = my_cpg_obj,
-  context = "CpG",
-  lo.count = 10
-)
-
+print(my_cpg_obj)
+ comprehensive_cpg_table <- get_methylkit_data(
+   methyl_obj = my_cpg_obj,
+   context = "CpG",
+   lo.count = 10
+ )
 # 3. 查看最终结果
 #    注意新增了 context 列
 print(comprehensive_cpg_table)
+}
 
-# 如果您有 CHG 数据，可以这样调用：
-# comprehensive_chg_table <- get_methylkit_data(my_chg_obj, context = "CHG")
 }

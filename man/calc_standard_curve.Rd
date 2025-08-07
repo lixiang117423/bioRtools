@@ -7,6 +7,7 @@
 calc_standard_curve(
   cq_table,
   concentration_table,
+  gene_name = NULL,
   highest_concentration,
   lowest_concentration,
   dilution_factor = 4,
@@ -14,9 +15,15 @@ calc_standard_curve(
 )
 }
 \arguments{
-\item{cq_table}{A data frame containing position and Cq values}
+\item{cq_table}{A data frame containing position and Cq values.
+Must contain columns: Position, Cq}
 
-\item{concentration_table}{A data frame containing position and concentration values}
+\item{concentration_table}{A data frame containing position and concentration values.
+Must contain columns: Position, Conc. May also contain Gene column.}
+
+\item{gene_name}{Optional character string specifying gene name. If NULL and Gene
+column exists in concentration_table, will use that. If NULL and no Gene column,
+will use "Unknown_Gene" (default: NULL)}
 
 \item{highest_concentration}{The highest concentration for calculation}
 
@@ -29,7 +36,7 @@ calc_standard_curve(
 \value{
 A list containing:
   \item{table}{Data frame with regression statistics and efficiency}
-  \item{figure}{ggplot object showing the standard curve}
+  \item{plot}{ggplot object showing the standard curve}
 }
 \description{
 This function calculates the standard curve and amplification efficiency
@@ -38,13 +45,13 @@ which method can be used to calculate expression levels.
 }
 \examples{
 # Load example data
-cq_data_path <- system.file("examples", "calsc.cq.txt", package = "qPCRtools")
-concentration_data_path <- system.file("examples", "calsc.info.txt", package = "qPCRtools")
+cq_data_path <- system.file("extdata/qPCR", "calsc.cq.txt", package = "bioRtools")
+concentration_data_path <- system.file("extdata/qPCR", "calsc.info.txt", package = "bioRtools")
 cq_data <- read.table(cq_data_path, header = TRUE)
 concentration_data <- read.table(concentration_data_path, header = TRUE)
 
-# Calculate standard curve
-result <- calc_standard_curve(
+# Calculate standard curve (gene info in concentration_table)
+result1 <- calc_standard_curve(
   cq_table = cq_data,
   concentration_table = concentration_data,
   lowest_concentration = 4,
@@ -53,9 +60,20 @@ result <- calc_standard_curve(
   use_mean_cq = TRUE
 )
 
+# Calculate standard curve (specify gene name manually)
+result2 <- calc_standard_curve(
+  cq_table = cq_data,
+  concentration_table = concentration_data,
+  gene_name = "MyGene",
+  lowest_concentration = 4,
+  highest_concentration = 4096,
+  dilution_factor = 4,
+  use_mean_cq = TRUE
+)
+
 # View results
-result$table
-result$figure
+result1$table
+result1$plot
 
 }
 \author{

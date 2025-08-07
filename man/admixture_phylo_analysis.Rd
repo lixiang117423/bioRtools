@@ -24,11 +24,12 @@ admixture_phylo_analysis(
 }
 \arguments{
 \item{admixture_path}{Character string specifying the directory path containing 
-Admixture .Q files. All .Q files in this directory will be processed.}
+Admixture .Q files and the corresponding .fam file. All .Q files in this 
+directory will be processed.}
 
 \item{tree_file}{Character string specifying the path to the phylogenetic tree 
 file (Newick format). Sample names in the tree must match those in the 
-Admixture files.}
+.fam file.}
 
 \item{output_dir}{Character string specifying the output directory for plots. 
 Default is the same as admixture_path.}
@@ -73,14 +74,15 @@ different K values. Default is TRUE.}
 Default is TRUE.}
 }
 \value{
-A list containing six components:
+A list containing seven components:
 \describe{
-  \item{qlist.original}{Original Q matrices read from files.}
+  \item{qlist.original}{Original Q matrices read from files with sample names.}
   \item{qlist.ordered}{Q matrices reordered according to phylogenetic topology.}
   \item{tree.plot}{ggplot object of the phylogenetic tree.}
   \item{sample.order}{Data frame showing the final sample ordering with 
     phylogenetic and population information.}
   \item{summary.statistics}{Summary statistics from pophelper analysis.}
+  \item{sample.info}{Data frame containing sample information from .fam file.}
   \item{output.files}{Character vector of created output file paths.}
 }
 }
@@ -88,12 +90,15 @@ A list containing six components:
 Process Admixture .Q files and create population structure plots ordered 
 according to phylogenetic tree topology. This function integrates phylogenetic 
 relationships with population genetic structure analysis for comprehensive 
-evolutionary insights.
+evolutionary insights. The function automatically reads sample names from 
+.fam files and assigns them to .Q files.
 }
 \details{
 The function workflow includes:
 \enumerate{
+  \item Reading .fam file to extract sample information
   \item Reading all .Q files from the specified directory
+  \item Assigning sample names from .fam file to .Q files
   \item Processing and summarizing admixture results
   \item Aligning clusters across different K values (optional)
   \item Reading phylogenetic tree and extracting tip order
@@ -111,7 +116,8 @@ The phylogenetic ordering ensures that:
 }
 \note{
 \itemize{
-  \item Sample names must be consistent across .Q files and phylogenetic tree
+  \item A .fam file must be present in the admixture_path directory
+  \item Sample names must be consistent across .fam file and phylogenetic tree
   \item Requires pophelper, ape, ggtree, and dplyr packages
   \item Output plots are designed for easy horizontal concatenation
   \item Tree plot height should match admixture plot height for alignment
@@ -121,7 +127,7 @@ The phylogenetic ordering ensures that:
 \dontrun{
 # Basic analysis with specific K range
 result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/",
+  admixture_path = system.file("extdata", "admixture", package = "bioRtools"),
   tree_file = "path/to/phylogenetic_tree.nwk",
   output_dir = "path/to/output/",
   k_range = 2:5  # Only analyze K=2,3,4,5

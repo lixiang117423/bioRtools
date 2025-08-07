@@ -5,9 +5,9 @@
 #' which normalizes target gene expression to a reference gene.
 #'
 #' @param cq_table A data frame containing position, Cq values, and gene information.
-#'   Must contain columns: Position, Cq, Gene
+#'   Should contain columns: Position, Cq, Gene
 #' @param design_table A data frame containing experimental design information.
-#'   Must contain columns: Position, Group, BioRep
+#'   Should contain columns: Position, Group, BioRep
 #' @param reference_gene Character string specifying the name of the reference gene
 #'   (default: "Actin")
 #' @param create_plot Logical indicating whether to create a visualization plot
@@ -28,8 +28,8 @@
 #'
 #' @examples
 #' # Load example data
-#' cq_data_path <- system.file("examples", "dct.cq.txt", package = "qPCRtools")
-#' design_data_path <- system.file("examples", "dct.design.txt", package = "qPCRtools")
+#' cq_data_path <- system.file("extdata/qPCR", "dct.cq.txt", package = "bioRtools")
+#' design_data_path <- system.file("extdata/qPCR", "dct.design.txt", package = "bioRtools")
 #' cq_data <- read.table(cq_data_path, sep = ",", header = TRUE)
 #' design_data <- read.table(design_data_path, sep = ",", header = TRUE)
 #' 
@@ -51,22 +51,19 @@ calc_expression_delta_ct <- function(cq_table,
                                    reference_gene = "Actin",
                                    create_plot = TRUE) {
   
-  # Input validation
-  validate_delta_ct_inputs(cq_table, design_table, reference_gene)
-  
-  # Merge and prepare data
+  # Step 1: Merge and prepare data (similar to original approach)
   merged_data <- prepare_delta_ct_data(cq_table, design_table)
   
-  # Calculate reference gene means
+  # Step 2: Calculate reference gene means
   reference_data <- calculate_reference_means(merged_data, reference_gene)
   
-  # Calculate target gene expression
+  # Step 3: Calculate target gene expression
   expression_data <- calculate_target_expression(merged_data, reference_data, reference_gene)
   
-  # Calculate summary statistics
+  # Step 4: Calculate summary statistics
   summary_table <- calculate_expression_summary(expression_data)
   
-  # Create plot if requested
+  # Step 5: Create plot if requested
   plot_result <- NULL
   if (create_plot) {
     plot_result <- create_expression_plot(summary_table)
@@ -79,58 +76,19 @@ calc_expression_delta_ct <- function(cq_table,
   ))
 }
 
-#' Validate input parameters for delta-Ct calculation
-#' @keywords internal
-validate_delta_ct_inputs <- function(cq_table, design_table, reference_gene) {
-  
-  if (!is.data.frame(cq_table)) {
-    stop("cq_table must be a data frame")
-  }
-  
-  if (!is.data.frame(design_table)) {
-    stop("design_table must be a data frame")
-  }
-  
-  # Check required columns in cq_table
-  required_cq_cols <- c("Position", "Cq", "Gene")
-  missing_cq_cols <- setdiff(required_cq_cols, names(cq_table))
-  if (length(missing_cq_cols) > 0) {
-    stop(sprintf("cq_table missing required columns: %s", 
-                paste(missing_cq_cols, collapse = ", ")))
-  }
-  
-  # Check required columns in design_table
-  required_design_cols <- c("Position", "Group", "BioRep")
-  missing_design_cols <- setdiff(required_design_cols, names(design_table))
-  if (length(missing_design_cols) > 0) {
-    stop(sprintf("design_table missing required columns: %s", 
-                paste(missing_design_cols, collapse = ", ")))
-  }
-  
-  # Check if reference gene exists in data
-  if (!reference_gene %in% cq_table$Gene) {
-    stop(sprintf("Reference gene '%s' not found in cq_table", reference_gene))
-  }
-  
-  # Check for matching positions
-  common_positions <- intersect(cq_table$Position, design_table$Position)
-  if (length(common_positions) == 0) {
-    stop("No matching positions found between cq_table and design_table")
-  }
-}
-
 #' Prepare and merge data for delta-Ct calculation
 #' @keywords internal
 prepare_delta_ct_data <- function(cq_table, design_table) {
   
+  # Use the same approach as original function - no strict validation
   merged_data <- cq_table %>%
     dplyr::left_join(design_table, by = "Position") %>%
     dplyr::rename(
-      position = .data$Position,
-      cq = .data$Cq,
-      group = .data$Group,
-      gene = .data$Gene,
-      bio_rep = .data$BioRep
+      position = Position,
+      cq = Cq,
+      group = Group,
+      gene = Gene,
+      bio_rep = BioRep
     ) %>%
     dplyr::filter(!is.na(.data$group), !is.na(.data$bio_rep))
   
@@ -148,7 +106,8 @@ calculate_reference_means <- function(merged_data, reference_gene) {
       mean_ref_cq = mean(.data$cq, na.rm = TRUE),
       .groups = "drop"
     ) %>%
-    dplyr::mutate(group_biorep = paste0(.data$group, "_", .data$bio_rep))
+    dplyr::mutate(group_biorep = paste0(.data$group, .data$bio_rep)) %>%
+    dplyr::select(.data$group_biorep, .data$mean_ref_cq)
   
   return(reference_means)
 }
@@ -159,17 +118,21 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
   
   expression_data <- merged_data %>%
     dplyr::filter(.data$gene != reference_gene) %>%
-    dplyr::mutate(group_biorep = paste0(.data$group, "_", .data$bio_rep)) %>%
-    dplyr::left_join(
-      reference_data %>% dplyr::select(.data$group_biorep, .data$mean_ref_cq),
-      by = "group_biorep"
-    ) %>%
-    dplyr::filter(!is.na(.data$mean_ref_cq)) %>%
+    dplyr::mutate(group_biorep = paste0(.data$group, .data$bio_rep)) %>%
+    dplyr::left_join(reference_data, by = "group_biorep") %>%
+    dplyr::select(-group_biorep) %>%
     dplyr::mutate(
       delta_ct = .data$cq - .data$mean_ref_cq,
-      relative_expression = 2^(-(.data$delta_ct))
+      expre = 2^(.data$mean_ref_cq - .data$cq)  # Keep original variable name
     ) %>%
-    dplyr::select(-.data$group_biorep)
+    dplyr::group_by(.data$group, .data$gene) %>%
+    dplyr::mutate(
+      n = dplyr::n(),
+      mean.expre = mean(.data$expre, na.rm = TRUE),
+      sd.expre = stats::sd(.data$expre, na.rm = TRUE),
+      se.expre = .data$sd.expre / sqrt(.data$n)
+    ) %>%
+    dplyr::ungroup()
   
   return(expression_data)
 }
@@ -182,8 +145,8 @@ calculate_expression_summary <- function(expression_data) {
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::summarise(
       n_replicates = dplyr::n(),
-      mean_expression = mean(.data$relative_expression, na.rm = TRUE),
-      sd_expression = stats::sd(.data$relative_expression, na.rm = TRUE),
+      mean_expression = mean(.data$expre, na.rm = TRUE),
+      sd_expression = stats::sd(.data$expre, na.rm = TRUE),
       se_expression = .data$sd_expression / sqrt(.data$n_replicates),
       mean_delta_ct = mean(.data$delta_ct, na.rm = TRUE),
       sd_delta_ct = stats::sd(.data$delta_ct, na.rm = TRUE),
@@ -234,7 +197,7 @@ create_expression_plot <- function(summary_table) {
     ggplot2::facet_wrap(~ .data$gene, scales = "free_y", ncol = 3) +
     ggplot2::labs(
       x = "Treatment Group",
-      y = "Relative Expression (2^-ΔCt)",
+      y = "Relative Expression (2^-dCt)",
       title = "Gene Expression Analysis (Delta-Ct Method)",
       subtitle = "Error bars represent standard error",
       fill = "Group"
@@ -251,15 +214,76 @@ create_expression_plot <- function(summary_table) {
   return(plot_result)
 }
 
-# For backward compatibility
+# 为向后兼容保留原函数名和行为
 CalExp2dCt <- function(cq.table, design.table, ref.gene = "Actin") {
-  result <- calc_expression_delta_ct(
-    cq_table = cq.table,
-    design_table = design.table,
-    reference_gene = ref.gene,
-    create_plot = FALSE
-  )
+  # 直接使用原有逻辑，保持完全兼容
+  merged_data <- cq.table %>%
+    dplyr::left_join(design.table, by = "Position") %>%
+    dplyr::rename(
+      position = Position,
+      cq = Cq,
+      group = Group,
+      gene = Gene,
+      biorep = BioRep
+    )
+
+  # 计算参考基因平均值
+  reference_stats <- merged_data %>%
+    dplyr::filter(.data$gene == ref.gene) %>%
+    dplyr::group_by(.data$group, .data$biorep) %>%
+    dplyr::mutate(
+      mean.cq = mean(.data$cq),
+      temp = paste0(.data$group, .data$biorep)
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(.data$temp, .data$mean.cq) %>%
+    dplyr::distinct_all()
+
+  # 计算目标基因表达量
+  expression_results <- merged_data %>%
+    dplyr::filter(.data$gene != ref.gene) %>%
+    dplyr::mutate(temp = paste0(.data$group, .data$biorep)) %>%
+    dplyr::left_join(reference_stats, by = "temp") %>%
+    dplyr::select(-temp) %>%
+    dplyr::mutate(expre = 2^(.data$mean.cq - .data$cq)) %>%
+    dplyr::group_by(.data$group, .data$gene) %>%
+    dplyr::mutate(
+      n = dplyr::n(),
+      mean.expre = mean(.data$expre),
+      sd.expre = stats::sd(.data$expre),
+      se.expre = .data$sd.expre / sqrt(.data$n)
+    ) %>%
+    dplyr::ungroup()
   
-  # Return only expression data to match original function behavior
-  return(result$expression_data)
+  return(expression_results)
 }
+
+# Output column explanations:
+# 
+# For calc_expression_delta_ct():
+# expression_data:
+# - position: Original well position from the qPCR plate  
+# - cq: Quantification cycle value for the target gene
+# - group: Experimental treatment or condition group
+# - gene: Name of the target gene being analyzed
+# - bio_rep: Biological replicate identifier
+# - mean_ref_cq: Mean Cq value of the reference gene for the same biological replicate
+# - delta_ct: Delta Ct value (target Cq - reference Cq)
+# - expre: Relative expression calculated as 2^(mean_ref_cq - cq) using 2^-ΔCt method
+# - n: Number of technical replicates for each group-gene combination
+# - mean.expre: Mean relative expression across technical replicates
+# - sd.expre: Standard deviation of relative expression values
+# - se.expre: Standard error of relative expression (sd.expre / sqrt(n))
+#
+# summary_table:
+# - group: Experimental treatment or condition group
+# - gene: Name of the target gene being analyzed
+# - n_replicates: Number of technical replicates
+# - mean_expression: Mean relative expression level
+# - sd_expression: Standard deviation of expression values
+# - se_expression: Standard error of expression values
+# - mean_delta_ct: Mean delta Ct value
+# - sd_delta_ct: Standard deviation of delta Ct values
+#
+# For CalExp2dCt() (backward compatibility):
+# Same as expression_data above, maintaining exact original output format

@@ -16,10 +16,10 @@ calc_expression_qpcr_efficiency(
 }
 \arguments{
 \item{cq_table}{A data frame containing qPCR data.
-Must contain columns: Position, Cq, Gene}
+Must contain columns: Position, Cq}
 
 \item{design_table}{A data frame containing experimental design information.
-Must contain columns: Position, Group, BioRep, TechRep, Eff}
+Must contain columns: Position, Group, Gene, BioRep, TechRep, Eff}
 
 \item{reference_gene}{Character vector of reference gene names.
 If NULL, the most stable genes will be selected automatically}
@@ -46,8 +46,8 @@ This function preserves the original algorithm logic from the author.
 }
 \examples{
 # Load example data
-cq_data_path <- system.file("examples", "cal.expre.rqpcr.cq.txt", package = "qPCRtools")
-design_data_path <- system.file("examples", "cal.expre.rqpcr.design.txt", package = "qPCRtools")
+cq_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.cq.txt", package = "bioRtools")
+design_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.design.txt", package = "bioRtools")
 
 cq_data <- read.table(cq_data_path, header = TRUE)
 design_data <- read.table(design_data_path, header = TRUE)
