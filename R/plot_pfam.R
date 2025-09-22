@@ -75,7 +75,7 @@ plot_pfam <- function(pfam_file,
       p <- p + geom_tile(aes(x = (start + end)/2, y = id, width = end - start, height = tile_height, fill = domain))
     }
     
-    p <- p + labs(x = "Position (bp)") +
+    p <- p + labs(x = "Position") +
       fill_scale +
       theme(legend.title = element_blank(),
             axis.title.y = element_blank())
@@ -118,7 +118,7 @@ plot_pfam <- function(pfam_file,
     }
     
     p_domain <- p_domain +
-      labs(x = "Position (bp)") +
+      labs(x = "Position") +
       fill_scale +
       theme(legend.title = element_blank(),
             axis.title.y = element_blank(),
