@@ -286,6 +286,12 @@ admixture_phylo_analysis <- function(admixture_path,
     if (verbose) message("Using K values: ", paste(sort(unique(df.admixture$k_value)), collapse = ", "))
   }
   
+  # Fix K value ordering by converting to factor with proper levels
+  df.admixture <- df.admixture %>% 
+    dplyr::mutate(
+      k = factor(k, levels = paste0("K = ", sort(unique(k_value))))
+    )
+  
   # Step 5: Check sample matching
   if (!is.null(tree_file)) {
     # Only check matching if tree file was provided

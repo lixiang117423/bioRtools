@@ -1,6 +1,6 @@
-#' Plot protein domain distribution with optional phylogenetic tree
+#' Plot protein domain (from Pfam and other tools) distribution with optional phylogenetic tree
 #'
-#' @param pfam_file Character string, path to pfam result file
+#' @param data Character string, dataframe of input data with four columns, id, length, domain, start, end
 #' @param tree_file Character string, path to phylogenetic tree file (optional, default is NULL)
 #' @param tile_height Numeric, height of geom_tile, default is 0.8
 #' @param fill_scale Fill color setting, can be a function or color vector, default is bioRtools::scale_fill_cell()
@@ -16,14 +16,14 @@
 #'
 #' @examples
 #' # Without phylogenetic tree
-#' plot_pfam(pfam_file = "path/to/pfam.tsv")
+#' plot_pfam(data = "path/to/pfam.tsv")
 #' 
 #' # With phylogenetic tree
-#' plot_pfam(pfam_file = "path/to/pfam.tsv", 
+#' plot_pfam(data = "path/to/pfam.tsv", 
 #'           tree_file = "path/to/tree.nwk")
 #' 
 #' # Custom parameters with rounded corners
-#' plot_pfam(pfam_file = "path/to/pfam.tsv", 
+#' plot_pfam(data = "path/to/pfam.tsv", 
 #'           tree_file = "path/to/tree.nwk",
 #'           tile_height = 0.6,
 #'           tree_xlim_factor = 2.0,
@@ -31,7 +31,7 @@
 #'           rounded_corners = TRUE,
 #'           corner_radius = 0.15)
 
-plot_pfam <- function(pfam_file, 
+plot_pfam <- function(data, 
                      tree_file = NULL,
                      tile_height = 0.8,
                      fill_scale = bioRtools::scale_fill_cell(),
@@ -53,10 +53,12 @@ plot_pfam <- function(pfam_file,
   }
   
   # Read pfam data
-  pfam_data <- readr::read_delim(pfam_file, col_names = FALSE) %>% 
-    dplyr::select(1, 3, 6:8) %>% 
-    magrittr::set_names(c("id", "length", "domain", "start", "end"))
-  
+  # pfam_data <- readr::read_delim(data, col_names = FALSE) %>% 
+  #   dplyr::select(1, 3, 6:8) %>% 
+  #   magrittr::set_names(c("id", "length", "domain", "start", "end"))
+
+  pfam_data <- data
+
   # If no phylogenetic tree file provided, plot domain diagram only
   if (is.null(tree_file)) {
     p <- pfam_data %>% 
@@ -127,7 +129,7 @@ plot_pfam <- function(pfam_file,
     
     # Plot phylogenetic tree
     p_tree <- ggtree::ggtree(tree, layout = tree_layout) +
-      ggtree::geom_tiplab()
+      ggtree::geom_tiplab(align = TRUE)
     
     # Adjust phylogenetic tree x-axis range
     p_tree_final <- p_tree + xlim(NA, max(p_tree$data$x) * tree_xlim_factor)
@@ -142,15 +144,15 @@ plot_pfam <- function(pfam_file,
 # Optional convenience function
 #' Quick function for plotting protein domains
 #'
-#' @param pfam_file Path to pfam file
+#' @param data Path to pfam file
 #' @param tree_file Path to tree file (optional)
 #' @param ... Other parameters passed to plot_pfam
 #'
 #' @return ggplot object
 #' @export
 
-quick_pfam_plot <- function(pfam_file, tree_file = NULL, ...) {
-  plot_pfam(pfam_file = pfam_file, 
+quick_pfam_plot <- function(data, tree_file = NULL, ...) {
+  plot_pfam(data = data, 
             tree_file = tree_file, 
             ...)
 }
