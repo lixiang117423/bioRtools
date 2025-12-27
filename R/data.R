@@ -221,3 +221,82 @@
 #' }
 #' @source Xiang Li
 "df.splsda.sample"
+
+#' Test data for synteny plot.
+#'
+#' @name df.synteny.gene
+#' @title Gene Synteny Example Data
+#' @usage df.synteny.gene
+#' @format A data frame with 15 rows and 7 columns containing gene information
+#'   for synteny visualization:
+#' \describe{
+#'   \item{start}{Gene start position (numeric)}
+#'   \item{end}{Gene end position (numeric)}
+#'   \item{y}{Y-axis position for arranging genes on different tracks (numeric)}
+#'   \item{gene_name}{Gene identifier (character)}
+#'   \item{species}{Species name (character)}
+#'   \item{direction}{Gene strand direction, "+" or "-" (character)}
+#'   \item{gene_type}{Gene category for color coding (character)}
+#' }
+#' @source Simulated example data inspired by comparative genomics studies
+#' @description{
+#' Test data for synteny plot containing gene information for 4 species
+#' with 15 genes total.
+#' }
+#' @examples
+#' data(df.synteny.gene)
+#' head(df.synteny.gene)
+"df.synteny.gene"
+
+#' Test data for synteny plot links (curve style).
+#'
+#' @name df.synteny.link
+#' @title Synteny Link Example Data (Curve Style)
+#' @usage df.synteny.link
+#' @format A data frame with 14 rows and 3 columns containing synteny relationship
+#'   information for connecting homologous genes with simple curves:
+#' \describe{
+#'   \item{x}{X-coordinate for the link connection point (numeric)}
+#'   \item{y}{Y-coordinate for the link connection point (numeric)}
+#'   \item{group}{Grouping variable that identifies which genes should
+#'     be connected across species (numeric/character)}
+#' }
+#' @details
+#' Each group has exactly 2 rows representing the start and end points of a curve.
+#' Use this data with link_type = "curve" in plot_synteny().
+#' @source Simulated example data demonstrating synteny relationships
+#' @description{
+#' Test data for synteny plot containing 7 synteny links connecting
+#' homologous genes across 4 species. Each link has 2 points (start and end).
+#' }
+#' @examples
+#' data(df.synteny.link)
+#' head(df.synteny.link)
+"df.synteny.link"
+
+#' Test data for synteny plot links (ribbon style).
+#'
+#' @name df.synteny.link.ribbon
+#' @title Synteny Link Example Data (Ribbon Style)
+#' @usage df.synteny.link.ribbon
+#' @format A data frame with 28 rows and 3 columns containing synteny relationship
+#'   information for connecting homologous genes with filled ribbons:
+#' \describe{
+#'   \item{x}{X-coordinate for the link region corner (numeric)}
+#'   \item{y}{Y-coordinate for the link region corner (numeric)}
+#'   \item{group}{Grouping variable that identifies which genes should
+#'     be connected across species (numeric/character)}
+#' }
+#' @details
+#' Each group has exactly 4 rows representing the corners of a ribbon region
+#' connecting two gene intervals. Use this data with link_type = "ribbon" in plot_synteny().
+#' @source Simulated example data demonstrating synteny relationships
+#' @description{
+#' Test data for synteny plot containing 7 synteny links connecting
+#' homologous genes across 4 species. Each link has 4 points defining
+#' the corners of a ribbon-style connection.
+#' }
+#' @examples
+#' data(df.synteny.link.ribbon)
+#' head(df.synteny.link.ribbon)
+"df.synteny.link.ribbon"
