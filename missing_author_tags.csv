@@ -1,0 +1,14 @@
+"file","function_name","export_line"
+"run_wgcna.R","wgcna_results",746
+"run_wgcna.R","wgcna_results",710
+"plot_multi_volcano.R","plot_multi_volcano",104
+"identify_core_microbiome.R","core_microbiome",538
+"get_lm_stats.R","format_lm_stats",315
+"academic_color_scales.R","pal_shinkai",235
+"academic_color_scales.R","pal_nat_comm",220
+"academic_color_scales.R","pal_chem_eng",205
+"academic_color_scales.R","pal_fuel",190
+"academic_color_scales.R","pal_jacs",175
+"academic_color_scales.R","pal_cell",160
+"academic_color_scales.R","pal_science",145
+"academic_color_scales.R","pal_nature",130

@@ -104,6 +104,7 @@ is_ggplot2_350 <- function() {
 #' @param alpha Transparency level, a real number in (0, 1].
 #'   See `alpha` in [grDevices::rgb()] for details.
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export pal_sci
 #'
 #' @importFrom grDevices col2rgb rgb
@@ -127,6 +128,7 @@ pal_sci <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_nature <- function(palette = c("default", "materials"), alpha = 1) {
   palette <- match.arg(palette)
@@ -142,6 +144,7 @@ pal_nature <- function(palette = c("default", "materials"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_science <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -157,6 +160,7 @@ pal_science <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_cell <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -172,6 +176,7 @@ pal_cell <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_jacs <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -187,6 +192,7 @@ pal_jacs <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_fuel <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -202,6 +208,7 @@ pal_fuel <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_chem_eng <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -217,6 +224,7 @@ pal_chem_eng <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_nat_comm <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
@@ -232,6 +240,7 @@ pal_nat_comm <- function(palette = c("default"), alpha = 1) {
 }
 
 #' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha = 1) {
   palette <- match.arg(palette)
@@ -255,6 +264,7 @@ pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha
 #' @inheritParams pal_sci
 #' @param ... Additional parameters for [ggplot2::discrete_scale()].
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export scale_color_sci
 #'
 #' @importFrom ggplot2 discrete_scale
@@ -272,6 +282,7 @@ pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha
 #' ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
 #'   geom_point(size = 2) +
 #'   scale_color_sci(alpha = 0.7)
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_sci <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -283,11 +294,13 @@ scale_color_sci <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_sci
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_sci <- scale_color_sci
 
 #' @export scale_fill_sci
 #' @importFrom ggplot2 discrete_scale
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_sci <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -300,6 +313,7 @@ scale_fill_sci <- function(palette = c("default"), alpha = 1, ...) {
 # Nature scales
 #' @export scale_color_nature
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_nature <- function(palette = c("default", "materials"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -311,10 +325,12 @@ scale_color_nature <- function(palette = c("default", "materials"), alpha = 1, .
 
 #' @export scale_colour_nature
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_nature <- scale_color_nature
 
 #' @export scale_fill_nature
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_nature <- function(palette = c("default", "materials"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -327,6 +343,7 @@ scale_fill_nature <- function(palette = c("default", "materials"), alpha = 1, ..
 # Science scales
 #' @export scale_color_science
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_science <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -338,10 +355,12 @@ scale_color_science <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_science
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_science <- scale_color_science
 
 #' @export scale_fill_science
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_science <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -354,6 +373,7 @@ scale_fill_science <- function(palette = c("default"), alpha = 1, ...) {
 # Cell scales
 #' @export scale_color_cell
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_cell <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -365,10 +385,12 @@ scale_color_cell <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_cell
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_cell <- scale_color_cell
 
 #' @export scale_fill_cell
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_cell <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -381,6 +403,7 @@ scale_fill_cell <- function(palette = c("default"), alpha = 1, ...) {
 # JACS scales
 #' @export scale_color_jacs
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_jacs <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -392,10 +415,12 @@ scale_color_jacs <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_jacs
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_jacs <- scale_color_jacs
 
 #' @export scale_fill_jacs
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_jacs <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -408,6 +433,7 @@ scale_fill_jacs <- function(palette = c("default"), alpha = 1, ...) {
 # Fuel scales
 #' @export scale_color_fuel
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_fuel <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -419,10 +445,12 @@ scale_color_fuel <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_fuel
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_fuel <- scale_color_fuel
 
 #' @export scale_fill_fuel
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_fuel <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -435,6 +463,7 @@ scale_fill_fuel <- function(palette = c("default"), alpha = 1, ...) {
 # Chemical Engineering Journal scales
 #' @export scale_color_chem_eng
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -446,10 +475,12 @@ scale_color_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_chem_eng
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_chem_eng <- scale_color_chem_eng
 
 #' @export scale_fill_chem_eng
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -462,6 +493,7 @@ scale_fill_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
 # Nature Communications scales
 #' @export scale_color_nat_comm
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -473,10 +505,12 @@ scale_color_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
 
 #' @export scale_colour_nat_comm
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_nat_comm <- scale_color_nat_comm
 
 #' @export scale_fill_nat_comm
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -489,6 +523,7 @@ scale_fill_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
 # Shinkai scales
 #' @export scale_color_shinkai
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -500,6 +535,7 @@ scale_color_shinkai <- function(palette = c("default", "blue_tones", "red_tones"
 
 #' @export scale_colour_shinkai
 #' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_shinkai <- scale_color_shinkai
 
 #' @export scale_fill_shinkai
@@ -537,6 +573,7 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #' @param ... Additional parameters for [ggplot2::scale_color_gradientn()] or
 #'   [ggplot2::scale_fill_gradientn()].
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export scale_color_sci_c
 #'
 #' @importFrom ggplot2 scale_color_gradientn scale_fill_gradientn
@@ -566,6 +603,7 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #'   geom_tile() +
 #'   scale_fill_science_c() +
 #'   theme_minimal()
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
                               alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
@@ -587,10 +625,12 @@ scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sc
 
 #' @export scale_colour_sci_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_sci_c <- scale_color_sci_c
 
 #' @export scale_fill_sci_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
                              alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
@@ -613,48 +653,57 @@ scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sci
 # Additional continuous scales for other journals
 #' @export scale_color_nature_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "nature_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_nature_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_nature_c <- scale_color_nature_c
 
 #' @export scale_fill_nature_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "nature_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_color_cell_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "cell_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_cell_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_cell_c <- scale_color_cell_c
 
 #' @export scale_fill_cell_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "cell_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_color_jacs_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "jacs_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_jacs_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_jacs_c <- scale_color_jacs_c
 
 #' @export scale_fill_jacs_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "jacs_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -662,16 +711,19 @@ scale_fill_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
 # Science continuous scales
 #' @export scale_color_science_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_science_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "science_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_science_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_science_c <- scale_color_science_c
 
 #' @export scale_fill_science_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_science_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "science_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -679,16 +731,19 @@ scale_fill_science_c <- function(alpha = 1, reverse = FALSE, ...) {
 # Fuel continuous scales
 #' @export scale_color_fuel_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "fuel_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_fuel_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_fuel_c <- scale_color_fuel_c
 
 #' @export scale_fill_fuel_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "fuel_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -696,16 +751,19 @@ scale_fill_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
 # Chemical Engineering continuous scales
 #' @export scale_color_chem_eng_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "chem_eng_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_chem_eng_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_chem_eng_c <- scale_color_chem_eng_c
 
 #' @export scale_fill_chem_eng_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "chem_eng_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -713,16 +771,19 @@ scale_fill_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
 # Nature Communications continuous scales
 #' @export scale_color_nat_comm_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "nat_comm_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_nat_comm_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_nat_comm_c <- scale_color_nat_comm_c
 
 #' @export scale_fill_nat_comm_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_fill_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "nat_comm_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -730,12 +791,14 @@ scale_fill_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
 # Shinkai continuous scales
 #' @export scale_color_shinkai_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_color_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "shinkai_gradient", alpha = alpha, reverse = reverse, ...)
 }
 
 #' @export scale_colour_shinkai_c
 #' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 scale_colour_shinkai_c <- scale_color_shinkai_c
 
 #' @export scale_fill_shinkai_c

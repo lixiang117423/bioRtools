@@ -132,3 +132,6 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
   geom_point(size = 2) +
   scale_color_sci(alpha = 0.7)
 }
+\author{
+Xiang LI \email{lixiang117423@foxmail.com}
+}

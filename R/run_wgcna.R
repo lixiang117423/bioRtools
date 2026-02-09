@@ -707,6 +707,7 @@ run_wgcna_analysis <- function(
 #' Print method for WGCNA results
 #' @param x A wgcna_results object
 #' @param ... Additional arguments (not used)
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 print.wgcna_results <- function(x, ...) {
   cat("WGCNA Analysis Results\n")
@@ -743,6 +744,7 @@ print.wgcna_results <- function(x, ...) {
 #' Summary method for WGCNA results
 #' @param object A wgcna_results object
 #' @param ... Additional arguments (not used)
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 summary.wgcna_results <- function(object, ...) {
   cat("WGCNA Analysis Summary\n")

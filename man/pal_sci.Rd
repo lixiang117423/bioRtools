@@ -57,3 +57,6 @@ library("scales")
 show_col(pal_sci("default")(10))
 show_col(pal_sci("default", alpha = 0.6)(10))
 }
+\author{
+Xiang LI \email{lixiang117423@foxmail.com}
+}

@@ -81,6 +81,7 @@
 #'
 #' map_dfr(models, get_lm_stats, .id = "model")
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 get_lm_stats <- function(model,
                          r_squared_type = c("adjusted", "multiple"),
@@ -312,6 +313,7 @@ get_p_value_column <- function(anova_result) {
 #' # Markdown
 #' format_lm_stats(model, format = "markdown")
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 format_lm_stats <- function(model,
                             r_squared_type = c("adjusted", "multiple"),
@@ -339,5 +341,6 @@ format_lm_stats <- function(model,
 
 
 #' @rdname get_lm_stats
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 extract_lm_stats <- get_lm_stats

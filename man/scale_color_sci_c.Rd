@@ -155,3 +155,6 @@ ggplot(data, aes(x = x, y = y, fill = z)) +
   scale_fill_science_c() +
   theme_minimal()
 }
+\author{
+Xiang LI \email{lixiang117423@foxmail.com}
+}

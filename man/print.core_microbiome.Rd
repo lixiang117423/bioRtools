@@ -9,3 +9,6 @@
 \description{
 Print Method for Core Microbiome Results
 }
+\author{
+Xiang LI \email{lixiang117423@foxmail.com}
+}

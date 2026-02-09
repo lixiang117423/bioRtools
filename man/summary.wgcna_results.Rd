@@ -14,3 +14,6 @@
 \description{
 Summary method for WGCNA results
 }
+\author{
+Xiang LI \email{lixiang117423@foxmail.com}
+}

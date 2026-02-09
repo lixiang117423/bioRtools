@@ -535,6 +535,7 @@ plot_neutral_model <- function(fitting_results, neutral_results) {
 
 
 #' Print Method for Core Microbiome Results
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 print.core_microbiome <- function(x, ...) {
   cat("Core Microbiome Analysis Results\n")

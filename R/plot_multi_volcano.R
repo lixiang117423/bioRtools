@@ -101,6 +101,7 @@
 #' print(p_custom2)
 #' }
 #'
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
 plot_multi_volcano <- function(data,
                                fc_column = "avg_log2FC",
