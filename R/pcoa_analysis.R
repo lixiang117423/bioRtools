@@ -29,12 +29,11 @@
 #' pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa.res
 #'
 pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2", size = 2, color = "group", alpha = 1) {
-  
   # Step 1: Calculate distance matrix and perform PCoA
   data %>%
     vegan::vegdist(method = method) %>%
     ape::pcoa() -> pcoa.res
-  
+
   # Step 2: Extract eigenvalues and calculate explained variance
   pcoa.res$values %>%
     as.data.frame() %>%
@@ -46,7 +45,7 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
       percentage = paste0(relative.eig, "%"),
       label = paste0(PCoA, " (", percentage, ")")
     ) -> eigenvalue.pcoa
-  
+
   # Step 3: Extract coordinate data and merge with sample information
   pcoa.res$vectors %>%
     as.data.frame() %>%
@@ -54,40 +53,40 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
     magrittr::set_names(paste0("PCo", seq_len(ncol(.)))) %>%
     tibble::rownames_to_column(var = "sample") %>%
     dplyr::left_join(sample, by = "sample") -> point.data
-  
+
   # Step 4: Create axis labels with explained variance
   x_label <- eigenvalue.pcoa %>%
     dplyr::filter(PCoA == x) %>%
     dplyr::pull(label)
-  
+
   y_label <- eigenvalue.pcoa %>%
     dplyr::filter(PCoA == y) %>%
     dplyr::pull(label)
-  
+
   # Step 5: Create PCoA plot
   plot.pcoa <- point.data %>%
     ggplot2::ggplot(ggplot2::aes(
-      x = !!rlang::sym(x), 
-      y = !!rlang::sym(y), 
+      x = !!rlang::sym(x),
+      y = !!rlang::sym(y),
       color = !!rlang::sym(color)
     )) +
     ggplot2::geom_hline(
-      yintercept = 0, 
-      color = "#222222", 
-      linetype = "dashed", 
+      yintercept = 0,
+      color = "#222222",
+      linetype = "dashed",
       linewidth = 0.5
     ) +
     ggplot2::geom_vline(
-      xintercept = 0, 
-      color = "#222222", 
-      linetype = "dashed", 
+      xintercept = 0,
+      color = "#222222",
+      linetype = "dashed",
       linewidth = 0.5
     ) +
     ggplot2::geom_point(size = size, alpha = alpha) +
     ggplot2::labs(x = x_label, y = y_label) +
     ggsci::scale_color_d3() +
     ggplot2::theme_bw()
-  
+
   # Step 6: Return results as a list following project conventions
   return(list(
     result.pcoa = pcoa.res,

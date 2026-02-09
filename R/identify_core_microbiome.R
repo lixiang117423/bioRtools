@@ -86,21 +86,21 @@
 #'
 #' @export
 identify_core_microbiome <- function(otu_table,
-                                      metadata,
-                                      sample_col,
-                                      group_col = "group",
-                                      n_ranked = 500,
-                                      threshold = 0.02) {
+                                     metadata,
+                                     sample_col,
+                                     group_col = "group",
+                                     n_ranked = 500,
+                                     threshold = 0.02) {
   # Input validation
   validate_core_inputs(otu_table, metadata, sample_col, group_col, n_ranked, threshold)
-  
+
   # Convert to data frames if needed
   otu_df <- as.data.frame(otu_table)
   meta_df <- as.data.frame(metadata)
-  
+
   # Calculate OTU occurrence and abundance metrics
   otu_metrics <- calculate_otu_metrics(otu_df)
-  
+
   # Rank OTUs by occurrence and consistency
   otu_ranking <- rank_otus_by_occurrence(
     otu_df,
@@ -108,32 +108,32 @@ identify_core_microbiome <- function(otu_table,
     sample_col,
     group_col
   )
-  
+
   # Calculate contribution to community dissimilarity
   bc_ranked <- calculate_bray_curtis_contribution(
     otu_df,
     otu_ranking,
     n_ranked
   )
-  
+
   # Determine core cutoffs
   elbow <- determine_elbow_cutoff(bc_ranked)
   last_call <- determine_last_increase_cutoff(bc_ranked, threshold)
-  
+
   # Fit neutral model
   neutral_results <- fit_neutral_model(otu_df)
-  
+
   # Combine results
   fitting_results <- combine_ranking_and_neutral(
     otu_metrics,
     otu_ranking,
     last_call
   )
-  
+
   # Create plots
   plot_ranked <- plot_ranked_otus(bc_ranked, elbow, last_call, threshold)
   plot_neutral <- plot_neutral_model(fitting_results, neutral_results)
-  
+
   # Create output object
   result <- structure(
     list(
@@ -147,8 +147,8 @@ identify_core_microbiome <- function(otu_table,
     ),
     class = "core_microbiome"
   )
-  
-  return(result)
+
+  result
 }
 
 
@@ -156,39 +156,39 @@ identify_core_microbiome <- function(otu_table,
 #' @keywords internal
 #' @noRd
 validate_core_inputs <- function(otu_table, metadata, sample_col,
-                                  group_col, n_ranked, threshold) {
+                                 group_col, n_ranked, threshold) {
   # Check OTU table
   if (!is.matrix(otu_table) && !is.data.frame(otu_table)) {
     stop("otu_table must be a matrix or data frame", call. = FALSE)
   }
-  
+
   if (is.null(rownames(otu_table)) || any(rownames(otu_table) == "")) {
     stop("otu_table must have row names (OTU identifiers)", call. = FALSE)
   }
-  
+
   # Check metadata
   if (!is.data.frame(metadata)) {
     stop("metadata must be a data frame", call. = FALSE)
   }
-  
+
   if (!sample_col %in% names(metadata)) {
     stop(
       "sample_col '", sample_col, "' not found in metadata",
       call. = FALSE
     )
   }
-  
+
   if (!group_col %in% names(metadata)) {
     stop(
       "group_col '", group_col, "' not found in metadata",
       call. = FALSE
     )
   }
-  
+
   # Check sample matching
   otu_samples <- colnames(otu_table)
   meta_samples <- metadata[[sample_col]]
-  
+
   if (!all(otu_samples %in% meta_samples)) {
     stop(
       "Not all OTU table samples found in metadata ",
@@ -196,16 +196,16 @@ validate_core_inputs <- function(otu_table, metadata, sample_col,
       call. = FALSE
     )
   }
-  
+
   # Check parameters
   if (!is.numeric(n_ranked) || n_ranked < 1) {
     stop("n_ranked must be a positive integer", call. = FALSE)
   }
-  
+
   if (!is.numeric(threshold) || threshold < 0 || threshold > 1) {
     stop("threshold must be between 0 and 1", call. = FALSE)
   }
-  
+
   if (n_ranked > nrow(otu_table)) {
     warning(
       "n_ranked (", n_ranked, ") exceeds number of OTUs (",
@@ -213,7 +213,7 @@ validate_core_inputs <- function(otu_table, metadata, sample_col,
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -223,7 +223,7 @@ validate_core_inputs <- function(otu_table, metadata, sample_col,
 #' @noRd
 calculate_otu_metrics <- function(otu_df) {
   n_samples <- ncol(otu_df)
-  
+
   otu_df %>%
     tibble::rownames_to_column(var = "otu") %>%
     tidyr::pivot_longer(
@@ -259,7 +259,7 @@ calculate_otu_metrics <- function(otu_df) {
 #' @noRd
 rank_otus_by_occurrence <- function(otu_df, meta_df, sample_col, group_col) {
   group_sym <- rlang::sym(group_col)
-  
+
   otu_df %>%
     tibble::rownames_to_column(var = "otu") %>%
     dplyr::mutate(otu = factor(.data$otu)) %>%
@@ -294,27 +294,27 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
   n_otus_to_use <- min(n_ranked, nrow(otu_ranking))
   n_samples <- ncol(otu_df)
   sample_names <- colnames(otu_df)
-  
+
   # Initialize results
   bc_accumulation <- list()
-  
+
   # Calculate for each rank
   for (i in seq_len(n_otus_to_use)) {
     selected_otus <- as.character(otu_ranking$otu[1:i])
     subset_matrix <- as.matrix(otu_df[selected_otus, , drop = FALSE])
-    
+
     # Calculate pairwise Bray-Curtis
     bc_values <- calculate_pairwise_bc(subset_matrix)
     bc_accumulation[[i]] <- bc_values
-    
+
     if (i %% 50 == 0) {
       message("Processed ", i, "/", n_otus_to_use, " OTUs")
     }
   }
-  
+
   # Calculate for full community
   full_bc <- calculate_pairwise_bc(as.matrix(otu_df))
-  
+
   # Summarize results
   bc_summary <- tibble::tibble(
     rank = factor(seq_len(n_otus_to_use)),
@@ -323,11 +323,11 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
     dplyr::mutate(
       proportion_bc = .data$mean_bc / max(.data$mean_bc)
     )
-  
+
   # Calculate increase
   increase <- c(0, bc_summary$mean_bc[-1] / bc_summary$mean_bc[-nrow(bc_summary)])
   bc_summary$increase_bc <- increase
-  
+
   # Calculate first-order differences for elbow method
   bc_summary$fo_diff <- sapply(
     seq_len(nrow(bc_summary)),
@@ -338,7 +338,7 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
       return(left - right)
     }
   )
-  
+
   return(bc_summary)
 }
 
@@ -349,16 +349,16 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
 calculate_pairwise_bc <- function(matrix) {
   n_samples <- ncol(matrix)
   sample_totals <- colSums(matrix)
-  
+
   bc_values <- numeric()
-  
+
   for (i in seq_len(n_samples - 1)) {
     for (j in (i + 1):n_samples) {
       bc <- sum(abs(matrix[, i] - matrix[, j])) / (2 * sample_totals[1])
       bc_values <- c(bc_values, bc)
     }
   }
-  
+
   return(bc_values)
 }
 
@@ -377,7 +377,7 @@ determine_elbow_cutoff <- function(bc_ranked) {
 determine_last_increase_cutoff <- function(bc_ranked, threshold) {
   above_threshold <- bc_ranked %>%
     dplyr::filter(.data$increase_bc >= 1 + threshold)
-  
+
   if (nrow(above_threshold) == 0) {
     warning(
       "No OTUs met the threshold increase of ",
@@ -387,7 +387,7 @@ determine_last_increase_cutoff <- function(bc_ranked, threshold) {
     )
     return(determine_elbow_cutoff(bc_ranked))
   }
-  
+
   as.numeric(as.character(dplyr::last(above_threshold$rank)))
 }
 
@@ -397,7 +397,7 @@ determine_last_increase_cutoff <- function(bc_ranked, threshold) {
 #' @noRd
 combine_ranking_and_neutral <- function(otu_metrics, otu_ranking, last_call) {
   core_otus <- as.character(otu_ranking$otu[seq_len(last_call)])
-  
+
   otu_metrics %>%
     dplyr::select(
       "otu",
@@ -416,7 +416,7 @@ combine_ranking_and_neutral <- function(otu_metrics, otu_ranking, last_call) {
 #' @noRd
 plot_ranked_otus <- function(bc_ranked, elbow, last_call, threshold) {
   thread_value <- bc_ranked[bc_ranked$rank == last_call, ]$proportion_bc
-  
+
   plot_data <- bc_ranked %>%
     dplyr::mutate(
       rank = as.numeric(as.character(.data$rank)),
@@ -427,7 +427,7 @@ plot_ranked_otus <- function(bc_ranked, elbow, last_call, threshold) {
       )
     ) %>%
     dplyr::slice(1:min(100, dplyr::n()))
-  
+
   ggplot2::ggplot(plot_data, ggplot2::aes(x = .data$rank, y = .data$proportion_bc)) +
     ggplot2::geom_point(ggplot2::aes(color = .data$status), size = 2) +
     ggplot2::geom_vline(
@@ -613,23 +613,23 @@ print.core_microbiome <- function(x, ...) {
 #'
 #' @export
 fit_sloan_neutral_model <- function(otu_table,
-                                     pool = NULL,
-                                     return_stats = FALSE) {
+                                    pool = NULL,
+                                    return_stats = FALSE) {
   # Validate inputs
   if (!is.matrix(otu_table) && !is.data.frame(otu_table)) {
     stop("otu_table must be a matrix or data frame", call. = FALSE)
   }
-  
+
   # Transpose if needed (samples should be rows)
   if (is.null(rownames(otu_table))) {
     stop("otu_table must have row names (OTU identifiers)", call. = FALSE)
   }
-  
+
   spp <- t(as.matrix(otu_table))
-  
+
   # Calculate mean community size
   N <- mean(rowSums(spp))
-  
+
   # Calculate mean relative abundance
   if (is.null(pool)) {
     p_mean <- colMeans(spp)
@@ -640,12 +640,12 @@ fit_sloan_neutral_model <- function(otu_table,
     p_mean <- p_mean[p_mean != 0]
     p <- p_mean / N
   }
-  
+
   # Calculate occurrence frequencies
   spp_binary <- (spp > 0) * 1
   freq <- colMeans(spp_binary)
   freq <- freq[freq != 0]
-  
+
   # Combine and remove zeros
   combined <- merge(
     data.frame(otu = names(p), p = p, row.names = NULL),
@@ -653,15 +653,15 @@ fit_sloan_neutral_model <- function(otu_table,
     by = "otu"
   )
   combined <- combined[order(combined$p), ]
-  
+
   p <- combined$p
   freq <- combined$freq
   names(p) <- combined$otu
   names(freq) <- combined$otu
-  
+
   # Detection limit
   d <- 1 / N
-  
+
   # Fit migration parameter using non-linear least squares
   tryCatch(
     {
@@ -669,26 +669,26 @@ fit_sloan_neutral_model <- function(otu_table,
         freq ~ pbeta(d, N * m * p, N * m * (1 - p), lower.tail = FALSE),
         start = list(m = 0.1)
       )
-      
+
       m_ci <- confint(m_fit, "m", level = 0.95)
-      
+
       # Maximum likelihood estimation
       sncm_ll <- function(m, sigma) {
         R <- freq - pbeta(d, N * m * p, N * m * (1 - p), lower.tail = FALSE)
         R <- dnorm(R, 0, sigma)
         -sum(log(R))
       }
-      
+
       m_mle <- stats4::mle(
         sncm_ll,
         start = list(m = 0.1, sigma = 0.1),
         nobs = length(p)
       )
-      
+
       # Model fit statistics
       aic_fit <- AIC(m_mle, k = 2)
       bic_fit <- BIC(m_mle)
-      
+
       # Predictions
       freq_pred <- pbeta(
         d,
@@ -696,13 +696,13 @@ fit_sloan_neutral_model <- function(otu_table,
         N * coef(m_fit) * (1 - p),
         lower.tail = FALSE
       )
-      
+
       # R-squared
       rsqr <- 1 - sum((freq - freq_pred)^2) / sum((freq - mean(freq))^2)
-      
+
       # RMSE
       rmse <- sqrt(sum((freq - freq_pred)^2) / (length(freq) - 1))
-      
+
       # Prediction intervals
       pred_ci <- Hmisc::binconf(
         freq_pred * nrow(spp),
@@ -711,7 +711,7 @@ fit_sloan_neutral_model <- function(otu_table,
         method = "wilson",
         return.df = TRUE
       )
-      
+
       if (return_stats) {
         # Return statistics
         return(
@@ -765,7 +765,7 @@ fit_neutral_model <- function(otu_df) {
     pool = NULL,
     return_stats = FALSE
   )
-  
+
   if (is.null(result)) {
     warning("Neutral model fitting failed, returning empty data frame", call. = FALSE)
     return(data.frame(
@@ -777,7 +777,7 @@ fit_neutral_model <- function(otu_df) {
       pred_upper = numeric()
     ))
   }
-  
+
   return(result)
 }
 

@@ -103,24 +103,23 @@
 #'
 #' @export
 plot_multi_volcano <- function(data,
-                                fc_column = "avg_log2FC",
-                                cluster_column = "cluster",
-                                gene_column = "gene",
-                                pval_column = "p_val_adj",
-                                fc_threshold = 1,
-                                pval_threshold = 0.05,
-                                label_n = 5,
-                                cluster_colors = c("#3B9AB2", "#78B7C5",
-                                                  "#EBCC2A", "#E1AF00",
-                                                  "#F21A00", "#C51B7D",
-                                                  "#7F3B08", "#B2ABD2",
-                                                  "#ABDDA4", "#FC8D62"),
-                                up_color = "#0073C2FF",
-                                down_color = "#EE0000FF",
-                                y_limits = c(-3, 7),
-                                y_breaks = c(-3, -2, -1, 0, 2, 4, 6),
-                                legend_position = c(0.08, 0.9)) {
-
+                               fc_column = "avg_log2FC",
+                               cluster_column = "cluster",
+                               gene_column = "gene",
+                               pval_column = "p_val_adj",
+                               fc_threshold = 1,
+                               pval_threshold = 0.05,
+                               label_n = 5,
+                               cluster_colors = c("#3B9AB2", "#78B7C5",
+                                 "#EBCC2A", "#E1AF00",
+                                 "#F21A00", "#C51B7D",
+                                 "#7F3B08", "#B2ABD2",
+                                 "#ABDDA4", "#FC8D62"),
+                               up_color = "#0073C2FF",
+                               down_color = "#EE0000FF",
+                               y_limits = c(-3, 7),
+                               y_breaks = c(-3, -2, -1, 0, 2, 4, 6),
+                               legend_position = c(0.08, 0.9)) {
   # Input validation
   validate_multi_volcano_input(
     data,
@@ -206,20 +205,19 @@ plot_multi_volcano <- function(data,
 #' @keywords internal
 #' @noRd
 validate_multi_volcano_input <- function(data,
-                                          fc_column,
-                                          cluster_column,
-                                          gene_column,
-                                          pval_column,
-                                          fc_threshold,
-                                          pval_threshold,
-                                          label_n,
-                                          cluster_colors,
-                                          up_color,
-                                          down_color,
-                                          y_limits,
-                                          y_breaks,
-                                          legend_position) {
-
+                                         fc_column,
+                                         cluster_column,
+                                         gene_column,
+                                         pval_column,
+                                         fc_threshold,
+                                         pval_threshold,
+                                         label_n,
+                                         cluster_colors,
+                                         up_color,
+                                         down_color,
+                                         y_limits,
+                                         y_breaks,
+                                         legend_position) {
   # Check data frame
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame", call. = FALSE)
@@ -243,13 +241,13 @@ validate_multi_volcano_input <- function(data,
   }
 
   if (!is.numeric(pval_threshold) || length(pval_threshold) != 1 ||
-      pval_threshold <= 0 || pval_threshold >= 1) {
+    pval_threshold <= 0 || pval_threshold >= 1) {
     stop("'pval_threshold' must be a single numeric value between 0 and 1",
-         call. = FALSE)
+      call. = FALSE)
   }
 
   if (!is.numeric(label_n) || length(label_n) != 1 || label_n < 1 ||
-      label_n != as.integer(label_n)) {
+    label_n != as.integer(label_n)) {
     stop("'label_n' must be a positive integer", call. = FALSE)
   }
 
@@ -278,12 +276,12 @@ validate_multi_volcano_input <- function(data,
   # Validate legend position
   if (!is.character(legend_position) && !is.numeric(legend_position)) {
     stop("'legend_position' must be a character string or numeric vector",
-         call. = FALSE)
+      call. = FALSE)
   }
 
   if (is.numeric(legend_position) && length(legend_position) != 2) {
     stop("'legend_position' must be a numeric vector of length 2 when numeric",
-         call. = FALSE)
+      call. = FALSE)
   }
 
   invisible(TRUE)
@@ -422,22 +420,22 @@ select_genes_to_label <- function(df,
 #' @keywords internal
 #' @noRd
 build_multi_volcano_plot <- function(df,
-                                      label_df,
-                                      bg_df,
-                                      bg_vertical,
-                                      fc_column,
-                                      cluster_column,
-                                      gene_column,
-                                      cluster_colors,
-                                      up_color,
-                                      down_color,
-                                      y_limits,
-                                      y_breaks,
-                                      legend_position) {
+                                     label_df,
+                                     bg_df,
+                                     bg_vertical,
+                                     fc_column,
+                                     cluster_column,
+                                     gene_column,
+                                     cluster_colors,
+                                     up_color,
+                                     down_color,
+                                     y_limits,
+                                     y_breaks,
+                                     legend_position) {
 
   ggplot2::ggplot(df, ggplot2::aes(.data[[cluster_column]],
-                                     .data[[fc_column]],
-                                     color = .data$type)) +
+    .data[[fc_column]],
+    color = .data$type)) +
     # Vertical background strips
     ggplot2::geom_rect(
       data = bg_vertical,

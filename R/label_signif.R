@@ -68,10 +68,10 @@ label_signif <- function(p_values,
   validate_p_values(p_values)
   validate_ns_label(ns)
   validate_thresholds(thresholds)
-  
+
   # Sort thresholds in ascending order for proper application
   thresholds <- sort(thresholds)
-  
+
   # Apply significance labels
   apply_labels_to_p_values(p_values, ns, thresholds)
 }
@@ -90,10 +90,10 @@ validate_p_values <- function(p_values) {
       call. = FALSE
     )
   }
-  
+
   # Check for values outside [0, 1] range (excluding NA)
   out_of_range <- p_values[!is.na(p_values) & (p_values < 0 | p_values > 1)]
-  
+
   if (length(out_of_range) > 0) {
     warning(
       "Some p-values are outside the valid range [0, 1]. ",
@@ -103,7 +103,7 @@ validate_p_values <- function(p_values) {
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -120,7 +120,7 @@ validate_ns_label <- function(ns) {
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -137,21 +137,21 @@ validate_thresholds <- function(thresholds) {
       call. = FALSE
     )
   }
-  
+
   if (is.null(names(thresholds)) || any(names(thresholds) == "")) {
     stop(
       "thresholds must be a fully named numeric vector",
       call. = FALSE
     )
   }
-  
+
   if (any(thresholds < 0 | thresholds > 1)) {
     stop(
       "All threshold values must be between 0 and 1",
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -167,20 +167,20 @@ validate_thresholds <- function(thresholds) {
 apply_labels_to_p_values <- function(p_values, ns, thresholds) {
   # Initialize all values as non-significant
   labels <- rep(ns, length(p_values))
-  
+
   # Apply labels from most stringent to least stringent threshold
   # This ensures that the most significant label is applied
   for (i in length(thresholds):1) {
     threshold_value <- thresholds[i]
     threshold_label <- names(thresholds)[i]
-    
+
     # Update labels for values below this threshold
     labels[!is.na(p_values) & p_values < threshold_value] <- threshold_label
   }
-  
+
   # Preserve NA values in output
   labels[is.na(p_values)] <- NA_character_
-  
+
   return(labels)
 }
 

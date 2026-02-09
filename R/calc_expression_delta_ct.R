@@ -32,14 +32,14 @@
 #' design_data_path <- system.file("extdata/qPCR", "dct.design.txt", package = "bioRtools")
 #' cq_data <- read.table(cq_data_path, sep = ",", header = TRUE)
 #' design_data <- read.table(design_data_path, sep = ",", header = TRUE)
-#' 
+#'
 #' # Calculate expression using delta-Ct method
 #' result <- calc_expression_delta_ct(
 #'   cq_table = cq_data,
 #'   design_table = design_data,
 #'   reference_gene = "Actin"
 #' )
-#' 
+#'
 #' # View results
 #' result$summary_table
 #' result$plot
@@ -47,28 +47,27 @@
 #' @author Xiang LI <lixiang117423@gmail.com>
 
 calc_expression_delta_ct <- function(cq_table,
-                                   design_table,
-                                   reference_gene = "Actin",
-                                   create_plot = TRUE) {
-  
+                                     design_table,
+                                     reference_gene = "Actin",
+                                     create_plot = TRUE) {
   # Step 1: Merge and prepare data (similar to original approach)
   merged_data <- prepare_delta_ct_data(cq_table, design_table)
-  
+
   # Step 2: Calculate reference gene means
   reference_data <- calculate_reference_means(merged_data, reference_gene)
-  
+
   # Step 3: Calculate target gene expression
   expression_data <- calculate_target_expression(merged_data, reference_data, reference_gene)
-  
+
   # Step 4: Calculate summary statistics
   summary_table <- calculate_expression_summary(expression_data)
-  
+
   # Step 5: Create plot if requested
   plot_result <- NULL
   if (create_plot) {
     plot_result <- create_expression_plot(summary_table)
   }
-  
+
   return(list(
     expression_data = expression_data,
     summary_table = summary_table,
@@ -79,7 +78,6 @@ calc_expression_delta_ct <- function(cq_table,
 #' Prepare and merge data for delta-Ct calculation
 #' @keywords internal
 prepare_delta_ct_data <- function(cq_table, design_table) {
-  
   # Use the same approach as original function - no strict validation
   merged_data <- cq_table %>%
     dplyr::left_join(design_table, by = "Position") %>%
@@ -91,14 +89,14 @@ prepare_delta_ct_data <- function(cq_table, design_table) {
       bio_rep = BioRep
     ) %>%
     dplyr::filter(!is.na(.data$group), !is.na(.data$bio_rep))
-  
+
   return(merged_data)
 }
 
 #' Calculate reference gene mean Cq values
 #' @keywords internal
 calculate_reference_means <- function(merged_data, reference_gene) {
-  
+
   reference_means <- merged_data %>%
     dplyr::filter(.data$gene == reference_gene) %>%
     dplyr::group_by(.data$group, .data$bio_rep) %>%
@@ -108,14 +106,14 @@ calculate_reference_means <- function(merged_data, reference_gene) {
     ) %>%
     dplyr::mutate(group_biorep = paste0(.data$group, .data$bio_rep)) %>%
     dplyr::select(.data$group_biorep, .data$mean_ref_cq)
-  
+
   return(reference_means)
 }
 
 #' Calculate target gene expression levels
 #' @keywords internal
 calculate_target_expression <- function(merged_data, reference_data, reference_gene) {
-  
+
   expression_data <- merged_data %>%
     dplyr::filter(.data$gene != reference_gene) %>%
     dplyr::mutate(group_biorep = paste0(.data$group, .data$bio_rep)) %>%
@@ -133,14 +131,14 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
       se.expre = .data$sd.expre / sqrt(.data$n)
     ) %>%
     dplyr::ungroup()
-  
+
   return(expression_data)
 }
 
 #' Calculate summary statistics for expression data
 #' @keywords internal
 calculate_expression_summary <- function(expression_data) {
-  
+
   summary_stats <- expression_data %>%
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::summarise(
@@ -157,29 +155,29 @@ calculate_expression_summary <- function(expression_data) {
       se_expression = ifelse(is.na(.data$se_expression), 0, .data$se_expression),
       sd_delta_ct = ifelse(is.na(.data$sd_delta_ct), 0, .data$sd_delta_ct)
     )
-  
+
   return(summary_stats)
 }
 
 #' Create expression level plot
 #' @keywords internal
 create_expression_plot <- function(summary_table) {
-  
+
   if (nrow(summary_table) == 0) {
     warning("No data available for plotting")
     return(NULL)
   }
-  
+
   # Calculate error bar limits
   summary_table <- summary_table %>%
     dplyr::mutate(
       error_min = pmax(0, .data$mean_expression - .data$se_expression),
       error_max = .data$mean_expression + .data$se_expression
     )
-  
+
   # Create plot
   plot_result <- ggplot2::ggplot(
-    summary_table, 
+    summary_table,
     ggplot2::aes(x = .data$group, y = .data$mean_expression, fill = .data$group)
   ) +
     ggplot2::geom_col(
@@ -210,7 +208,7 @@ create_expression_plot <- function(summary_table) {
       strip.background = ggplot2::element_rect(fill = "lightgray"),
       legend.position = "bottom"
     )
-  
+
   return(plot_result)
 }
 
@@ -254,15 +252,15 @@ CalExp2dCt <- function(cq.table, design.table, ref.gene = "Actin") {
       se.expre = .data$sd.expre / sqrt(.data$n)
     ) %>%
     dplyr::ungroup()
-  
+
   return(expression_results)
 }
 
 # Output column explanations:
-# 
+#
 # For calc_expression_delta_ct():
 # expression_data:
-# - position: Original well position from the qPCR plate  
+# - position: Original well position from the qPCR plate
 # - cq: Quantification cycle value for the target gene
 # - group: Experimental treatment or condition group
 # - gene: Name of the target gene being analyzed

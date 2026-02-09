@@ -35,7 +35,7 @@ library(magrittr) # 用于 %>% 管道操作符
 #'   numTs = 0
 #' )
 #' mock_data1$numTs <- mock_data1$coverage - mock_data1$numCs
-#' 
+#'
 #' mock_data2 <- data.frame(
 #'   chr = "chr1", start = 1001:1005, end = 1001:1005, strand = "+",
 #'   coverage = c(110, 130, 80, 160, 210),
@@ -51,7 +51,7 @@ library(magrittr) # 用于 %>% 管道操作符
 #'   dbtype = "tabix",          # 推荐使用 tabix 格式，效率更高
 #'   dbdir = "methylDB_example" # 指定一个文件夹存放数据库文件
 #' )
-#' 
+#'
 #' # 步骤 B: 为第二个样本创建 methylRaw 对象
 #' obj2 <- methRead(
 #'   location = mock_data2,
@@ -60,25 +60,25 @@ library(magrittr) # 用于 %>% 管道操作符
 #'   dbtype = "tabix",
 #'   dbdir = "methylDB_example"
 #' )
-#' 
+#'
 #' # 步骤 C: 将创建好的对象组合成 methylRawList
 #' my_cpg_obj <- methylRawList(
 #'   obj1,
 #'   obj2,
 #'   treatment = c(0, 1) # 0 代表对照组 (CK1), 1 代表处理组 (Treat1)
 #' )
-#' 
+#'
 #' print(my_cpg_obj)
-#'  comprehensive_cpg_table <- get_methylkit_data(
-#'    methyl_obj = my_cpg_obj,
-#'    context = "CpG",
-#'    lo.count = 10
-#'  )
+#' comprehensive_cpg_table <- get_methylkit_data(
+#'   methyl_obj = my_cpg_obj,
+#'   context = "CpG",
+#'   lo.count = 10
+#' )
 #' # 3. 查看最终结果
 #' #    注意新增了 context 列
 #' print(comprehensive_cpg_table)
-#'}
-#' 
+#' }
+#'
 get_methylkit_data <- function(methyl_obj,
                                context = "CpG",
                                lo.count = 5,
@@ -86,26 +86,25 @@ get_methylkit_data <- function(methyl_obj,
                                hi.count = NULL,
                                hi.perc = 100,
                                destrand = FALSE) {
-  
   # --- 1. 过滤、标准化和合并数据 ---
   message(paste("步骤 1: 正在为", context, "数据按覆盖度过滤、标准化并合并样本..."))
   myobj.final <- methylKit::filterByCoverage(methyl_obj,
-                                             lo.count = lo.count,
-                                             lo.perc = lo.perc,
-                                             hi.count = hi.count,
-                                             hi.perc = hi.perc) %>%
+    lo.count = lo.count,
+    lo.perc = lo.perc,
+    hi.count = hi.count,
+    hi.perc = hi.perc) %>%
     methylKit::normalizeCoverage() %>%
     methylKit::unite(destrand = destrand)
-  
+
   # --- 2. 提取数据和样本信息 ---
   message("步骤 2: 正在提取处理后的数据和样本ID...")
   united_data <- methylKit::getData(myobj.final)
   sample_names <- methylKit::getSampleID(myobj.final)
   num_samples <- length(sample_names)
-  
+
   # --- 3. 创建基础数据框并循环添加所有信息 ---
   message("步骤 3: 正在构建包含上下文、原始计数和百分比的最终表格...")
-  
+
   # 初始化结果数据框，包含固定的位点信息和【新增的上下文信息】
   final_df <- data.frame(
     chr = united_data$chr,
@@ -114,32 +113,32 @@ get_methylkit_data <- function(methyl_obj,
     strand = united_data$strand,
     context = context  # 在这里添加上下文列
   )
-  
+
   # 循环遍历每个样本
   for (i in 1:num_samples) {
     current_sample_name <- sample_names[i]
-    
+
     source_cov_col <- paste0("coverage", i)
     source_cs_col <- paste0("numCs", i)
     source_ts_col <- paste0("numTs", i)
-    
+
     dest_cov_col <- paste0(current_sample_name, "_coverage")
     dest_cs_col <- paste0(current_sample_name, "_numCs")
     dest_ts_col <- paste0(current_sample_name, "_numTs")
     dest_pct_col <- paste0(current_sample_name, "_meth_percent")
-    
+
     # 将原始计数数据复制到新列中
     final_df[[dest_cov_col]] <- united_data[[source_cov_col]]
     final_df[[dest_cs_col]] <- united_data[[source_cs_col]]
     final_df[[dest_ts_col]] <- united_data[[source_ts_col]]
-    
+
     # 计算甲基化百分比
     meth_percent <- (united_data[[source_cs_col]] / united_data[[source_cov_col]]) * 100
-    
+
     # 将计算出的百分比数据添加到新列中
     final_df[[dest_pct_col]] <- meth_percent
   }
-  
+
   message("处理完成！最终综合性表格已生成。")
   return(final_df)
 }

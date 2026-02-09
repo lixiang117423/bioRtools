@@ -55,7 +55,7 @@
 #' # Use in a plot annotation
 #' library(ggplot2)
 #' stats <- get_lm_stats(model)
-#' 
+#'
 #' ggplot(mtcars, aes(x = wt, y = mpg)) +
 #'   geom_point() +
 #'   geom_smooth(method = "lm", se = FALSE) +
@@ -72,13 +72,13 @@
 #' # Compare multiple models
 #' library(dplyr)
 #' library(purrr)
-#' 
+#'
 #' models <- list(
 #'   model1 = lm(mpg ~ wt, data = mtcars),
 #'   model2 = lm(mpg ~ wt + hp, data = mtcars),
 #'   model3 = lm(mpg ~ wt + hp + cyl, data = mtcars)
 #' )
-#' 
+#'
 #' map_dfr(models, get_lm_stats, .id = "model")
 #'
 #' @export
@@ -89,11 +89,11 @@ get_lm_stats <- function(model,
   validate_lm_model(model)
   r_squared_type <- match.arg(r_squared_type)
   validate_digits(digits)
-  
+
   # Extract statistics
   r_squared <- extract_r_squared(model, r_squared_type, digits)
   p_value <- extract_model_p_value(model)
-  
+
   # Return as tibble
   tibble::tibble(
     r_squared = r_squared,
@@ -117,7 +117,7 @@ validate_lm_model <- function(model) {
       call. = FALSE
     )
   }
-  
+
   # Check if summary method exists
   if (!hasMethod("summary", class(model))) {
     stop(
@@ -125,7 +125,7 @@ validate_lm_model <- function(model) {
       call. = FALSE
     )
   }
-  
+
   # Check if anova method exists
   if (!hasMethod("anova", class(model))) {
     stop(
@@ -133,7 +133,7 @@ validate_lm_model <- function(model) {
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -151,7 +151,7 @@ validate_digits <- function(digits) {
         call. = FALSE
       )
     }
-    
+
     if (digits < 0 || digits != round(digits)) {
       stop(
         "digits must be a non-negative integer",
@@ -159,7 +159,7 @@ validate_digits <- function(digits) {
       )
     }
   }
-  
+
   invisible(TRUE)
 }
 
@@ -174,14 +174,14 @@ validate_digits <- function(digits) {
 #' @noRd
 extract_r_squared <- function(model, type, digits) {
   model_summary <- summary(model)
-  
+
   # Extract appropriate R-squared
   r_squared <- switch(
     type,
     adjusted = model_summary$adj.r.squared,
     multiple = model_summary$r.squared
   )
-  
+
   # Handle missing R-squared
   if (is.null(r_squared)) {
     warning(
@@ -190,12 +190,12 @@ extract_r_squared <- function(model, type, digits) {
     )
     return(NA_real_)
   }
-  
+
   # Round if requested
   if (!is.null(digits)) {
     r_squared <- round(r_squared, digits)
   }
-  
+
   return(r_squared)
 }
 
@@ -219,15 +219,15 @@ extract_model_p_value <- function(model) {
       return(NULL)
     }
   )
-  
+
   # Return NA if ANOVA failed
   if (is.null(anova_result)) {
     return(NA_real_)
   }
-  
+
   # Extract p-value from first row (model effect)
   p_col_name <- get_p_value_column(anova_result)
-  
+
   if (is.null(p_col_name)) {
     warning(
       "P-value column not found in ANOVA table",
@@ -235,9 +235,9 @@ extract_model_p_value <- function(model) {
     )
     return(NA_real_)
   }
-  
+
   p_value <- anova_result[[p_col_name]][1]
-  
+
   # Handle missing p-value
   if (is.null(p_value) || is.na(p_value)) {
     warning(
@@ -246,7 +246,7 @@ extract_model_p_value <- function(model) {
     )
     return(NA_real_)
   }
-  
+
   return(p_value)
 }
 
@@ -268,15 +268,15 @@ get_p_value_column <- function(anova_result) {
     "pvalue",
     "Pvalue"
   )
-  
+
   col_names <- names(anova_result)
-  
+
   for (name in possible_names) {
     if (name %in% col_names) {
       return(name)
     }
   }
-  
+
   return(NULL)
 }
 
@@ -302,13 +302,13 @@ get_p_value_column <- function(anova_result) {
 #'
 #' @examples
 #' model <- lm(mpg ~ wt, data = mtcars)
-#' 
+#'
 #' # For ggplot2 annotation
 #' format_lm_stats(model)
-#' 
+#'
 #' # Plain text
 #' format_lm_stats(model, format = "text")
-#' 
+#'
 #' # Markdown
 #' format_lm_stats(model, format = "markdown")
 #'
@@ -320,13 +320,13 @@ format_lm_stats <- function(model,
                             format = c("expression", "text", "markdown")) {
   r_squared_type <- match.arg(r_squared_type)
   format <- match.arg(format)
-  
+
   stats <- get_lm_stats(model, r_squared_type, r_squared_digits)
-  
+
   r2_symbol <- if (r_squared_type == "adjusted") "R²" else "R²"
   r2_value <- sprintf(paste0("%.", r_squared_digits, "f"), stats$r_squared)
   p_value <- sprintf(paste0("%.", p_digits, "f"), stats$p_value)
-  
+
   switch(
     format,
     expression = bquote(

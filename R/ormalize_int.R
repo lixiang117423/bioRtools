@@ -63,8 +63,7 @@
 #' qqnorm(transformed_row)
 #' qqline(transformed_row, col = "red")
 #'
-normalize_int <- function(data, feature_col, c = 3/8) {
-
+normalize_int <- function(data, feature_col, c = 3 / 8) {
   # --- Input Validation ---
   if (!is.data.frame(data)) {
     stop("Input 'data' must be a data frame.")

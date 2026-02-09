@@ -23,44 +23,44 @@ NULL
 # Academic journal color database
 academic_db <- list(
   "sci" = list(
-    "default" = c("#0C6291", "#A63446", "#F6B101", "#53D600", "#7000AC", "#FF6B6B", 
-                  "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", "#F06292", "#5E82A2")
+    "default" = c("#0C6291", "#A63446", "#F6B101", "#53D600", "#7000AC", "#FF6B6B",
+      "#4ECDC4", "#45B7D1", "#FFA07A", "#98D8C8", "#F06292", "#5E82A2")
   ),
   "nature" = list(
-    "default" = c("#0074B3", "#EC3232", "#F6B101", "#53D600", "#7000AC", "#FFA500", 
-                  "#3C5488", "#FB6467", "#526E2D", "#80C4BB", "#ED8474", "#AE5D9D"),
+    "default" = c("#0074B3", "#EC3232", "#F6B101", "#53D600", "#7000AC", "#FFA500",
+      "#3C5488", "#FB6467", "#526E2D", "#80C4BB", "#ED8474", "#AE5D9D"),
     "materials" = c("#FFA810", "#7000AC", "#53D600", "#D61737", "#F7BF25", "#3634F2",
-                    "#5A08A5", "#16386A", "#1E69B0", "#64B0DF", "#770020", "#69B78F")
+      "#5A08A5", "#16386A", "#1E69B0", "#64B0DF", "#770020", "#69B78F")
   ),
   "science" = list(
     "default" = c("#B42B22", "#315A89", "#996E2E", "#EC3232", "#0787C3", "#F6944B",
-                  "#8FC0A9", "#467F79", "#C6133B", "#90162D", "#93A5CB", "#2E4F4A")
+      "#8FC0A9", "#467F79", "#C6133B", "#90162D", "#93A5CB", "#2E4F4A")
   ),
   "cell" = list(
     "default" = c("#427AB2", "#F09148", "#FF9896", "#299D8F", "#E9C46A", "#D87659",
-                  "#DBDB8D", "#C59D94", "#AFC7E8", "#EA8379", "#7DAEE0", "#B395BD")
+      "#DBDB8D", "#C59D94", "#AFC7E8", "#EA8379", "#7DAEE0", "#B395BD")
   ),
   "jacs" = list(
     "default" = c("#D15354", "#5094D5", "#E8B86C", "#8887CB", "#5E82A2", "#BFC7E5",
-                  "#F9AD95", "#ABD8E5", "#F6AD8A", "#3DA6AE", "#F79647", "#C3D69C")
+      "#F9AD95", "#ABD8E5", "#F6AD8A", "#3DA6AE", "#F79647", "#C3D69C")
   ),
   "fuel" = list(
     "default" = c("#000035", "#730101", "#009E2B", "#FBC40F", "#C34A00", "#74379F",
-                  "#1D4201", "#0172BE", "#DA5319", "#EDB11F")
+      "#1D4201", "#0172BE", "#DA5319", "#EDB11F")
   ),
   "chem_eng" = list(
     "default" = c("#EB0000", "#0000E4", "#155C00", "#E97200", "#295ABA", "#D47232",
-                  "#379124", "#077DF0", "#FF2F4C", "#737373", "#696969", "#242424")
+      "#379124", "#077DF0", "#FF2F4C", "#737373", "#696969", "#242424")
   ),
   "nat_comm" = list(
     "default" = c("#7E4909", "#0E8585", "#830783", "#FA5454", "#C31D1D", "#44988F",
-                  "#EBB34F", "#8389C2", "#D87A8A", "#92CEC8", "#ED8666", "#8036FC")
+      "#EBB34F", "#8389C2", "#D87A8A", "#92CEC8", "#ED8666", "#8036FC")
   ),
   "shinkai" = list(
     "default" = c("#5A5FA3", "#8F97C9", "#BFC0DE", "#3F5B72", "#6178A5", "#79A0B5",
-                  "#1E3F66", "#2E5C8A", "#4178A5", "#5F8FB8", "#7BA3C7", "#2A4D66"),
+      "#1E3F66", "#2E5C8A", "#4178A5", "#5F8FB8", "#7BA3C7", "#2A4D66"),
     "blue_tones" = c("#1E3F66", "#2E5C8A", "#4178A5", "#5F8FB8", "#7BA3C7", "#2A4D66",
-                     "#3C6278", "#4F7A8F", "#6391A5", "#5C7B88", "#7DA2B0", "#9BB8C6"),
+      "#3C6278", "#4F7A8F", "#6391A5", "#5C7B88", "#7DA2B0", "#9BB8C6"),
     "red_tones" = c("#710000", "#980000", "#C60000", "#E50000", "#F80000")
   )
 )
@@ -544,7 +544,7 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #'
 #' @examples
 #' library("ggplot2")
-#' 
+#'
 #' # Create sample data
 #' data <- expand.grid(x = 1:10, y = 1:10)
 #' data$z <- with(data, x * y)
@@ -566,14 +566,14 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #'   geom_tile() +
 #'   scale_fill_science_c() +
 #'   theme_minimal()
-scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"), 
+scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
                               alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
-  
+
   colors <- academic_continuous[[palette]]
   if (reverse) colors <- rev(colors)
-  
+
   # Create smooth gradient
   func_cols <- colorRamp(colors, space = "Lab", interpolate = "spline")
   mat_cols <- func_cols(seq(0L, 1L, length.out = 256))
@@ -581,7 +581,7 @@ scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sc
     mat_cols[, 1L], mat_cols[, 2L], mat_cols[, 3L],
     alpha = alpha * 255L, maxColorValue = 255L
   )
-  
+
   scale_color_gradientn(colours = gradient_cols, ...)
 }
 
@@ -591,14 +591,14 @@ scale_colour_sci_c <- scale_color_sci_c
 
 #' @export scale_fill_sci_c
 #' @rdname scale_color_sci_c
-scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"), 
+scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
                              alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
-  
+
   colors <- academic_continuous[[palette]]
   if (reverse) colors <- rev(colors)
-  
+
   # Create smooth gradient
   func_cols <- colorRamp(colors, space = "Lab", interpolate = "spline")
   mat_cols <- func_cols(seq(0L, 1L, length.out = 256))
@@ -606,7 +606,7 @@ scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sci
     mat_cols[, 1L], mat_cols[, 2L], mat_cols[, 3L],
     alpha = alpha * 255L, maxColorValue = 255L
   )
-  
+
   scale_fill_gradientn(colours = gradient_cols, ...)
 }
 

@@ -20,7 +20,7 @@
 #'     \item "red_blue": Blue to white to red diverging scale
 #'     \item Custom vector: User-provided color vector (e.g., c("#f7fcf5", "#238b45"))
 #'   }
-#' @param color_steps Integer specifying the number of color steps in the palette. 
+#' @param color_steps Integer specifying the number of color steps in the palette.
 #'   Default is 100.
 #' @param flip_diagonal Logical indicating whether to flip the heatmap along the diagonal.
 #'   Default is TRUE.
@@ -31,15 +31,15 @@
 #'   If NULL, the plot will only be displayed. Default is NULL.
 #' @param file_format Character string specifying the output format. Options include:
 #'   "png", "pdf", "jpeg", "tiff". Default is "png".
-#' @param width Numeric value for plot width. For raster formats (png, jpeg, tiff), 
+#' @param width Numeric value for plot width. For raster formats (png, jpeg, tiff),
 #'   this is in pixels when multiplied by dpi. For PDF, this is in inches. Default is 9.
-#' @param height Numeric value for plot height. For raster formats (png, jpeg, tiff), 
+#' @param height Numeric value for plot height. For raster formats (png, jpeg, tiff),
 #'   this is in pixels when multiplied by dpi. For PDF, this is in inches. Default is 7.
-#' @param dpi Numeric value for resolution (dots per inch) for raster formats. 
+#' @param dpi Numeric value for resolution (dots per inch) for raster formats.
 #'   Default is 300.
-#' @param ggplot_version Logical indicating whether to create a ggplot2 version 
+#' @param ggplot_version Logical indicating whether to create a ggplot2 version
 #'   of the heatmap in addition to the LDheatmap version. Default is TRUE.
-#' @param show_values Logical indicating whether to show LD values in the ggplot2 
+#' @param show_values Logical indicating whether to show LD values in the ggplot2
 #'   heatmap tiles. Default is FALSE (recommended for large datasets).
 #' @param text_size Numeric value for text size in ggplot2 version when show_values = TRUE.
 #'   Default is 3.
@@ -83,31 +83,31 @@
 #'   vcf_file = "path/to/your/file.vcf",
 #'   title = "LD Heatmap for Chr1:1000000-2000000"
 #' )
-#' 
+#'
 #' # Display the plot
 #' ld_result$plot.ld_heatmap
-#' 
+#'
 #' # Custom color palette matching your image style
 #' ld_soft <- plot_LDheatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "green_yellow",
 #'   title = "LD Analysis with Soft Green-Yellow Colors"
 #' )
-#' 
+#'
 #' # Nature journal style
 #' ld_nature <- plot_LDheatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "nature",
 #'   title = "Publication-Ready LD Heatmap"
 #' )
-#' 
+#'
 #' # Custom hex colors for precise control
 #' ld_custom_hex <- plot_LDheatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = c("#f7fcf5", "#c7e9c0", "#74c476", "#238b45", "#00441b"),
 #'   title = "Custom Green Gradient LD Analysis"
 #' )
-#' 
+#'
 #' # Save ggplot2 version with ggsave
 #' ld_ggplot <- plot_LDheatmap(
 #'   vcf_file = "path/to/your/file.vcf",
@@ -115,13 +115,13 @@
 #'   ggplot_version = TRUE,
 #'   title = "LD Heatmap Analysis"
 #' )
-#' 
+#'
 #' # Save the ggplot2 version
-#' ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot.ggplot2, 
-#'                 width = 10, height = 8, dpi = 300)
-#' ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot.ggplot2, 
-#'                 width = 10, height = 8)
-#' 
+#' ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot.ggplot2,
+#'   width = 10, height = 8, dpi = 300)
+#' ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot.ggplot2,
+#'   width = 10, height = 8)
+#'
 #' # Customize the ggplot2 version further
 #' custom_plot <- ld_ggplot$plot.ggplot2 +
 #'   ggplot2::theme_minimal() +
@@ -132,10 +132,10 @@
 #'   ggplot2::labs(
 #'     caption = "Generated with bioRtools::plot_LDheatmap()"
 #'   )
-#' 
-#' ggplot2::ggsave("ld_heatmap_custom.png", custom_plot, 
-#'                 width = 12, height = 10, dpi = 300)
-#' 
+#'
+#' ggplot2::ggsave("ld_heatmap_custom.png", custom_plot,
+#'   width = 12, height = 10, dpi = 300)
+#'
 #' # Multiple format output with soft colors
 #' ld_multi <- plot_LDheatmap(
 #'   vcf_file = "path/to/your/file.vcf",
@@ -163,61 +163,60 @@ plot_LDheatmap <- function(vcf_file,
                            show_values = FALSE,
                            text_size = 3,
                            verbose = TRUE) {
-  
   # -------------------------------------------------------------------------
   # Input validation
   # -------------------------------------------------------------------------
-  
+
   if (!is.character(vcf_file) || length(vcf_file) != 1) {
     stop("'vcf_file' must be a single character string")
   }
-  
+
   if (!file.exists(vcf_file)) {
     stop("VCF file not found: ", vcf_file)
   }
-  
+
   if (!is.numeric(color_steps) || color_steps < 10 || color_steps > 1000) {
     stop("'color_steps' must be a numeric value between 10 and 1000")
   }
-  
+
   if (!is.logical(flip_diagonal)) {
     stop("'flip_diagonal' must be logical (TRUE or FALSE)")
   }
-  
+
   if (!file_format %in% c("png", "pdf", "jpeg", "jpg", "tiff")) {
     stop("'file_format' must be one of: png, pdf, jpeg, jpg, tiff")
   }
-  
+
   if (!is.numeric(width) || width <= 0) {
     stop("'width' must be a positive numeric value")
   }
-  
+
   if (!is.numeric(height) || height <= 0) {
     stop("'height' must be a positive numeric value")
   }
-  
+
   if (!is.numeric(dpi) || dpi < 72 || dpi > 2400) {
     stop("'dpi' must be between 72 and 2400")
   }
-  
+
   if (!is.logical(ggplot_version)) {
     stop("'ggplot_version' must be logical (TRUE or FALSE)")
   }
-  
+
   if (!is.logical(show_values)) {
     stop("'show_values' must be logical (TRUE or FALSE)")
   }
-  
+
   if (!is.numeric(text_size) || text_size <= 0) {
     stop("'text_size' must be a positive numeric value")
   }
-  
+
   # -------------------------------------------------------------------------
   # Package dependencies
   # -------------------------------------------------------------------------
-  
+
   if (verbose) message("Checking package dependencies...")
-  
+
   # Check and install LDheatmap if needed
   if (!requireNamespace("LDheatmap", quietly = TRUE)) {
     if (verbose) message("Installing LDheatmap from Bioconductor...")
@@ -226,12 +225,12 @@ plot_LDheatmap <- function(vcf_file,
     }
     BiocManager::install("LDheatmap", quiet = !verbose)
   }
-  
+
   # Check ttplot package
   if (!requireNamespace("ttplot", quietly = TRUE)) {
     stop("ttplot package is required for VCF file processing. Please install it first.")
   }
-  
+
   # Load required libraries
   suppressWarnings(suppressMessages({
     library(LDheatmap, quietly = TRUE)
@@ -241,39 +240,41 @@ plot_LDheatmap <- function(vcf_file,
       }
     }
   }))
-  
+
   # -------------------------------------------------------------------------
   # Data preparation
   # -------------------------------------------------------------------------
-  
+
   if (verbose) message("Reading VCF file and extracting SNP data...")
-  
+
   # Extract SNP matrix and information
-  tryCatch({
-    snp_matrix <- ttplot::getsnpMat(vcf_file)
-    snp_info <- ttplot::getsnpInfo(vcf_file)
-  }, error = function(e) {
-    stop("Error reading VCF file: ", e$message)
-  })
-  
+  tryCatch(
+    {
+      snp_matrix <- ttplot::getsnpMat(vcf_file)
+      snp_info <- ttplot::getsnpInfo(vcf_file)
+    },
+    error = function(e) {
+      stop("Error reading VCF file: ", e$message)
+    })
+
   if (verbose) {
-    message("Successfully loaded ", nrow(snp_matrix), " samples and ", 
-            ncol(snp_matrix), " SNPs")
+    message("Successfully loaded ", nrow(snp_matrix), " samples and ",
+      ncol(snp_matrix), " SNPs")
   }
-  
+
   # Extract genetic distances
   genetic_distances <- as.numeric(snp_info$POS)
-  
+
   if (any(is.na(genetic_distances))) {
     stop("Invalid position information in VCF file")
   }
-  
+
   # -------------------------------------------------------------------------
   # Color palette generation
   # -------------------------------------------------------------------------
-  
+
   if (verbose) message("Setting up color palette...")
-  
+
   # Define color palette based on input
   if (length(color_palette) == 1 && is.character(color_palette)) {
     color_scheme <- switch(
@@ -300,7 +301,7 @@ plot_LDheatmap <- function(vcf_file,
   } else {
     stop("'color_palette' must be a character string or vector of colors")
   }
-  
+
   # Generate color palette function
   if (length(color_scheme) == color_steps) {
     # Pre-defined palette with exact number of colors
@@ -309,14 +310,14 @@ plot_LDheatmap <- function(vcf_file,
     # Generate gradient from provided colors
     color_function <- colorRampPalette(rev(color_scheme), space = "rgb")
   }
-  
+
   # Generate final colors
   plot_colors <- color_function(color_steps)
-  
+
   # -------------------------------------------------------------------------
   # Plot title generation
   # -------------------------------------------------------------------------
-  
+
   if (is.null(title)) {
     # Extract basic info for default title
     n_snps <- ncol(snp_matrix)
@@ -325,32 +326,32 @@ plot_LDheatmap <- function(vcf_file,
     } else {
       chr_info <- "Multi-chromosome"
     }
-    
+
     title <- paste0("LD Heatmap: ", chr_info, " (", n_snps, " SNPs)")
   }
-  
+
   # -------------------------------------------------------------------------
   # File output setup
   # -------------------------------------------------------------------------
-  
+
   if (!is.null(output_file)) {
     if (verbose) message("Setting up file output...")
-    
+
     # Create output filename
     output_filename <- paste0(output_file, ".", file_format)
-    
+
     # Set up graphics device
     if (file_format == "pdf") {
       pdf(output_filename, width = width, height = height)
     } else if (file_format %in% c("png", "PNG")) {
       png(output_filename, width = width * dpi, height = height * dpi, res = dpi)
     } else if (file_format %in% c("jpeg", "jpg", "JPEG", "JPG")) {
-      jpeg(output_filename, width = width * dpi, height = height * dpi, 
-           res = dpi, quality = 95)
+      jpeg(output_filename, width = width * dpi, height = height * dpi,
+        res = dpi, quality = 95)
     } else if (file_format %in% c("tiff", "TIFF")) {
       tiff(output_filename, width = width * dpi, height = height * dpi, res = dpi)
     }
-    
+
     par(xpd = TRUE)
   } else {
     # Set up display device if needed
@@ -359,26 +360,28 @@ plot_LDheatmap <- function(vcf_file,
     }
     par(xpd = TRUE)
   }
-  
+
   # -------------------------------------------------------------------------
   # Generate LD heatmap
   # -------------------------------------------------------------------------
-  
+
   if (verbose) message("Generating LD heatmap...")
-  
-  tryCatch({
-    ld_heatmap <- LDheatmap(
-      gdat = snp_matrix,
-      genetic.distances = genetic_distances,
-      color = plot_colors,
-      flip = flip_diagonal,
-      title = title
-    )
-  }, error = function(e) {
-    if (!is.null(output_file)) dev.off()
-    stop("Error generating LD heatmap: ", e$message)
-  })
-  
+
+  tryCatch(
+    {
+      ld_heatmap <- LDheatmap(
+        gdat = snp_matrix,
+        genetic.distances = genetic_distances,
+        color = plot_colors,
+        flip = flip_diagonal,
+        title = title
+      )
+    },
+    error = function(e) {
+      if (!is.null(output_file)) dev.off()
+      stop("Error generating LD heatmap: ", e$message)
+    })
+
   # Close graphics device if file output
   if (!is.null(output_file)) {
     dev.off()
@@ -386,11 +389,11 @@ plot_LDheatmap <- function(vcf_file,
       message("LD heatmap saved to: ", file.path(getwd(), output_filename))
     }
   }
-  
+
   # -------------------------------------------------------------------------
   # Prepare return results
   # -------------------------------------------------------------------------
-  
+
   plot_params <- list(
     color_palette = color_palette,
     color_steps = color_steps,
@@ -408,7 +411,7 @@ plot_LDheatmap <- function(vcf_file,
     n_colors_used = length(plot_colors),
     n_snps = ncol(snp_matrix)
   )
-  
+
   if (verbose) {
     message("LD heatmap analysis completed successfully!")
     message("Matrix dimensions: ", nrow(snp_matrix), " samples × ", ncol(snp_matrix), " SNPs")
@@ -417,7 +420,7 @@ plot_LDheatmap <- function(vcf_file,
       message("Output saved as: ", output_filename)
     }
   }
-  
+
   # Return results following bioRtools conventions
   return(list(
     plot.ld_heatmap = ld_heatmap,

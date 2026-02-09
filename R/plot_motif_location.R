@@ -57,19 +57,19 @@
 #'
 #' @export
 plot_motif_location <- function(data,
-                                 tree_path = NULL,
-                                 tree_annotation = NULL) {
+                                tree_path = NULL,
+                                tree_annotation = NULL) {
   # Input validation
   validate_motif_data(data)
-  
+
   if (!is.null(tree_path) && !file.exists(tree_path)) {
     stop("Tree file not found: ", tree_path, call. = FALSE)
   }
-  
+
   if (!is.null(tree_annotation)) {
     validate_tree_annotation(tree_annotation)
   }
-  
+
   # Create plot based on whether tree is provided
   if (is.null(tree_path)) {
     create_motif_plot_standalone(data)
@@ -89,9 +89,9 @@ validate_motif_data <- function(data) {
     "input_seq_id", "length", "motif_id",
     "start_position", "end_position"
   )
-  
+
   missing_cols <- setdiff(required_cols, names(data))
-  
+
   if (length(missing_cols) > 0) {
     stop(
       "Missing required columns in data: ",
@@ -99,7 +99,7 @@ validate_motif_data <- function(data) {
       call. = FALSE
     )
   }
-  
+
   invisible(TRUE)
 }
 
@@ -113,15 +113,15 @@ validate_tree_annotation <- function(tree_annotation) {
   if (!is.data.frame(tree_annotation)) {
     stop("tree_annotation must be a data frame", call. = FALSE)
   }
-  
+
   if (!"label" %in% names(tree_annotation)) {
     stop("tree_annotation must contain a 'label' column", call. = FALSE)
   }
-  
+
   if (!"Group" %in% names(tree_annotation)) {
     stop("tree_annotation must contain a 'Group' column", call. = FALSE)
   }
-  
+
   invisible(TRUE)
 }
 
@@ -149,7 +149,7 @@ prepare_motif_data <- function(data, gene_order = NULL) {
       start = .data$start_position,
       end = .data$end_position
     )
-  
+
   # Add y-coordinates for plotting
   if (is.null(gene_order)) {
     unique_genes <- unique(motif_data$genes)
@@ -159,7 +159,7 @@ prepare_motif_data <- function(data, gene_order = NULL) {
       stringsAsFactors = FALSE
     )
   }
-  
+
   # Merge and calculate plot coordinates
   motif_data %>%
     dplyr::left_join(gene_order, by = "genes") %>%
@@ -185,7 +185,7 @@ prepare_motif_data <- function(data, gene_order = NULL) {
 #' @noRd
 create_motif_plot_standalone <- function(data) {
   prepared_data <- prepare_motif_data(data)
-  
+
   create_motif_ggplot(prepared_data, show_y_axis = TRUE)
 }
 
@@ -200,7 +200,7 @@ create_motif_plot_standalone <- function(data) {
 create_motif_ggplot <- function(data, show_y_axis = TRUE) {
   max_length <- max(data$length)
   breaks <- seq(0, max_length, by = 100)
-  
+
   p <- ggplot2::ggplot(data) +
     ggplot2::geom_segment(
       ggplot2::aes(
@@ -226,7 +226,7 @@ create_motif_ggplot <- function(data, show_y_axis = TRUE) {
     ) +
     ggplot2::labs(x = "", y = "Name") +
     ggplot2::theme_classic()
-  
+
   # Customize y-axis based on whether tree is present
   if (!show_y_axis) {
     p <- p +
@@ -235,7 +235,7 @@ create_motif_ggplot <- function(data, show_y_axis = TRUE) {
         plot.margin = grid::unit(c(0, 0, 0, -3), "cm")
       )
   }
-  
+
   return(p)
 }
 
@@ -249,7 +249,7 @@ create_motif_ggplot <- function(data, show_y_axis = TRUE) {
 #' @noRd
 create_tree_plot <- function(tree_path, tree_annotation = NULL) {
   tree <- ape::read.tree(tree_path)
-  
+
   if (is.null(tree_annotation)) {
     p_tree <- ggtree::ggtree(tree, branch.length = "none") +
       ggplot2::theme(
@@ -269,7 +269,7 @@ create_tree_plot <- function(tree_path, tree_annotation = NULL) {
         plot.margin = grid::unit(c(0, -3, 0, 0), "cm")
       )
   }
-  
+
   return(p_tree)
 }
 
@@ -298,28 +298,28 @@ extract_tree_coordinates <- function(tree_plot) {
 #' @keywords internal
 #' @noRd
 create_motif_plot_with_tree <- function(data,
-                                         tree_path,
-                                         tree_annotation = NULL) {
+                                        tree_path,
+                                        tree_annotation = NULL) {
   # Create tree plot
   tree_plot <- create_tree_plot(tree_path, tree_annotation)
-  
+
   # Extract tree coordinates for gene ordering
   tree_coords <- extract_tree_coordinates(tree_plot)
-  
+
   # Prepare motif data with tree-based ordering
   prepared_data <- data %>%
     prepare_motif_data(gene_order = tree_coords) %>%
     dplyr::mutate(
       genes = factor(.data$genes, levels = tree_coords$genes)
     )
-  
+
   # Create motif plot
   motif_plot <- create_motif_ggplot(prepared_data, show_y_axis = FALSE)
-  
+
   # Combine plots
   combined_plot <- tree_plot + motif_plot +
     patchwork::plot_layout(guides = "collect")
-  
+
   return(combined_plot)
 }
 

@@ -200,7 +200,6 @@ plot_synteny <- function(gene_data,
                          axis_text_italic = TRUE,
                          title = NULL,
                          subtitle = NULL) {
-
   # Auto-generate syntenic_data from synteny_groups or syn_group_col if syntenic_data is NULL
   if (is.null(syntenic_data)) {
     # First check if syn_group_col exists in gene_data
@@ -225,7 +224,7 @@ plot_synteny <- function(gene_data,
       )
     } else {
       stop("Either 'syntenic_data', 'synteny_groups', or a gene_data column specified by 'syn_group_col' must be provided",
-           call. = FALSE)
+        call. = FALSE)
     }
   }
 
@@ -410,29 +409,29 @@ validate_synteny_inputs <- function(gene_data, syntenic_data, ...) {
   # Validate syntenic_data structure based on link_type
   n_rows_per_group <- syntenic_data %>%
     dplyr::group_by(!!rlang::sym(args$group_col)) %>%
-    dplyr::summarise(n = dplyr::n(), .groups = 'drop')
+    dplyr::summarise(n = dplyr::n(), .groups = "drop")
 
   if (args$link_type == "ribbon") {
     if (any(n_rows_per_group$n != 4)) {
       stop("For link_type = 'ribbon', each group in syntenic_data must have exactly 4 rows",
-           call. = FALSE)
+        call. = FALSE)
     }
   } else if (args$link_type == "curve") {
     if (any(n_rows_per_group$n != 2)) {
       stop("For link_type = 'curve', each group in syntenic_data must have exactly 2 rows",
-           call. = FALSE)
+        call. = FALSE)
     }
   }
 
   # Check if required packages are available
   if (!requireNamespace("gggenes", quietly = TRUE)) {
     stop("Package 'gggenes' is required. Please install it using: install.packages('gggenes')",
-         call. = FALSE)
+      call. = FALSE)
   }
 
   if (!requireNamespace("ggforce", quietly = TRUE)) {
     stop("Package 'ggforce' is required. Please install it using: install.packages('ggforce')",
-         call. = FALSE)
+      call. = FALSE)
   }
 
   invisible(TRUE)
@@ -509,7 +508,7 @@ auto_generate_synteny_links <- function(gene_data, synteny_groups,
 #' @keywords internal
 #' @noRd
 auto_generate_synteny_links_from_col <- function(gene_data, syn_group_col,
-                                                   start_col, end_col, y_col) {
+                                                 start_col, end_col, y_col) {
   # Get unique synteny groups
   syn_groups <- unique(gene_data[[syn_group_col]])
   syn_groups <- syn_groups[!is.na(syn_groups)]
@@ -521,7 +520,7 @@ auto_generate_synteny_links_from_col <- function(gene_data, syn_group_col,
   for (group_name in syn_groups) {
     # Filter genes in this group
     group_genes <- gene_data[!is.na(gene_data[[syn_group_col]]) &
-                              gene_data[[syn_group_col]] == group_name, ]
+      gene_data[[syn_group_col]] == group_name, ]
 
     # Skip if not enough genes
     if (nrow(group_genes) < 2) next
@@ -628,7 +627,7 @@ prepare_segment_data <- function(gene_data, start_col, end_col, y_col) {
       min = min(!!rlang::sym(start_col)),
       max = max(!!rlang::sym(end_col)),
       y = min(!!rlang::sym(y_col)),
-      .groups = 'drop'
+      .groups = "drop"
     ) %>%
     dplyr::mutate(
       min = min - 3,
@@ -680,7 +679,7 @@ create_synteny_plot <- function(gene_data, syntenic_data, segment_data, ...) {
         fill = args$link_color,
         alpha = args$link_alpha,
         strength = args$link_strength,
-        radius = grid::unit(0, 'mm'),
+        radius = grid::unit(0, "mm"),
         orientation = "y"
       )
   } else if (args$link_type == "curve") {
@@ -694,7 +693,7 @@ create_synteny_plot <- function(gene_data, syntenic_data, segment_data, ...) {
             y_start = .data[[args$y_synt_col]][1],
             x_end = .data[[args$x_col]][2],
             y_end = .data[[args$y_synt_col]][2],
-            .groups = 'drop'
+            .groups = "drop"
           ),
         ggplot2::aes(
           x = x_start,
@@ -788,7 +787,7 @@ create_synteny_summary <- function(gene_data, syntenic_data, species_col, group_
     dplyr::group_by(!!rlang::sym(species_col)) %>%
     dplyr::summarise(
       n_genes = dplyr::n(),
-      .groups = 'drop'
+      .groups = "drop"
     ) %>%
     dplyr::arrange(!!rlang::sym(species_col))
 

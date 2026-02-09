@@ -45,7 +45,7 @@
 #' design_data_path <- system.file("extdata/qPCR", "ddct.design.txt", package = "bioRtools")
 #' cq_data <- read.table(cq_data_path, header = TRUE)
 #' design_data <- read.table(design_data_path, header = TRUE)
-#' 
+#'
 #' # Calculate expression using delta-delta Ct method
 #' result <- calc_expression_delta_delta_ct(
 #'   cq_table = cq_data,
@@ -56,7 +56,7 @@
 #'   remove_outliers = TRUE,
 #'   plot_type = "bar"
 #' )
-#' 
+#'
 #' # View results
 #' result$summary_table
 #' result$statistical_results
@@ -65,41 +65,40 @@
 #' @author Xiang LI <lixiang117423@gmail.com>
 
 calc_expression_delta_delta_ct <- function(cq_table,
-                                         design_table,
-                                         reference_gene = "OsUBQ",
-                                         reference_group = "CK",
-                                         statistical_method = "t.test",
-                                         remove_outliers = TRUE,
-                                         plot_type = "box",
-                                         plot_ncol = NULL) {
-  
+                                           design_table,
+                                           reference_gene = "OsUBQ",
+                                           reference_group = "CK",
+                                           statistical_method = "t.test",
+                                           remove_outliers = TRUE,
+                                           plot_type = "box",
+                                           plot_ncol = NULL) {
   # Prepare data first (merge tables before validation)
   merged_data <- prepare_ddct_data(cq_table, design_table)
-  
+
   # Basic validation (after merging)
-  validate_ddct_inputs_fixed(merged_data, reference_gene, reference_group, 
-                            statistical_method, plot_type)
-  
+  validate_ddct_inputs_fixed(merged_data, reference_gene, reference_group,
+    statistical_method, plot_type)
+
   # Calculate delta-delta Ct values
   expression_data <- calculate_ddct_expression(merged_data, reference_gene, reference_group)
-  
+
   # Remove outliers if requested
   if (remove_outliers) {
     expression_data <- remove_expression_outliers(expression_data)
   }
-  
+
   # Calculate summary statistics
   summary_table <- calculate_ddct_summary(expression_data)
-  
+
   # Perform statistical analysis
   statistical_results <- perform_statistical_analysis(expression_data, reference_group, statistical_method)
-  
+
   # Add statistical annotations to summary table
   summary_with_stats <- add_statistical_annotations(summary_table, statistical_results)
-  
+
   # Create plot
   plot_result <- create_ddct_plot(summary_with_stats, plot_type, plot_ncol)
-  
+
   return(list(
     expression_data = expression_data,
     summary_table = summary_with_stats,
@@ -111,7 +110,7 @@ calc_expression_delta_delta_ct <- function(cq_table,
 #' Prepare and merge data for delta-delta Ct calculation
 #' @keywords internal
 prepare_ddct_data <- function(cq_table, design_table) {
-  
+
   merged_data <- cq_table %>%
     dplyr::left_join(design_table, by = "Position") %>%
     dplyr::rename(
@@ -122,70 +121,68 @@ prepare_ddct_data <- function(cq_table, design_table) {
       bio_rep = BioRep
     ) %>%
     dplyr::filter(!is.na(.data$group), !is.na(.data$bio_rep), !is.na(.data$cq))
-  
+
   return(merged_data)
 }
 
 #' Validate input parameters for delta-delta Ct calculation (after merging)
 #' @keywords internal
-validate_ddct_inputs_fixed <- function(merged_data, reference_gene, 
-                                      reference_group, statistical_method, plot_type) {
-  
+validate_ddct_inputs_fixed <- function(merged_data, reference_gene,
+                                       reference_group, statistical_method, plot_type) {
   # Check if reference gene exists in merged data
   if (!reference_gene %in% merged_data$gene) {
     available_genes <- unique(merged_data$gene)
-    stop(sprintf("Reference gene '%s' not found. Available genes: %s", 
-                reference_gene, paste(available_genes, collapse = ", ")))
+    stop(sprintf("Reference gene '%s' not found. Available genes: %s",
+      reference_gene, paste(available_genes, collapse = ", ")))
   }
-  
+
   # Check if reference group exists in merged data
   if (!reference_group %in% merged_data$group) {
     available_groups <- unique(merged_data$group)
-    stop(sprintf("Reference group '%s' not found. Available groups: %s", 
-                reference_group, paste(available_groups, collapse = ", ")))
+    stop(sprintf("Reference group '%s' not found. Available groups: %s",
+      reference_group, paste(available_groups, collapse = ", ")))
   }
-  
+
   # Validate statistical method
   valid_methods <- c("t.test", "wilcox.test", "anova")
   if (!statistical_method %in% valid_methods) {
-    stop(sprintf("statistical_method must be one of: %s", 
-                paste(valid_methods, collapse = ", ")))
+    stop(sprintf("statistical_method must be one of: %s",
+      paste(valid_methods, collapse = ", ")))
   }
-  
+
   # Validate plot type
   valid_plot_types <- c("box", "bar")
   if (!plot_type %in% valid_plot_types) {
-    stop(sprintf("plot_type must be one of: %s", 
-                paste(valid_plot_types, collapse = ", ")))
+    stop(sprintf("plot_type must be one of: %s",
+      paste(valid_plot_types, collapse = ", ")))
   }
 }
 
 #' Calculate delta-delta Ct expression values
 #' @keywords internal
 calculate_ddct_expression <- function(merged_data, reference_gene, reference_group) {
-  
   # Get target genes (all except reference gene)
   target_genes <- setdiff(unique(merged_data$gene), reference_gene)
-  
+
   # Calculate reference values (reference gene in reference group)
   ref_gene_ref_group_cq <- merged_data %>%
     dplyr::filter(.data$gene == reference_gene, .data$group == reference_group) %>%
     dplyr::pull(.data$cq) %>%
     mean(na.rm = TRUE)
-  
+
   expression_results <- vector("list", length(target_genes))
-  
+
   for (i in seq_along(target_genes)) {
     target_gene <- target_genes[i]
-    
+
     # Calculate dCt for reference group (target - reference in reference group)
     target_gene_ref_group_cq <- merged_data %>%
       dplyr::filter(.data$gene == target_gene, .data$group == reference_group) %>%
       dplyr::pull(.data$cq) %>%
       mean(na.rm = TRUE)
-    
+
     delta_ct_ref <- target_gene_ref_group_cq - ref_gene_ref_group_cq
-    
+
     # Calculate expression for all groups
     gene_data <- merged_data %>%
       dplyr::filter(.data$gene %in% c(target_gene, reference_gene)) %>%
@@ -196,7 +193,7 @@ calculate_ddct_expression <- function(merged_data, reference_gene, reference_gro
         names_from = "gene",
         values_from = "mean_cq"
       )
-    
+
     # Ensure column order and names
     if (reference_gene %in% names(gene_data) && target_gene %in% names(gene_data)) {
       gene_data <- gene_data %>%
@@ -211,44 +208,44 @@ calculate_ddct_expression <- function(merged_data, reference_gene, reference_gro
           gene = target_gene
         ) %>%
         dplyr::select(.data$group, .data$gene, .data$bio_rep, .data$relative_expression,
-                     .data$delta_ct, .data$delta_delta_ct)
-      
+          .data$delta_ct, .data$delta_delta_ct)
+
       expression_results[[i]] <- gene_data
     }
   }
-  
+
   # Combine all results
   all_expression_data <- do.call(rbind, expression_results)
-  
+
   return(all_expression_data)
 }
 
 #' Remove outliers using IQR method
 #' @keywords internal
 remove_expression_outliers <- function(expression_data) {
-  
+
   find_outliers <- function(x) {
     q1 <- stats::quantile(x, 0.25, na.rm = TRUE)
     q3 <- stats::quantile(x, 0.75, na.rm = TRUE)
     iqr <- q3 - q1
     lower_bound <- q1 - 1.5 * iqr
     upper_bound <- q3 + 1.5 * iqr
-    
+
     return(x < lower_bound | x > upper_bound)
   }
-  
+
   cleaned_data <- expression_data %>%
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::filter(!find_outliers(.data$relative_expression)) %>%
     dplyr::ungroup()
-  
+
   return(cleaned_data)
 }
 
 #' Calculate summary statistics
 #' @keywords internal
 calculate_ddct_summary <- function(expression_data) {
-  
+
   summary_stats <- expression_data %>%
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::summarise(
@@ -264,81 +261,83 @@ calculate_ddct_summary <- function(expression_data) {
       sd_expression = ifelse(is.na(.data$sd_expression), 0, .data$sd_expression),
       se_expression = ifelse(is.na(.data$se_expression), 0, .data$se_expression)
     )
-  
+
   return(summary_stats)
 }
 
 #' Perform statistical analysis
 #' @keywords internal
 perform_statistical_analysis <- function(expression_data, reference_group, statistical_method) {
-  
-  tryCatch({
-    if (statistical_method == "t.test") {
-      stat_results <- expression_data %>%
-        dplyr::group_by(.data$gene) %>%
-        rstatix::t_test(relative_expression ~ group, ref.group = reference_group) %>%
-        dplyr::ungroup() %>%
-        dplyr::select(.data$gene, .data$group2, .data$p) %>%
-        dplyr::rename(group = .data$group2)
-      
-    } else if (statistical_method == "wilcox.test") {
-      stat_results <- expression_data %>%
-        dplyr::group_by(.data$gene) %>%
-        rstatix::wilcox_test(relative_expression ~ group, ref.group = reference_group) %>%
-        dplyr::ungroup() %>%
-        dplyr::select(.data$gene, .data$group2, .data$p) %>%
-        dplyr::rename(group = .data$group2)
-      
-    } else { # anova with Tukey post-hoc
-      genes <- unique(expression_data$gene)
-      results_list <- vector("list", length(genes))
-      
-      for (i in seq_along(genes)) {
-        gene_data <- expression_data %>%
-          dplyr::filter(.data$gene == genes[i]) %>%
-          dplyr::mutate(group = factor(.data$group))
-        
-        if (length(unique(gene_data$group)) > 1) {
-          fit <- stats::aov(relative_expression ~ group, data = gene_data)
-          tukey_test <- multcomp::glht(fit, linfct = multcomp::mcp(group = "Tukey"))
-          letters <- multcomp::cld(tukey_test, level = 0.95, decreasing = TRUE)
-          
-          results_list[[i]] <- data.frame(
-            gene = genes[i],
-            group = names(letters$mcletters$Letters),
-            significance_letter = as.character(letters$mcletters$Letters),
-            stringsAsFactors = FALSE
-          )
+
+  tryCatch(
+    {
+      if (statistical_method == "t.test") {
+        stat_results <- expression_data %>%
+          dplyr::group_by(.data$gene) %>%
+          rstatix::t_test(relative_expression ~ group, ref.group = reference_group) %>%
+          dplyr::ungroup() %>%
+          dplyr::select(.data$gene, .data$group2, .data$p) %>%
+          dplyr::rename(group = .data$group2)
+
+      } else if (statistical_method == "wilcox.test") {
+        stat_results <- expression_data %>%
+          dplyr::group_by(.data$gene) %>%
+          rstatix::wilcox_test(relative_expression ~ group, ref.group = reference_group) %>%
+          dplyr::ungroup() %>%
+          dplyr::select(.data$gene, .data$group2, .data$p) %>%
+          dplyr::rename(group = .data$group2)
+
+      } else { # anova with Tukey post-hoc
+        genes <- unique(expression_data$gene)
+        results_list <- vector("list", length(genes))
+
+        for (i in seq_along(genes)) {
+          gene_data <- expression_data %>%
+            dplyr::filter(.data$gene == genes[i]) %>%
+            dplyr::mutate(group = factor(.data$group))
+
+          if (length(unique(gene_data$group)) > 1) {
+            fit <- stats::aov(relative_expression ~ group, data = gene_data)
+            tukey_test <- multcomp::glht(fit, linfct = multcomp::mcp(group = "Tukey"))
+            letters <- multcomp::cld(tukey_test, level = 0.95, decreasing = TRUE)
+
+            results_list[[i]] <- data.frame(
+              gene = genes[i],
+              group = names(letters$mcletters$Letters),
+              significance_letter = as.character(letters$mcletters$Letters),
+              stringsAsFactors = FALSE
+            )
+          }
         }
+
+        stat_results <- do.call(rbind, results_list)
       }
-      
-      stat_results <- do.call(rbind, results_list)
-    }
-    
-    return(stat_results)
-    
-  }, error = function(e) {
-    warning("Statistical analysis failed: ", e$message)
-    return(data.frame(gene = character(0), group = character(0), p = numeric(0)))
-  })
+
+      return(stat_results)
+
+    },
+    error = function(e) {
+      warning("Statistical analysis failed: ", e$message)
+      return(data.frame(gene = character(0), group = character(0), p = numeric(0)))
+    })
 }
 
 #' Add statistical annotations to summary table
 #' @keywords internal
 add_statistical_annotations <- function(summary_table, statistical_results) {
-  
+
   if (nrow(statistical_results) == 0) {
     # If statistical analysis failed, add NS for all
     summary_table$significance <- "NS"
     return(summary_table)
   }
-  
+
   if ("significance_letter" %in% names(statistical_results)) {
     # For ANOVA results
     annotated_summary <- summary_table %>%
       dplyr::left_join(statistical_results, by = c("group", "gene")) %>%
       dplyr::rename(significance = .data$significance_letter)
-    
+
   } else {
     # For t-test and wilcox test results
     stat_with_significance <- statistical_results %>%
@@ -350,41 +349,41 @@ add_statistical_annotations <- function(summary_table, statistical_results) {
           TRUE ~ "NS"
         )
       )
-    
+
     # Add reference group with no significance
     ref_groups <- summary_table %>%
       dplyr::anti_join(stat_with_significance, by = c("group", "gene")) %>%
       dplyr::select(.data$group, .data$gene) %>%
       dplyr::mutate(significance = "")
-    
+
     all_significance <- rbind(
       stat_with_significance %>% dplyr::select(.data$group, .data$gene, .data$significance),
       ref_groups
     )
-    
+
     annotated_summary <- summary_table %>%
       dplyr::left_join(all_significance, by = c("group", "gene"))
   }
-  
+
   # Ensure significance column exists and has default values
   if (!"significance" %in% names(annotated_summary)) {
     annotated_summary$significance <- "NS"
   }
-  
+
   annotated_summary$significance[is.na(annotated_summary$significance)] <- "NS"
-  
+
   return(annotated_summary)
 }
 
 #' Create delta-delta Ct plot
 #' @keywords internal
 create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
-  
+
   if (nrow(summary_data) == 0) {
     warning("No data available for plotting")
     return(NULL)
   }
-  
+
   # Prepare data for plotting
   plot_data <- summary_data %>%
     dplyr::rename(
@@ -393,19 +392,19 @@ create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
       sd_expr = .data$sd_expression,
       se_expr = .data$se_expression
     )
-  
+
   if (plot_type == "bar") {
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(.data$treatment, .data$expression, 
-                                                 fill = .data$treatment)) +
+    p <- ggplot2::ggplot(plot_data, ggplot2::aes(.data$treatment, .data$expression,
+      fill = .data$treatment)) +
       ggplot2::geom_col(alpha = 0.7, width = 0.6) +
       ggplot2::geom_errorbar(
         ggplot2::aes(ymin = pmax(0, .data$expression - .data$se_expr),
-                    ymax = .data$expression + .data$se_expr),
+          ymax = .data$expression + .data$se_expr),
         width = 0.2
       ) +
       ggplot2::geom_text(
         ggplot2::aes(y = .data$expression + .data$se_expr + max(.data$expression) * 0.05,
-                    label = .data$significance),
+          label = .data$significance),
         vjust = 0,
         size = 4
       ) +
@@ -422,19 +421,19 @@ create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
         plot.title = ggplot2::element_text(hjust = 0.5, size = 14),
         axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
       )
-    
+
   } else { # box plot style with bars
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(.data$treatment, .data$expression, 
-                                                 fill = .data$treatment)) +
+    p <- ggplot2::ggplot(plot_data, ggplot2::aes(.data$treatment, .data$expression,
+      fill = .data$treatment)) +
       ggplot2::geom_col(alpha = 0.7, width = 0.6) +
       ggplot2::geom_errorbar(
         ggplot2::aes(ymin = pmax(0, .data$expression - .data$se_expr),
-                    ymax = .data$expression + .data$se_expr),
+          ymax = .data$expression + .data$se_expr),
         width = 0.2
       ) +
       ggplot2::geom_text(
         ggplot2::aes(y = .data$expression + .data$se_expr + max(.data$expression) * 0.05,
-                    label = .data$significance),
+          label = .data$significance),
         vjust = 0,
         size = 4
       ) +
@@ -452,45 +451,47 @@ create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
         axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
       )
   }
-  
+
   return(p)
 }
 
 # For backward compatibility - simplified version that works with original data structure
-CalExp2ddCt <- function(cq.table, design.table, ref.gene = "OsUBQ", 
-                       ref.group = "CK", stat.method = "t.test", 
-                       remove.outliers = TRUE, fig.type = "box", 
-                       fig.ncol = NULL) {
-  
-  tryCatch({
-    result <- calc_expression_delta_delta_ct(
-      cq_table = cq.table,
-      design_table = design.table,
-      reference_gene = ref.gene,
-      reference_group = ref.group,
-      statistical_method = stat.method,
-      remove_outliers = remove.outliers,
-      plot_type = fig.type,
-      plot_ncol = fig.ncol
-    )
-    
-    # Return in original format for compatibility
-    return(list(
-      table = result$summary_table,
-      figure = result$plot
-    ))
-    
-  }, error = function(e) {
-    warning("Analysis failed: ", e$message)
-    return(list(
-      table = data.frame(),
-      figure = NULL
-    ))
-  })
+CalExp2ddCt <- function(cq.table, design.table, ref.gene = "OsUBQ",
+                        ref.group = "CK", stat.method = "t.test",
+                        remove.outliers = TRUE, fig.type = "box",
+                        fig.ncol = NULL) {
+
+  tryCatch(
+    {
+      result <- calc_expression_delta_delta_ct(
+        cq_table = cq.table,
+        design_table = design.table,
+        reference_gene = ref.gene,
+        reference_group = ref.group,
+        statistical_method = stat.method,
+        remove_outliers = remove.outliers,
+        plot_type = fig.type,
+        plot_ncol = fig.ncol
+      )
+
+      # Return in original format for compatibility
+      return(list(
+        table = result$summary_table,
+        figure = result$plot
+      ))
+
+    },
+    error = function(e) {
+      warning("Analysis failed: ", e$message)
+      return(list(
+        table = data.frame(),
+        figure = NULL
+      ))
+    })
 }
 
 # Output column explanations:
-# 
+#
 # expression_data:
 # - group: Experimental treatment or condition group
 # - gene: Name of the target gene being analyzed (excludes reference gene)

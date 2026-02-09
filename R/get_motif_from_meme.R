@@ -43,12 +43,12 @@ get_motif_from_meme <- function(data, format = "txt") {
   if (!file.exists(data)) {
     stop("File not found: ", data, call. = FALSE)
   }
-  
+
   format <- tolower(format)
   if (!format %in% c("txt", "xml")) {
     stop("Format must be either 'txt' or 'xml', not '", format, "'", call. = FALSE)
   }
-  
+
   # Dispatch to appropriate parser
   if (format == "txt") {
     parse_meme_txt(data)
@@ -68,7 +68,7 @@ parse_meme_txt <- function(file_path) {
   # Read raw data
   raw_data <- readLines(file_path, warn = FALSE) %>%
     tibble::tibble(raw = .)
-  
+
   # Find motif boundaries
   motif_boundaries <- raw_data %>%
     dplyr::mutate(
@@ -91,23 +91,23 @@ parse_meme_txt <- function(file_path) {
       )
     ) %>%
     dplyr::select(.data$raw, .data$row_num)
-  
+
   # Extract motifs
   n_motifs <- nrow(motif_boundaries) / 2
-  
+
   motif_data <- purrr::map_dfr(
     seq_len(n_motifs),
     function(i) {
       start_idx <- (i - 1) * 2 + 1
       end_idx <- start_idx + 1
-      
+
       start_row <- motif_boundaries$row_num[start_idx]
       end_row <- motif_boundaries$row_num[end_idx]
-      
+
       extract_motif_block(raw_data$raw, start_row, end_row, motif_num = i)
     }
   )
-  
+
   return(motif_data)
 }
 
@@ -123,17 +123,17 @@ parse_meme_txt <- function(file_path) {
 #' @noRd
 extract_motif_block <- function(raw_lines, start_row, end_row, motif_num) {
   motif_lines <- raw_lines[start_row:end_row]
-  
+
   tibble::tibble(raw = motif_lines) %>%
     dplyr::mutate(
       motif_num = paste0("Motif.", motif_num),
       split_line = stringr::str_split(.data$raw, "\\s+")
     ) %>%
     dplyr::mutate(
-      input_seq_name = purrr::map_chr(.data$split_line, ~.x[1]),
+      input_seq_name = purrr::map_chr(.data$split_line, ~ .x[1]),
       input_seq_motif = purrr::map_chr(
         .data$split_line,
-        ~.x[length(.x) - 3]
+        ~ .x[length(.x) - 3]
       )
     ) %>%
     dplyr::select(
@@ -155,16 +155,16 @@ parse_meme_xml <- function(file_path) {
   # Parse XML
   xml_doc <- XML::xmlParse(file = file_path)
   xml_root <- XML::xmlRoot(xml_doc)
-  
+
   # Extract sequence information
   seq_info <- extract_sequence_info(xml_root[[1]])
-  
+
   # Extract motif information
   motif_info <- extract_motif_info(xml_root[[3]])
-  
+
   # Extract gene-motif mapping
   gene_motif_info <- extract_gene_motif_info(xml_root[[4]])
-  
+
   # Combine all information
   combine_motif_data(gene_motif_info, motif_info, seq_info)
 }
@@ -178,7 +178,7 @@ parse_meme_xml <- function(file_path) {
 #' @noRd
 extract_sequence_info <- function(seq_node) {
   n_sequences <- XML::xmlSize(seq_node) - 1
-  
+
   purrr::map_dfr(
     2:n_sequences,
     function(i) {
@@ -203,7 +203,7 @@ extract_sequence_info <- function(seq_node) {
 #' @noRd
 extract_motif_info <- function(motif_node) {
   n_motifs <- XML::xmlSize(motif_node)
-  
+
   purrr::map_dfr(
     seq_len(n_motifs),
     function(i) {
@@ -229,19 +229,19 @@ extract_motif_info <- function(motif_node) {
 #' @noRd
 extract_gene_motif_info <- function(gene_node) {
   n_genes <- XML::xmlSize(gene_node)
-  
+
   purrr::map_dfr(
     seq_len(n_genes),
     function(i) {
       gene_data <- XML::xmlToList(gene_node[[i]])
-      
+
       # Skip if character (no motif found)
       if (is.character(gene_data)) {
         return(NULL)
       }
-      
+
       n_elements <- length(gene_data) - 1
-      
+
       purrr::map_dfr(
         seq_len(n_elements),
         function(j) {

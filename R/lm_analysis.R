@@ -65,7 +65,7 @@
 #'   \item \strong{P-values}: Statistical significance of slope and overall model
 #'   \item \strong{Confidence intervals}: Uncertainty bounds for slope estimates
 #' }
-#' 
+#'
 #' The visualization combines all groups in a single plot for easy comparison
 #' of regression relationships across groups.
 #'
@@ -91,133 +91,131 @@
 #' library(bioRtools)
 #' library(dplyr)
 #' library(ggplot2)
-#' 
+#'
 #' # Example 1: Basic regression analysis with iris data
 #' data(iris)
-#' 
+#'
 #' # Analyze relationship between sepal length and width by species
 #' results <- lm_analysis(
 #'   data = iris,
 #'   x = "Sepal.Length",
-#'   y = "Sepal.Width", 
+#'   y = "Sepal.Width",
 #'   group = "Species",
 #'   color = "Species"
 #' )
-#' 
+#'
 #' # View regression statistics
 #' print("Regression results by species:")
 #' print(results$regression_results)
-#' 
+#'
 #' # Display the plot
 #' print(results$scatter_plot)
-#' 
+#'
 #' # Summary of significant relationships
 #' significant_groups <- results$regression_results %>%
 #'   filter(significance == "Significant")
-#' 
-#' print(paste("Significant relationships found in", nrow(significant_groups), "groups"))
-#' 
 #'
-lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.95, 
+#' print(paste("Significant relationships found in", nrow(significant_groups), "groups"))
+#'
+lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.95,
                         method = "lm", se = TRUE) {
-  
   # Input validation
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame")
   }
-  
+
   if (nrow(data) == 0) {
     stop("'data' cannot be empty")
   }
-  
+
   # Validate column names
   required_cols <- c(x, y, group, color)
   missing_cols <- setdiff(required_cols, names(data))
   if (length(missing_cols) > 0) {
     stop(paste("Missing columns in data:", paste(missing_cols, collapse = ", ")))
   }
-  
+
   # Validate parameter types
   if (!is.character(x) || length(x) != 1) {
     stop("'x' must be a single character string (column name)")
   }
-  
+
   if (!is.character(y) || length(y) != 1) {
     stop("'y' must be a single character string (column name)")
   }
-  
+
   if (!is.character(group) || length(group) != 1) {
     stop("'group' must be a single character string (column name)")
   }
-  
+
   if (!is.character(color) || length(color) != 1) {
     stop("'color' must be a single character string (column name)")
   }
-  
+
   if (!is.numeric(alpha) || length(alpha) != 1 || alpha <= 0 || alpha >= 1) {
     stop("'alpha' must be a single number between 0 and 1")
   }
-  
+
   if (!is.numeric(conf.level) || length(conf.level) != 1 || conf.level <= 0 || conf.level >= 1) {
     stop("'conf.level' must be a single number between 0 and 1")
   }
-  
+
   if (!is.logical(se) || length(se) != 1) {
     stop("'se' must be a single logical value")
   }
-  
+
   # Check if x and y are numeric
   if (!is.numeric(data[[x]])) {
     stop(paste("Variable", x, "must be numeric for linear regression"))
   }
-  
+
   if (!is.numeric(data[[y]])) {
     stop(paste("Variable", y, "must be numeric for linear regression"))
   }
-  
+
   # Remove rows with missing values in key variables
   clean_data <- data %>%
-    dplyr::filter(!is.na(!!rlang::sym(x)), !is.na(!!rlang::sym(y)), 
-                  !is.na(!!rlang::sym(group)), !is.na(!!rlang::sym(color)))
-  
+    dplyr::filter(!is.na(!!rlang::sym(x)), !is.na(!!rlang::sym(y)),
+      !is.na(!!rlang::sym(group)), !is.na(!!rlang::sym(color)))
+
   if (nrow(clean_data) == 0) {
     stop("No complete cases remain after removing missing values")
   }
-  
+
   if (nrow(clean_data) < nrow(data)) {
-    warning(paste("Removed", nrow(data) - nrow(clean_data), 
-                  "rows due to missing values"))
+    warning(paste("Removed", nrow(data) - nrow(clean_data),
+      "rows due to missing values"))
   }
-  
+
   # Check group sizes
   group_sizes <- clean_data %>%
     dplyr::count(!!rlang::sym(group), name = "n_obs") %>%
     dplyr::arrange(n_obs)
-  
+
   min_group_size <- min(group_sizes$n_obs)
   if (min_group_size < 3) {
-    warning(paste("Some groups have fewer than 3 observations. Smallest group:", 
-                  min_group_size, "observations. Results may be unreliable."))
+    warning(paste("Some groups have fewer than 3 observations. Smallest group:",
+      min_group_size, "observations. Results may be unreliable."))
   }
-  
+
   # Check for groups with no variation in x or y
   variance_check <- clean_data %>%
     dplyr::group_by(!!rlang::sym(group)) %>%
     dplyr::summarise(
       x_var = var(!!rlang::sym(x), na.rm = TRUE),
       y_var = var(!!rlang::sym(y), na.rm = TRUE),
-      .groups = 'drop'
+      .groups = "drop"
     )
-  
+
   zero_var_groups <- variance_check %>%
     dplyr::filter(x_var == 0 | y_var == 0)
-  
+
   if (nrow(zero_var_groups) > 0) {
-    warning(paste("Groups with zero variance detected:", 
-                  paste(zero_var_groups[[group]], collapse = ", "),
-                  ". These groups will have undefined regression statistics."))
+    warning(paste("Groups with zero variance detected:",
+      paste(zero_var_groups[[group]], collapse = ", "),
+      ". These groups will have undefined regression statistics."))
   }
-  
+
   # Define helper functions for regression statistics
   get_regression_stats <- function(fit, conf_level = 0.95) {
     if (is.null(fit) || !inherits(fit, "lm")) {
@@ -227,34 +225,36 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
         overall_pvalue = NA, slope_ci_lower = NA, slope_ci_upper = NA
       ))
     }
-    
-    tryCatch({
-      fit_summary <- summary(fit)
-      anova_result <- stats::anova(fit)
-      confint_result <- confint(fit, level = conf_level)
-      
-      data.frame(
-        n_observations = nobs(fit),
-        r_squared = round(fit_summary$r.squared, 4),
-        adj_r_squared = round(fit_summary$adj.r.squared, 4),
-        slope = round(coef(fit)[2], 4),
-        intercept = round(coef(fit)[1], 4),
-        slope_se = round(fit_summary$coefficients[2, "Std. Error"], 4),
-        slope_pvalue = fit_summary$coefficients[2, "Pr(>|t|)"],
-        overall_pvalue = anova_result$`Pr(>F)`[1],
-        slope_ci_lower = round(confint_result[2, 1], 4),
-        slope_ci_upper = round(confint_result[2, 2], 4)
-      )
-    }, error = function(e) {
-      warning(paste("Error extracting regression statistics:", e$message))
-      data.frame(
-        n_observations = NA, r_squared = NA, adj_r_squared = NA,
-        slope = NA, intercept = NA, slope_se = NA, slope_pvalue = NA,
-        overall_pvalue = NA, slope_ci_lower = NA, slope_ci_upper = NA
-      )
-    })
+
+    tryCatch(
+      {
+        fit_summary <- summary(fit)
+        anova_result <- stats::anova(fit)
+        confint_result <- confint(fit, level = conf_level)
+
+        data.frame(
+          n_observations = nobs(fit),
+          r_squared = round(fit_summary$r.squared, 4),
+          adj_r_squared = round(fit_summary$adj.r.squared, 4),
+          slope = round(coef(fit)[2], 4),
+          intercept = round(coef(fit)[1], 4),
+          slope_se = round(fit_summary$coefficients[2, "Std. Error"], 4),
+          slope_pvalue = fit_summary$coefficients[2, "Pr(>|t|)"],
+          overall_pvalue = anova_result$`Pr(>F)`[1],
+          slope_ci_lower = round(confint_result[2, 1], 4),
+          slope_ci_upper = round(confint_result[2, 2], 4)
+        )
+      },
+      error = function(e) {
+        warning(paste("Error extracting regression statistics:", e$message))
+        data.frame(
+          n_observations = NA, r_squared = NA, adj_r_squared = NA,
+          slope = NA, intercept = NA, slope_se = NA, slope_pvalue = NA,
+          overall_pvalue = NA, slope_ci_lower = NA, slope_ci_upper = NA
+        )
+      })
   }
-  
+
   # Perform group-wise regression analysis
   regression_results <- clean_data %>%
     dplyr::group_by(!!rlang::sym(group)) %>%
@@ -262,13 +262,15 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
     dplyr::mutate(
       # Fit linear models
       model = purrr::map(data, ~ {
-        tryCatch({
-          lm(as.formula(paste(y, "~", x)), data = .x)
-        }, error = function(e) {
-          warning(paste("Model fitting failed for group", 
-                       unique(.x[[group]]), ":", e$message))
-          NULL
-        })
+        tryCatch(
+          {
+            lm(as.formula(paste(y, "~", x)), data = .x)
+          },
+          error = function(e) {
+            warning(paste("Model fitting failed for group",
+              unique(.x[[group]]), ":", e$message))
+            NULL
+          })
       }),
       # Extract statistics
       stats = purrr::map(model, ~ get_regression_stats(.x, conf.level))
@@ -289,88 +291,90 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
         TRUE ~ sprintf("%.3f", overall_pvalue)
       ),
       slope_pvalue_formatted = dplyr::case_when(
-        is.na(slope_pvalue) ~ "NA", 
+        is.na(slope_pvalue) ~ "NA",
         slope_pvalue < 0.001 ~ "< 0.001",
         TRUE ~ sprintf("%.3f", slope_pvalue)
       )
     ) %>%
     dplyr::arrange(overall_pvalue)
-  
+
   # Create enhanced scatter plot
-  tryCatch({
-    scatter_plot <- clean_data %>%
-      ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x), y = !!rlang::sym(y), 
-                                   color = !!rlang::sym(color))) +
-      ggplot2::geom_point(alpha = 0.7, size = 2) +
-      ggplot2::geom_smooth(method = method, se = se, level = conf.level) +
-      ggplot2::labs(
-        title = paste("Linear Regression Analysis by", group),
-        subtitle = paste("Method:", method, "| Confidence level:", 
-                         paste0(round(conf.level * 100, 1), "%")),
-        x = tools::toTitleCase(gsub("[._]", " ", x)),
-        y = tools::toTitleCase(gsub("[._]", " ", y)),
-        color = tools::toTitleCase(gsub("[._]", " ", color))
-      ) +
-      ggplot2::theme_minimal() +
-      ggplot2::theme(
-        plot.title = ggplot2::element_text(size = 14, face = "bold"),
-        plot.subtitle = ggplot2::element_text(size = 11),
-        axis.title = ggplot2::element_text(size = 12),
-        legend.title = ggplot2::element_text(size = 11),
-        legend.text = ggplot2::element_text(size = 10),
-        panel.grid.minor = ggplot2::element_blank()
-      )
-  }, error = function(e) {
-    warning(paste("Error creating plot:", e$message))
-    scatter_plot <- ggplot2::ggplot() + 
-      ggplot2::annotate("text", x = 0.5, y = 0.5, 
-                        label = "Plot creation failed", size = 6) +
-      ggplot2::theme_void()
-  })
-  
+  tryCatch(
+    {
+      scatter_plot <- clean_data %>%
+        ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x), y = !!rlang::sym(y),
+          color = !!rlang::sym(color))) +
+        ggplot2::geom_point(alpha = 0.7, size = 2) +
+        ggplot2::geom_smooth(method = method, se = se, level = conf.level) +
+        ggplot2::labs(
+          title = paste("Linear Regression Analysis by", group),
+          subtitle = paste("Method:", method, "| Confidence level:",
+            paste0(round(conf.level * 100, 1), "%")),
+          x = tools::toTitleCase(gsub("[._]", " ", x)),
+          y = tools::toTitleCase(gsub("[._]", " ", y)),
+          color = tools::toTitleCase(gsub("[._]", " ", color))
+        ) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 14, face = "bold"),
+          plot.subtitle = ggplot2::element_text(size = 11),
+          axis.title = ggplot2::element_text(size = 12),
+          legend.title = ggplot2::element_text(size = 11),
+          legend.text = ggplot2::element_text(size = 10),
+          panel.grid.minor = ggplot2::element_blank()
+        )
+    },
+    error = function(e) {
+      warning(paste("Error creating plot:", e$message))
+      scatter_plot <- ggplot2::ggplot() +
+        ggplot2::annotate("text", x = 0.5, y = 0.5,
+          label = "Plot creation failed", size = 6) +
+        ggplot2::theme_void()
+    })
+
   # Add summary statistics
   n_total_obs <- nrow(clean_data)
   n_groups <- nrow(regression_results)
   n_significant <- sum(regression_results$significance == "Significant", na.rm = TRUE)
-  
+
   # Print summary if interactive
   if (interactive()) {
     cat("Linear Regression Analysis Summary:\n")
     cat("==================================\n")
     cat("Total observations:", n_total_obs, "\n")
     cat("Number of groups:", n_groups, "\n")
-    cat("Groups with significant relationships:", n_significant, 
-        paste0("(", round(100 * n_significant / n_groups, 1), "%)"), "\n")
+    cat("Groups with significant relationships:", n_significant,
+      paste0("(", round(100 * n_significant / n_groups, 1), "%)"), "\n")
     cat("Significance level:", alpha, "\n")
     cat("Confidence level:", conf.level, "\n\n")
-    
+
     if (n_significant > 0) {
       cat("Significant relationships:\n")
       sig_results <- regression_results %>%
         dplyr::filter(significance == "Significant") %>%
         dplyr::select(!!rlang::sym(group), slope, r_squared, overall_pvalue_formatted)
-      
+
       for (i in 1:nrow(sig_results)) {
         cat(sprintf("  %s: slope = %.3f, R² = %.3f, p = %s\n",
-                    sig_results[[group]][i],
-                    sig_results$slope[i],
-                    sig_results$r_squared[i], 
-                    sig_results$overall_pvalue_formatted[i]))
+          sig_results[[group]][i],
+          sig_results$slope[i],
+          sig_results$r_squared[i],
+          sig_results$overall_pvalue_formatted[i]))
       }
     }
     cat("\n")
   }
-  
+
   # Prepare final result
   result <- list(
     regression_results = regression_results,
     scatter_plot = scatter_plot
   )
-  
+
   # Add metadata as attributes
   attr(result, "analysis_type") <- "group_wise_linear_regression"
   attr(result, "x_variable") <- x
-  attr(result, "y_variable") <- y  
+  attr(result, "y_variable") <- y
   attr(result, "group_variable") <- group
   attr(result, "color_variable") <- color
   attr(result, "n_observations") <- n_total_obs
@@ -379,6 +383,6 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
   attr(result, "alpha_level") <- alpha
   attr(result, "confidence_level") <- conf.level
   attr(result, "regression_method") <- method
-  
+
   return(result)
 }
