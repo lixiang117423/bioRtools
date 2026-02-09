@@ -16,6 +16,7 @@
 #' and the maximum value becomes 1.
 #'
 #' @examples
+#' library(bioRtools)
 #' # Basic usage
 #' scale01(c(1, 2, 3, 4, 5))
 #'

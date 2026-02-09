@@ -27,16 +27,16 @@ run_wgcna_analysis(
 )
 }
 \arguments{
-\item{expression_data}{Either a file path to expression data (tab-delimited) or 
-a data frame containing expression data. Required columns: sample ID, gene ID, 
+\item{expression_data}{Either a file path to expression data (tab-delimited) or
+a data frame containing expression data. Required columns: sample ID, gene ID,
 and expression values.}
 
-\item{sample_info}{Either a file path to sample information (Excel format) or 
+\item{sample_info}{Either a file path to sample information (Excel format) or
 a data frame containing sample metadata. Must include sample IDs and trait columns.}
 
 \item{output_dir}{Character. Directory path where results and plots will be saved.}
 
-\item{trait_columns}{Character vector. Column names in sample_info to use for 
+\item{trait_columns}{Character vector. Column names in sample_info to use for
 module-trait association analysis.}
 
 \item{gene_id_col}{Character. Column name containing gene IDs in expression_data.
@@ -45,7 +45,7 @@ Default: "gene_id".}
 \item{sample_col}{Character. Column name containing sample IDs in expression_data.
 Default: "sample".}
 
-\item{expression_col}{Character. Column name containing expression values in 
+\item{expression_col}{Character. Column name containing expression values in
 expression_data. Default: "FPKM".}
 
 \item{sample_id_col}{Character. Column name containing sample IDs in sample_info.
@@ -96,7 +96,7 @@ A list containing:
 }
 }
 \description{
-A comprehensive function to perform WGCNA including data preprocessing, 
+A comprehensive function to perform WGCNA including data preprocessing,
 network construction, module identification, and module-trait association analysis.
 }
 \details{
@@ -112,7 +112,7 @@ This function performs a complete WGCNA pipeline:
 }
 
 The function automatically creates the output directory if it doesn't exist and
-generates multiple output files including correlation matrices, gene-module 
+generates multiple output files including correlation matrices, gene-module
 mappings, and visualization plots.
 }
 \note{
@@ -121,6 +121,7 @@ Gene IDs containing ":" will be split and the second part will be used.
 Expression values are log2(x+1) transformed before analysis.
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Using file paths
 result1 <- run_wgcna_analysis(

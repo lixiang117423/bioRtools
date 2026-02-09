@@ -55,157 +55,157 @@ theme_bio(
 )
 }
 \arguments{
-\item{base_size}{Numeric value specifying the base font size in points. 
+\item{base_size}{Numeric value specifying the base font size in points.
 All other text elements are scaled relative to this size. Default is 10.}
 
-\item{base_family}{Character string specifying the base font family. 
+\item{base_family}{Character string specifying the base font family.
 Default is "" (system default).}
 
-\item{strip_text_italic}{Logical indicating whether strip text should be 
+\item{strip_text_italic}{Logical indicating whether strip text should be
 displayed in italic font when using facets. Default is FALSE.}
 
-\item{show_minor_ticks_x}{Logical indicating whether to display minor ticks 
+\item{show_minor_ticks_x}{Logical indicating whether to display minor ticks
 on the X-axis. Default is FALSE.}
 
-\item{show_minor_ticks_y}{Logical indicating whether to display minor ticks 
+\item{show_minor_ticks_y}{Logical indicating whether to display minor ticks
 on the Y-axis. Default is TRUE.}
 
-\item{show_legend}{Logical indicating whether to display the legend. 
+\item{show_legend}{Logical indicating whether to display the legend.
 Default is TRUE.}
 
-\item{panel_background_color}{Character string specifying the panel 
+\item{panel_background_color}{Character string specifying the panel
 background color. Default is "white".}
 
-\item{panel_border_color}{Character string specifying the panel border 
+\item{panel_border_color}{Character string specifying the panel border
 color. Default is "black".}
 
-\item{panel_border_size}{Numeric value specifying the panel border line 
+\item{panel_border_size}{Numeric value specifying the panel border line
 width. Default is 0.8.}
 
-\item{strip_background_color}{Character string specifying the strip 
+\item{strip_background_color}{Character string specifying the strip
 background color for facets. Default is "#f0f0f0".}
 
-\item{grid_lines}{Logical indicating whether to show major grid lines. 
+\item{grid_lines}{Logical indicating whether to show major grid lines.
 Default is FALSE for a clean look.}
 
-\item{axis_line}{Logical indicating whether to show axis lines. Default 
+\item{axis_line}{Logical indicating whether to show axis lines. Default
 is FALSE (uses panel border instead).}
 
-\item{y_expand}{Y-axis expansion setting. Can be a numeric vector of length 2 
+\item{y_expand}{Y-axis expansion setting. Can be a numeric vector of length 2
 (e.g., c(0, 0)) or NULL to use ggplot default. Default is c(0, 0) for no expansion.}
 
-\item{x_expand}{X-axis expansion setting. Can be a numeric vector of length 2 
+\item{x_expand}{X-axis expansion setting. Can be a numeric vector of length 2
 or NULL to use ggplot default. Default is NULL.}
 
-\item{return_list}{Logical indicating whether to return a list containing both 
+\item{return_list}{Logical indicating whether to return a list containing both
 theme and scale objects, or just the theme. Default is FALSE (theme only).}
 
-\item{legend.position}{Character string or numeric vector specifying legend 
-position. Options: "none", "left", "right", "bottom", "top", or numeric 
+\item{legend.position}{Character string or numeric vector specifying legend
+position. Options: "none", "left", "right", "bottom", "top", or numeric
 vector c(x, y). Default is NULL (uses show_legend parameter).}
 
-\item{legend.text.size}{Numeric value specifying legend text size as multiple 
+\item{legend.text.size}{Numeric value specifying legend text size as multiple
 of base_size. Default is NULL (uses 1.0).}
 
-\item{legend.title.size}{Numeric value specifying legend title size as 
+\item{legend.title.size}{Numeric value specifying legend title size as
 multiple of base_size. Default is NULL (uses 1.0).}
 
-\item{legend.title.face}{Character string specifying legend title font face. 
+\item{legend.title.face}{Character string specifying legend title font face.
 Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
 
-\item{plot.title.color}{Character string specifying plot title color. 
+\item{plot.title.color}{Character string specifying plot title color.
 Default is NULL (uses theme default).}
 
-\item{plot.title.size}{Numeric value specifying plot title size as multiple 
+\item{plot.title.size}{Numeric value specifying plot title size as multiple
 of base_size. Default is NULL (uses 1.3).}
 
-\item{plot.title.hjust}{Numeric value (0-1) specifying plot title horizontal 
+\item{plot.title.hjust}{Numeric value (0-1) specifying plot title horizontal
 justification. Default is NULL (uses 0.5).}
 
-\item{plot.title.face}{Character string specifying plot title font face. 
+\item{plot.title.face}{Character string specifying plot title font face.
 Options: "plain", "bold", "italic", "bold.italic". Default is NULL (uses "bold").}
 
-\item{plot.subtitle.size}{Numeric value specifying subtitle size as multiple 
+\item{plot.subtitle.size}{Numeric value specifying subtitle size as multiple
 of base_size. Default is NULL (uses 1.1).}
 
-\item{plot.caption.size}{Numeric value specifying caption size as multiple 
+\item{plot.caption.size}{Numeric value specifying caption size as multiple
 of base_size. Default is NULL (uses 0.8).}
 
-\item{axis.text.x.angle}{Numeric value specifying X-axis text rotation angle 
+\item{axis.text.x.angle}{Numeric value specifying X-axis text rotation angle
 in degrees. Default is NULL (no rotation).}
 
-\item{axis.text.x.hjust}{Numeric value (0-1) specifying X-axis text horizontal 
+\item{axis.text.x.hjust}{Numeric value (0-1) specifying X-axis text horizontal
 justification. Default is NULL (auto-adjusted based on angle).}
 
-\item{axis.text.x.vjust}{Numeric value (0-1) specifying X-axis text vertical 
+\item{axis.text.x.vjust}{Numeric value (0-1) specifying X-axis text vertical
 justification. Default is NULL (uses 0.5).}
 
-\item{axis.text.x.size}{Numeric value specifying X-axis text size as multiple 
+\item{axis.text.x.size}{Numeric value specifying X-axis text size as multiple
 of base_size. Default is NULL (uses 1.0).}
 
-\item{axis.text.y.angle}{Numeric value specifying Y-axis text rotation angle 
+\item{axis.text.y.angle}{Numeric value specifying Y-axis text rotation angle
 in degrees. Default is NULL (no rotation).}
 
-\item{axis.text.y.size}{Numeric value specifying Y-axis text size as multiple 
+\item{axis.text.y.size}{Numeric value specifying Y-axis text size as multiple
 of base_size. Default is NULL (uses 1.0).}
 
-\item{axis.title.x.face}{Character string specifying X-axis title font face. 
+\item{axis.title.x.face}{Character string specifying X-axis title font face.
 Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
 
-\item{axis.title.x.size}{Numeric value specifying X-axis title size as 
+\item{axis.title.x.size}{Numeric value specifying X-axis title size as
 multiple of base_size. Default is NULL (uses 1.1).}
 
-\item{axis.title.x.color}{Character string specifying X-axis title color. 
+\item{axis.title.x.color}{Character string specifying X-axis title color.
 Default is NULL.}
 
-\item{axis.title.y.face}{Character string specifying Y-axis title font face. 
+\item{axis.title.y.face}{Character string specifying Y-axis title font face.
 Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
 
-\item{axis.title.y.size}{Numeric value specifying Y-axis title size as 
+\item{axis.title.y.size}{Numeric value specifying Y-axis title size as
 multiple of base_size. Default is NULL (uses 1.1).}
 
-\item{axis.title.y.color}{Character string specifying Y-axis title color. 
+\item{axis.title.y.color}{Character string specifying Y-axis title color.
 Default is NULL.}
 
-\item{panel.grid.major.x}{Grid lines for X-axis. Use element_line() or 
+\item{panel.grid.major.x}{Grid lines for X-axis. Use element_line() or
 element_blank(). Default is NULL.}
 
-\item{panel.grid.major.y}{Grid lines for Y-axis. Use element_line() or 
+\item{panel.grid.major.y}{Grid lines for Y-axis. Use element_line() or
 element_blank(). Default is NULL.}
 
-\item{panel.grid.minor.x}{Minor grid lines for X-axis. Use element_line() or 
+\item{panel.grid.minor.x}{Minor grid lines for X-axis. Use element_line() or
 element_blank(). Default is NULL.}
 
-\item{panel.grid.minor.y}{Minor grid lines for Y-axis. Use element_line() or 
+\item{panel.grid.minor.y}{Minor grid lines for Y-axis. Use element_line() or
 element_blank(). Default is NULL.}
 
-\item{strip.text.face}{Character string specifying strip text font face. 
+\item{strip.text.face}{Character string specifying strip text font face.
 Options: "plain", "bold", "italic", "bold.italic". Default is NULL.}
 
-\item{strip.text.size}{Numeric value specifying strip text size as multiple 
+\item{strip.text.size}{Numeric value specifying strip text size as multiple
 of base_size. Default is NULL (uses 1.0).}
 
-\item{strip.text.color}{Character string specifying strip text color. 
+\item{strip.text.color}{Character string specifying strip text color.
 Default is NULL (uses "black").}
 
-\item{strip.background.fill}{Character string specifying strip background 
+\item{strip.background.fill}{Character string specifying strip background
 fill color. Default is NULL (uses strip_background_color parameter).}
 
-\item{strip.background.color}{Character string specifying strip background 
+\item{strip.background.color}{Character string specifying strip background
 border color. Default is NULL.}
 
-\item{...}{Additional theme arguments passed to \code{ggplot2::theme()}. 
+\item{...}{Additional theme arguments passed to \code{ggplot2::theme()}.
 These won't have autocomplete but provide full flexibility.}
 }
 \value{
 If return_list is FALSE (default): A ggplot2 theme object.
-  If return_list is TRUE: A list containing 'theme' and scale objects 
+  If return_list is TRUE: A list containing 'theme' and scale objects
   that can be added to any ggplot.
 }
 \description{
-A clean and professional ggplot2 theme specifically designed for biological 
-data visualization. This enhanced version provides explicit parameters for 
-common theme modifications, enabling autocomplete functionality while 
+A clean and professional ggplot2 theme specifically designed for biological
+data visualization. This enhanced version provides explicit parameters for
+common theme modifications, enabling autocomplete functionality while
 maintaining all original features. Now includes scale control options.
 }
 \examples{

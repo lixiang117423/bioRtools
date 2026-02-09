@@ -22,34 +22,34 @@ plot_volcano(
 )
 }
 \arguments{
-\item{data}{The data frame used to create the volcano plot, typically the 
+\item{data}{The data frame used to create the volcano plot, typically the
 output from DESeq2 analysis or \code{RNASeq.call_DEGs_DESeq2}.}
 
-\item{x}{Character string specifying the column name for the x-axis 
+\item{x}{Character string specifying the column name for the x-axis
 (fold change values). Default is "log2FoldChange".}
 
-\item{y}{Character string specifying the column name for the y-axis 
+\item{y}{Character string specifying the column name for the y-axis
 (p-values or adjusted p-values). Default is "padj".}
 
-\item{size}{Character string specifying the column name used to map the 
+\item{size}{Character string specifying the column name used to map the
 size of points. Default is "baseMean".}
 
-\item{color}{Character string specifying the column name used to map the 
+\item{color}{Character string specifying the column name used to map the
 color of points (typically grouping variable). Default is "group".}
 
-\item{xintercept_abs}{Numeric value for the absolute fold change threshold. 
+\item{xintercept_abs}{Numeric value for the absolute fold change threshold.
 Vertical lines will be drawn at +/- this value. Default is 1.}
 
-\item{yintercept}{Numeric value for the significance threshold (before -log10 
+\item{yintercept}{Numeric value for the significance threshold (before -log10
 transformation). Default is 0.05.}
 
-\item{point_alpha}{Numeric value between 0 and 1 for point transparency. 
+\item{point_alpha}{Numeric value between 0 and 1 for point transparency.
 Default is 0.8.}
 
-\item{line_color}{Character string specifying the color of threshold lines. 
+\item{line_color}{Character string specifying the color of threshold lines.
 Default is "grey50".}
 
-\item{line_type}{Character string specifying the line type for thresholds. 
+\item{line_type}{Character string specifying the line type for thresholds.
 Default is "dashed".}
 
 \item{line_size}{Numeric value for threshold line width. Default is 0.8.}
@@ -58,40 +58,40 @@ Default is "dashed".}
 
 \item{subtitle}{Character string for plot subtitle. Default is NULL.}
 
-\item{point_size_range}{Numeric vector of length 2 specifying the range 
+\item{point_size_range}{Numeric vector of length 2 specifying the range
 for point sizes. Default is c(0.5, 4).}
 }
 \value{
 A list containing two components:
 \describe{
-  \item{plot.volcano}{A ggplot object that can be further customized 
+  \item{plot.volcano}{A ggplot object that can be further customized
     or directly displayed.}
-  \item{data.summary}{A summary table showing the number of genes in 
+  \item{data.summary}{A summary table showing the number of genes in
     each category (up-regulated, down-regulated, not significant).}
 }
 }
 \description{
-Create a volcano plot to visualize the results of differential expression 
-analysis, typically from DESeq2. The plot displays the relationship between 
+Create a volcano plot to visualize the results of differential expression
+analysis, typically from DESeq2. The plot displays the relationship between
 fold change (x-axis) and statistical significance (y-axis).
 }
 \details{
-The volcano plot is a scatter plot that shows statistical significance 
-(y-axis) versus magnitude of change (x-axis). Points are typically colored 
-based on their significance and fold change thresholds. The y-axis values 
+The volcano plot is a scatter plot that shows statistical significance
+(y-axis) versus magnitude of change (x-axis). Points are typically colored
+based on their significance and fold change thresholds. The y-axis values
 are automatically transformed using -log10.
 
 The function automatically adds:
 \itemize{
   \item Horizontal line at the significance threshold
-  \item Vertical lines at the fold change thresholds  
+  \item Vertical lines at the fold change thresholds
   \item Color coding based on the grouping variable
   \item Size mapping based on expression level
 }
 }
 \note{
-This function is specifically designed for RNA-seq differential expression 
-results but can be adapted for other types of data with appropriate 
+This function is specifically designed for RNA-seq differential expression
+results but can be adapted for other types of data with appropriate
 column names.
 }
 \examples{

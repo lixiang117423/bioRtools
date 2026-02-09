@@ -186,8 +186,8 @@ print(pca_results$eigenvalues)
 print(pca_results$plots$score_plot)
 
 # Check summary statistics
-print(paste("Total variance in first 2 PCs:", 
-            round(pca_results$summary_stats$total_variance_explained[2], 1), "\%"))
+print(paste("Total variance in first 2 PCs:",
+  round(pca_results$summary_stats$total_variance_explained[2], 1), "\%"))
 
 # Example 2: Customized PCA with different visualization options
 pca_custom <- pca_analysis(
@@ -261,8 +261,8 @@ print(head(variable_importance, 10))
 # Create custom loading plot
 loading_plot <- variable_importance \%>\%
   ggplot(aes(x = PC1, y = PC2)) +
-  geom_segment(aes(xend = 0, yend = 0), 
-               arrow = arrow(length = unit(0.3, "cm"))) +
+  geom_segment(aes(xend = 0, yend = 0),
+    arrow = arrow(length = unit(0.3, "cm"))) +
   geom_text(aes(label = variable), vjust = -1) +
   labs(
     title = "PCA Loading Plot",
@@ -291,9 +291,9 @@ enhanced_scree <- scree_analysis \%>\%
   ggplot(aes(x = component_num, y = variance_percent)) +
   geom_line(color = "blue", size = 1) +
   geom_point(aes(color = above_kaiser), size = 3) +
-  geom_hline(yintercept = 100/ncol(iris_data), 
-             linetype = "dashed", color = "red",
-             alpha = 0.7) +
+  geom_hline(yintercept = 100 / ncol(iris_data),
+    linetype = "dashed", color = "red",
+    alpha = 0.7) +
   labs(
     title = "Scree Plot with Selection Criteria",
     subtitle = "Red line: Average variance per component",

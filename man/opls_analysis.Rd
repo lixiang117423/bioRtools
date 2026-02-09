@@ -73,7 +73,7 @@ A named list containing:
     \item{\code{scores}}{Data frame with sample scores (coordinates) for visualization:
       \itemize{
         \item \code{t1, t2, ...}: Predictive component scores
-        \item \code{to1, to2, ...}: Orthogonal component scores  
+        \item \code{to1, to2, ...}: Orthogonal component scores
         \item \code{sample_id}: Sample identifiers
         \item \code{group}: Group labels for coloring plots
       }}
@@ -224,7 +224,7 @@ score_plot <- multigroup_oplsda$scores \%>\%
   geom_point(size = 3, alpha = 0.7) +
   stat_ellipse(level = 0.95) +
   labs(
-    x = "Predictive Component 1", 
+    x = "Predictive Component 1",
     y = "Orthogonal Component 1",
     title = "OPLS-DA Score Plot",
     subtitle = "95\% confidence ellipses"
@@ -241,7 +241,7 @@ vip_analysis <- oplsda_results$vip_scores \%>\%
   mutate(
     importance_level = case_when(
       vip >= 2.0 ~ "Very High",
-      vip >= 1.5 ~ "High", 
+      vip >= 1.5 ~ "High",
       vip >= 1.0 ~ "Moderate",
       TRUE ~ "Low"
     )
@@ -265,7 +265,7 @@ vip_plot <- vip_analysis \%>\%
   coord_flip() +
   labs(
     x = "Metabolites",
-    y = "VIP Score", 
+    y = "VIP Score",
     title = "Variable Importance in Projection (VIP)",
     subtitle = "Top 20 discriminating metabolites",
     fill = "Importance"
@@ -286,7 +286,7 @@ cv_metrics <- data.frame(
   Metric = c("R2Y", "Q2Y", "RMSEE", "RMSECV"),
   Value = c(
     model_object@summaryDF$R2Y,
-    model_object@summaryDF$Q2Y, 
+    model_object@summaryDF$Q2Y,
     model_object@summaryDF$RMSEE,
     model_object@summaryDF$RMSECV
   )
@@ -298,7 +298,7 @@ print(cv_metrics)
 # Model interpretation guidelines
 cat("Model Interpretation Guidelines:\n")
 cat("R2Y > 0.5: Good explanatory power\n")
-cat("Q2Y > 0.5: Good predictive ability\n") 
+cat("Q2Y > 0.5: Good predictive ability\n")
 cat("Q2Y > 0.9: Excellent predictive ability\n")
 cat("VIP > 1.0: Important for discrimination\n")
 cat("VIP > 1.5: Highly important variables\n\n")
@@ -308,8 +308,8 @@ if (cv_metrics$Value[cv_metrics$Metric == "Q2Y"] < 0.5) {
   warning("Q2Y < 0.5: Potential overfitting. Consider reducing model complexity.")
 }
 
-if ((cv_metrics$Value[cv_metrics$Metric == "R2Y"] - 
-     cv_metrics$Value[cv_metrics$Metric == "Q2Y"]) > 0.3) {
+if ((cv_metrics$Value[cv_metrics$Metric == "R2Y"] -
+  cv_metrics$Value[cv_metrics$Metric == "Q2Y"]) > 0.3) {
   warning("Large R2Y-Q2Y gap: Possible overfitting detected.")
 }
 }

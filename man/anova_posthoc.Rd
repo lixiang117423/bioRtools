@@ -13,8 +13,8 @@ anova_posthoc(data, group, value, method = "Tukey", level = 0.95)
 
 \item{value}{Column name (as string) containing the numeric values to compare}
 
-\item{method}{Method for post-hoc comparison. Either "Tukey" (default) for 
-Tukey's Honest Significant Difference test or "Duncan" for Duncan's Multiple 
+\item{method}{Method for post-hoc comparison. Either "Tukey" (default) for
+Tukey's Honest Significant Difference test or "Duncan" for Duncan's Multiple
 Range Test}
 
 \item{level}{Confidence level for the comparisons (default: 0.95, i.e., 95%)}
@@ -47,7 +47,7 @@ Significance levels:
 \itemize{
   \item NS: p > 0.05 (not significant)
   \item *: 0.01 < p ≤ 0.05
-  \item **: 0.001 < p ≤ 0.01  
+  \item **: 0.001 < p ≤ 0.01
   \item ***: p ≤ 0.001
 }
 }
@@ -61,7 +61,7 @@ data(iris)
 # Basic usage: Perform ANOVA with Tukey post-hoc test
 tukey_result <- anova_posthoc(
   data = iris,
-  group = "Species", 
+  group = "Species",
   value = "Sepal.Length"
 )
 print(tukey_result)
@@ -70,7 +70,7 @@ print(tukey_result)
 duncan_result <- anova_posthoc(
   data = iris,
   group = "Species",
-  value = "Sepal.Length", 
+  value = "Sepal.Length",
   method = "Duncan"
 )
 print(duncan_result)
@@ -94,8 +94,8 @@ print(grouped_result)
 # Multiple grouping variables
 mtcars_grouped <- mtcars \%>\%
   mutate(cyl = as.factor(cyl),
-         am = as.factor(am),
-         gear_group = as.factor(gear)) \%>\%
+    am = as.factor(am),
+    gear_group = as.factor(gear)) \%>\%
   group_by(cyl, am)
 
 result <- anova_posthoc(

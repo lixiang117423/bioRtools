@@ -14,43 +14,43 @@ rarefy_table(
 )
 }
 \arguments{
-\item{data}{Community data matrix where rows represent samples and columns 
+\item{data}{Community data matrix where rows represent samples and columns
 represent species/OTUs/taxa. The data should contain count data (integers).}
 
 \item{value}{Subsample size for rarefying community. Can be:
 \itemize{
   \item NULL (default): Uses the minimum row sum across all samples
-  \item Single numeric value: Same rarefaction depth for all samples  
+  \item Single numeric value: Same rarefaction depth for all samples
   \item Numeric vector: Different rarefaction depth for each sample
 }}
 
-\item{seed}{Integer value for setting random seed to ensure reproducible 
+\item{seed}{Integer value for setting random seed to ensure reproducible
 results. Default is 123.}
 
-\item{min_reads}{Minimum number of reads required for a sample to be included 
+\item{min_reads}{Minimum number of reads required for a sample to be included
 in rarefaction. Samples with fewer reads will be removed. Default is 1000.}
 
-\item{remove_empty}{Logical indicating whether to remove taxa (columns) that 
+\item{remove_empty}{Logical indicating whether to remove taxa (columns) that
 become absent after rarefaction. Default is TRUE.}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 }
 \value{
 A list containing four components:
 \describe{
-  \item{data.rarefied}{A data frame containing the rarefied community matrix 
+  \item{data.rarefied}{A data frame containing the rarefied community matrix
     with the same structure as input but standardized sampling depth.}
-  \item{rarefaction.info}{A summary data frame with original and rarefied 
+  \item{rarefaction.info}{A summary data frame with original and rarefied
     read counts, number of taxa, and other statistics for each sample.}
-  \item{removed.samples}{Character vector of sample names that were removed 
+  \item{removed.samples}{Character vector of sample names that were removed
     due to insufficient reads (if any).}
   \item{rarefaction.depth}{The actual rarefaction depth used for analysis.}
 }
 }
 \description{
-Perform rarefaction analysis to standardize the sampling depth across all 
-samples in a community data matrix. This is essential for comparing diversity 
+Perform rarefaction analysis to standardize the sampling depth across all
+samples in a community data matrix. This is essential for comparing diversity
 metrics across samples with different sequencing depths in microbiome studies.
 }
 \details{
@@ -66,7 +66,7 @@ enabling fair comparison of diversity metrics across samples. The function:
 \note{
 \itemize{
   \item Input data should be raw count data (not relative abundances)
-  \item Rarefaction involves random sampling, so results may vary between runs 
+  \item Rarefaction involves random sampling, so results may vary between runs
     unless seed is set
   \item Consider the trade-off between retaining samples and rarefaction depth
   \item Some studies prefer alternative normalization methods to rarefaction

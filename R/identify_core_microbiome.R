@@ -57,6 +57,7 @@
 #' @importFrom rlang .data := !!
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Prepare data
 #' otu_data <- matrix(rpois(1000, 10), nrow = 100, ncol = 10)

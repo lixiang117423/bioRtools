@@ -88,11 +88,11 @@ my_cpg_obj <- methylRawList(
 )
 
 print(my_cpg_obj)
- comprehensive_cpg_table <- get_methylkit_data(
-   methyl_obj = my_cpg_obj,
-   context = "CpG",
-   lo.count = 10
- )
+comprehensive_cpg_table <- get_methylkit_data(
+  methyl_obj = my_cpg_obj,
+  context = "CpG",
+  lo.count = 10
+)
 # 3. 查看最终结果
 #    注意新增了 context 列
 print(comprehensive_cpg_table)

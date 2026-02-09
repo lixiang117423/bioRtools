@@ -7,31 +7,31 @@
 permanova_test(formula, sample, method = "bray", permutations = 999)
 }
 \arguments{
-\item{formula}{A formula specifying the response data and explanatory variables, 
-such as \code{data ~ factor1 * factor2 * factor3}. The left-hand side should be 
-a data frame or matrix containing community data (e.g., OTU table), and the 
+\item{formula}{A formula specifying the response data and explanatory variables,
+such as \code{data ~ factor1 * factor2 * factor3}. The left-hand side should be
+a data frame or matrix containing community data (e.g., OTU table), and the
 right-hand side should specify the explanatory variables.}
 
-\item{sample}{Sample information table containing the explanatory variables 
+\item{sample}{Sample information table containing the explanatory variables
 referenced in the formula. Column names must match variable names in the formula.}
 
-\item{method}{The distance method used in \code{vegan::vegdist()} to calculate 
-pairwise distances. Default is "bray" (Bray-Curtis dissimilarity). Other options 
+\item{method}{The distance method used in \code{vegan::vegdist()} to calculate
+pairwise distances. Default is "bray" (Bray-Curtis dissimilarity). Other options
 include "jaccard", "euclidean", "manhattan", etc.}
 
-\item{permutations}{The number of permutations for the permutation test, or a 
-list of control values for permutations as returned by \code{vegan::how()}, 
+\item{permutations}{The number of permutations for the permutation test, or a
+list of control values for permutations as returned by \code{vegan::how()},
 or a permutation matrix where each row gives the permuted indices. Default is 999.}
 }
 \value{
 A list containing three components:
 \describe{
-  \item{result.permanova}{A data frame containing the PERMANOVA results table 
-    with degrees of freedom, sum of squares, mean squares, F values, R-squared, 
+  \item{result.permanova}{A data frame containing the PERMANOVA results table
+    with degrees of freedom, sum of squares, mean squares, F values, R-squared,
     and p-values for each factor.}
-  \item{raw.result}{The original \code{vegan::adonis2()} output object, which 
+  \item{raw.result}{The original \code{vegan::adonis2()} output object, which
     can be used for further analysis or custom formatting.}
-  \item{summary.stats}{A simplified summary table with key statistics including 
+  \item{summary.stats}{A simplified summary table with key statistics including
     R-squared and p-values for each factor.}
 }
 }
@@ -40,14 +40,14 @@ Perform Permutational Multivariate Analysis of Variance (PERMANOVA)
 }
 \details{
 PERMANOVA tests the null hypothesis that the centroids and dispersion of groups
-as defined by the explanatory variables are equivalent for all groups. It is a 
+as defined by the explanatory variables are equivalent for all groups. It is a
 non-parametric method suitable for ecological community data. The function uses
 \code{vegan::adonis2()} which is the updated version of \code{vegan::adonis()}.
 }
 \note{
-This function uses \code{vegan::adonis2()} instead of the deprecated 
-\code{vegan::adonis()} for better performance and accuracy. If you need to use 
-the old \code{adonis()} function for compatibility reasons, please specify this 
+This function uses \code{vegan::adonis2()} instead of the deprecated
+\code{vegan::adonis()} for better performance and accuracy. If you need to use
+the old \code{adonis()} function for compatibility reasons, please specify this
 in your analysis requirements.
 }
 \examples{

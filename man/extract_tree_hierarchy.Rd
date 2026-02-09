@@ -14,29 +14,29 @@ extract_tree_hierarchy(
 )
 }
 \arguments{
-\item{tree_file}{Character string specifying the path to the phylogenetic tree 
-file. Supported formats include Newick (.nwk, .tre, .tree) and other formats 
+\item{tree_file}{Character string specifying the path to the phylogenetic tree
+file. Supported formats include Newick (.nwk, .tre, .tree) and other formats
 supported by \code{ggtree::read.tree()}.}
 
-\item{include_internal_nodes}{Logical indicating whether to include internal 
+\item{include_internal_nodes}{Logical indicating whether to include internal
 (non-tip) nodes in the output. Default is FALSE (tips only).}
 
-\item{max_path_length}{Numeric value specifying the maximum path length to prevent 
+\item{max_path_length}{Numeric value specifying the maximum path length to prevent
 infinite loops in case of circular references. Default is 1000.}
 
-\item{column_prefix}{Character string specifying the prefix for hierarchy level 
+\item{column_prefix}{Character string specifying the prefix for hierarchy level
 columns. Default is "parent_".}
 
-\item{return_format}{Character string specifying the output format. Options are 
-"wide" (default) for wide format with separate columns for each level, or 
+\item{return_format}{Character string specifying the output format. Options are
+"wide" (default) for wide format with separate columns for each level, or
 "long" for long format with path information in a single column.}
 
 \item{verbose}{Logical indicating whether to print progress messages. Default is TRUE.}
 }
 \value{
-A data frame containing hierarchical information. In wide format, 
-  each row represents a tip node with columns showing the node IDs at each 
-  hierarchical level from root to tip. In long format, each row represents 
+A data frame containing hierarchical information. In wide format,
+  each row represents a tip node with columns showing the node IDs at each
+  hierarchical level from root to tip. In long format, each row represents
   a single node-level combination.
 }
 \description{
@@ -54,8 +54,8 @@ This function performs the following steps:
   \item Converts the hierarchical information to a structured data frame
 }
 
-The function uses an internal helper function \code{find_path_to_root} to 
-trace the complete path from any given node to the root node. This ensures 
+The function uses an internal helper function \code{find_path_to_root} to
+trace the complete path from any given node to the root node. This ensures
 that all hierarchical relationships are captured accurately.
 }
 \note{
@@ -67,6 +67,8 @@ that all hierarchical relationships are captured accurately.
 }
 }
 \examples{
+library(bioRtools)
+library(writexl)
 \dontrun{
 # Basic usage - extract hierarchy information
 tree_hierarchy <- extract_tree_hierarchy("path/to/your/tree.nwk")

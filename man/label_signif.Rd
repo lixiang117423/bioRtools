@@ -48,6 +48,7 @@ Custom thresholds can be provided to change these boundaries. The function
 handles NA values by preserving them in the output.
 }
 \examples{
+library(bioRtools)
 # Basic usage
 p_vals <- c(0.0001, 0.005, 0.03, 0.07, 0.5, NA)
 label_signif(p_vals)

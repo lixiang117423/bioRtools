@@ -21,37 +21,37 @@ plot_manhattan(
 )
 }
 \arguments{
-\item{data}{A data frame containing the plotting data. If \code{input_file} is 
+\item{data}{A data frame containing the plotting data. If \code{input_file} is
 provided, this parameter can be omitted.}
 
-\item{input_file}{Character string specifying the path to the input data file. 
-If \code{data} is provided, this parameter can be omitted. Supports common 
+\item{input_file}{Character string specifying the path to the input data file.
+If \code{data} is provided, this parameter can be omitted. Supports common
 delimited formats (csv, tsv, txt).}
 
-\item{chr_col}{Character string specifying the chromosome column name. 
+\item{chr_col}{Character string specifying the chromosome column name.
 Default is "chr".}
 
-\item{pos_col}{Character string specifying the physical position column name. 
+\item{pos_col}{Character string specifying the physical position column name.
 Default is "pos".}
 
-\item{val_col}{Character string specifying the value column name (e.g., p-values). 
+\item{val_col}{Character string specifying the value column name (e.g., p-values).
 Default is "value".}
 
-\item{transform_log10}{Logical value indicating whether to apply -log10 
+\item{transform_log10}{Logical value indicating whether to apply -log10
 transformation to the values. Set to TRUE for p-values. Default is FALSE.}
 
 \item{title}{Character string for the plot title. Default is "Manhattan Plot".}
 
-\item{ylab}{Character string for the Y-axis label. If NULL, will be set 
+\item{ylab}{Character string for the Y-axis label. If NULL, will be set
 automatically based on \code{transform_log10}.}
 
-\item{colors}{Character vector of colors for alternating chromosome coloring. 
+\item{colors}{Character vector of colors for alternating chromosome coloring.
 Default is c("gray50", "steelblue").}
 
-\item{threshold_line}{Numeric value for drawing a horizontal threshold line. 
+\item{threshold_line}{Numeric value for drawing a horizontal threshold line.
 Default is NULL (no line).}
 
-\item{threshold_color}{Character string specifying the threshold line color. 
+\item{threshold_color}{Character string specifying the threshold line color.
 Default is "red".}
 
 \item{point_size}{Numeric value for point size. Default is 1.2.}
@@ -61,11 +61,11 @@ Default is "red".}
 \value{
 A list containing three components:
 \describe{
-  \item{plot.manhattan}{A ggplot object that can be further customized or 
+  \item{plot.manhattan}{A ggplot object that can be further customized or
     directly displayed.}
-  \item{data.processed}{The processed data frame used for plotting, including 
+  \item{data.processed}{The processed data frame used for plotting, including
     cumulative positions and transformed values.}
-  \item{chromosome.centers}{A data frame containing the center positions for 
+  \item{chromosome.centers}{A data frame containing the center positions for
     each chromosome, useful for custom axis labeling.}
 }
 }
@@ -75,10 +75,10 @@ genome-wide data. Supports both data frames and file input, with customizable
 visualization options.
 }
 \details{
-The function automatically handles chromosome sorting using natural ordering 
-(chr1, chr2, ..., chr10, chr11, ...) and calculates cumulative positions for 
-proper Manhattan plot visualization. The plot uses alternating colors to 
-distinguish chromosomes and includes optional threshold lines for significance 
+The function automatically handles chromosome sorting using natural ordering
+(chr1, chr2, ..., chr10, chr11, ...) and calculates cumulative positions for
+proper Manhattan plot visualization. The plot uses alternating colors to
+distinguish chromosomes and includes optional threshold lines for significance
 cutoffs.
 }
 \note{
@@ -95,7 +95,7 @@ n_chr <- 10
 n_points_per_chr <- 1000
 mock_data <- data.frame(
   chromosome = rep(paste0("chr", 1:n_chr), each = n_points_per_chr),
-  position = unlist(lapply(1:n_chr, function(x) 
+  position = unlist(lapply(1:n_chr, function(x)
     sample(1:1e6, n_points_per_chr, replace = TRUE))),
   p_value = runif(n_chr * n_points_per_chr, min = 1e-8, max = 1)
 )
@@ -104,7 +104,7 @@ mock_data <- data.frame(
 manhattan_result <- plot_manhattan(
   data = mock_data,
   chr_col = "chromosome",
-  pos_col = "position", 
+  pos_col = "position",
   val_col = "p_value",
   transform_log10 = TRUE,
   title = "GWAS Manhattan Plot"
@@ -118,7 +118,7 @@ manhattan_result2 <- plot_manhattan(
   data = mock_data,
   chr_col = "chromosome",
   pos_col = "position",
-  val_col = "p_value", 
+  val_col = "p_value",
   transform_log10 = TRUE,
   title = "Manhattan Plot with Threshold",
   threshold_line = -log10(5e-8),

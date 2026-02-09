@@ -37,6 +37,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' # Load example data
 #' cq_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.cq.txt", package = "bioRtools")
 #' design_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.design.txt", package = "bioRtools")

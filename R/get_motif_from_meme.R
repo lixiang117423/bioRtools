@@ -27,6 +27,7 @@
 #' @importFrom rlang .data
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Load TXT format
 #' filepath_txt <- system.file("examples", "meme.txt", package = "ggmotif")

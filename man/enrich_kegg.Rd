@@ -15,7 +15,7 @@ enrich_kegg(
 }
 \arguments{
 \item{gene}{Character vector containing gene identifiers (e.g., gene symbols,
-Entrez IDs, Ensembl IDs, or other identifiers) that correspond to 
+Entrez IDs, Ensembl IDs, or other identifiers) that correspond to
 differentially expressed genes for pathway enrichment analysis}
 
 \item{kegg.db}{Data frame containing KEGG pathway annotation information.
@@ -143,10 +143,10 @@ sample_kegg_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5", "GENE6"),
   kegg.id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
   kegg.term = c("Cell cycle", "Cell cycle", "Cell cycle",
-                "Glycolysis / Gluconeogenesis", "Glycolysis / Gluconeogenesis",
-                "Apoptosis", "Apoptosis"),
+    "Glycolysis / Gluconeogenesis", "Glycolysis / Gluconeogenesis",
+    "Apoptosis", "Apoptosis"),
   kegg.category = c("Cell Growth and Death", "Cell Growth and Death", "Cell Growth and Death",
-                    "Metabolism", "Metabolism", "Cell Growth and Death", "Cell Growth and Death")
+    "Metabolism", "Metabolism", "Cell Growth and Death", "Cell Growth and Death")
 )
 
 sample_genes <- c("GENE1", "GENE2", "GENE4", "GENE6")
@@ -195,8 +195,8 @@ kegg_for_plot <- kegg_results \%>\%
   head(15) \%>\%
   mutate(
     pathway_short = ifelse(nchar(Description) > 40,
-                          paste0(substr(Description, 1, 37), "..."),
-                          Description)
+      paste0(substr(Description, 1, 37), "..."),
+      Description)
   )
 
 # The results are ready for ggplot2 visualization

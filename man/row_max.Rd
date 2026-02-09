@@ -24,7 +24,7 @@ This function is designed to work seamlessly with dplyr::mutate().
 library(dplyr)
 df <- data.frame(
   sample1 = c(100, 23, 95),
-  sample2 = c(55, 24, 6), 
+  sample2 = c(55, 24, 6),
   sample3 = c(93, 20, 59),
   row.names = c("Gene1", "Gene2", "Gene3")
 )

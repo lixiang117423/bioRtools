@@ -77,6 +77,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Basic LD heatmap with default settings
 #' ld_result <- plot_LDheatmap(

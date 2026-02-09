@@ -28,6 +28,7 @@ Visualize the location of motifs identified by MEME on sequences. Can
 optionally display sequences aligned with a phylogenetic tree.
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Without phylogenetic tree
 filepath <- system.file("examples", "meme.xml", package = "ggmotif")

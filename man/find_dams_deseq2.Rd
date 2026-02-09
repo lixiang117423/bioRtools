@@ -61,7 +61,7 @@ A data frame containing differential abundance results with columns:
     \item \code{significance}: Significance classification:
       \itemize{
         \item "Enriched": log2FC > threshold & padj < threshold
-        \item "Depleted": log2FC < -threshold & padj < threshold  
+        \item "Depleted": log2FC < -threshold & padj < threshold
         \item "NS": Not significant
       }
     \item \code{fold_change}: Actual fold change (2^log2FoldChange)
@@ -139,15 +139,15 @@ print(enriched[, c("feature_id", "log2FoldChange", "padj", "baseMean")])
 dam_strict <- find_dams_deseq2(
   data = t(df.pcoa.otu),
   sample = df.pcoa.sample,
-  formula = ~treatment + batch,  # Account for batch effects
+  formula = ~ treatment + batch,  # Account for batch effects
   log2FoldChange = 1.5,          # 3-fold change threshold
   padj = 0.01,                   # 1\% FDR threshold
   min.count.per.sample = 5,      # Higher count threshold
   min.samples.with.counts = 3    # Present in at least 3 samples
 )
 
-print(paste("Strict analysis found", sum(dam_strict$significance != "NS"), 
-            "significant features"))
+print(paste("Strict analysis found", sum(dam_strict$significance != "NS"),
+  "significant features"))
 }
 
 # Example 3: Time series analysis
@@ -157,7 +157,7 @@ print(paste("Strict analysis found", sum(dam_strict$significance != "NS"),
 longitudinal_results <- find_dams_deseq2(
   data = t(df.pcoa.otu),
   sample = df.pcoa.sample,
-  formula = ~timepoint + subject,  # Account for subject variation
+  formula = ~ timepoint + subject,  # Account for subject variation
   log2FoldChange = 0.5,            # More sensitive threshold
   padj = 0.1                       # Less stringent for exploratory analysis
 )

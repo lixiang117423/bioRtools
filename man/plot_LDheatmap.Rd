@@ -40,7 +40,7 @@ The file should contain SNP genotype data.}
   \item Custom vector: User-provided color vector (e.g., c("#f7fcf5", "#238b45"))
 }}
 
-\item{color_steps}{Integer specifying the number of color steps in the palette. 
+\item{color_steps}{Integer specifying the number of color steps in the palette.
 Default is 100.}
 
 \item{flip_diagonal}{Logical indicating whether to flip the heatmap along the diagonal.
@@ -57,19 +57,19 @@ If NULL, the plot will only be displayed. Default is NULL.}
 \item{file_format}{Character string specifying the output format. Options include:
 "png", "pdf", "jpeg", "tiff". Default is "png".}
 
-\item{width}{Numeric value for plot width. For raster formats (png, jpeg, tiff), 
+\item{width}{Numeric value for plot width. For raster formats (png, jpeg, tiff),
 this is in pixels when multiplied by dpi. For PDF, this is in inches. Default is 9.}
 
-\item{height}{Numeric value for plot height. For raster formats (png, jpeg, tiff), 
+\item{height}{Numeric value for plot height. For raster formats (png, jpeg, tiff),
 this is in pixels when multiplied by dpi. For PDF, this is in inches. Default is 7.}
 
-\item{dpi}{Numeric value for resolution (dots per inch) for raster formats. 
+\item{dpi}{Numeric value for resolution (dots per inch) for raster formats.
 Default is 300.}
 
-\item{ggplot_version}{Logical indicating whether to create a ggplot2 version 
+\item{ggplot_version}{Logical indicating whether to create a ggplot2 version
 of the heatmap in addition to the LDheatmap version. Default is TRUE.}
 
-\item{show_values}{Logical indicating whether to show LD values in the ggplot2 
+\item{show_values}{Logical indicating whether to show LD values in the ggplot2
 heatmap tiles. Default is FALSE (recommended for large datasets).}
 
 \item{text_size}{Numeric value for text size in ggplot2 version when show_values = TRUE.
@@ -112,6 +112,7 @@ This function requires the LDheatmap package and ttplot package for VCF file pro
 If LDheatmap is not installed, it will be installed automatically from Bioconductor.
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Basic LD heatmap with default settings
 ld_result <- plot_LDheatmap(
@@ -152,10 +153,10 @@ ld_ggplot <- plot_LDheatmap(
 )
 
 # Save the ggplot2 version
-ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot.ggplot2, 
-                width = 10, height = 8, dpi = 300)
-ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot.ggplot2, 
-                width = 10, height = 8)
+ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot.ggplot2,
+  width = 10, height = 8, dpi = 300)
+ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot.ggplot2,
+  width = 10, height = 8)
 
 # Customize the ggplot2 version further
 custom_plot <- ld_ggplot$plot.ggplot2 +
@@ -168,8 +169,8 @@ custom_plot <- ld_ggplot$plot.ggplot2 +
     caption = "Generated with bioRtools::plot_LDheatmap()"
   )
 
-ggplot2::ggsave("ld_heatmap_custom.png", custom_plot, 
-                width = 12, height = 10, dpi = 300)
+ggplot2::ggsave("ld_heatmap_custom.png", custom_plot,
+  width = 12, height = 10, dpi = 300)
 
 # Multiple format output with soft colors
 ld_multi <- plot_LDheatmap(

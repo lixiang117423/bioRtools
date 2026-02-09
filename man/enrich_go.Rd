@@ -15,7 +15,7 @@ enrich_go(
 }
 \arguments{
 \item{gene}{Character vector containing gene identifiers (e.g., gene symbols,
-Ensembl IDs, or other identifiers) that correspond to differentially 
+Ensembl IDs, or other identifiers) that correspond to differentially
 expressed genes for enrichment analysis}
 
 \item{go.db}{Data frame containing GO annotation information. Must include
@@ -33,7 +33,7 @@ the following columns:
   \item \code{"bonferroni"}: Bonferroni correction
   \item \code{"holm"}: Holm's step-down procedure
   \item \code{"hochberg"}: Hochberg's procedure
-  \item \code{"hommel"}: Hommel's procedure  
+  \item \code{"hommel"}: Hommel's procedure
   \item \code{"BY"}: Benjamini-Yekutieli procedure
   \item \code{"fdr"}: Synonym for "BH"
   \item \code{"none"}: No correction
@@ -65,7 +65,7 @@ A data frame containing enrichment results with columns:
   }
 }
 \description{
-This function performs Gene Ontology enrichment analysis on a set of 
+This function performs Gene Ontology enrichment analysis on a set of
 differentially expressed genes using a custom GO annotation database.
 It identifies significantly over-represented GO terms and calculates
 enrichment statistics with multiple testing correction.
@@ -125,10 +125,10 @@ print(go_results_strict)
 # This shows the required structure for go.db parameter
 sample_go_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5"),
-  go.id = c("GO:0008150", "GO:0008150", "GO:0008150", 
-            "GO:0003674", "GO:0003674", "GO:0005575"),
+  go.id = c("GO:0008150", "GO:0008150", "GO:0008150",
+    "GO:0003674", "GO:0003674", "GO:0005575"),
   go.term = c("biological_process", "biological_process", "biological_process",
-              "molecular_function", "molecular_function", "cellular_component"),
+    "molecular_function", "molecular_function", "cellular_component"),
   go.ontology = c("BP", "BP", "BP", "MF", "MF", "CC")
 )
 

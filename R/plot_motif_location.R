@@ -31,6 +31,7 @@
 #' @importFrom rlang .data
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Without phylogenetic tree
 #' filepath <- system.file("examples", "meme.xml", package = "ggmotif")

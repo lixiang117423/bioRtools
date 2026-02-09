@@ -85,6 +85,7 @@
 #'
 #' @export
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Mode 1: Analysis without tree (traditional layout)
 #' result <- admixture_phylo_analysis(

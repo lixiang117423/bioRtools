@@ -59,13 +59,13 @@ library(dplyr)
 gene_data <- data.frame(
   condition = c(rep("Treatment_A", 5), rep("Treatment_B", 5), rep("Control", 4)),
   gene_id = c("GENE1", "GENE2", "GENE3", "GENE4", "GENE5",
-              "GENE3", "GENE4", "GENE6", "GENE7", "GENE8", 
-              "GENE1", "GENE9", "GENE10", "GENE11")
+    "GENE3", "GENE4", "GENE6", "GENE7", "GENE8",
+    "GENE1", "GENE9", "GENE10", "GENE11")
 )
 
 gene_list <- df_to_list(
   data = gene_data,
-  group = "condition", 
+  group = "condition",
   value = "gene_id"
 )
 print(gene_list)
@@ -73,7 +73,7 @@ print(lengths(gene_list))  # Number of genes per condition
 
 # Example 2: Creating overlapping sets (original example improved)
 df_A <- data.frame(group = "A", value = 1:10)
-df_B <- data.frame(group = "B", value = 3:12) 
+df_B <- data.frame(group = "B", value = 3:12)
 df_C <- data.frame(group = "C", value = 7:20)
 
 combined_data <- dplyr::bind_rows(df_A, df_B, df_C)
@@ -99,11 +99,11 @@ print(paste("A ∩ B ∩ C:", paste(intersection_ABC, collapse = ", ")))
 # Example 3: Real biological application - DEG analysis
 deg_results <- data.frame(
   comparison = c(rep("TreatmentA_vs_Control", 6),
-                 rep("TreatmentB_vs_Control", 5),
-                 rep("TreatmentA_vs_TreatmentB", 4)),
+    rep("TreatmentB_vs_Control", 5),
+    rep("TreatmentA_vs_TreatmentB", 4)),
   gene = c("ATG1", "ATG2", "PTEN", "TP53", "MYC", "EGFR",
-           "ATG1", "PTEN", "BRCA1", "BRCA2", "MYC",
-           "TP53", "MYC", "EGFR", "KRAS")
+    "ATG1", "PTEN", "BRCA1", "BRCA2", "MYC",
+    "TP53", "MYC", "EGFR", "KRAS")
 )
 
 deg_lists <- df_to_list(

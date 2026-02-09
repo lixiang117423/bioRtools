@@ -51,6 +51,7 @@ method (2^-ddCt), which normalizes target gene expression to a reference
 gene and compares to a reference group.
 }
 \examples{
+library(bioRtools)
 # Load example data
 cq_data_path <- system.file("extdata/qPCR", "ddct.cq.txt", package = "bioRtools")
 design_data_path <- system.file("extdata/qPCR", "ddct.design.txt", package = "bioRtools")

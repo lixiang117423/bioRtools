@@ -74,6 +74,7 @@
 #' Expression values are log2(x+1) transformed before analysis.
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Using file paths
 #' result1 <- run_wgcna_analysis(

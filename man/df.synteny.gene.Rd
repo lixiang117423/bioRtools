@@ -33,6 +33,7 @@ with 15 genes total.
 Test data for synteny plot.
 }
 \examples{
+library(bioRtools)
 data(df.synteny.gene)
 head(df.synteny.gene)
 }

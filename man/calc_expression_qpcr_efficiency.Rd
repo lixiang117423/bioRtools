@@ -45,6 +45,7 @@ reference gene selection using GeNorm algorithm if reference genes are not speci
 This function preserves the original algorithm logic from the author.
 }
 \examples{
+library(bioRtools)
 # Load example data
 cq_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.cq.txt", package = "bioRtools")
 design_data_path <- system.file("extdata/qPCR", "cal.expre.rqpcr.design.txt", package = "bioRtools")

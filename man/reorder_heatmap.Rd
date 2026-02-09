@@ -16,20 +16,20 @@ reorder_heatmap(
 )
 }
 \arguments{
-\item{data}{A data frame in long format (tidy format) containing the data 
-to be reordered. Must contain columns specified by \code{col}, \code{row}, 
+\item{data}{A data frame in long format (tidy format) containing the data
+to be reordered. Must contain columns specified by \code{col}, \code{row},
 and \code{value} parameters.}
 
-\item{col}{Character string specifying the column name containing sample 
-identifiers (typically samples, conditions, or time points). This will 
+\item{col}{Character string specifying the column name containing sample
+identifiers (typically samples, conditions, or time points). This will
 become the columns in the heatmap.}
 
-\item{row}{Character string specifying the column name containing feature 
-identifiers (typically genes, metabolites, or other measured entities). 
+\item{row}{Character string specifying the column name containing feature
+identifiers (typically genes, metabolites, or other measured entities).
 This will become the rows in the heatmap.}
 
-\item{value}{Character string specifying the column name containing the 
-numerical values to be displayed in the heatmap (e.g., expression levels, 
+\item{value}{Character string specifying the column name containing the
+numerical values to be displayed in the heatmap (e.g., expression levels,
 abundances, intensities).}
 
 \item{method}{Character string specifying the reordering method. Options:
@@ -39,39 +39,39 @@ abundances, intensities).}
   \item "mean": Order by mean values
 }}
 
-\item{ties_method}{Character string specifying how to handle ties when 
+\item{ties_method}{Character string specifying how to handle ties when
 finding peak values. Options: "first", "last", "random". Default is "first".}
 
-\item{na_handling}{Character string specifying how to handle missing values. 
+\item{na_handling}{Character string specifying how to handle missing values.
 Options: "remove", "zero", "mean". Default is "remove".}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 }
 \value{
 A list containing four components:
 \describe{
-  \item{data.reordered}{A data frame with the same structure as input but 
+  \item{data.reordered}{A data frame with the same structure as input but
     with reordered factor levels for optimal heatmap visualization.}
-  \item{column.order}{A character vector showing the optimal column order 
+  \item{column.order}{A character vector showing the optimal column order
     based on the number of features that peak in each column.}
-  \item{row.order}{A character vector showing the optimal row order based 
+  \item{row.order}{A character vector showing the optimal row order based
     on peak expression patterns.}
-  \item{peak.summary}{A summary data frame showing where each feature peaks 
+  \item{peak.summary}{A summary data frame showing where each feature peaks
     and how many features peak in each column.}
 }
 }
 \description{
-Reorder rows and columns of data in long format to optimize heatmap 
+Reorder rows and columns of data in long format to optimize heatmap
 visualization by grouping features based on their peak expression patterns.
-This function identifies where each feature reaches its maximum value and 
+This function identifies where each feature reaches its maximum value and
 groups similar patterns together to reveal biological clusters and trends.
 }
 \details{
 The reordering algorithm works by:
 \enumerate{
   \item Identifying where each feature (row) reaches its maximum value
-  \item Counting how many features peak in each sample (column)  
+  \item Counting how many features peak in each sample (column)
   \item Ordering columns by the number of features that peak there
   \item Ordering rows by their peak expression patterns
 }
@@ -103,7 +103,7 @@ data(df.reorder2heatmap)
 reorder_result <- reorder_heatmap(
   data = df.reorder2heatmap,
   col = "sample",
-  row = "meta", 
+  row = "meta",
   value = "value"
 )
 
@@ -131,7 +131,7 @@ reorder_hierarchical <- reorder_heatmap(
   data = df.reorder2heatmap,
   col = "sample",
   row = "meta",
-  value = "value", 
+  value = "value",
   method = "hierarchical"
 )
 
@@ -142,7 +142,7 @@ time_series_data <- data.frame(
   expression = c(
     # Early genes
     rep(c(10, 8, 4, 2, 1, 1), 5),
-    # Mid genes  
+    # Mid genes
     rep(c(2, 6, 10, 8, 3, 1), 5),
     # Late genes
     rep(c(1, 2, 3, 6, 10, 8), 5),
@@ -154,7 +154,7 @@ time_series_data <- data.frame(
 # Reorder time-series data
 time_reordered <- reorder_heatmap(
   data = time_series_data,
-  col = "timepoint", 
+  col = "timepoint",
   row = "gene",
   value = "expression"
 )

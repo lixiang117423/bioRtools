@@ -20,49 +20,49 @@ admixture_phylo_analysis(
 )
 }
 \arguments{
-\item{admixture_path}{Character string specifying the directory path containing 
+\item{admixture_path}{Character string specifying the directory path containing
 Admixture .Q files and .fam file. All .Q files in this directory will be processed.}
 
-\item{tree_file}{Optional character string specifying the path to the phylogenetic tree 
-file (Newick format). If provided, a phylogenetic tree will be drawn and combined 
+\item{tree_file}{Optional character string specifying the path to the phylogenetic tree
+file (Newick format). If provided, a phylogenetic tree will be drawn and combined
 with the admixture plot. If NULL, only admixture plot will be returned. Default is NULL.}
 
-\item{sample_group}{Optional data frame containing sample grouping information 
-with columns 'label' (sample names), 'group', and optionally 'color'. 
+\item{sample_group}{Optional data frame containing sample grouping information
+with columns 'label' (sample names), 'group', and optionally 'color'.
 Can also be a file path to read the grouping information.
 If provided when tree_file is given, tree tips will be colored by groups. Default is NULL.}
 
-\item{k_range}{Integer vector specifying which K values to include in the 
-analysis. Can be specified as a range (e.g., 2:5) or specific values 
+\item{k_range}{Integer vector specifying which K values to include in the
+analysis. Can be specified as a range (e.g., 2:5) or specific values
 (e.g., c(2,3,5)). If NULL, all available K values will be used. Default is NULL.}
 
-\item{color_scale}{Character string specifying the color scale to use for admixture. 
-Options: "default" (uses optimized base colors), "aaas", "npg", "lancet", 
-"jco", "ucscgb", "uchicago", "simpsons", "rickandmorty", or "manual". 
+\item{color_scale}{Character string specifying the color scale to use for admixture.
+Options: "default" (uses optimized base colors), "aaas", "npg", "lancet",
+"jco", "ucscgb", "uchicago", "simpsons", "rickandmorty", or "manual".
 Default is "aaas".}
 
 \item{tree_color_scale}{Character string specifying the color scale for tree groups.
 Options: "d3", "aaas", "npg", "lancet", etc. Default is "d3".}
 
-\item{manual_colors}{Character vector of colors for manual admixture color scale. 
+\item{manual_colors}{Character vector of colors for manual admixture color scale.
 Only used when color_scale = "manual". Default is NULL.}
 
-\item{tree_width}{Numeric value specifying the relative width of the tree plot. 
+\item{tree_width}{Numeric value specifying the relative width of the tree plot.
 Default is 0.2 (20% of total width).}
 
-\item{tree_linewidth}{Numeric value specifying the line width for tree branches. 
+\item{tree_linewidth}{Numeric value specifying the line width for tree branches.
 Default is 0.2.}
 
-\item{tip_point_size}{Numeric value specifying the size of tip points in tree. 
+\item{tip_point_size}{Numeric value specifying the size of tip points in tree.
 Default is 0.1.}
 
-\item{show_branch_length}{Logical indicating whether to show branch lengths. 
+\item{show_branch_length}{Logical indicating whether to show branch lengths.
 Default is FALSE.}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 
-\item{k_ncol}{Integer specifying number of columns for K value facets. 
+\item{k_ncol}{Integer specifying number of columns for K value facets.
 Default is 9.}
 }
 \value{
@@ -74,9 +74,9 @@ A list containing:
 }
 }
 \description{
-Process Admixture .Q files and create population structure plots with integrated 
-phylogenetic tree visualization using ggplot2 and ggtree. This function creates 
-a rotated layout with samples on Y-axis and values on X-axis, with K values 
+Process Admixture .Q files and create population structure plots with integrated
+phylogenetic tree visualization using ggplot2 and ggtree. This function creates
+a rotated layout with samples on Y-axis and values on X-axis, with K values
 arranged horizontally, and optionally combines with a phylogenetic tree.
 }
 \details{
@@ -111,12 +111,13 @@ The sample_group parameter can be:
 \itemize{
   \item Requires tidyverse and ggplot2 packages
   \item When using phylogenetic features: requires ape, treeio, ggtree, aplot packages
-  \item When using ggsci color scales: requires ggsci package  
+  \item When using ggsci color scales: requires ggsci package
   \item Returns aplot object when tree provided, ggplot2 object otherwise
   \item No files are saved automatically - use ggsave() if needed
 }
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Mode 1: Analysis without tree (traditional layout)
 result <- admixture_phylo_analysis(

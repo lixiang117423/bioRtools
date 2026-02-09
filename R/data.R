@@ -244,6 +244,7 @@
 #' with 15 genes total.
 #' }
 #' @examples
+#' library(bioRtools)
 #' data(df.synteny.gene)
 #' head(df.synteny.gene)
 "df.synteny.gene"

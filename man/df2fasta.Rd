@@ -50,17 +50,17 @@ aligned sequences.}
 Default is FALSE. Set to TRUE for standardized output.}
 }
 \value{
-If \code{output_file} is NULL, returns a single-column data frame with FASTA 
-formatted text (headers and sequences alternating in rows). 
-If \code{output_file} is specified, writes to file and invisibly returns the 
+If \code{output_file} is NULL, returns a single-column data frame with FASTA
+formatted text (headers and sequences alternating in rows).
+If \code{output_file} is specified, writes to file and invisibly returns the
 file path. The returned data frame has one column named "fasta_line" containing
 the properly formatted FASTA entries.
 }
 \description{
-\code{df2fasta} efficiently converts a data frame containing sequence 
-identifiers and sequences into FASTA format. This optimized version uses 
-vectorized operations to achieve superior performance compared to loop-based 
-approaches, making it suitable for processing large genomic, transcriptomic, 
+\code{df2fasta} efficiently converts a data frame containing sequence
+identifiers and sequences into FASTA format. This optimized version uses
+vectorized operations to achieve superior performance compared to loop-based
+approaches, making it suitable for processing large genomic, transcriptomic,
 or proteomic datasets.
 }
 \details{
@@ -101,6 +101,7 @@ The function handles various input formats and edge cases:
 }
 
 \examples{
+library(bioRtools)
 # Create sample sequence data
 sample_data <- data.frame(
   sequence_id = c("seq1", "sequence2", "long_sequence_3"),
@@ -125,26 +126,26 @@ cat(paste(fasta_df$fasta_line, collapse = "\n"))
 df2fasta(sample_data, output_file = "sequences.fasta")
 
 # Custom column specification
-df2fasta(sample_data, 
-         id_col = "sequence_id", 
-         seq_col = "sequence",
-         output_file = "output.fasta")
+df2fasta(sample_data,
+  id_col = "sequence_id",
+  seq_col = "sequence",
+  output_file = "output.fasta")
 
 # With line wrapping (standard FASTA format)
-df2fasta(sample_data, 
-         line_width = 60,
-         output_file = "wrapped_sequences.fasta")
+df2fasta(sample_data,
+  line_width = 60,
+  output_file = "wrapped_sequences.fasta")
 
 # Clean and standardize sequences
 df2fasta(sample_data,
-         remove_gaps = TRUE,
-         to_upper = TRUE,
-         output_file = "clean_sequences.fasta")
+  remove_gaps = TRUE,
+  to_upper = TRUE,
+  output_file = "clean_sequences.fasta")
 
 # Maximum performance for large datasets
-df2fasta(large_dataset, 
-         validate = FALSE,
-         output_file = "large_output.fasta")
+df2fasta(large_dataset,
+  validate = FALSE,
+  output_file = "large_output.fasta")
 }
 
 # Working with different column arrangements
@@ -154,20 +155,20 @@ reversed_data <- data.frame(
 )
 
 # Specify columns by name
-fasta_reversed <- df2fasta(reversed_data, 
-                          id_col = "names", 
-                          seq_col = "sequences")
+fasta_reversed <- df2fasta(reversed_data,
+  id_col = "names",
+  seq_col = "sequences")
 
 # Or by position (sequences in column 1, names in column 2)
-fasta_by_pos <- df2fasta(reversed_data, 
-                        id_col = 2, 
-                        seq_col = 1)
+fasta_by_pos <- df2fasta(reversed_data,
+  id_col = 2,
+  seq_col = 1)
 
 }
 \references{
 FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 
-Pearson, W.R. and Lipman, D.J. (1988) Improved tools for biological sequence 
+Pearson, W.R. and Lipman, D.J. (1988) Improved tools for biological sequence
 comparison. PNAS 85:2444-2448.
 }
 \seealso{

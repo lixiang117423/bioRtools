@@ -26,6 +26,7 @@ This function parses MEME output files and returns structured motif data suitabl
 for downstream analysis and visualization.
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Load TXT format
 filepath_txt <- system.file("examples", "meme.txt", package = "ggmotif")

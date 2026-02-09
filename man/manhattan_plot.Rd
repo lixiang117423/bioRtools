@@ -125,10 +125,10 @@ print(manhattan_basic)
 
 # Summary of results
 print(paste("Total SNPs:", nrow(simulated_gwas)))
-print(paste("Genome-wide significant SNPs (p < 5e-8):", 
-            sum(simulated_gwas$p < 5e-8, na.rm = TRUE)))
-print(paste("Suggestive SNPs (p < 1e-5):", 
-            sum(simulated_gwas$p < 1e-5, na.rm = TRUE)))
+print(paste("Genome-wide significant SNPs (p < 5e-8):",
+  sum(simulated_gwas$p < 5e-8, na.rm = TRUE)))
+print(paste("Suggestive SNPs (p < 1e-5):",
+  sum(simulated_gwas$p < 1e-5, na.rm = TRUE)))
 }
 
 # Example 2: Custom significance thresholds
@@ -146,9 +146,9 @@ print(manhattan_gwas)
 
 # Add custom annotations
 manhattan_annotated <- manhattan_gwas +
-  annotate("text", x = Inf, y = Inf, 
-           label = paste("N =", format(nrow(simulated_gwas), big.mark = ",")),
-           hjust = 1.1, vjust = 1.5, size = 3) +
+  annotate("text", x = Inf, y = Inf,
+    label = paste("N =", format(nrow(simulated_gwas), big.mark = ",")),
+    hjust = 1.1, vjust = 1.5, size = 3) +
   labs(caption = "Data: Simulated GWAS results")
 
 print(manhattan_annotated)
@@ -164,15 +164,15 @@ manhattan_multi <- manhattan_plot(
   point.size.range = c(0.3, 2.5)
 ) +
   # Add suggestive significance line
-  geom_hline(yintercept = -log10(1e-5), 
-             color = "grey60", linetype = "dotted", alpha = 0.8) +
+  geom_hline(yintercept = -log10(1e-5),
+    color = "grey60", linetype = "dotted", alpha = 0.8) +
   # Add annotations for thresholds
-  annotate("text", x = 0, y = -log10(5e-8) + 0.5, 
-           label = "Genome-wide significance", 
-           hjust = 0, size = 3, color = "grey40") +
-  annotate("text", x = 0, y = -log10(1e-5) + 0.5, 
-           label = "Suggestive significance", 
-           hjust = 0, size = 3, color = "grey60")
+  annotate("text", x = 0, y = -log10(5e-8) + 0.5,
+    label = "Genome-wide significance",
+    hjust = 0, size = 3, color = "grey40") +
+  annotate("text", x = 0, y = -log10(1e-5) + 0.5,
+    label = "Suggestive significance",
+    hjust = 0, size = 3, color = "grey60")
 
 print(manhattan_multi)
 }
@@ -189,8 +189,8 @@ sample_gwas_data <- data.frame(
 
 # Add some significant hits
 sample_gwas_data$p[c(1000, 5000, 15000)] <- c(1e-9, 3e-8, 2e-11)
-sample_gwas_data$label <- ifelse(sample_gwas_data$p < 5e-8, 
-                                 sample_gwas_data$snp, NA)
+sample_gwas_data$label <- ifelse(sample_gwas_data$p < 5e-8,
+  sample_gwas_data$snp, NA)
 
 \dontrun{
 # Create Manhattan plot
@@ -229,12 +229,12 @@ custom_manhattan <- manhattan_plot(
 print(custom_manhattan)
 
 # Save high-resolution plot
-ggsave("manhattan_plot.png", custom_manhattan, 
-       width = 12, height = 6, dpi = 300, bg = "white")
+ggsave("manhattan_plot.png", custom_manhattan,
+  width = 12, height = 6, dpi = 300, bg = "white")
 
 # Save as PDF for publications
-ggsave("manhattan_plot.pdf", custom_manhattan, 
-       width = 12, height = 6, device = "pdf")
+ggsave("manhattan_plot.pdf", custom_manhattan,
+  width = 12, height = 6, device = "pdf")
 }
 
 # Example 6: Quality control and diagnostics
@@ -269,7 +269,7 @@ if (lambda_gc > 1.1) {
 \references{
 Gibson, G. (2010). Hints of hidden heritability in GWAS. Nature Genetics, 42(7), 558-560.
 
-Visscher, P. M., et al. (2017). 10 Years of GWAS Discovery: Biology, Function, and Translation. 
+Visscher, P. M., et al. (2017). 10 Years of GWAS Discovery: Biology, Function, and Translation.
 American Journal of Human Genetics, 101(1), 5-22.
 }
 \seealso{

@@ -391,6 +391,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Create a sample FASTA file for demonstration
 #' fasta_content <- c(

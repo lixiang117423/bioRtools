@@ -96,7 +96,7 @@ The data frame(s) have one row per sequence found in the input file(s).
 }
 \description{
 \code{fasta2df} efficiently converts FASTA format files to R data frames.
-This optimized version uses vectorized operations and efficient memory 
+This optimized version uses vectorized operations and efficient memory
 allocation to significantly improve performance compared to loop-based approaches.
 Suitable for processing large genomic, transcriptomic, or proteomic sequence files.
 }
@@ -126,6 +126,7 @@ The function handles various FASTA format variations:
 }
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Create a sample FASTA file for demonstration
 fasta_content <- c(
@@ -165,9 +166,9 @@ df_fast <- fasta2df("large_file.fasta", validate = FALSE)
 
 # Keep empty sequences and preserve whitespace
 \dontrun{
-df_raw <- fasta2df("sequences.fasta", 
-                   remove_empty = FALSE, 
-                   trim_whitespace = FALSE)
+df_raw <- fasta2df("sequences.fasta",
+  remove_empty = FALSE,
+  trim_whitespace = FALSE)
 }
 
 }

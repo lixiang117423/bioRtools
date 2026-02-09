@@ -21,23 +21,23 @@ pav_gwas(
 )
 }
 \arguments{
-\item{pav_data}{Character string specifying the path to the PAV matrix file, 
-or a data frame containing the PAV matrix. If a file path, the file should 
-be tab-delimited with the following columns: 1) chr (chromosome), 2) start 
-(start position), 3) end (end position), 4) sequence (PAV sequence), 
+\item{pav_data}{Character string specifying the path to the PAV matrix file,
+or a data frame containing the PAV matrix. If a file path, the file should
+be tab-delimited with the following columns: 1) chr (chromosome), 2) start
+(start position), 3) end (end position), 4) sequence (PAV sequence),
 5+ sample abundance/presence values. Headers are expected.
 If a data frame, it should follow the same column structure.}
 
-\item{phenotype_data}{Character string specifying the path to the phenotype file, 
-or a data frame containing phenotype information. If a file path, the file 
-should be tab-delimited with sample IDs in the first column and phenotype 
-values in the second column. Headers are expected. If a data frame, the first 
+\item{phenotype_data}{Character string specifying the path to the phenotype file,
+or a data frame containing phenotype information. If a file path, the file
+should be tab-delimited with sample IDs in the first column and phenotype
+values in the second column. Headers are expected. If a data frame, the first
 column should contain sample IDs and the second column should contain phenotype values.}
 
-\item{output_dir}{Character string specifying the output directory for results. 
+\item{output_dir}{Character string specifying the output directory for results.
 Default is "pav_gwas_results".}
 
-\item{analysis_type}{Character string specifying the phenotype analysis approach. 
+\item{analysis_type}{Character string specifying the phenotype analysis approach.
 Options: "auto" (automatic detection), "binary", "logit", "arcsine", "categorical",
 "continuous", "continuous_raw". Default is "auto".}
 
@@ -45,31 +45,31 @@ Options: "auto" (automatic detection), "binary", "logit", "arcsine", "categorica
 Options: "auto" (automatic selection), "fisher", "mannwhitney", "logistic",
 "linear", "welch_ttest". Default is "auto".}
 
-\item{min_sample_count}{Integer specifying the minimum number of samples where 
+\item{min_sample_count}{Integer specifying the minimum number of samples where
 a PAV feature must be present to be included in analysis. Default is 2.}
 
-\item{max_sample_count}{Integer specifying the maximum number of samples where 
-a PAV feature can be present to be included in analysis. If NULL, uses total 
+\item{max_sample_count}{Integer specifying the maximum number of samples where
+a PAV feature can be present to be included in analysis. If NULL, uses total
 sample count (no upper limit). Default is NULL.}
 
-\item{binary_threshold}{Numeric value specifying the threshold for binary 
+\item{binary_threshold}{Numeric value specifying the threshold for binary
 conversion when analysis_type is "binary" or "auto". Default is 0.5.}
 
-\item{use_population_structure}{Logical indicating whether to include population 
+\item{use_population_structure}{Logical indicating whether to include population
 structure correction using PCA. Default is TRUE.}
 
-\item{n_pcs}{Integer specifying the number of principal components to use for 
+\item{n_pcs}{Integer specifying the number of principal components to use for
 population structure correction. Default is 3.}
 
-\item{significance_threshold}{Numeric value specifying the genome-wide significance 
-threshold for Manhattan plot. If NULL (default), automatically calculates 
-Bonferroni-corrected threshold as 0.05/number_of_tested_features. Can be 
+\item{significance_threshold}{Numeric value specifying the genome-wide significance
+threshold for Manhattan plot. If NULL (default), automatically calculates
+Bonferroni-corrected threshold as 0.05/number_of_tested_features. Can be
 manually specified if desired.}
 
-\item{n_cores}{Integer specifying the number of CPU cores for parallel processing. 
+\item{n_cores}{Integer specifying the number of CPU cores for parallel processing.
 Default is 4.}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 }
 \value{
@@ -84,36 +84,36 @@ A list containing:
 }
 }
 \description{
-Perform presence/absence variation based genome-wide association study using 
-PAV data (such as k-mers, structural variants, gene presence/absence) and 
-phenotype information. Enhanced version with better support for continuous 
+Perform presence/absence variation based genome-wide association study using
+PAV data (such as k-mers, structural variants, gene presence/absence) and
+phenotype information. Enhanced version with better support for continuous
 phenotypes like plant height, weight, expression levels, etc.
 }
 \details{
 **Enhanced Data Type Detection and Method Selection:**
 
-The function automatically detects phenotype distribution patterns and selects 
+The function automatically detects phenotype distribution patterns and selects
 appropriate statistical methods when analysis_type = "auto":
 
 \enumerate{
-  \item **Binary Data** (exactly 2 unique values): 
+  \item **Binary Data** (exactly 2 unique values):
      - Automatically uses binary analysis
      - Uses Fisher's exact test for association
      - Ideal for case/control studies
-  \item **Bimodal Distribution** (values concentrated at extremes): 
+  \item **Bimodal Distribution** (values concentrated at extremes):
      - Automatically converts to binary phenotype
      - Uses Fisher's exact test for association
      - Ideal for presence/absence traits
-  \item **Categorical Data** (3-10 discrete categories): 
+  \item **Categorical Data** (3-10 discrete categories):
      - Uses multinomial logistic regression
      - Falls back to chi-square test if logistic regression fails
      - Categories can be numeric or character
-  \item **Continuous Data** (many unique values): 
+  \item **Continuous Data** (many unique values):
      - **Normal Distribution**: Uses Welch's t-test for higher statistical power
      - **Non-normal Distribution**: Uses Mann-Whitney U test or applies transformations
      - **Bounded [0,1]**: Uses logit transformation
      - **Percentage-like [0,100]**: Uses arcsine transformation
-  \item **Highly Skewed Continuous Data**: 
+  \item **Highly Skewed Continuous Data**:
      - Uses log transformation or rank transformation
      - Followed by appropriate parametric/non-parametric tests
 }
@@ -122,47 +122,47 @@ appropriate statistical methods when analysis_type = "auto":
 
 Choose specific methods based on your data characteristics:
 
-- **analysis_type = "continuous"**: For truly continuous traits (plant height, 
+- **analysis_type = "continuous"**: For truly continuous traits (plant height,
   weight, expression levels). Automatically applies appropriate transformations.
-- **analysis_type = "continuous_raw"**: For continuous traits without any 
+- **analysis_type = "continuous_raw"**: For continuous traits without any
   transformation. Uses raw phenotype values.
-- **analysis_type = "binary"**: For clearly binary traits (disease/healthy, 
+- **analysis_type = "binary"**: For clearly binary traits (disease/healthy,
   resistant/susceptible). Converts continuous data using binary_threshold.
-- **analysis_type = "logit"**: For proportion data bounded between 0 and 1 
+- **analysis_type = "logit"**: For proportion data bounded between 0 and 1
   (survival rates, infection percentages).
-- **analysis_type = "arcsine"**: For percentage data with many zeros or ones 
+- **analysis_type = "arcsine"**: For percentage data with many zeros or ones
   (germination rates, mortality percentages).
-- **analysis_type = "categorical"**: For multi-level categorical traits 
+- **analysis_type = "categorical"**: For multi-level categorical traits
   (flower color, growth habit).
-  
+
 **Enhanced Statistical Test Selection:**
 
 - **test_type = "welch_ttest"**: Welch's t-test for continuous normal phenotypes.
   Higher statistical power than non-parametric tests when assumptions are met.
 - **test_type = "linear"**: Linear regression, allows inclusion of population
   structure covariates. Provides regression coefficients as effect sizes.
-- **test_type = "fisher"**: Best for binary phenotypes, exact p-values, 
+- **test_type = "fisher"**: Best for binary phenotypes, exact p-values,
   robust with small sample sizes.
-- **test_type = "mannwhitney"**: Non-parametric test for continuous phenotypes, 
+- **test_type = "mannwhitney"**: Non-parametric test for continuous phenotypes,
   no normality assumptions.
 - **test_type = "logistic"**: Handles both binary and categorical phenotypes.
-  For binary: standard logistic regression. For categorical: multinomial 
+  For binary: standard logistic regression. For categorical: multinomial
   logistic regression (requires nnet package) or chi-square test as fallback.
   Allows inclusion of covariates.
 
 **PAV Feature Filtering Strategy:**
 
-- **min_sample_count**: Removes rare PAV features that may represent sequencing 
-  errors or population-specific variants. Higher values increase statistical power 
+- **min_sample_count**: Removes rare PAV features that may represent sequencing
+  errors or population-specific variants. Higher values increase statistical power
   but may miss important rare variants.
-- **max_sample_count**: Removes ubiquitous PAV features that provide little 
+- **max_sample_count**: Removes ubiquitous PAV features that provide little
   information. Leave as NULL unless you want to focus on rare variants only.
 
 **Population Structure Correction:**
 
-Principal Component Analysis (PCA) is performed on the PAV matrix to capture 
-population structure. The first n_pcs components are included as covariates in 
-association tests to control for confounding due to relatedness or population 
+Principal Component Analysis (PCA) is performed on the PAV matrix to capture
+population structure. The first n_pcs components are included as covariates in
+association tests to control for confounding due to relatedness or population
 stratification.
 
 **PAV Data Types Supported:**
@@ -184,7 +184,7 @@ The function creates several output files in the specified directory:
   \item **manhattan_plot.pdf/.png**: Manhattan plot showing associations across chromosomes with multiple significance threshold lines
   \item **significant_p1e-5.csv, significant_p1e-6.csv, etc.**: Separate files for each significance threshold containing only significant features
   \item **significant_fdr0.05.csv**: Features significant after FDR correction
-  \item **qq_plot.pdf/.png**: Q-Q plot for test calibration assessment  
+  \item **qq_plot.pdf/.png**: Q-Q plot for test calibration assessment
   \item **phenotype_distribution.pdf/.png**: Phenotype distribution analysis
   \item **population_structure.pdf/.png**: PCA plots and variance explained
   \item **analysis_summary.txt**: Text summary of results and parameters including threshold-specific counts
@@ -192,9 +192,9 @@ The function creates several output files in the specified directory:
 }
 \note{
 \itemize{
-  \item Requires packages: data.table, dplyr, ggplot2, parallel, corrplot, 
+  \item Requires packages: data.table, dplyr, ggplot2, parallel, corrplot,
     scales, tidyr, factoextra
-  \item Optional packages: nnet (for multinomial logistic regression), 
+  \item Optional packages: nnet (for multinomial logistic regression),
     moments (for skewness/kurtosis calculation)
   \item Missing data is handled by removing samples with NA values
   \item Multiple testing correction includes both Bonferroni and FDR methods
@@ -206,6 +206,7 @@ The function creates several output files in the specified directory:
 }
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Basic analysis with automatic significance threshold calculation
 # PAV matrix format: chr, start, end, sequence, sample1, sample2, ...

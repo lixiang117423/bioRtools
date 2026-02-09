@@ -34,6 +34,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' # 1. Create a sample dataset with non-normal data
 #' set.seed(123)
 #' sample_data <- data.frame(

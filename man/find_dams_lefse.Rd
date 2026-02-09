@@ -62,7 +62,7 @@ A data frame containing LEfSe analysis results with columns:
     \item \code{lda.score}: Absolute LDA effect size
     \item \code{direction}: Direction of enrichment relative to comparison
   }
-  
+
   Only features that pass all statistical thresholds (Kruskal-Wallis, Wilcoxon,
   and LDA) are included in the results.
 }
@@ -144,7 +144,7 @@ lefse_strict <- find_dams_lefse(
   sample = df.call_DAMs_LEfSe.sample,
   groupCol = "treatment",
   kruskal.threshold = 0.01,        # More stringent Kruskal-Wallis
-  wilcox.threshold = 0.01,         # More stringent Wilcoxon  
+  wilcox.threshold = 0.01,         # More stringent Wilcoxon
   lda.threshold = 2.0,             # Higher LDA threshold
   bootstrap.iterations = 50        # More bootstrap iterations
 )
@@ -154,8 +154,8 @@ print(paste("Strict analysis found", nrow(lefse_strict), "biomarkers"))
 # Compare effect sizes
 if (nrow(lefse_strict) > 0) {
   print("Top strict biomarkers:")
-  print(lefse_strict[1:min(5, nrow(lefse_strict)), 
-                     c("features", "class", "scores")])
+  print(lefse_strict[1:min(5, nrow(lefse_strict)),
+    c("features", "class", "scores")])
 }
 }
 
@@ -164,8 +164,8 @@ if (nrow(lefse_strict) > 0) {
 # Assume sample metadata has multiple treatment groups
 # Create sample data with multiple groups for demonstration
 multi_sample <- df.call_DAMs_LEfSe.sample
-multi_sample$treatment_type <- rep(c("Drug_A", "Drug_B", "Placebo"), 
-                                   length.out = nrow(multi_sample))
+multi_sample$treatment_type <- rep(c("Drug_A", "Drug_B", "Placebo"),
+  length.out = nrow(multi_sample))
 
 # LEfSe with multiple groups
 multi_lefse <- find_dams_lefse(
@@ -182,7 +182,7 @@ if (nrow(multi_lefse) > 0) {
     summarise(
       n_biomarkers = n(),
       mean_lda_score = mean(abs(scores)),
-      .groups = 'drop'
+      .groups = "drop"
     )
   print("Biomarkers by group:")
   print(biomarker_summary)
@@ -237,8 +237,8 @@ if (nrow(mock_lefse) > 0) {
 abundance_filter <- rowMeans(df.call_DAMs_LEfSe.otu) > 0.01  # 1\% mean abundance
 filtered_data <- df.call_DAMs_LEfSe.otu[abundance_filter, ]
 
-print(paste("Retained", nrow(filtered_data), "of", nrow(df.call_DAMs_LEfSe.otu), 
-            "features after filtering"))
+print(paste("Retained", nrow(filtered_data), "of", nrow(df.call_DAMs_LEfSe.otu),
+  "features after filtering"))
 
 # Run LEfSe on filtered data
 filtered_lefse <- find_dams_lefse(
@@ -261,7 +261,7 @@ Genome Biology, 12(6), R60.
 \seealso{
 \itemize{
   \item \code{\link{find_dams_deseq2}} for DESeq2-based differential abundance
-  \item \code{\link{rarefy_table}} for rarefaction preprocessing  
+  \item \code{\link{rarefy_table}} for rarefaction preprocessing
   \item \code{\link{permanova_test}} for community-level differences
 }
 }

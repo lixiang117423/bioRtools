@@ -30,6 +30,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' # Load example data
 #' cq_data_path <- system.file("extdata/qPCR", "calsc.cq.txt", package = "bioRtools")
 #' concentration_data_path <- system.file("extdata/qPCR", "calsc.info.txt", package = "bioRtools")

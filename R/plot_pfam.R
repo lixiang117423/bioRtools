@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' # Without phylogenetic tree
 #' plot_pfam(data = "path/to/pfam.tsv")
 #'

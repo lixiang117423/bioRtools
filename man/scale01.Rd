@@ -28,15 +28,16 @@ This function scales a numeric vector to the range [0, 1] using min-max normaliz
 The transformation is: (x - min(x)) / (max(x) - min(x))
 }
 \details{
-This function performs min-max normalization, which linearly transforms 
-the data to fit within the range [0, 1]. The minimum value becomes 0 
+This function performs min-max normalization, which linearly transforms
+the data to fit within the range [0, 1]. The minimum value becomes 0
 and the maximum value becomes 1.
 
-This function performs min-max normalization, which linearly transforms 
-the data to fit within the range [0, 1]. The minimum value becomes 0 
+This function performs min-max normalization, which linearly transforms
+the data to fit within the range [0, 1]. The minimum value becomes 0
 and the maximum value becomes 1.
 }
 \examples{
+library(bioRtools)
 # Basic usage
 scale01(c(1, 2, 3, 4, 5))
 
@@ -49,6 +50,7 @@ scale01(c(5, 5, 5))
 # With missing values
 scale01(c(1, 2, NA, 4, 5))
 
+library(bioRtools)
 # Basic usage
 scale01(c(1, 2, 3, 4, 5))
 

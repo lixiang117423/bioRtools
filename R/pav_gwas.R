@@ -173,6 +173,7 @@
 #'
 #' @export
 #' @examples
+#' library(bioRtools)
 #' \dontrun{
 #' # Basic analysis with automatic significance threshold calculation
 #' # PAV matrix format: chr, start, end, sequence, sample1, sample2, ...

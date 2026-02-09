@@ -45,19 +45,20 @@ Plot protein domain (from Pfam and other tools) distribution with optional phylo
 When rounded_corners = TRUE, the ggforce package is required
 }
 \examples{
+library(bioRtools)
 # Without phylogenetic tree
 plot_pfam(data = "path/to/pfam.tsv")
 
 # With phylogenetic tree
-plot_pfam(data = "path/to/pfam.tsv", 
-          tree_file = "path/to/tree.nwk")
+plot_pfam(data = "path/to/pfam.tsv",
+  tree_file = "path/to/tree.nwk")
 
 # Custom parameters with rounded corners
-plot_pfam(data = "path/to/pfam.tsv", 
-          tree_file = "path/to/tree.nwk",
-          tile_height = 0.6,
-          tree_xlim_factor = 2.0,
-          tree_width = 1.5,
-          rounded_corners = TRUE,
-          corner_radius = 0.15)
+plot_pfam(data = "path/to/pfam.tsv",
+  tree_file = "path/to/tree.nwk",
+  tile_height = 0.6,
+  tree_xlim_factor = 2.0,
+  tree_width = 1.5,
+  rounded_corners = TRUE,
+  corner_radius = 0.15)
 }

@@ -54,6 +54,8 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
+#' library(writexl)
 #' \dontrun{
 #' # Basic usage - extract hierarchy information
 #' tree_hierarchy <- extract_tree_hierarchy("path/to/your/tree.nwk")

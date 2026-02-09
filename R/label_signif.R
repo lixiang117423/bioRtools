@@ -29,6 +29,7 @@
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #'
 #' @examples
+#' library(bioRtools)
 #' # Basic usage
 #' p_vals <- c(0.0001, 0.005, 0.03, 0.07, 0.5, NA)
 #' label_signif(p_vals)

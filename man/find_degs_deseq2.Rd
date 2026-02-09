@@ -61,7 +61,7 @@ improve multiple testing correction and statistical power}
 A data frame containing differential expression results with columns:
   \itemize{
     \item \code{gene}: Gene identifiers (from row names of input matrix)
-    \item \code{baseMean}: Mean normalized counts across all samples  
+    \item \code{baseMean}: Mean normalized counts across all samples
     \item \code{log2FoldChange}: Log2 fold change between conditions
     \item \code{lfcSE}: Standard error of log2 fold change estimate
     \item \code{stat}: Wald test statistic
@@ -143,7 +143,7 @@ upregulated <- de_results \%>\%
 print("Top up-regulated genes:")
 print(upregulated[, c("gene", "log2FoldChange", "padj", "baseMean")])
 
-# Top down-regulated genes  
+# Top down-regulated genes
 downregulated <- de_results \%>\%
   filter(regulation == "Down-regulated") \%>\%
   arrange(padj) \%>\%
@@ -159,16 +159,16 @@ print(downregulated[, c("gene", "log2FoldChange", "padj", "baseMean")])
 de_strict <- find_degs_deseq2(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
-  formula = ~batch + condition,    # Control for batch effects
+  formula = ~ batch + condition,    # Control for batch effects
   log2FoldChange = 1.5,           # 3-fold change threshold
   padj = 0.01,                    # 1\% FDR
   shrink.lfc = TRUE,              # Apply LFC shrinkage
   independent.filtering = TRUE     # Enable independent filtering
 )
 
-print(paste("Strict analysis found", 
-            sum(de_strict$regulation != "Not significant"), 
-            "DE genes"))
+print(paste("Strict analysis found",
+  sum(de_strict$regulation != "Not significant"),
+  "DE genes"))
 
 # Compare effect sizes
 effect_comparison <- de_strict \%>\%
@@ -189,7 +189,7 @@ print(effect_comparison)
 timeseries_de <- find_degs_deseq2(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
-  formula = ~subject + timepoint,  # Control for subject effects
+  formula = ~ subject + timepoint,  # Control for subject effects
   log2FoldChange = 0.5,           # More sensitive for time effects
   padj = 0.1                      # Less stringent for discovery
 )
@@ -206,7 +206,7 @@ magnitude_summary <- time_responsive \%>\%
   mutate(
     magnitude = case_when(
       abs_log2fc >= 2 ~ "High (4+ fold)",
-      abs_log2fc >= 1 ~ "Medium (2-4 fold)", 
+      abs_log2fc >= 1 ~ "Medium (2-4 fold)",
       TRUE ~ "Low (<2 fold)"
     )
   ) \%>\%
@@ -262,10 +262,10 @@ print("Simulated data DE analysis:")
 print(table(mock_de$regulation))
 
 # Check recovery of simulated DE genes
-recovered_up <- sum(paste0("Gene_", up_genes) \%in\% 
-                    mock_de$gene[mock_de$regulation == "Up-regulated"])
-recovered_down <- sum(paste0("Gene_", down_genes) \%in\% 
-                      mock_de$gene[mock_de$regulation == "Down-regulated"])
+recovered_up <- sum(paste0("Gene_", up_genes) \%in\%
+  mock_de$gene[mock_de$regulation == "Up-regulated"])
+recovered_down <- sum(paste0("Gene_", down_genes) \%in\%
+  mock_de$gene[mock_de$regulation == "Down-regulated"])
 
 print(paste("Recovered", recovered_up, "of", length(up_genes), "up-regulated genes"))
 print(paste("Recovered", recovered_down, "of", length(down_genes), "down-regulated genes"))
@@ -287,8 +287,8 @@ min_samples <- ceiling(0.25 * ncol(raw_counts))
 keep_genes <- rowSums(raw_counts >= min_counts) >= min_samples
 
 filtered_counts <- raw_counts[keep_genes, ]
-print(paste("Retained", nrow(filtered_counts), "of", nrow(raw_counts), 
-            "genes after filtering"))
+print(paste("Retained", nrow(filtered_counts), "of", nrow(raw_counts),
+  "genes after filtering"))
 
 # Run analysis on filtered data
 filtered_de <- find_degs_deseq2(

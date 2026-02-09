@@ -20,63 +20,63 @@ rda_analysis(
 )
 }
 \arguments{
-\item{data}{A data frame where rows represent samples and columns represent 
+\item{data}{A data frame where rows represent samples and columns represent
 species/OTUs/taxa. Should contain abundance or count data.}
 
-\item{physicochemical}{A data frame containing environmental/physicochemical 
-variables where rows represent samples and columns represent environmental 
+\item{physicochemical}{A data frame containing environmental/physicochemical
+variables where rows represent samples and columns represent environmental
 variables. Sample names should match those in \code{data}.}
 
-\item{sample}{A data frame containing sample information where the first 
+\item{sample}{A data frame containing sample information where the first
 column is 'sample' and subsequent columns contain grouping variables.}
 
-\item{method_decostand}{Character string specifying the standardization 
-method for \code{vegan::decostand()}. Default is "hellinger". Other 
+\item{method_decostand}{Character string specifying the standardization
+method for \code{vegan::decostand()}. Default is "hellinger". Other
 options include "normalize", "standardize", "pa", "chi.square", etc.}
 
-\item{scale}{Logical indicating whether to scale environmental variables 
+\item{scale}{Logical indicating whether to scale environmental variables
 in \code{vegan::rda()}. Default is FALSE.}
 
-\item{color}{Character string specifying the column name in \code{sample} 
+\item{color}{Character string specifying the column name in \code{sample}
 used for coloring points in the plot. Default is "group".}
 
-\item{point_size}{Numeric value specifying the size of sample points. 
+\item{point_size}{Numeric value specifying the size of sample points.
 Default is 3.}
 
-\item{arrow_size}{Numeric value specifying the size/length of environmental 
+\item{arrow_size}{Numeric value specifying the size/length of environmental
 variable arrows. Default is 0.8.}
 
-\item{arrow_color}{Character string specifying the color of environmental 
+\item{arrow_color}{Character string specifying the color of environmental
 variable arrows. Default is "#222222".}
 
-\item{arrow_alpha}{Numeric value between 0 and 1 for arrow transparency. 
+\item{arrow_alpha}{Numeric value between 0 and 1 for arrow transparency.
 Default is 0.8.}
 
-\item{label_repel}{Logical indicating whether to use repelling labels for 
+\item{label_repel}{Logical indicating whether to use repelling labels for
 environmental variables to avoid overlap. Default is TRUE.}
 
-\item{permutations}{Integer specifying the number of permutations for 
+\item{permutations}{Integer specifying the number of permutations for
 environmental fitting significance test. Default is 999.}
 }
 \value{
 A list containing five components:
 \describe{
-  \item{result.rda}{The complete RDA result object from \code{vegan::rda()}, 
+  \item{result.rda}{The complete RDA result object from \code{vegan::rda()},
     which can be used for further analysis.}
-  \item{plot.rda}{A ggplot object showing the RDA biplot with sample points 
+  \item{plot.rda}{A ggplot object showing the RDA biplot with sample points
     and environmental variable arrows.}
-  \item{sample.scores}{A data frame containing sample coordinates on RDA axes 
+  \item{sample.scores}{A data frame containing sample coordinates on RDA axes
     merged with sample information.}
-  \item{environmental.scores}{A data frame containing environmental variable 
+  \item{environmental.scores}{A data frame containing environmental variable
     coordinates for plotting arrows.}
-  \item{environmental.fit}{A data frame containing R² and p-values for 
+  \item{environmental.fit}{A data frame containing R² and p-values for
     environmental variables from permutation tests.}
 }
 }
 \description{
-Perform Redundancy Analysis (RDA) to explore the relationship between 
-community composition and environmental variables. RDA is a constrained 
-ordination method that identifies linear combinations of environmental 
+Perform Redundancy Analysis (RDA) to explore the relationship between
+community composition and environmental variables. RDA is a constrained
+ordination method that identifies linear combinations of environmental
 variables that best explain the variation in species composition.
 }
 \details{
@@ -124,7 +124,7 @@ df.rda.chem \%>\%
 # Basic RDA analysis
 rda_result <- rda_analysis(
   data = df.rda.otu,
-  physicochemical = df.rda.chem, 
+  physicochemical = df.rda.chem,
   sample = df.sample
 )
 

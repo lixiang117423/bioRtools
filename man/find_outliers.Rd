@@ -120,7 +120,7 @@ outlier_summary <- iris_with_outliers \%>\%
     sepal_width_outliers = sum(sepal_width_outlier == "yes"),
     petal_length_outliers = sum(petal_length_outlier == "yes"),
     petal_width_outliers = sum(petal_width_outlier == "yes"),
-    .groups = 'drop'
+    .groups = "drop"
   )
 
 print("Outliers by species and measurement:")
@@ -133,8 +133,8 @@ test_data <- c(rnorm(95, mean = 10, sd = 2), c(1, 25, 30))  # Normal data + outl
 # Compare different methods
 iqr_outliers <- find_outliers(test_data, method = "iqr", return.logical = TRUE)
 zscore_outliers <- find_outliers(test_data, method = "zscore", k = 2, return.logical = TRUE)
-modified_zscore_outliers <- find_outliers(test_data, method = "modified_zscore", 
-                                          k = 3.5, return.logical = TRUE)
+modified_zscore_outliers <- find_outliers(test_data, method = "modified_zscore",
+  k = 3.5, return.logical = TRUE)
 
 # Create comparison data frame
 comparison <- data.frame(
@@ -145,7 +145,7 @@ comparison <- data.frame(
 )
 
 # Show detected outliers
-outlier_comparison <- comparison[apply(comparison[,2:4], 1, any), ]
+outlier_comparison <- comparison[apply(comparison[, 2:4], 1, any), ]
 print("Outliers detected by different methods:")
 print(outlier_comparison)
 
@@ -159,7 +159,7 @@ print(paste("Modified Z-score method:", sum(modified_zscore_outliers), "outliers
 # Conservative outlier detection (fewer outliers)
 conservative_outliers <- find_outliers(iris$Sepal.Length, k = 3.0)
 
-# Liberal outlier detection (more outliers)  
+# Liberal outlier detection (more outliers)
 liberal_outliers <- find_outliers(iris$Sepal.Length, k = 1.0)
 
 print("Threshold comparison:")
@@ -204,16 +204,16 @@ print(outlier_samples)
 print("Expression data summary:")
 print(summary(gene_expression))
 print(paste("IQR:", round(IQR(gene_expression), 2)))
-print(paste("Outlier threshold (lower):", 
-            round(quantile(gene_expression, 0.25) - 1.5 * IQR(gene_expression), 2)))
-print(paste("Outlier threshold (upper):", 
-            round(quantile(gene_expression, 0.75) + 1.5 * IQR(gene_expression), 2)))
+print(paste("Outlier threshold (lower):",
+  round(quantile(gene_expression, 0.25) - 1.5 * IQR(gene_expression), 2)))
+print(paste("Outlier threshold (upper):",
+  round(quantile(gene_expression, 0.75) + 1.5 * IQR(gene_expression), 2)))
 
 }
 \references{
 Tukey, J.W. (1977). Exploratory Data Analysis. Addison-Wesley.
 
-Iglewicz, B. and Hoaglin, D.C. (1993). How to Detect and Handle Outliers. 
+Iglewicz, B. and Hoaglin, D.C. (1993). How to Detect and Handle Outliers.
 ASQC Quality Press.
 }
 \seealso{

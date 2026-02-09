@@ -20,16 +20,16 @@ spls_analysis(
 )
 }
 \arguments{
-\item{data}{Numeric matrix or data frame with observations as rows and 
+\item{data}{Numeric matrix or data frame with observations as rows and
 variables (features) as columns. Missing values (NAs) are allowed.}
 
-\item{group}{A factor or character vector indicating the class membership 
+\item{group}{A factor or character vector indicating the class membership
 for each observation. Must have the same length as the number of rows in data.}
 
-\item{ncomp}{Positive integer specifying the number of components to include 
+\item{ncomp}{Positive integer specifying the number of components to include
 in the model. Default is 3.}
 
-\item{keepX}{Numeric vector indicating the number of variables to keep in 
+\item{keepX}{Numeric vector indicating the number of variables to keep in
 each component. If NULL (default), all variables are kept (non-sparse).}
 
 \item{scale}{Logical indicating whether to scale the data. Default is TRUE.}
@@ -40,37 +40,37 @@ each component. If NULL (default), all variables are kept (non-sparse).}
 
 \item{tol}{Convergence tolerance for the algorithm. Default is 1e-06.}
 
-\item{validation}{Character string specifying the validation method for 
+\item{validation}{Character string specifying the validation method for
 parameter tuning. Options: "Mfold", "loo". Default is NULL (no validation).}
 
-\item{folds}{Number of folds for cross-validation if validation is used. 
+\item{folds}{Number of folds for cross-validation if validation is used.
 Default is 10.}
 
 \item{nrepeat}{Number of repeats for cross-validation. Default is 5.}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 }
 \value{
 A list containing six components:
 \describe{
-  \item{result.splsda}{The complete sPLS-DA result object from 
+  \item{result.splsda}{The complete sPLS-DA result object from
     \code{mixOmics::splsda()}, which can be used for further analysis.}
-  \item{sample.scores}{A data frame containing sample coordinates on 
+  \item{sample.scores}{A data frame containing sample coordinates on
     sPLS-DA components with sample names.}
-  \item{variance.explained}{A data frame containing the variance explained 
+  \item{variance.explained}{A data frame containing the variance explained
     by each component with formatted percentages and axis labels.}
-  \item{variable.loadings}{A data frame containing variable loadings for 
+  \item{variable.loadings}{A data frame containing variable loadings for
     each component (if available).}
-  \item{classification.performance}{Cross-validation performance metrics 
+  \item{classification.performance}{Cross-validation performance metrics
     (if validation was performed).}
   \item{model.parameters}{A summary of model parameters and settings used.}
 }
 }
 \description{
-Perform sparse Partial Least Squares Discriminant Analysis (sPLS-DA) for 
+Perform sparse Partial Least Squares Discriminant Analysis (sPLS-DA) for
 supervised dimension reduction and classification of high-dimensional data.
-sPLS-DA is particularly useful for metabolomics, genomics, and other omics 
+sPLS-DA is particularly useful for metabolomics, genomics, and other omics
 data where variable selection and class discrimination are important.
 }
 \details{
@@ -85,7 +85,7 @@ sPLS-DA combines the benefits of PLS-DA and variable selection:
 The function automatically:
 \itemize{
   \item Validates input data and group matching
-  \item Performs sPLS-DA with specified parameters  
+  \item Performs sPLS-DA with specified parameters
   \item Extracts and formats key results
   \item Calculates variance explained by each component
   \item Provides ready-to-use plotting coordinates

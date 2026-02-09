@@ -66,6 +66,7 @@ This function implements a multi-step approach to identify core microbiome membe
 }
 }
 \examples{
+library(bioRtools)
 \dontrun{
 # Prepare data
 otu_data <- matrix(rpois(1000, 10), nrow = 100, ncol = 10)

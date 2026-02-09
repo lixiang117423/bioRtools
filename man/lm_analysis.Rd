@@ -117,7 +117,7 @@ data(iris)
 results <- lm_analysis(
   data = iris,
   x = "Sepal.Length",
-  y = "Sepal.Width", 
+  y = "Sepal.Width",
   group = "Species",
   color = "Species"
 )
@@ -134,7 +134,6 @@ significant_groups <- results$regression_results \%>\%
   filter(significance == "Significant")
 
 print(paste("Significant relationships found in", nrow(significant_groups), "groups"))
-
 
 }
 \seealso{

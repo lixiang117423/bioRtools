@@ -9,7 +9,7 @@ row_sd(data, cols = NULL, na.rm = TRUE)
 \arguments{
 \item{data}{A data frame (can have row names)}
 
-\item{cols}{Columns to calculate standard deviation across. Can be column names, 
+\item{cols}{Columns to calculate standard deviation across. Can be column names,
 indices, or tidyselect helpers. If NULL (default), all numeric columns will be used.}
 
 \item{na.rm}{Logical. Should missing values be removed? (default: TRUE)}
@@ -26,7 +26,7 @@ This function is designed to work seamlessly with dplyr::mutate().
 library(dplyr)
 df <- data.frame(
   sample1 = c(100, 23, 95),
-  sample2 = c(55, 24, 6), 
+  sample2 = c(55, 24, 6),
   sample3 = c(93, 20, 59),
   row.names = c("Gene1", "Gene2", "Gene3")
 )

@@ -19,10 +19,10 @@ A data frame with additional scaled columns
 A data frame with additional scaled columns
 }
 \description{
-A wrapper function that makes it easy to scale multiple columns 
+A wrapper function that makes it easy to scale multiple columns
 in dplyr pipelines with automatic "_scaled" suffix.
 
-A wrapper function that makes it easy to scale multiple columns 
+A wrapper function that makes it easy to scale multiple columns
 in dplyr pipelines with automatic "_scaled" suffix.
 }
 \examples{

@@ -11,7 +11,7 @@ scale01_rows(data, cols = NULL, suffix = "_scaled", replace = TRUE)
 \arguments{
 \item{data}{A data frame (can have row names)}
 
-\item{cols}{Columns to scale. Can be column names, indices, or tidyselect helpers. 
+\item{cols}{Columns to scale. Can be column names, indices, or tidyselect helpers.
 If NULL (default), all numeric columns will be scaled.}
 
 \item{suffix}{Suffix to add to scaled column names (default: "_scaled")}

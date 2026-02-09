@@ -39,8 +39,8 @@ df <- data.frame(
   value2 = c(10, 30, 50, 20, 40, 60)
 )
 
-df \%>\% 
-  group_by(category) \%>\% 
+df \%>\%
+  group_by(category) \%>\%
   scale01_groups(cols = c("value1", "value2"))
 
 library(dplyr)
@@ -52,8 +52,8 @@ df <- data.frame(
   value2 = c(10, 30, 50, 20, 40, 60)
 )
 
-df \%>\% 
-  group_by(category) \%>\% 
+df \%>\%
+  group_by(category) \%>\%
   scale01_groups(cols = c("value1", "value2"))
 
 }

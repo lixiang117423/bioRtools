@@ -22,71 +22,71 @@ top_taxa(
 )
 }
 \arguments{
-\item{data}{Feature abundance table (OTU/ASV table) where rows represent 
-samples and columns represent features. Row names should be sample IDs 
+\item{data}{Feature abundance table (OTU/ASV table) where rows represent
+samples and columns represent features. Row names should be sample IDs
 matching those in the sample table.}
 
-\item{sample}{Sample metadata table where the first column contains sample 
+\item{sample}{Sample metadata table where the first column contains sample
 names and must include a 'group' column for statistical comparisons.}
 
-\item{taxo}{Taxonomic classification table where rows represent features 
-(matching column names in data) and columns represent taxonomic levels 
+\item{taxo}{Taxonomic classification table where rows represent features
+(matching column names in data) and columns represent taxonomic levels
 (e.g., phylum, class, order, family, genus, species).}
 
-\item{which}{Character string specifying which taxonomic level to analyze. 
+\item{which}{Character string specifying which taxonomic level to analyze.
 Must be a column name in the taxo table. Default is "phylum".}
 
-\item{n_top}{Integer specifying the number of top taxa to display separately. 
+\item{n_top}{Integer specifying the number of top taxa to display separately.
 Remaining taxa will be grouped as "Other". Default is 9 (showing top 9 + Other = 10 total).}
 
-\item{by}{Character string specifying how to calculate abundance rankings. 
-Options: "sum" (total abundance), "mean" (average abundance), "prevalence" 
+\item{by}{Character string specifying how to calculate abundance rankings.
+Options: "sum" (total abundance), "mean" (average abundance), "prevalence"
 (number of samples present). Default is "sum".}
 
-\item{method}{Character string specifying the statistical test method. 
-Options: "wilcox" (Wilcoxon rank-sum test), "t.test" (t-test), "kruskal" 
+\item{method}{Character string specifying the statistical test method.
+Options: "wilcox" (Wilcoxon rank-sum test), "t.test" (t-test), "kruskal"
 (Kruskal-Wallis test). Default is "wilcox".}
 
-\item{ref}{Character string specifying the reference group for pairwise 
+\item{ref}{Character string specifying the reference group for pairwise
 comparisons. Must be a level in the 'group' column. Default is "CK".}
 
-\item{p_threshold}{Numeric value for p-value significance threshold. 
+\item{p_threshold}{Numeric value for p-value significance threshold.
 Default is 0.05.}
 
-\item{abundance_transform}{Character string specifying abundance transformation. 
+\item{abundance_transform}{Character string specifying abundance transformation.
 Options: "none", "log10", "sqrt", "arcsin_sqrt". Default is "none".}
 
-\item{show_statistics}{Logical indicating whether to display significance 
+\item{show_statistics}{Logical indicating whether to display significance
 symbols on the plot. Default is TRUE.}
 
-\item{color_palette}{Character string specifying color palette. Options: 
+\item{color_palette}{Character string specifying color palette. Options:
 "d3", "viridis", "brewer", "custom". Default is "d3".}
 
-\item{plot_type}{Character string specifying plot type. Options: "stacked_bar", 
+\item{plot_type}{Character string specifying plot type. Options: "stacked_bar",
 "grouped_bar", "heatmap". Default is "stacked_bar".}
 
-\item{verbose}{Logical indicating whether to print progress information. 
+\item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
 }
 \value{
 A list containing five components:
 \describe{
-  \item{result.statistics}{A data frame containing statistical test results 
+  \item{result.statistics}{A data frame containing statistical test results
     for each taxon including p-values and significance levels.}
-  \item{plot.abundance}{A ggplot object showing relative abundance 
+  \item{plot.abundance}{A ggplot object showing relative abundance
     visualization with optional significance annotations.}
-  \item{data.processed}{A data frame containing the processed abundance 
+  \item{data.processed}{A data frame containing the processed abundance
     data used for plotting and analysis.}
-  \item{taxa.summary}{A summary table showing the top taxa selected and 
+  \item{taxa.summary}{A summary table showing the top taxa selected and
     their average abundances across groups.}
-  \item{analysis.parameters}{A data frame recording all analysis parameters 
+  \item{analysis.parameters}{A data frame recording all analysis parameters
     for reproducibility.}
 }
 }
 \description{
-Identify the most abundant microorganisms at specified taxonomic levels and 
-perform statistical comparisons between groups. This function creates both 
-relative abundance visualizations and statistical analysis results for 
+Identify the most abundant microorganisms at specified taxonomic levels and
+perform statistical comparisons between groups. This function creates both
+relative abundance visualizations and statistical analysis results for
 microbiome community composition studies.
 }
 \details{
@@ -121,7 +121,7 @@ library(bioRtools)
 
 # Load example microbiome data
 data(df.top10.otu)
-data(df.top10.sample) 
+data(df.top10.sample)
 data(df.top10.class)
 
 # Basic top taxa analysis at phylum level

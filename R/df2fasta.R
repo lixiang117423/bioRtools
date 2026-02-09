@@ -88,6 +88,7 @@
 #' @export
 #'
 #' @examples
+#' library(bioRtools)
 #' # Create sample sequence data
 #' sample_data <- data.frame(
 #'   sequence_id = c("seq1", "sequence2", "long_sequence_3"),

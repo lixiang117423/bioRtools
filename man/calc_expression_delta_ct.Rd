@@ -35,6 +35,7 @@ This function calculates gene expression levels using the delta-Ct method,
 which normalizes target gene expression to a reference gene.
 }
 \examples{
+library(bioRtools)
 # Load example data
 cq_data_path <- system.file("extdata/qPCR", "dct.cq.txt", package = "bioRtools")
 design_data_path <- system.file("extdata/qPCR", "dct.design.txt", package = "bioRtools")
