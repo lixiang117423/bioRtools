@@ -1,7 +1,7 @@
 Type: Package
 Package: bioRtools
 Title: Convenience Functions for Biological Data Processing
-Version: 1.10.3.9000
+Version: 1.10.4
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
 Description: This package provides a comprehensive suite of convenience
@@ -23,7 +23,7 @@ URL: https://github.com/lixiang117423/bioRtools,
 BugReports: https://github.com/lixiang117423/bioRtools/issues
 Depends: 
     R (>= 2.10)
-Imports: 
+Imports:
     agricolae,
     ape,
     broom,
@@ -46,7 +46,6 @@ Imports:
     magrittr,
     mixOmics,
     multcomp,
-    normentR,
     purrr,
     rlang,
     ropls,
@@ -61,8 +60,9 @@ Imports:
     vegan,
     WGCNA,
     ggpmisc
-Suggests: 
+Suggests:
     knitr,
+    normentR,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: 
