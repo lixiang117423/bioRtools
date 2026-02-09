@@ -1,3 +1,35 @@
-backup_original_files/*
-deve.R
-test.R
+# R specific
+.Rhistory
+.RData
+.Rproj.user
+
+# Package build artifacts
+*.tar.gz
+*.Rcheck/
+
+# IDE files
+*.Rproj
+
+# Test output files
+test_*.png
+test_*.pdf
+Rplots.pdf
+Rplots.rdb
+Rplots.rdx
+
+# Backup files
+*.backup
+*~
+
+# OS files
+.DS_Store
+.Thumbs.db
+
+# Documentation build
+docs/
+
+# Temporary files
+*.tmp
+*.temp
+deve.log.R
+test_function.R

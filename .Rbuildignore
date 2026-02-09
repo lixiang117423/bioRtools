@@ -1,0 +1,14 @@
+^README\.md$
+^deve\.log\.R$
+^test_function\.R$
+^.*\.Rproj$
+^.*\.Rproj\.user$
+^.*\.Rhistory$
+^raw\.data/
+^PlotCase/
+^\.Rprofile$
+^INSTALL_SYNTENY\.md$
+^scripts/
+^.*\.backup$
+^\.github/
+^data/df\.synteny\..*\.rda$
