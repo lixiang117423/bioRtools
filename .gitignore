@@ -33,3 +33,5 @@ docs/
 *.temp
 deve.log.R
 test_function.R
+missing_author_tags.csv
+deve.R.backup
