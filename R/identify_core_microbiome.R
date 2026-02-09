@@ -575,7 +575,7 @@ print.core_microbiome <- function(x, ...) {
 #' and dispersal, with no selective differences between species.
 #'
 #' @return If return_stats is TRUE, returns a data frame with one row
-#'   containing model fit statistics (R-squared, AIC, BIC, migration parameter m).
+#'   containing model fit statistics (R2, AIC, BIC, migration parameter m).
 #'   If return_stats is FALSE, returns a data frame with columns:
 #'   \item{otu}{OTU identifier}
 #'   \item{mean_rel_abun}{Mean relative abundance}
