@@ -1,0 +1,17 @@
+# R Development Configuration
+# This file contains project-specific settings for rdev tools
+
+# R interpreter path
+R_PATH=/opt/homebrew/bin/R
+
+# GitHub information (optional - auto-detected from git remote)
+# Commented out - will be auto-detected from git remote
+# GITHUB_USER=lixiang117423
+# GITHUB_REPO=bioRtools
+
+# Package license type
+LICENSE=mit
+
+# Output settings
+VERBOSE=true
+USE_EMOJI=true
