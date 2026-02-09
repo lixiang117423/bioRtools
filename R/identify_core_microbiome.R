@@ -574,15 +574,10 @@ print.core_microbiome <- function(x, ...) {
 #' The model assumes that species dynamics are driven by random birth, death,
 #' and dispersal, with no selective differences between species.
 #'
-#' @return If return_stats is TRUE, returns a data frame with one row
-#'   containing model fit statistics (R2, AIC, BIC, migration parameter m).
-#'   If return_stats is FALSE, returns a data frame with columns:
-#'   \item{otu}{OTU identifier}
-#'   \item{mean_rel_abun}{Mean relative abundance}
-#'   \item{freq_observed}{Observed occurrence frequency}
-#'   \item{freq_pred}{Predicted occurrence frequency}
-#'   \item{pred_lower}{Lower 95% prediction interval}
-#'   \item{pred_upper}{Upper 95% prediction interval}
+#' @return A data frame. When return_stats is TRUE, returns one row with
+#'   model fit statistics: R2, AIC, BIC, and migration parameter m.
+#'   When return_stats is FALSE, returns a data frame with columns for
+#'   each OTU including observed and predicted frequencies and confidence intervals.
 #'
 #' @references
 #' Sloan, W. T. et al. (2006). Quantifying the roles of immigration and chance
