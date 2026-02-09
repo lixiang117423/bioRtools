@@ -2,170 +2,167 @@
 % Please edit documentation in R/admixture_phylo_analysis.R
 \name{admixture_phylo_analysis}
 \alias{admixture_phylo_analysis}
-\title{Analyze Admixture results with phylogenetic ordering and visualization}
+\title{Analyze Admixture results with phylogenetic tree and visualization}
 \usage{
 admixture_phylo_analysis(
   admixture_path,
-  tree_file,
-  output_dir = NULL,
-  population_info = NULL,
+  tree_file = NULL,
+  sample_group = NULL,
   k_range = NULL,
-  plot_width = 15,
-  plot_height = 1,
-  tree_width = 3,
-  tree_height = 15,
-  dpi = 500,
-  color_palette = NULL,
-  show_tree_branch_length = FALSE,
-  output_prefix = "admixture_phylo_analysis",
-  align_clusters = TRUE,
+  color_scale = "aaas",
+  tree_color_scale = "d3",
+  manual_colors = NULL,
+  tree_width = 0.2,
+  tree_linewidth = 0.2,
+  tip_point_size = 0.1,
+  show_branch_length = FALSE,
   verbose = TRUE
 )
 }
 \arguments{
 \item{admixture_path}{Character string specifying the directory path containing 
-Admixture .Q files and the corresponding .fam file. All .Q files in this 
-directory will be processed.}
+Admixture .Q files and .fam file. All .Q files in this directory will be processed.}
 
-\item{tree_file}{Character string specifying the path to the phylogenetic tree 
-file (Newick format). Sample names in the tree must match those in the 
-.fam file.}
+\item{tree_file}{Optional character string specifying the path to the phylogenetic tree 
+file (Newick format). If provided, a phylogenetic tree will be drawn and combined 
+with the admixture plot. If NULL, only admixture plot will be returned. Default is NULL.}
 
-\item{output_dir}{Character string specifying the output directory for plots. 
-Default is the same as admixture_path.}
-
-\item{population_info}{Optional data frame containing population information 
-with columns 'sample' and 'population'. If provided, samples will be 
-grouped by population before phylogenetic ordering. Default is NULL.}
+\item{sample_group}{Optional data frame containing sample grouping information 
+with columns 'label' (sample names), 'group', and optionally 'color'. 
+Can also be a file path to read the grouping information.
+If provided when tree_file is given, tree tips will be colored by groups. Default is NULL.}
 
 \item{k_range}{Integer vector specifying which K values to include in the 
 analysis. Can be specified as a range (e.g., 2:5) or specific values 
 (e.g., c(2,3,5)). If NULL, all available K values will be used. Default is NULL.}
 
-\item{plot_width}{Numeric value specifying the width of the admixture plot 
-in inches. Default is 15.}
+\item{color_scale}{Character string specifying the color scale to use for admixture. 
+Options: "default" (uses optimized base colors), "aaas", "npg", "lancet", 
+"jco", "ucscgb", "uchicago", "simpsons", "rickandmorty", or "manual". 
+Default is "aaas".}
 
-\item{plot_height}{Numeric value specifying the height of the admixture plot 
-in inches. Default is 1.}
+\item{tree_color_scale}{Character string specifying the color scale for tree groups.
+Options: "d3", "aaas", "npg", "lancet", etc. Default is "d3".}
 
-\item{tree_width}{Numeric value specifying the width of the phylogenetic tree 
-plot in inches. Default is 3.}
+\item{manual_colors}{Character vector of colors for manual admixture color scale. 
+Only used when color_scale = "manual". Default is NULL.}
 
-\item{tree_height}{Numeric value specifying the height of the phylogenetic 
-tree plot in inches. Default is 15.}
+\item{tree_width}{Numeric value specifying the relative width of the tree plot. 
+Default is 0.2 (20% of total width).}
 
-\item{dpi}{Numeric value specifying the resolution for output plots. 
-Default is 500.}
+\item{tree_linewidth}{Numeric value specifying the line width for tree branches. 
+Default is 0.2.}
 
-\item{color_palette}{Character vector of colors for different ancestry 
-components. If NULL, uses a default color scheme. Colors will be 
-dynamically adjusted based on the maximum K value in the analysis.}
+\item{tip_point_size}{Numeric value specifying the size of tip points in tree. 
+Default is 0.1.}
 
-\item{show_tree_branch_length}{Logical indicating whether to show branch 
-lengths in the phylogenetic tree. Default is FALSE.}
-
-\item{output_prefix}{Character string for output file naming prefix. 
-Default is "admixture_phylo_analysis".}
-
-\item{align_clusters}{Logical indicating whether to align clusters across 
-different K values. Default is TRUE.}
+\item{show_branch_length}{Logical indicating whether to show branch lengths. 
+Default is FALSE.}
 
 \item{verbose}{Logical indicating whether to print progress information. 
 Default is TRUE.}
+
+\item{k_ncol}{Integer specifying number of columns for K value facets. 
+Default is 9.}
 }
 \value{
-A list containing seven components:
+A list containing:
 \describe{
-  \item{qlist.original}{Original Q matrices read from files with sample names.}
-  \item{qlist.ordered}{Q matrices reordered according to phylogenetic topology.}
-  \item{tree.plot}{ggplot object of the phylogenetic tree.}
-  \item{sample.order}{Data frame showing the final sample ordering with 
-    phylogenetic and population information.}
-  \item{summary.statistics}{Summary statistics from pophelper analysis.}
-  \item{sample.info}{Data frame containing sample information from .fam file.}
-  \item{output.files}{Character vector of created output file paths.}
+  \item{combined_plot}{Combined plot object (aplot) when tree_file provided, otherwise NULL.}
+  \item{admixture_plot}{ggplot2 object of the admixture structure plot.}
+  \item{tree_plot}{ggplot2/ggtree object when tree_file provided, otherwise NULL.}
 }
 }
 \description{
-Process Admixture .Q files and create population structure plots ordered 
-according to phylogenetic tree topology. This function integrates phylogenetic 
-relationships with population genetic structure analysis for comprehensive 
-evolutionary insights. The function automatically reads sample names from 
-.fam files and assigns them to .Q files.
+Process Admixture .Q files and create population structure plots with integrated 
+phylogenetic tree visualization using ggplot2 and ggtree. This function creates 
+a rotated layout with samples on Y-axis and values on X-axis, with K values 
+arranged horizontally, and optionally combines with a phylogenetic tree.
 }
 \details{
-The function workflow includes:
+The function has two distinct modes based on whether tree_file is provided:
+
+**Mode 1: Without tree_file (Traditional Layout)**
 \enumerate{
-  \item Reading .fam file to extract sample information
-  \item Reading all .Q files from the specified directory
-  \item Assigning sample names from .fam file to .Q files
-  \item Processing and summarizing admixture results
-  \item Aligning clusters across different K values (optional)
-  \item Reading phylogenetic tree and extracting tip order
-  \item Reordering samples based on phylogenetic relationships
-  \item Incorporating population structure if provided
-  \item Creating publication-ready plots with matching dimensions
+  \item Samples arranged horizontally (X-axis)
+  \item K values arranged vertically as facets (ncol = 1)
+  \item Strip labels on the left with 90-degree rotation
+  \item Returns only admixture plot
 }
 
-The phylogenetic ordering ensures that:
+**Mode 2: With tree_file (Rotated Layout)**
+\enumerate{
+  \item Reading phylogenetic tree and extracting tip order with proper label cleaning
+  \item Samples arranged vertically (Y-axis)
+  \item K values arranged horizontally as facets (ncol = auto-calculated from k_range)
+  \item Strip labels on top with 90-degree rotation
+  \item Optional sample grouping with colored tree tips
+  \item Returns combined plot, admixture plot, and tree plot
+}
+
+The sample_group parameter can be:
 \itemize{
-  \item Closely related samples appear adjacent in plots
-  \item Population structure patterns can be interpreted in evolutionary context
-  \item Tree and admixture plots have matching sample orders for easy comparison
+  \item A data.frame with columns: 'label', 'group', and optionally 'color'
+  \item A file path to a tab-delimited file with the same columns
+  \item NULL for no grouping (default)
 }
 }
 \note{
 \itemize{
-  \item A .fam file must be present in the admixture_path directory
-  \item Sample names must be consistent across .fam file and phylogenetic tree
-  \item Requires pophelper, ape, ggtree, and dplyr packages
-  \item Output plots are designed for easy horizontal concatenation
-  \item Tree plot height should match admixture plot height for alignment
+  \item Requires tidyverse and ggplot2 packages
+  \item When using phylogenetic features: requires ape, treeio, ggtree, aplot packages
+  \item When using ggsci color scales: requires ggsci package  
+  \item Returns aplot object when tree provided, ggplot2 object otherwise
+  \item No files are saved automatically - use ggsave() if needed
 }
 }
 \examples{
 \dontrun{
-# Basic analysis with specific K range
+# Mode 1: Analysis without tree (traditional layout)
 result <- admixture_phylo_analysis(
-  admixture_path = system.file("extdata", "admixture", package = "bioRtools"),
-  tree_file = "path/to/phylogenetic_tree.nwk",
-  output_dir = "path/to/output/",
-  k_range = 2:5  # Only analyze K=2,3,4,5
+  admixture_path = "path/to/admixture/results/"
+)
+print(result$admixture_plot)  # ggplot2 object
+# result$combined_plot and result$tree_plot will be NULL
+
+# Mode 2: Analysis with tree (rotated layout)
+result <- admixture_phylo_analysis(
+  admixture_path = "path/to/admixture/results/",
+  tree_file = "path/to/phylogenetic_tree.nwk"
+)
+print(result$combined_plot)   # aplot combined object
+print(result$admixture_plot)  # ggplot2 admixture plot
+print(result$tree_plot)       # ggtree plot
+
+# Mode 2 with sample grouping (data frame)
+sample_group <- data.frame(
+  label = c("sample1", "sample2", "sample3"),
+  group = c("A", "A", "B"),
+  color = c("A", "A", "B")
 )
 
-# View the plots
-result$tree.plot
-
-# Access reordered data
-head(result$sample.order)
-
-# With population information and specific K values
-pop_info <- data.frame(
-  sample = c("sample1", "sample2", "sample3"),
-  population = c("Pop1", "Pop1", "Pop2")
-)
-
-result_with_pop <- admixture_phylo_analysis(
+result <- admixture_phylo_analysis(
   admixture_path = "path/to/admixture/results/",
   tree_file = "path/to/phylogenetic_tree.nwk",
-  population_info = pop_info,
-  k_range = c(2, 3, 5),  # Only K=2,3,5
-  output_dir = "path/to/output/",
-  plot_width = 20,
-  tree_width = 4
+  sample_group = sample_group,
+  k_range = 2:6
 )
 
-# Custom colors with automatic adjustment
-custom_colors <- c("#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", 
-                   "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F")
-
-result_custom <- admixture_phylo_analysis(
+# Mode 2 with sample grouping (file path)
+result <- admixture_phylo_analysis(
   admixture_path = "path/to/admixture/results/",
   tree_file = "path/to/phylogenetic_tree.nwk",
-  k_range = 2:6,
-  color_palette = custom_colors,  # Will extend if needed
-  show_tree_branch_length = TRUE,
-  dpi = 300
+  sample_group = "path/to/sample_groups.txt"  # Tab-delimited file
+)
+
+# Custom styling
+result <- admixture_phylo_analysis(
+  admixture_path = "path/to/admixture/results/",
+  tree_file = "path/to/phylogenetic_tree.nwk",
+  color_scale = "npg",
+  tree_color_scale = "aaas",
+  tree_width = 0.3,
+  tip_point_size = 0.2
 )
 }
 

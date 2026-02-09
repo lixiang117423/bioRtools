@@ -17,6 +17,9 @@ theme_bio(
   strip_background_color = "#f0f0f0",
   grid_lines = FALSE,
   axis_line = FALSE,
+  y_expand = c(0, 0),
+  x_expand = NULL,
+  return_list = FALSE,
   legend.position = NULL,
   legend.text.size = NULL,
   legend.title.size = NULL,
@@ -87,6 +90,15 @@ Default is FALSE for a clean look.}
 
 \item{axis_line}{Logical indicating whether to show axis lines. Default 
 is FALSE (uses panel border instead).}
+
+\item{y_expand}{Y-axis expansion setting. Can be a numeric vector of length 2 
+(e.g., c(0, 0)) or NULL to use ggplot default. Default is c(0, 0) for no expansion.}
+
+\item{x_expand}{X-axis expansion setting. Can be a numeric vector of length 2 
+or NULL to use ggplot default. Default is NULL.}
+
+\item{return_list}{Logical indicating whether to return a list containing both 
+theme and scale objects, or just the theme. Default is FALSE (theme only).}
 
 \item{legend.position}{Character string or numeric vector specifying legend 
 position. Options: "none", "left", "right", "bottom", "top", or numeric 
@@ -186,29 +198,37 @@ border color. Default is NULL.}
 These won't have autocomplete but provide full flexibility.}
 }
 \value{
-A ggplot2 theme object that can be added to any ggplot.
+If return_list is FALSE (default): A ggplot2 theme object.
+  If return_list is TRUE: A list containing 'theme' and scale objects 
+  that can be added to any ggplot.
 }
 \description{
 A clean and professional ggplot2 theme specifically designed for biological 
 data visualization. This enhanced version provides explicit parameters for 
 common theme modifications, enabling autocomplete functionality while 
-maintaining all original features.
+maintaining all original features. Now includes scale control options.
 }
 \examples{
 library(dplyr)
 library(ggplot2)
 library(bioRtools)
 
-# Basic usage with enhanced parameters (autocomplete supported)
+# Basic usage (theme only)
+iris \%>\%
+  ggplot(aes(Species, Sepal.Length, fill = Species)) +
+  geom_boxplot() +
+  theme_bio(base_size = 12, legend.position = "none") +
+  scale_y_continuous(expand = c(0, 0))
+
+# Enhanced usage with automatic scale application
 iris \%>\%
   ggplot(aes(Species, Sepal.Length, fill = Species)) +
   geom_boxplot() +
   theme_bio(
     base_size = 12,
     legend.position = "none",
-    plot.title.color = "navy",
-    axis.text.x.angle = 45,
-    axis.title.x.face = "bold"
+    y_expand = c(0, 0),
+    return_list = TRUE
   )
 
 }

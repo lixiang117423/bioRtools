@@ -7,7 +7,7 @@
 anova_posthoc(data, group, value, method = "Tukey", level = 0.95)
 }
 \arguments{
-\item{data}{A data frame containing the variables for analysis}
+\item{data}{A data frame or grouped data frame containing the variables for analysis}
 
 \item{group}{Column name (as string) containing group information for comparison}
 
@@ -22,6 +22,7 @@ Range Test}
 \value{
 A data frame containing:
   \itemize{
+    \item Grouping columns (if data was grouped)
     \item \code{group}: Group levels
     \item \code{anova.pvalue}: Overall ANOVA p-value
     \item \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
@@ -31,12 +32,16 @@ A data frame containing:
 \description{
 This function performs one-way ANOVA followed by post-hoc multiple comparison
 tests using either Tukey HSD or Duncan's test. It provides both ANOVA p-values
-and post-hoc group comparisons with significance letters.
+and post-hoc group comparisons with significance letters. Supports grouped data
+from dplyr::group_by().
 }
 \details{
 The function first performs a one-way ANOVA to test for overall differences
 between groups. If significant differences are detected, post-hoc tests are
 performed to identify which specific groups differ from each other.
+
+When used with grouped data (from dplyr::group_by()), the function will
+perform separate ANOVA analyses for each group combination.
 
 Significance levels:
 \itemize{
@@ -53,7 +58,7 @@ library(dplyr)
 # Load iris dataset
 data(iris)
 
-# Perform ANOVA with Tukey post-hoc test
+# Basic usage: Perform ANOVA with Tukey post-hoc test
 tukey_result <- anova_posthoc(
   data = iris,
   group = "Species", 
@@ -61,7 +66,7 @@ tukey_result <- anova_posthoc(
 )
 print(tukey_result)
 
-# Perform ANOVA with Duncan post-hoc test
+# With Duncan post-hoc test
 duncan_result <- anova_posthoc(
   data = iris,
   group = "Species",
@@ -70,13 +75,35 @@ duncan_result <- anova_posthoc(
 )
 print(duncan_result)
 
-# Using different confidence level
-result_99 <- anova_posthoc(
-  data = iris,
+# Using grouped data
+library(tidyr)
+
+# Create example data with multiple factors
+iris_long <- iris \%>\%
+  mutate(Size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) \%>\%
+  group_by(Size)
+
+# Perform ANOVA for each Size group
+grouped_result <- anova_posthoc(
+  data = iris_long,
   group = "Species",
-  value = "Sepal.Width",
-  level = 0.99
+  value = "Sepal.Length"
 )
-print(result_99)
+print(grouped_result)
+
+# Multiple grouping variables
+mtcars_grouped <- mtcars \%>\%
+  mutate(cyl = as.factor(cyl),
+         am = as.factor(am),
+         gear_group = as.factor(gear)) \%>\%
+  group_by(cyl, am)
+
+result <- anova_posthoc(
+  data = mtcars_grouped,
+  group = "gear_group",
+  value = "mpg",
+  method = "Tukey"
+)
+print(result)
 
 }

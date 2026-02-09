@@ -501,6 +501,7 @@ admixture_phylo_analysis <- function(admixture_path,
       dplyr::mutate(label = stringr::str_remove_all(label, "\\'")) %>% 
       treeio::as.phylo() %>% 
       ggtree::ggtree(branch.length = if(show_branch_length) NULL else "none", 
+                    ladderize = FALSE,
                      linewidth = tree_linewidth)
     
     # Add group information if provided
