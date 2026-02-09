@@ -554,7 +554,18 @@ theme_bio <- function(base_size = 10,
   }
 }
 
-# Custom + operator for theme_bio_list
+#' Add Operator for theme_bio_list
+#'
+#' @description
+#' Custom + operator to combine two theme_bio_list objects or add
+#' a theme to a theme_bio_list.
+#'
+#' @param e1 A theme_bio_list object or theme
+#' @param e2 A theme_bio_list object or theme
+#'
+#' @return A combined theme_bio_list object
+#'
+#' @export
 `+.theme_bio_list` <- function(e1, e2) {
   if (inherits(e2, "theme_bio_list")) {
     # Adding two theme_bio_list objects

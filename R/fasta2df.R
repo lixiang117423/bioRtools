@@ -386,7 +386,6 @@
 #' @references
 #' FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 #'
-#' @importFrom utils file.size
 #' @importFrom stats setNames
 #' @export
 #'

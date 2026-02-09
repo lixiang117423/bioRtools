@@ -574,9 +574,9 @@ print.core_microbiome <- function(x, ...) {
 #' The model assumes that species dynamics are driven by random birth, death,
 #' and dispersal, with no selective differences between species.
 #'
-#' @return If \code{return_stats = TRUE}, returns a data frame with one row
-#'   containing model fit statistics (R², AIC, BIC, migration parameter m).
-#'   If \code{return_stats = FALSE}, returns a data frame with columns:
+#' @return If return_stats is TRUE, returns a data frame with one row
+#'   containing model fit statistics (R-squared, AIC, BIC, migration parameter m).
+#'   If return_stats is FALSE, returns a data frame with columns:
 #'   \item{otu}{OTU identifier}
 #'   \item{mean_rel_abun}{Mean relative abundance}
 #'   \item{freq_observed}{Observed occurrence frequency}
