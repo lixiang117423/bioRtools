@@ -39,6 +39,10 @@
 #'   improve multiple testing correction and statistical power
 #' @param alpha Alpha level for outlier detection and Cook's distance filtering
 #'   (default: 0.1). Lower values are more stringent for outlier detection
+#' @param remove_problematic_genes Logical indicating whether to automatically
+#'   remove genes with non-finite values (Inf, -Inf, NaN) (default: TRUE).
+#'   If TRUE, problematic genes are removed with a warning. If FALSE, the function
+#'   will stop with an error message detailing which genes and samples have issues
 #'
 #' @return A data frame containing differential expression results with columns:
 #'   \itemize{
@@ -293,7 +297,8 @@
 #' }
 #'
 find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1, padj = 0.05,
-                             shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1) {
+                             shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1,
+                             remove_problematic_genes = TRUE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop("'data' must be a matrix or data frame")
@@ -311,17 +316,72 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
     stop("'sample' cannot be empty")
   }
 
+  # Validate remove_problematic_genes parameter
+  if (!is.logical(remove_problematic_genes) || length(remove_problematic_genes) != 1) {
+    stop("'remove_problematic_genes' must be a single logical value")
+  }
+
   # Check if data contains valid count values
   if (any(data < 0, na.rm = TRUE)) {
     stop("'data' must contain only non-negative values (raw counts required)")
   }
 
-  if (any(!is.finite(as.matrix(data)), na.rm = TRUE)) {
-    stop("'data' contains non-finite values (Inf, -Inf, NaN)")
+  # Check for non-finite values
+  data_matrix <- as.matrix(data)
+  n_genes_original <- nrow(data_matrix)
+  has_nonfinite <- any(!is.finite(data_matrix), na.rm = TRUE)
+
+  if (has_nonfinite) {
+    # Identify problematic genes and samples
+    problem_genes_idx <- which(apply(data_matrix, 1, function(x) any(!is.finite(x))))
+    problem_samples_idx <- which(apply(data_matrix, 2, function(x) any(!is.finite(x))))
+
+    gene_names <- if (!is.null(rownames(data_matrix))) rownames(data_matrix) else paste0("Row_", 1:nrow(data_matrix))
+    sample_names <- if (!is.null(colnames(data_matrix))) colnames(data_matrix) else paste0("Col_", 1:ncol(data_matrix))
+
+    problematic_gene_names <- gene_names[problem_genes_idx]
+    problematic_sample_names <- sample_names[problem_samples_idx]
+
+    if (remove_problematic_genes) {
+      # Auto-remove problematic genes
+      warning_msg <- paste0(
+        "Automatically removing ", length(problematic_gene_names), " gene(s) with non-finite values:\n",
+        "  Genes: ", paste(head(problematic_gene_names, 5), collapse = ", "),
+        if (length(problematic_gene_names) > 5) paste0(", ... (+", length(problematic_gene_names) - 5, " more)"),
+        "\n",
+        "  Found in samples: ", paste(problematic_sample_names, collapse = ", "),
+        "\n",
+        "  To keep these genes, set remove_problematic_genes = FALSE and fix the data manually"
+      )
+      warning(warning_msg)
+
+      # Remove problematic genes
+      data_matrix <- data_matrix[-problem_genes_idx, , drop = FALSE]
+    } else {
+      # Stop with detailed error message
+      error_msg <- paste0(
+        "'data' contains non-finite values (Inf, -Inf, NaN)\n",
+        "Found ", length(problematic_gene_names), " problematic gene(s): ",
+        paste(head(problematic_gene_names, 5), collapse = ", "),
+        if (length(problematic_gene_names) > 5) paste0(", ... (+", length(problematic_gene_names) - 5, " more)"),
+        "\n",
+        "Found in ", length(problematic_sample_names), " sample(s): ",
+        paste(problematic_sample_names, collapse = ", "),
+        "\n\n",
+        "Fix options:\n",
+        "1. Set remove_problematic_genes = TRUE to auto-remove these genes\n",
+        "2. Replace non-finite values: data[!is.finite(data)] <- 0\n",
+        "3. Remove manually: data <- data[!rownames(data) %in% c('",
+        paste(head(problematic_gene_names, 3), collapse = "', '"), "'), ]"
+      )
+      stop(error_msg)
+    }
+  } else {
+    # No issues found, use original data
+    data_matrix <- data_matrix
   }
 
   # Check for and handle non-integer counts
-  data_matrix <- as.matrix(data)
   if (!is.integer(data_matrix[1, 1]) && any(data_matrix != round(data_matrix), na.rm = TRUE)) {
     warning("Non-integer values detected. Converting to integers. Ensure input represents raw counts, not normalized data.")
     data_matrix <- round(data_matrix)
@@ -579,6 +639,7 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
   # Add comprehensive metadata
   attr(results_processed, "n_genes_input") <- nrow(data_matrix)
+  attr(results_processed, "n_genes_original") <- n_genes_original
   attr(results_processed, "n_genes_tested") <- n_tested
   attr(results_processed, "n_samples") <- ncol(data_matrix)
   attr(results_processed, "design_formula") <- deparse(formula)
@@ -588,12 +649,25 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   attr(results_processed, "independent_filtering") <- independent.filtering
   attr(results_processed, "alpha_level") <- alpha
   attr(results_processed, "library_size_range") <- range(lib_sizes)
+  attr(results_processed, "remove_problematic_genes") <- remove_problematic_genes
+  if (has_nonfinite && remove_problematic_genes) {
+    attr(results_processed, "n_genes_removed") <- length(problematic_gene_names)
+    attr(results_processed, "genes_removed") <- problematic_gene_names
+  }
 
   # Interactive summary
   if (interactive()) {
     cat("DESeq2 Differential Expression Analysis Summary:\n")
     cat("===============================================\n")
-    cat("Genes input:", nrow(data_matrix), "\n")
+
+    # Show gene filtering information
+    if (has_nonfinite && remove_problematic_genes) {
+      cat("Genes (original):", n_genes_original, "\n")
+      cat("Genes removed (non-finite values):", length(problematic_gene_names), "\n")
+      cat("Genes analyzed:", nrow(data_matrix), "\n")
+    } else {
+      cat("Genes input:", nrow(data_matrix), "\n")
+    }
     cat("Genes tested:", n_tested, "\n")
     cat("Samples analyzed:", ncol(data_matrix), "\n")
     cat("Design formula:", deparse(formula), "\n")
