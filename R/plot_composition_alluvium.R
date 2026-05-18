@@ -94,18 +94,17 @@
 #'
 #' @export
 plot_composition_alluvium <- function(data,
-                                        taxon_column = "family",
-                                        id_column = NULL,
-                                        palette = "Paired",
-                                        alpha = 0.7,
-                                        y_labels_format = TRUE,
-                                        y_accuracy = 1,
-                                        y_expand = c(0, 0),
-                                        legend_position = "right",
-                                        legend_key_height = 0.4,
-                                        legend_key_width = 0.6,
-                                        base_size = 11) {
-
+                                      taxon_column = "family",
+                                      id_column = NULL,
+                                      palette = "Paired",
+                                      alpha = 0.7,
+                                      y_labels_format = TRUE,
+                                      y_accuracy = 1,
+                                      y_expand = c(0, 0),
+                                      legend_position = "right",
+                                      legend_key_height = 0.4,
+                                      legend_key_width = 0.6,
+                                      base_size = 11) {
   # Input validation
   validate_alluvium_input(data, taxon_column, id_column, palette, alpha)
 
@@ -142,11 +141,10 @@ plot_composition_alluvium <- function(data,
 #' @keywords internal
 #' @noRd
 validate_alluvium_input <- function(data,
-                                     taxon_column,
-                                     id_column,
-                                     palette,
-                                     alpha) {
-
+                                    taxon_column,
+                                    id_column,
+                                    palette,
+                                    alpha) {
   # Check data frame
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame", call. = FALSE)
@@ -201,7 +199,6 @@ validate_alluvium_input <- function(data,
 #' @keywords internal
 #' @noRd
 clean_alluvium_data <- function(data, taxon_column, id_column) {
-
   # Determine actual taxon column name
   if (!taxon_column %in% names(data) && !is.null(id_column)) {
     actual_taxon_col <- id_column
@@ -267,7 +264,6 @@ build_alluvium_plot <- function(df_clean,
                                 legend_key_height,
                                 legend_key_width,
                                 base_size) {
-
   # Build y-axis scale
   if (y_labels_format) {
     y_scale <- ggplot2::scale_y_continuous(

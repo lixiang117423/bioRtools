@@ -213,6 +213,11 @@ spls_analysis <- function(data,
     }
   }
 
+  # Perform centering and scaling on data
+  if (center || scale) {
+    data <- scale(data, center = center, scale = scale)
+  }
+
   # Perform sPLS-DA
   tryCatch(
     {
@@ -221,8 +226,7 @@ spls_analysis <- function(data,
         Y = group,
         ncomp = ncomp,
         keepX = keepX,
-        scale = scale,
-        center = center,
+        scale = FALSE,
         max.iter = max_iter,
         tol = tol
       )

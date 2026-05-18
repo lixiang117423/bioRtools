@@ -22,28 +22,33 @@
 #' @details
 #' This function implements a multi-step approach to identify core microbiome members:
 #'
-#' \enumerate{
-#'   \item \strong{Ranking}: OTUs are ranked by an index combining occurrence
-#'     frequency and consistency across groups
-#'   \item \strong{Contribution}: Calculates each OTU's contribution to
-#'     community dissimilarity using Bray-Curtis distances
-#'   \item \strong{Cutoff determination}: Uses two methods:
-#'     \itemize{
-#'       \item Elbow method (first-order difference)
-#'       \item Last increase method (based on threshold parameter)
-#'     }
-#'   \item \strong{Neutral model}: Fits Sloan's neutral model to assess
-#'     whether taxa follow neutral expectations
-#' }
+#' 1. Ranking: OTUs are ranked by an index combining occurrence frequency and
+#'    consistency across groups
+#'
+#' 2. Contribution: Calculates each OTU's contribution to community dissimilarity
+#'    using Bray-Curtis distances
+#'
+#' 3. Cutoff determination: Uses two methods:
+#'   - Elbow method (first-order difference)
+#'   - Last increase method (based on threshold parameter)
+#'
+#' 4. Neutral model: Fits Sloan's neutral model to assess whether taxa follow
+#'    neutral expectations
 #'
 #' @return A list with class "core_microbiome" containing:
-#'   \item{elbow}{Integer. Core size determined by elbow method}
-#'   \item{last_call}{Integer. Core size determined by last increase method}
-#'   \item{neutral_model}{Data frame with neutral model predictions}
-#'   \item{ranked_otus}{Data frame of ranked OTUs with dissimilarity metrics}
-#'   \item{fitting_results}{Data frame combining ranking and neutral model results}
-#'   \item{plot_ranked}{ggplot object showing ranked OTUs}
-#'   \item{plot_neutral}{ggplot object showing neutral model fit}
+#'   \code{elbow}: Integer. Core size determined by elbow method
+#'
+#'   \code{last_call}: Integer. Core size determined by last increase method
+#'
+#'   \code{neutral_model}: Data frame with neutral model predictions
+#'
+#'   \code{ranked_otus}: Data frame of ranked OTUs with dissimilarity metrics
+#'
+#'   \code{fitting_results}: Data frame combining ranking and neutral model results
+#'
+#'   \code{plot_ranked}: ggplot object showing ranked OTUs
+#'
+#'   \code{plot_neutral}: ggplot object showing neutral model fit
 #'
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #'

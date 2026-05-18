@@ -73,11 +73,74 @@ if (length(missing_packages) > 0) {
 }
 
 # Load helper scripts
-script_dir <- file.path(dirname(sys.frame(1)$filename), "setup")
-source_paths <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
+# Get the directory where this script is located
+get_script_dir <- function() {
+  # Try multiple methods to get script directory
+  script_path <- NULL
 
-for (script in source_paths) {
-  source(script)
+  # Method 1: thisfile() (R 4.0+)
+  if (exists("thisfile", mode = "function")) {
+    script_path <- tryCatch(thisfile(), error = function(e) NULL)
+  }
+
+  # Method 2: sys.frame(1)$filename
+  if (is.null(script_path)) {
+    script_path <- tryCatch(sys.frame(1)$filename, error = function(e) NULL)
+  }
+
+  # Method 3: Use current working directory with relative path
+  if (is.null(script_path) || !file.exists(script_path)) {
+    # Assume script is in scripts/setup.R relative to package root
+    script_path <- file.path(getwd(), "scripts", "setup.R")
+  }
+
+  if (!is.null(script_path) && file.exists(script_path)) {
+    return(dirname(script_path))
+  }
+
+  # Fallback: return NULL and handle it later
+  return(NULL)
+}
+
+script_dir <- get_script_dir()
+
+if (is.null(script_dir)) {
+  # If we can't determine script directory, use relative path
+  script_dir <- file.path(getwd(), "scripts")
+}
+
+helper_dir <- file.path(script_dir, "setup")
+
+# Check if helper directory exists
+if (!dir.exists(helper_dir)) {
+  # Try alternative paths
+  possible_paths <- c(
+    file.path(getwd(), "scripts", "setup"),
+    file.path(dirname(getwd()), "scripts", "setup"),
+    "scripts/setup",
+    "../scripts/setup"
+  )
+
+  for (path in possible_paths) {
+    if (dir.exists(path)) {
+      helper_dir <- path
+      break
+    }
+  }
+}
+
+# Load helper scripts if directory exists
+if (dir.exists(helper_dir)) {
+  source_paths <- list.files(helper_dir, pattern = "\\.R$", full.names = TRUE)
+
+  for (script in source_paths) {
+    tryCatch(source(script), error = function(e) {
+      warning(paste("Failed to load", script, ":", e$message))
+    })
+  }
+  message("✓ Loaded ", length(source_paths), " helper script(s)\n")
+} else {
+  warning("Could not find helper scripts directory. Some functions may not be available.")
 }
 
 

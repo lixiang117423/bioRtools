@@ -40,48 +40,41 @@
 #'   Default is TRUE.
 #'
 #' @return A list containing:
-#' \describe{
-#'   \item{combined_plot}{Combined plot object (aplot) when tree_file provided, otherwise NULL.}
-#'   \item{admixture_plot}{ggplot2 object of the admixture structure plot.}
-#'   \item{tree_plot}{ggplot2/ggtree object when tree_file provided, otherwise NULL.}
-#' }
+#'   \code{combined_plot}: Combined plot object (aplot) when tree_file provided,
+#'     otherwise NULL
+#'
+#'   \code{admixture_plot}: ggplot2 object of the admixture structure plot
+#'
+#'   \code{tree_plot}: ggplot2/ggtree object when tree_file provided, otherwise NULL
 #'
 #' @details
 #' The function has two distinct modes based on whether tree_file is provided:
 #'
 #' **Mode 1: Without tree_file (Traditional Layout)**
-#' \enumerate{
-#'   \item Samples arranged horizontally (X-axis)
-#'   \item K values arranged vertically as facets (ncol = 1)
-#'   \item Strip labels on the left with 90-degree rotation
-#'   \item Returns only admixture plot
-#' }
+#'   - Samples arranged horizontally (X-axis)
+#'   - K values arranged vertically as facets (ncol = 1)
+#'   - Strip labels on the left with 90-degree rotation
+#'   - Returns only admixture plot
 #'
 #' **Mode 2: With tree_file (Rotated Layout)**
-#' \enumerate{
-#'   \item Reading phylogenetic tree and extracting tip order with proper label cleaning
-#'   \item Samples arranged vertically (Y-axis)
-#'   \item K values arranged horizontally as facets (ncol = auto-calculated from k_range)
-#'   \item Strip labels on top with 90-degree rotation
-#'   \item Optional sample grouping with colored tree tips
-#'   \item Returns combined plot, admixture plot, and tree plot
-#' }
+#'   - Reading phylogenetic tree and extracting tip order with proper label cleaning
+#'   - Samples arranged vertically (Y-axis)
+#'   - K values arranged horizontally as facets (ncol = auto-calculated from k_range)
+#'   - Strip labels on top with 90-degree rotation
+#'   - Optional sample grouping with colored tree tips
+#'   - Returns combined plot, admixture plot, and tree plot
 #'
 #' The sample_group parameter can be:
-#' \itemize{
-#'   \item A data.frame with columns: 'label', 'group', and optionally 'color'
-#'   \item A file path to a tab-delimited file with the same columns
-#'   \item NULL for no grouping (default)
-#' }
+#'   - A data.frame with columns: 'label', 'group', and optionally 'color'
+#'   - A file path to a tab-delimited file with the same columns
+#'   - NULL for no grouping (default)
 #'
 #' @note
-#' \itemize{
-#'   \item Requires tidyverse and ggplot2 packages
-#'   \item When using phylogenetic features: requires ape, treeio, ggtree, aplot packages
-#'   \item When using ggsci color scales: requires ggsci package
-#'   \item Returns aplot object when tree provided, ggplot2 object otherwise
-#'   \item No files are saved automatically - use ggsave() if needed
-#' }
+#'   - Requires tidyverse and ggplot2 packages
+#'   - When using phylogenetic features: requires ape, treeio, ggtree, aplot packages
+#'   - When using ggsci color scales: requires ggsci package
+#'   - Returns aplot object when tree provided, ggplot2 object otherwise
+#'   - No files are saved automatically - use ggsave() if needed
 #'
 #' @export
 #' @examples

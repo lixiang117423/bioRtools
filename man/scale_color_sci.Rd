@@ -100,21 +100,21 @@ scale_fill_shinkai(
 )
 
 scale_color_research(
-  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+  palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber",
     "blue_coral", "pink_teal"),
   alpha = 1,
   ...
 )
 
 scale_colour_research(
-  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+  palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber",
     "blue_coral", "pink_teal"),
   alpha = 1,
   ...
 )
 
 scale_fill_research(
-  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+  palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber",
     "blue_coral", "pink_teal"),
   alpha = 1,
   ...

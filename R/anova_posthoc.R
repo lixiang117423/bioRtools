@@ -14,13 +14,11 @@
 #' @param level Confidence level for the comparisons (default: 0.95, i.e., 95%)
 #'
 #' @return A data frame containing:
-#'   \itemize{
-#'     \item Grouping columns (if data was grouped)
-#'     \item \code{group}: Group levels
-#'     \item \code{anova.pvalue}: Overall ANOVA p-value
-#'     \item \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
-#'     \item \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
-#'   }
+#'   - Grouping columns (if data was grouped)
+#'   - \code{group}: Group levels
+#'   - \code{anova.pvalue}: Overall ANOVA p-value
+#'   - \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
+#'   - \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
 #'
 #' @details
 #' The function first performs a one-way ANOVA to test for overall differences
@@ -31,12 +29,10 @@
 #' perform separate ANOVA analyses for each group combination.
 #'
 #' Significance levels:
-#' \itemize{
-#'   \item NS: p > 0.05 (not significant)
-#'   \item *: 0.01 < p ≤ 0.05
-#'   \item **: 0.001 < p ≤ 0.01
-#'   \item ***: p ≤ 0.001
-#' }
+#'   - NS: p > 0.05 (not significant)
+#'   - *: 0.01 < p ≤ 0.05
+#'   - **: 0.001 < p ≤ 0.01
+#'   - ***: p ≤ 0.001
 #'
 #' @export
 #'

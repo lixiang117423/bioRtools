@@ -32,7 +32,7 @@ pal_nat_comm(palette = c("default"), alpha = 1)
 pal_shinkai(palette = c("default", "blue_tones", "red_tones"), alpha = 1)
 
 pal_research(
-  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+  palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber",
     "blue_coral", "pink_teal"),
   alpha = 1
 )

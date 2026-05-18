@@ -25,7 +25,6 @@
 #' @importFrom stats lm
 #' @importFrom broom glance
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_bw
-#' @importFrom ggpmisc stat_poly_eq
 #'
 #' @export
 #'
