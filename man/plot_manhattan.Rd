@@ -13,11 +13,16 @@ plot_manhattan(
   transform_log10 = FALSE,
   title = "Manhattan Plot",
   ylab = NULL,
-  colors = c("gray50", "steelblue"),
+  colors = c("#D85A30", "#1D9E75"),
   threshold_line = NULL,
   threshold_color = "red",
   point_size = 1.2,
-  point_alpha = 0.8
+  point_alpha = 0.8,
+  show_density = FALSE,
+  density_colors = c("darkgreen", "yellow", "red"),
+  bin_size = 1e+05,
+  density_height = 0.12,
+  show_density_legend = FALSE
 )
 }
 \arguments{
@@ -46,7 +51,7 @@ transformation to the values. Set to TRUE for p-values. Default is FALSE.}
 automatically based on \code{transform_log10}.}
 
 \item{colors}{Character vector of colors for alternating chromosome coloring.
-Default is c("gray50", "steelblue").}
+Default is c("#D85A30", "#1D9E75").}
 
 \item{threshold_line}{Numeric value for drawing a horizontal threshold line.
 Default is NULL (no line).}
@@ -57,76 +62,47 @@ Default is "red".}
 \item{point_size}{Numeric value for point size. Default is 1.2.}
 
 \item{point_alpha}{Numeric value for point transparency (0-1). Default is 0.8.}
+
+\item{show_density}{Logical. Whether to display an rMVP-style SNP density panel
+below the main Manhattan plot. Requires the \code{patchwork} package.
+Default is FALSE.}
+
+\item{density_colors}{Character vector of 3 colors used to interpolate the
+density gradient from low to high SNP density.
+Default is c("darkgreen", "yellow", "red"), matching rMVP's style.}
+
+\item{bin_size}{Integer. Window size (in bp) for counting SNPs when computing
+density. Smaller values give finer resolution. Default is 1e5 (100 kb).}
+
+\item{density_height}{Numeric. Relative height of the density panel compared
+to the main plot (passed to \code{patchwork::plot_layout}). Default is 0.12.}
+
+\item{show_density_legend}{Logical. Whether to show a color legend for the
+SNP density panel. Default is FALSE.}
 }
 \value{
-A list containing three components:
+A list containing:
 \describe{
-  \item{plot.manhattan}{A ggplot object that can be further customized or
-    directly displayed.}
-  \item{data.processed}{The processed data frame used for plotting, including
-    cumulative positions and transformed values.}
-  \item{chromosome.centers}{A data frame containing the center positions for
-    each chromosome, useful for custom axis labeling.}
+  \item{plot.manhattan}{The main ggplot Manhattan plot object.}
+  \item{plot.density}{The density ggplot object (NULL if show_density = FALSE).}
+  \item{plot.combined}{The patchwork-combined plot (NULL if show_density = FALSE).}
+  \item{data.processed}{The processed data frame used for plotting.}
+  \item{chromosome.centers}{A data frame of chromosome center positions.}
 }
 }
 \description{
 A comprehensive function for creating Manhattan plots from GWAS results or other
 genome-wide data. Supports both data frames and file input, with customizable
-visualization options.
+visualization options. Optionally displays an rMVP-style SNP density panel below
+the main plot.
 }
 \details{
-The function automatically handles chromosome sorting using natural ordering
-(chr1, chr2, ..., chr10, chr11, ...) and calculates cumulative positions for
-proper Manhattan plot visualization. The plot uses alternating colors to
-distinguish chromosomes and includes optional threshold lines for significance
-cutoffs.
+When \code{show_density = TRUE}, the function computes per-bin SNP counts across
+the genome and renders them as a color-coded density strip beneath the main plot,
+mimicking the style produced by \code{rMVP::MVP.Report}. The combined figure is
+assembled with \code{patchwork}.
 }
 \note{
-This function requires the following packages: dplyr, ggplot2, readr, and gtools.
-The gtools package is specifically used for natural chromosome sorting.
-}
-\examples{
-library(dplyr)
-library(bioRtools)
-
-# Create mock GWAS data
-set.seed(123)
-n_chr <- 10
-n_points_per_chr <- 1000
-mock_data <- data.frame(
-  chromosome = rep(paste0("chr", 1:n_chr), each = n_points_per_chr),
-  position = unlist(lapply(1:n_chr, function(x)
-    sample(1:1e6, n_points_per_chr, replace = TRUE))),
-  p_value = runif(n_chr * n_points_per_chr, min = 1e-8, max = 1)
-)
-
-# Basic Manhattan plot with p-value transformation
-manhattan_result <- plot_manhattan(
-  data = mock_data,
-  chr_col = "chromosome",
-  pos_col = "position",
-  val_col = "p_value",
-  transform_log10 = TRUE,
-  title = "GWAS Manhattan Plot"
-)
-
-# Display the plot
-manhattan_result$plot.manhattan
-
-# Add significance threshold
-manhattan_result2 <- plot_manhattan(
-  data = mock_data,
-  chr_col = "chromosome",
-  pos_col = "position",
-  val_col = "p_value",
-  transform_log10 = TRUE,
-  title = "Manhattan Plot with Threshold",
-  threshold_line = -log10(5e-8),
-  colors = c("#276FBF", "#183059")
-)
-
-# Access processed data for further analysis
-head(manhattan_result$data.processed)
-manhattan_result$chromosome.centers
-
+Required packages: dplyr, ggplot2, readr, gtools, rlang.
+Additional package for density panel: patchwork.
 }

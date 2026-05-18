@@ -28,6 +28,9 @@
 \alias{scale_color_shinkai}
 \alias{scale_colour_shinkai}
 \alias{scale_fill_shinkai}
+\alias{scale_color_research}
+\alias{scale_colour_research}
+\alias{scale_fill_research}
 \title{Academic journal color scales}
 \usage{
 scale_color_sci(palette = c("default"), alpha = 1, ...)
@@ -95,6 +98,27 @@ scale_fill_shinkai(
   alpha = 1,
   ...
 )
+
+scale_color_research(
+  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+    "blue_coral", "pink_teal"),
+  alpha = 1,
+  ...
+)
+
+scale_colour_research(
+  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+    "blue_coral", "pink_teal"),
+  alpha = 1,
+  ...
+)
+
+scale_fill_research(
+  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+    "blue_coral", "pink_teal"),
+  alpha = 1,
+  ...
+)
 }
 \arguments{
 \item{palette}{Palette type. Available options depend on the journal:
@@ -108,6 +132,8 @@ scale_fill_shinkai(
   \item chem_eng: "default" (12-color Chemical Engineering Journal palette)
   \item nat_comm: "default" (12-color Nature Communications palette)
   \item shinkai: "default", "blue_tones", "red_tones" (Makoto Shinkai inspired)
+  \item research: "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+    "purple_amber", "blue_coral", "pink_teal"
 }}
 
 \item{alpha}{Transparency level, a real number in (0, 1].

@@ -12,7 +12,8 @@ find_degs_deseq2(
   padj = 0.05,
   shrink.lfc = TRUE,
   independent.filtering = TRUE,
-  alpha = 0.1
+  alpha = 0.1,
+  remove_problematic_genes = TRUE
 )
 }
 \arguments{
@@ -56,6 +57,11 @@ improve multiple testing correction and statistical power}
 
 \item{alpha}{Alpha level for outlier detection and Cook's distance filtering
 (default: 0.1). Lower values are more stringent for outlier detection}
+
+\item{remove_problematic_genes}{Logical indicating whether to automatically
+remove genes with non-finite values (Inf, -Inf, NaN) (default: TRUE).
+If TRUE, problematic genes are removed with a warning. If FALSE, the function
+will stop with an error message detailing which genes and samples have issues}
 }
 \value{
 A data frame containing differential expression results with columns:

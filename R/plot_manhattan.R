@@ -23,7 +23,7 @@
 #' @param ylab Character string for the Y-axis label. If NULL, will be set
 #'   automatically based on \code{transform_log10}.
 #' @param colors Character vector of colors for alternating chromosome coloring.
-#'   Default is c("gray50", "steelblue").
+#'   Default is c("#D85A30", "#1D9E75").
 #' @param threshold_line Numeric value for drawing a horizontal threshold line.
 #'   Default is NULL (no line).
 #' @param threshold_color Character string specifying the threshold line color.
@@ -71,7 +71,7 @@ plot_manhattan <- function(data = NULL,
                            transform_log10 = FALSE,
                            title = "Manhattan Plot",
                            ylab = NULL,
-                           colors = c("gray50", "steelblue"),
+                           colors = c("#D85A30", "#1D9E75"),
                            threshold_line = NULL,
                            threshold_color = "red",
                            point_size = 1.2,

@@ -21,13 +21,11 @@ Range Test}
 }
 \value{
 A data frame containing:
-  \itemize{
-    \item Grouping columns (if data was grouped)
-    \item \code{group}: Group levels
-    \item \code{anova.pvalue}: Overall ANOVA p-value
-    \item \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
-    \item \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
-  }
+  - Grouping columns (if data was grouped)
+  - \code{group}: Group levels
+  - \code{anova.pvalue}: Overall ANOVA p-value
+  - \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
+  - \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
 }
 \description{
 This function performs one-way ANOVA followed by post-hoc multiple comparison
@@ -44,12 +42,10 @@ When used with grouped data (from dplyr::group_by()), the function will
 perform separate ANOVA analyses for each group combination.
 
 Significance levels:
-\itemize{
-  \item NS: p > 0.05 (not significant)
-  \item *: 0.01 < p ≤ 0.05
-  \item **: 0.001 < p ≤ 0.01
-  \item ***: p ≤ 0.001
-}
+  - NS: p > 0.05 (not significant)
+  - *: 0.01 < p ≤ 0.05
+  - **: 0.001 < p ≤ 0.01
+  - ***: p ≤ 0.001
 }
 \examples{
 library(bioRtools)

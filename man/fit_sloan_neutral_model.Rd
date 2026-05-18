@@ -17,7 +17,10 @@ Should ideally be rarefied to equal sequencing depth.}
 If FALSE, returns observed and predicted values for each OTU. Default is FALSE.}
 }
 \value{
-
+A data frame. When return_stats is TRUE, returns one row with
+  model fit statistics: R2, AIC, BIC, and migration parameter m.
+  When return_stats is FALSE, returns a data frame with columns for
+  each OTU including observed and predicted frequencies and confidence intervals.
 }
 \description{
 Fits Sloan's neutral community model to OTU occurrence data. The neutral

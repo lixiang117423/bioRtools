@@ -87,7 +87,7 @@ print(cor_result2)
 
 # Example 3: Between-dataset correlation
 # Create two subsets of iris data
-morphology <- iris[, 1:2]  # Sepal measurements  
+morphology <- iris[, 1:2]  # Sepal measurements
 anatomy <- iris[, 3:4]     # Petal measurements
 
 cor_result3 <- cor_analysis(

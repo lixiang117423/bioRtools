@@ -10,6 +10,7 @@
 \alias{pal_chem_eng}
 \alias{pal_nat_comm}
 \alias{pal_shinkai}
+\alias{pal_research}
 \title{Academic journal color palettes}
 \usage{
 pal_sci(palette = c("default"), alpha = 1)
@@ -29,6 +30,12 @@ pal_chem_eng(palette = c("default"), alpha = 1)
 pal_nat_comm(palette = c("default"), alpha = 1)
 
 pal_shinkai(palette = c("default", "blue_tones", "red_tones"), alpha = 1)
+
+pal_research(
+  palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber",
+    "blue_coral", "pink_teal"),
+  alpha = 1
+)
 }
 \arguments{
 \item{palette}{Palette type. Available options depend on the journal:
@@ -42,6 +49,8 @@ pal_shinkai(palette = c("default", "blue_tones", "red_tones"), alpha = 1)
   \item chem_eng: "default" (12-color Chemical Engineering Journal palette)
   \item nat_comm: "default" (12-color Nature Communications palette)
   \item shinkai: "default", "blue_tones", "red_tones" (Makoto Shinkai inspired)
+  \item research: "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+    "purple_amber", "blue_coral", "pink_teal"
 }}
 
 \item{alpha}{Transparency level, a real number in (0, 1].

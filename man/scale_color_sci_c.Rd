@@ -28,12 +28,17 @@
 \alias{scale_color_shinkai_c}
 \alias{scale_colour_shinkai_c}
 \alias{scale_fill_shinkai_c}
+\alias{scale_color_research_c}
+\alias{scale_colour_research_c}
+\alias{scale_fill_research_c}
 \title{Continuous academic journal color scales}
 \usage{
 scale_color_sci_c(
   palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient",
     "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient",
-    "shinkai_gradient"),
+    "shinkai_gradient", "research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
   alpha = 1,
   reverse = FALSE,
   ...
@@ -42,7 +47,9 @@ scale_color_sci_c(
 scale_colour_sci_c(
   palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient",
     "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient",
-    "shinkai_gradient"),
+    "shinkai_gradient", "research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
   alpha = 1,
   reverse = FALSE,
   ...
@@ -51,7 +58,9 @@ scale_colour_sci_c(
 scale_fill_sci_c(
   palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient",
     "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient",
-    "shinkai_gradient"),
+    "shinkai_gradient", "research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
   alpha = 1,
   reverse = FALSE,
   ...
@@ -104,6 +113,33 @@ scale_color_shinkai_c(alpha = 1, reverse = FALSE, ...)
 scale_colour_shinkai_c(alpha = 1, reverse = FALSE, ...)
 
 scale_fill_shinkai_c(alpha = 1, reverse = FALSE, ...)
+
+scale_color_research_c(
+  palette = c("research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
+  alpha = 1,
+  reverse = FALSE,
+  ...
+)
+
+scale_colour_research_c(
+  palette = c("research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
+  alpha = 1,
+  reverse = FALSE,
+  ...
+)
+
+scale_fill_research_c(
+  palette = c("research_teal_sequential", "research_purple_sequential",
+    "research_amber_coral_sequential", "research_blue_coral_diverging",
+    "research_teal_pink_diverging", "research_purple_amber_diverging"),
+  alpha = 1,
+  reverse = FALSE,
+  ...
+)
 }
 \arguments{
 \item{palette}{Palette type for continuous scales:
@@ -117,6 +153,12 @@ scale_fill_shinkai_c(alpha = 1, reverse = FALSE, ...)
   \item "chem_eng_gradient": Chemical Engineering blue-gray-red gradient
   \item "nat_comm_gradient": Nature Communications cyan-gray-brown gradient
   \item "shinkai_gradient": Shinkai blue-lavender-purple gradient
+  \item "research_teal_sequential": Teal sequential gradient (low to high expression)
+  \item "research_purple_sequential": Purple sequential gradient (ATAC-seq / methylation)
+  \item "research_amber_coral_sequential": Amber to Coral warm gradient (log2FC)
+  \item "research_blue_coral_diverging": Blue-Coral diverging (down to up regulated)
+  \item "research_teal_pink_diverging": Teal-Pink diverging (colorblind friendly)
+  \item "research_purple_amber_diverging": Purple-Amber diverging (correlation matrix)
 }}
 
 \item{alpha}{Transparency level, a real number in (0, 1].}

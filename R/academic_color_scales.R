@@ -15,6 +15,7 @@
 #'   \item{chem_eng}{Chemical Engineering Journal inspired colors}
 #'   \item{nat_comm}{Nature Communications inspired colors}
 #'   \item{shinkai}{Makoto Shinkai (新海诚) animation inspired colors}
+#'   \item{research}{Research-oriented palettes for biological data visualization}
 #' }
 #'
 #' @name academic_palettes
@@ -62,6 +63,15 @@ academic_db <- list(
     "blue_tones" = c("#1E3F66", "#2E5C8A", "#4178A5", "#5F8FB8", "#7BA3C7", "#2A4D66",
       "#3C6278", "#4F7A8F", "#6391A5", "#5C7B88", "#7DA2B0", "#9BB8C6"),
     "red_tones" = c("#710000", "#980000", "#C60000", "#E50000", "#F80000")
+  ),
+  "research" = list(
+    "nature_genomics" = c("#378ADD", "#D85A30", "#1D9E75", "#BA7517", "#7F77DD", "#D4537E"),
+    "earth" = c("#3B6D11", "#639922", "#BA7517", "#854F0B", "#993C1D", "#888780"),
+    "cool_spectrum" = c("#0C447C", "#185FA5", "#534AB7", "#7F77DD", "#D4537E", "#ED93B1"),
+    "coral_teal" = c("#D85A30", "#F0997B", "#1D9E75", "#5DCAA5"),
+    "purple_amber" = c("#534AB7", "#AFA9EC", "#BA7517", "#EF9F27"),
+    "blue_coral" = c("#185FA5", "#85B7EB", "#D85A30", "#F0997B"),
+    "pink_teal" = c("#993556", "#ED93B1", "#0F6E56", "#5DCAA5")
   )
 )
 
@@ -75,7 +85,13 @@ academic_continuous <- list(
   "fuel_gradient" = c("#000035", "#EEEEEE", "#730101"),
   "chem_eng_gradient" = c("#0000E4", "#F0F0F0", "#EB0000"),
   "nat_comm_gradient" = c("#0E8585", "#F8F8F8", "#7E4909"),
-  "shinkai_gradient" = c("#1E3F66", "#E0E2F2", "#5A5FA3")
+  "shinkai_gradient" = c("#1E3F66", "#E0E2F2", "#5A5FA3"),
+  "research_teal_sequential" = c("#E1F5EE", "#9FE1CB", "#5DCAA5", "#1D9E75", "#0F6E56", "#04342C"),
+  "research_purple_sequential" = c("#EEEDFE", "#CECBF6", "#AFA9EC", "#7F77DD", "#534AB7", "#26215C"),
+  "research_amber_coral_sequential" = c("#FAEEDA", "#FAC775", "#EF9F27", "#D85A30", "#993C1D", "#4A1B0C"),
+  "research_blue_coral_diverging" = c("#185FA5", "#85B7EB", "#F1EFE8", "#F0997B", "#D85A30"),
+  "research_teal_pink_diverging" = c("#0F6E56", "#5DCAA5", "#F1EFE8", "#ED93B1", "#993556"),
+  "research_purple_amber_diverging" = c("#3C3489", "#AFA9EC", "#F1EFE8", "#FAC775", "#854F0B")
 )
 
 # Helper function to check ggplot2 version (from ggsci)
@@ -100,6 +116,8 @@ is_ggplot2_350 <- function() {
 #'     \item chem_eng: "default" (12-color Chemical Engineering Journal palette)
 #'     \item nat_comm: "default" (12-color Nature Communications palette)
 #'     \item shinkai: "default", "blue_tones", "red_tones" (Makoto Shinkai inspired)
+#'     \item research: "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+#'       "purple_amber", "blue_coral", "pink_teal"
 #'   }
 #' @param alpha Transparency level, a real number in (0, 1].
 #'   See `alpha` in [grDevices::rgb()] for details.
@@ -246,6 +264,22 @@ pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
   raw_cols <- academic_db$"shinkai"[[palette]]
+  raw_cols_rgb <- col2rgb(raw_cols)
+  alpha_cols <- rgb(
+    raw_cols_rgb[1L, ], raw_cols_rgb[2L, ], raw_cols_rgb[3L, ],
+    alpha = alpha * 255L, names = names(raw_cols),
+    maxColorValue = 255L
+  )
+  manual_pal(unname(alpha_cols))
+}
+
+#' @rdname pal_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @export
+pal_research <- function(palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1) {
+  palette <- match.arg(palette)
+  if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
+  raw_cols <- academic_db$"research"[[palette]]
   raw_cols_rgb <- col2rgb(raw_cols)
   alpha_cols <- rgb(
     raw_cols_rgb[1L, ], raw_cols_rgb[2L, ], raw_cols_rgb[3L, ],
@@ -549,6 +583,36 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
   }
 }
 
+# Research scales
+#' @export scale_color_research
+#' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_color_research <- function(palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
+  palette <- match.arg(palette)
+  if (is_ggplot2_350()) {
+    discrete_scale("colour", palette = pal_research(palette, alpha), ...)
+  } else {
+    discrete_scale("colour", scale_name = "research", palette = pal_research(palette, alpha), ...)
+  }
+}
+
+#' @export scale_colour_research
+#' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_colour_research <- scale_color_research
+
+#' @export scale_fill_research
+#' @rdname scale_color_sci
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_fill_research <- function(palette = c("nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
+  palette <- match.arg(palette)
+  if (is_ggplot2_350()) {
+    discrete_scale("fill", palette = pal_research(palette, alpha), ...)
+  } else {
+    discrete_scale("fill", scale_name = "research", palette = pal_research(palette, alpha), ...)
+  }
+}
+
 # Continuous color scales ====================================================
 
 #' Continuous academic journal color scales
@@ -567,6 +631,12 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #'     \item "chem_eng_gradient": Chemical Engineering blue-gray-red gradient
 #'     \item "nat_comm_gradient": Nature Communications cyan-gray-brown gradient
 #'     \item "shinkai_gradient": Shinkai blue-lavender-purple gradient
+#'     \item "research_teal_sequential": Teal sequential gradient (low to high expression)
+#'     \item "research_purple_sequential": Purple sequential gradient (ATAC-seq / methylation)
+#'     \item "research_amber_coral_sequential": Amber to Coral warm gradient (log2FC)
+#'     \item "research_blue_coral_diverging": Blue-Coral diverging (down to up regulated)
+#'     \item "research_teal_pink_diverging": Teal-Pink diverging (colorblind friendly)
+#'     \item "research_purple_amber_diverging": Purple-Amber diverging (correlation matrix)
 #'   }
 #' @param alpha Transparency level, a real number in (0, 1].
 #' @param reverse Logical. Should the order of the colors be reversed?
@@ -604,7 +674,7 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #'   scale_fill_science_c() +
 #'   theme_minimal()
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
-scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
+scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient", "research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                               alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -631,7 +701,7 @@ scale_colour_sci_c <- scale_color_sci_c
 #' @export scale_fill_sci_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
-scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient"),
+scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient", "research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                              alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -805,4 +875,26 @@ scale_colour_shinkai_c <- scale_color_shinkai_c
 #' @rdname scale_color_sci_c
 scale_fill_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "shinkai_gradient", alpha = alpha, reverse = reverse, ...)
+}
+
+# Research continuous scales
+#' @export scale_color_research_c
+#' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_color_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
+                                   alpha = 1, reverse = FALSE, ...) {
+  scale_color_sci_c(palette = palette, alpha = alpha, reverse = reverse, ...)
+}
+
+#' @export scale_colour_research_c
+#' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_colour_research_c <- scale_color_research_c
+
+#' @export scale_fill_research_c
+#' @rdname scale_color_sci_c
+#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+scale_fill_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
+                                  alpha = 1, reverse = FALSE, ...) {
+  scale_fill_sci_c(palette = palette, alpha = alpha, reverse = reverse, ...)
 }

@@ -20,6 +20,7 @@ Designed specifically for scientific data visualization.
   \item{chem_eng}{Chemical Engineering Journal inspired colors}
   \item{nat_comm}{Nature Communications inspired colors}
   \item{shinkai}{Makoto Shinkai (新海诚) animation inspired colors}
+  \item{research}{Research-oriented palettes for biological data visualization}
 }
 }
 
