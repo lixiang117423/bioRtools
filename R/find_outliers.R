@@ -23,6 +23,19 @@
 #'     \item 3.0: More conservative threshold for extreme outliers
 #'     \item 2.5: Intermediate threshold
 #'   }
+#' @param quantile_type Integer specifying the quantile algorithm type passed to
+#'   \code{\link[stats]{quantile}} (default: "auto").
+#'   \itemize{
+#'     \item \code{"auto"}: Automatically selects based on sample size. When n < 30,
+#'       uses type 2 (Tukey hinges, quartiles are actual data points). When n >= 30,
+#'       uses type 7 (R default, linear interpolation).
+#'     \item \code{2}: Tukey hinges — Q1/Q3 always correspond to real observations,
+#'       making results easier to explain for small samples.
+#'     \item \code{7}: R default — continuous quantile via linear interpolation,
+#'       preferred for large samples.
+#'     \item Other values (1--9): See \code{\link[stats]{quantile}} for all 9 types.
+#'   }
+#'   Only used when \code{method = "iqr"}.
 #' @param return.logical Logical indicating return format (default: FALSE).
 #'   If TRUE, returns logical vector (TRUE/FALSE). If FALSE, returns character
 #'   vector ("yes"/"no") for backward compatibility
@@ -45,6 +58,15 @@
 #'   \item Define lower fence = Q1 - k × IQR
 #'   \item Define upper fence = Q3 + k × IQR
 #'   \item Values outside these fences are outliers
+#' }
+#'
+#' When \code{quantile_type = "auto"} (default), the quantile algorithm is
+#' chosen based on sample size:
+#' \itemize{
+#'   \item n < 30: uses type 2 (Tukey hinges) — Q1 and Q3 are always real
+#'     observations, making the fence values more interpretable.
+#'   \item n >= 30: uses type 7 (R default) — standard linear interpolation,
+#'     differences between types are negligible at larger sample sizes.
 #' }
 #'
 #' \strong{Modified Z-Score Method:}
@@ -211,7 +233,8 @@
 #' print(paste("Outlier threshold (upper):",
 #'   round(quantile(gene_expression, 0.75) + 1.5 * IQR(gene_expression), 2)))
 #'
-find_outliers <- function(x, method = "iqr", k = 1.5, return.logical = FALSE, na.rm = TRUE) {
+find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
+                           return.logical = FALSE, na.rm = TRUE) {
   # Input validation
   if (!is.numeric(x)) {
     stop("'x' must be a numeric vector")
@@ -242,6 +265,19 @@ find_outliers <- function(x, method = "iqr", k = 1.5, return.logical = FALSE, na
     stop("'na.rm' must be a single logical value")
   }
 
+  # Validate quantile_type
+  if (is.character(quantile_type)) {
+    if (length(quantile_type) != 1 || quantile_type != "auto") {
+      stop("'quantile_type' must be \"auto\" or an integer from 1 to 9")
+    }
+  } else if (is.numeric(quantile_type)) {
+    if (length(quantile_type) != 1 || !(quantile_type %in% 1:9)) {
+      stop("'quantile_type' must be \"auto\" or an integer from 1 to 9")
+    }
+  } else {
+    stop("'quantile_type' must be \"auto\" or an integer from 1 to 9")
+  }
+
   # Handle all-NA case
   if (all(is.na(x))) {
     result <- rep(NA, length(x))
@@ -259,11 +295,20 @@ find_outliers <- function(x, method = "iqr", k = 1.5, return.logical = FALSE, na
 
   # Detect outliers based on method
   if (method == "iqr") {
+    # Resolve quantile type
+    if (is.character(quantile_type)) {
+      # "auto" — choose based on sample size
+      n_valid <- sum(!is.na(x))
+      qtype <- if (n_valid < 30) 2L else 7L
+    } else {
+      qtype <- as.integer(quantile_type)
+    }
+
     # IQR method (Tukey's fences)
     if (na.rm) {
-      q1 <- stats::quantile(x, 0.25, na.rm = TRUE)
-      q3 <- stats::quantile(x, 0.75, na.rm = TRUE)
-      iqr_value <- stats::IQR(x, na.rm = TRUE)
+      q1 <- stats::quantile(x, 0.25, na.rm = TRUE, type = qtype)
+      q3 <- stats::quantile(x, 0.75, na.rm = TRUE, type = qtype)
+      iqr_value <- q3 - q1
     } else {
       if (any(is.na(x))) {
         # If na.rm = FALSE and NAs present, return all NAs
@@ -273,9 +318,9 @@ find_outliers <- function(x, method = "iqr", k = 1.5, return.logical = FALSE, na
         }
         return(result)
       }
-      q1 <- stats::quantile(x, 0.25)
-      q3 <- stats::quantile(x, 0.75)
-      iqr_value <- stats::IQR(x)
+      q1 <- stats::quantile(x, 0.25, type = qtype)
+      q3 <- stats::quantile(x, 0.75, type = qtype)
+      iqr_value <- q3 - q1
     }
 
     # Check for zero IQR (no variation in data)
