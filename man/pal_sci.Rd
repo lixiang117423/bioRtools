@@ -32,8 +32,8 @@ pal_nat_comm(palette = c("default"), alpha = 1)
 pal_shinkai(palette = c("default", "blue_tones", "red_tones"), alpha = 1)
 
 pal_research(
-  palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber",
-    "blue_coral", "pink_teal"),
+  palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+    "purple_amber", "blue_coral", "pink_teal"),
   alpha = 1
 )
 }
@@ -49,7 +49,7 @@ pal_research(
   \item chem_eng: "default" (12-color Chemical Engineering Journal palette)
   \item nat_comm: "default" (12-color Nature Communications palette)
   \item shinkai: "default", "blue_tones", "red_tones" (Makoto Shinkai inspired)
-  \item research: "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+  \item research: "default" (10-color high-contrast palette), "nature_genomics", "earth", "cool_spectrum", "coral_teal",
     "purple_amber", "blue_coral", "pink_teal"
 }}
 
