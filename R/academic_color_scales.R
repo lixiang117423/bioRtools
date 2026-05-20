@@ -65,6 +65,7 @@ academic_db <- list(
     "red_tones" = c("#710000", "#980000", "#C60000", "#E50000", "#F80000")
   ),
   "research" = list(
+    "default" = c("#D85A30", "#1D9E75", "#378ADD", "#BA7517", "#7F77DD", "#D4537E", "#0C447C", "#993556", "#3B6D11", "#888780"),
     "nature_genomics" = c("#378ADD", "#D85A30", "#1D9E75", "#BA7517", "#7F77DD", "#D4537E"),
     "earth" = c("#3B6D11", "#639922", "#BA7517", "#854F0B", "#993C1D", "#888780"),
     "cool_spectrum" = c("#0C447C", "#185FA5", "#534AB7", "#7F77DD", "#D4537E", "#ED93B1"),
@@ -116,7 +117,7 @@ is_ggplot2_350 <- function() {
 #'     \item chem_eng: "default" (12-color Chemical Engineering Journal palette)
 #'     \item nat_comm: "default" (12-color Nature Communications palette)
 #'     \item shinkai: "default", "blue_tones", "red_tones" (Makoto Shinkai inspired)
-#'     \item research: "nature_genomics", "earth", "cool_spectrum", "coral_teal",
+#'     \item research: "default" (10-color high-contrast palette), "nature_genomics", "earth", "cool_spectrum", "coral_teal",
 #'       "purple_amber", "blue_coral", "pink_teal"
 #'   }
 #' @param alpha Transparency level, a real number in (0, 1].
@@ -276,7 +277,7 @@ pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha
 #' @rdname pal_sci
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
 #' @export
-pal_research <- function(palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber", "blue_coral", "pink_teal"), alpha = 1) {
+pal_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
   raw_cols <- academic_db$"research"[[palette]]
@@ -587,7 +588,7 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #' @export scale_color_research
 #' @rdname scale_color_sci
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
-scale_color_research <- function(palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
+scale_color_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
     discrete_scale("colour", palette = pal_research(palette, alpha), ...)
@@ -604,7 +605,7 @@ scale_colour_research <- scale_color_research
 #' @export scale_fill_research
 #' @rdname scale_color_sci
 #' @author Xiang LI \email{lixiang117423@@foxmail.com}
-scale_fill_research <- function(palette = c("coral_teal", "nature_genomics", "earth", "cool_spectrum", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
+scale_fill_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
     discrete_scale("fill", palette = pal_research(palette, alpha), ...)
