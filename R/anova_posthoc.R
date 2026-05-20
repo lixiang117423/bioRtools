@@ -191,7 +191,7 @@ anova_single_group <- function(data, group, value, method, level) {
     posthoc_result <- tryCatch(
       {
         multcomp::glht(fit, linfct = multcomp::mcp(group.anova = "Tukey")) %>%
-          multcomp::cld(level = level, decreasing = TRUE)
+          multcomp::cld(level = level, decreasing = FALSE)
       },
       error = function(e) {
         warning(paste("Tukey post-hoc test failed:", e$message))
