@@ -163,20 +163,33 @@ theme_prism <- function(palette = "black_and_white",
     panel.spacing.x = NULL,
     panel.spacing.y = NULL,
     panel.ontop = FALSE,
-    strip.background = ggplot2::element_blank(),
+    strip.background = ggplot2::element_rect(
+      fill = "grey85", colour = NA
+    ),
     strip.text = ggplot2::element_text(
-      colour = colours["axisTitleColor"],
-      size = ggplot2::rel(0.8),
+      colour = "black",
+      face = "bold",
+      size = ggplot2::rel(0.9),
+      hjust = 0.5,
+      vjust = 0.5,
       margin = ggplot2::margin(
         base_size / 2.5, base_size / 2.5,
         base_size / 2.5, base_size / 2.5
       )
     ),
     strip.text.x = ggplot2::element_text(
-      margin = ggplot2::margin(b = base_size / 3)
+      hjust = 0.5, vjust = 0.5,
+      margin = ggplot2::margin(
+        base_size / 2.5, base_size / 2.5,
+        base_size / 2.5, base_size / 2.5
+      )
     ),
     strip.text.y = ggplot2::element_text(
-      angle = -90, margin = ggplot2::margin(l = base_size / 3)
+      angle = -90, hjust = 0.5, vjust = 0.5,
+      margin = ggplot2::margin(
+        base_size / 2.5, base_size / 2.5,
+        base_size / 2.5, base_size / 2.5
+      )
     ),
     strip.text.y.left = ggplot2::element_text(angle = 90),
     strip.placement = "inside",
