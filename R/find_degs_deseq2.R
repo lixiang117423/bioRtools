@@ -379,17 +379,17 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   sample_names <- rownames(sample)
 
   if (is.null(data_samples) || is.null(sample_names)) {
-    stop("Both 'data' (columns) and 'sample' (rows) must have names")
+    stop(err_row_col_mismatch("data", "sample"))
   }
 
   if (!all(data_samples %in% sample_names)) {
     missing_samples <- setdiff(data_samples, sample_names)
-    stop(paste("Sample(s) missing from metadata:", paste(missing_samples, collapse = ", ")))
+    stop(err_row_col_mismatch("data", "sample metadata"))
   }
 
   if (!all(sample_names %in% data_samples)) {
     extra_samples <- setdiff(sample_names, data_samples)
-    warning(paste("Extra samples in metadata (ignored):", paste(extra_samples, collapse = ", ")))
+    warn_data_processing(paste("Extra samples in metadata (ignored):", paste(extra_samples, collapse = ", ")))
   }
 
   # Align sample metadata with count data
@@ -397,24 +397,20 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
   # Validate design formula
   if (!inherits(formula, "formula")) {
-    stop("'formula' must be a formula object (e.g., ~condition)")
+    stop(err_invalid_input("formula", "a formula object (e.g., ~condition)"))
   }
+
+  validate_formula_vars(formula, sample_aligned)
 
   formula_vars <- all.vars(formula)
   if (length(formula_vars) == 0) {
-    stop("Formula must contain at least one variable")
-  }
-
-  missing_vars <- setdiff(formula_vars, names(sample_aligned))
-  if (length(missing_vars) > 0) {
-    stop(paste("Formula variables not found in sample metadata:",
-      paste(missing_vars, collapse = ", ")))
+    stop(err_invalid_input("formula", "at least one variable"))
   }
 
   # Check for missing values in design variables
   for (var in formula_vars) {
     if (any(is.na(sample_aligned[[var]]))) {
-      stop(paste("Missing values found in design variable:", var))
+      stop(err_missing_values(sprintf("design variable '%s'", var), sum(is.na(sample_aligned[[var]]))))
     }
   }
 
