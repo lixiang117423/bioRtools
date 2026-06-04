@@ -213,22 +213,22 @@ plot_pangenome_rarefaction <- function(
     y    = c(pan_y, core_y),
     ymin = c(pan_y - pan_sd, core_y - core_sd),
     ymax = c(pan_y + pan_sd, core_y + core_sd),
-    type = rep(c("Pan-genome", "Core genome"), each = n_pts),
+    type = rep(c("Pan", "Core"), each = n_pts),
     stringsAsFactors = FALSE
   )
   plot_long$type <- factor(plot_long$type,
-                           levels = c("Pan-genome", "Core genome"))
+                           levels = c("Pan", "Core"))
 
   smooth_long <- data.frame(
     x    = rep(smooth_x, 2),
     y    = c(smooth_df$pan, smooth_df$core),
-    type = rep(c("Pan-genome", "Core genome"), each = n_smooth),
+    type = rep(c("Pan", "Core"), each = n_smooth),
     stringsAsFactors = FALSE
   )
   smooth_long$type <- factor(smooth_long$type,
-                             levels = c("Pan-genome", "Core genome"))
+                             levels = c("Pan", "Core"))
 
-  color_map <- c("Pan-genome" = pan_color, "Core genome" = core_color)
+  color_map <- c("Pan" = pan_color, "Core" = core_color)
 
   # ── Build ggplot ────────────────────────────────────────────────────────────
   p <- ggplot2::ggplot() +
