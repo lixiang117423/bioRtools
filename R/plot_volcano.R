@@ -195,7 +195,8 @@ plot_volcano <- function(data,
       range = point_size_range,
       guide = ggplot2::guide_legend(override.aes = list(alpha = 1))
     ) +
-    ggsci::scale_color_d3() +
+    # Use standardized color palette from bioRtools
+    scale_groups(n_groups = dplyr::n_distinct(data_processed[[color]]), palette = "d3") +
     # Add labels
     ggplot2::labs(
       x = ifelse(x == "log2FoldChange",
