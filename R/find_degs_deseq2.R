@@ -301,29 +301,30 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
                              remove_problematic_genes = TRUE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data)) {
-    stop("'data' must be a matrix or data frame")
+    stop(err_invalid_input("data", "a matrix or data frame"))
   }
 
   if (!is.data.frame(sample)) {
-    stop("'sample' must be a data frame")
+    stop(err_invalid_input("sample", "a data frame"))
   }
 
   if (nrow(data) == 0 || ncol(data) == 0) {
-    stop("'data' cannot be empty")
+    stop(err_missing_required("data"))
   }
 
   if (nrow(sample) == 0) {
-    stop("'sample' cannot be empty")
+    stop(err_missing_required("sample"))
   }
 
   # Validate remove_problematic_genes parameter
   if (!is.logical(remove_problematic_genes) || length(remove_problematic_genes) != 1) {
-    stop("'remove_problematic_genes' must be a single logical value")
+    stop(err_invalid_input("remove_problematic_genes", "a single logical value (TRUE or FALSE)"))
   }
 
   # Check if data contains valid count values
   if (any(data < 0, na.rm = TRUE)) {
-    stop("'data' must contain only non-negative values (raw counts required)")
+    min_val <- min(data, na.rm = TRUE)
+    stop(err_negative_values("data", min_val))
   }
 
   # Check for non-finite values
@@ -344,37 +345,15 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
     if (remove_problematic_genes) {
       # Auto-remove problematic genes
-      warning_msg <- paste0(
-        "Automatically removing ", length(problematic_gene_names), " gene(s) with non-finite values:\n",
-        "  Genes: ", paste(head(problematic_gene_names, 5), collapse = ", "),
-        if (length(problematic_gene_names) > 5) paste0(", ... (+", length(problematic_gene_names) - 5, " more)"),
-        "\n",
-        "  Found in samples: ", paste(problematic_sample_names, collapse = ", "),
-        "\n",
-        "  To keep these genes, set remove_problematic_genes = FALSE and fix the data manually"
-      )
-      warning(warning_msg)
+      warn_genes_removed(length(problematic_gene_names), "non-finite values (Inf, -Inf, NaN)")
 
       # Remove problematic genes
       data_matrix <- data_matrix[-problem_genes_idx, , drop = FALSE]
     } else {
       # Stop with detailed error message
-      error_msg <- paste0(
-        "'data' contains non-finite values (Inf, -Inf, NaN)\n",
-        "Found ", length(problematic_gene_names), " problematic gene(s): ",
-        paste(head(problematic_gene_names, 5), collapse = ", "),
-        if (length(problematic_gene_names) > 5) paste0(", ... (+", length(problematic_gene_names) - 5, " more)"),
-        "\n",
-        "Found in ", length(problematic_sample_names), " sample(s): ",
-        paste(problematic_sample_names, collapse = ", "),
-        "\n\n",
-        "Fix options:\n",
-        "1. Set remove_problematic_genes = TRUE to auto-remove these genes\n",
-        "2. Replace non-finite values: data[!is.finite(data)] <- 0\n",
-        "3. Remove manually: data <- data[!rownames(data) %in% c('",
-        paste(head(problematic_gene_names, 3), collapse = "', '"), "'), ]"
-      )
-      stop(error_msg)
+      genes_str <- paste(head(problematic_gene_names, 5), collapse = ", ")
+      samples_str <- paste(problematic_sample_names, collapse = ", ")
+      stop(err_infinite_values(problem_genes_idx, problem_samples_idx))
     }
   } else {
     # No issues found, use original data
