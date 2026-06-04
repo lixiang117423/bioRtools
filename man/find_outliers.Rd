@@ -4,7 +4,14 @@
 \alias{find_outliers}
 \title{Identify Statistical Outliers Using Interquartile Range (IQR) Method}
 \usage{
-find_outliers(x, method = "iqr", k = 1.5, return.logical = FALSE, na.rm = TRUE)
+find_outliers(
+  x,
+  method = "iqr",
+  k = 1.5,
+  quantile_type = "auto",
+  return.logical = FALSE,
+  na.rm = TRUE
+)
 }
 \arguments{
 \item{x}{Numeric vector containing the data to be analyzed for outliers.
@@ -26,6 +33,20 @@ Common values:
   \item 3.0: More conservative threshold for extreme outliers
   \item 2.5: Intermediate threshold
 }}
+
+\item{quantile_type}{Integer specifying the quantile algorithm type passed to
+\code{\link[stats]{quantile}} (default: "auto").
+\itemize{
+  \item \code{"auto"}: Automatically selects based on sample size. When n < 30,
+    uses type 2 (Tukey hinges, quartiles are actual data points). When n >= 30,
+    uses type 7 (R default, linear interpolation).
+  \item \code{2}: Tukey hinges — Q1/Q3 always correspond to real observations,
+    making results easier to explain for small samples.
+  \item \code{7}: R default — continuous quantile via linear interpolation,
+    preferred for large samples.
+  \item Other values (1--9): See \code{\link[stats]{quantile}} for all 9 types.
+}
+Only used when \code{method = "iqr"}.}
 
 \item{return.logical}{Logical indicating return format (default: FALSE).
 If TRUE, returns logical vector (TRUE/FALSE). If FALSE, returns character
@@ -58,6 +79,15 @@ identify and visualize outliers.
   \item Define lower fence = Q1 - k × IQR
   \item Define upper fence = Q3 + k × IQR
   \item Values outside these fences are outliers
+}
+
+When \code{quantile_type = "auto"} (default), the quantile algorithm is
+chosen based on sample size:
+\itemize{
+  \item n < 30: uses type 2 (Tukey hinges) — Q1 and Q3 are always real
+    observations, making the fence values more interpretable.
+  \item n >= 30: uses type 7 (R default) — standard linear interpolation,
+    differences between types are negligible at larger sample sizes.
 }
 
 \strong{Modified Z-Score Method:}

@@ -141,133 +141,131 @@ plot_pangenome_rarefaction <- function(
   core_y <- data[[core_mean_col]]
   core_sd <- data[[core_std_col]]
 
-  # ── Estimate start values via log-log linear regression ──────────────────────
-  est_start <- function(x, y) {
-    fit <- stats::lm(log(y) ~ log(x))
-    coefs <- stats::coef(fit)
-    list(a = unname(exp(coefs[1])), b = unname(coefs[2]))
-  }
-
-  start_pan <- est_start(x, pan_y)
-  start_core <- est_start(x, core_y)
-
-  # ── Fit Heaps' law: y ~ a * x^b ─────────────────────────────────────────────
+  # ── Fit Heaps' law or constant model ────────────────────────────────────────
   fit_df <- data.frame(x = x, pan_y = pan_y, core_y = core_y)
+  pan_var <- stats::var(pan_y)
+  core_var <- stats::var(core_y)
 
-  fit_pan <- minpack.lm::nlsLM(
-    pan_y ~ a * x^b,
-    data = fit_df,
-    start = start_pan
-  )
-
-  fit_core <- minpack.lm::nlsLM(
-    core_y ~ a * x^b,
-    data = fit_df,
-    start = start_core
-  )
-
-  # ── R-squared ───────────────────────────────────────────────────────────────
-  calc_r2 <- function(actual, fitted_obj) {
-    ss_res <- sum(stats::residuals(fitted_obj)^2)
-    ss_tot <- sum((actual - mean(actual))^2)
-    1 - ss_res / ss_tot
+  # Pan-genome
+  if (is.na(pan_var) || pan_var < .Machine$double.eps) {
+    fit_pan <- NULL
+    r2_pan <- NA_real_
+    heaps_pan <- c(a = pan_y[1L], gamma = 0)
+    pan_smooth_val <- rep(pan_y[1L], n_smooth)
+  } else {
+    start_pan <- list(a = pan_y[which.min(x)], b = 0.1)
+    fit_pan <- stats::nls(pan_y ~ a * x^b, data = fit_df, start = start_pan)
+    ss_res <- sum(stats::residuals(fit_pan)^2)
+    ss_tot <- sum((pan_y - mean(pan_y))^2)
+    r2_pan <- 1 - ss_res / ss_tot
+    heaps_pan <- stats::coef(fit_pan)
+    names(heaps_pan) <- c("a", "gamma")
+    pan_smooth_val <- NULL
   }
 
-  r2_pan <- calc_r2(pan_y, fit_pan)
-  r2_core <- calc_r2(core_y, fit_core)
-
-  # ── Heaps' law parameters ───────────────────────────────────────────────────
-  heaps_pan <- stats::coef(fit_pan)
-  heaps_core <- stats::coef(fit_core)
-  names(heaps_pan) <- c("a", "gamma")
-  names(heaps_core) <- c("a", "alpha")
+  # Core-genome
+  if (is.na(core_var) || core_var < .Machine$double.eps) {
+    fit_core <- NULL
+    r2_core <- NA_real_
+    heaps_core <- c(a = core_y[1L], alpha = 0)
+    core_smooth_val <- rep(core_y[1L], n_smooth)
+  } else {
+    start_core <- list(a = core_y[which.min(x)], b = -0.1)
+    fit_core <- stats::nls(core_y ~ a * x^b, data = fit_df, start = start_core)
+    ss_res <- sum(stats::residuals(fit_core)^2)
+    ss_tot <- sum((core_y - mean(core_y))^2)
+    r2_core <- 1 - ss_res / ss_tot
+    heaps_core <- stats::coef(fit_core)
+    names(heaps_core) <- c("a", "alpha")
+    core_smooth_val <- NULL
+  }
 
   # ── Smooth predictions ──────────────────────────────────────────────────────
   smooth_x <- seq(min(x), max(x), length.out = n_smooth)
   smooth_df <- data.frame(
     x    = smooth_x,
-    pan  = stats::predict(fit_pan, newdata = data.frame(x = smooth_x)),
-    core = stats::predict(fit_core, newdata = data.frame(x = smooth_x))
+    pan  = if (!is.null(fit_pan))
+             stats::predict(fit_pan, newdata = data.frame(x = smooth_x))
+           else pan_smooth_val,
+    core = if (!is.null(fit_core))
+             stats::predict(fit_core, newdata = data.frame(x = smooth_x))
+           else core_smooth_val
   )
 
-  # ── Build plot data ─────────────────────────────────────────────────────────
-  plot_df <- data.frame(
-    x        = x,
-    pan_y    = pan_y,
-    pan_ymin = pan_y - pan_sd,
-    pan_ymax = pan_y + pan_sd,
-    core_y   = core_y,
-    core_ymin = core_y - core_sd,
-    core_ymax = core_y + core_sd
-  )
+  # ── Print fitted parameters ─────────────────────────────────────────────────
+  if (!is.na(r2_pan)) {
+    message(sprintf("Pan-genome  | a = %.4f, gamma = %.4f, R2 = %.4f",
+                    heaps_pan["a"], heaps_pan["gamma"], r2_pan))
+  } else {
+    message("Pan-genome  | constant data (gamma = 0)")
+  }
+  if (!is.na(r2_core)) {
+    message(sprintf("Core-genome | a = %.4f, alpha = %.4f, R2 = %.4f",
+                    heaps_core["a"], heaps_core["alpha"], r2_core))
+  } else {
+    message("Core-genome | constant data (alpha = 0)")
+  }
 
-  # Label positions: right edge, aligned with last fitted values
-  label_x <- max(x)
-  pan_label_y <- utils::tail(pan_y, 1)
-  core_label_y <- utils::tail(core_y, 1)
+  # ── Build plot data (long format for legend) ────────────────────────────────
+  n_pts <- length(x)
+  plot_long <- data.frame(
+    x    = rep(x, 2),
+    y    = c(pan_y, core_y),
+    ymin = c(pan_y - pan_sd, core_y - core_sd),
+    ymax = c(pan_y + pan_sd, core_y + core_sd),
+    type = rep(c("Pan-genome", "Core genome"), each = n_pts),
+    stringsAsFactors = FALSE
+  )
+  plot_long$type <- factor(plot_long$type,
+                           levels = c("Pan-genome", "Core genome"))
+
+  smooth_long <- data.frame(
+    x    = rep(smooth_x, 2),
+    y    = c(smooth_df$pan, smooth_df$core),
+    type = rep(c("Pan-genome", "Core genome"), each = n_smooth),
+    stringsAsFactors = FALSE
+  )
+  smooth_long$type <- factor(smooth_long$type,
+                             levels = c("Pan-genome", "Core genome"))
+
+  color_map <- c("Pan-genome" = pan_color, "Core genome" = core_color)
 
   # ── Build ggplot ────────────────────────────────────────────────────────────
   p <- ggplot2::ggplot() +
 
     # Error ribbons (±1 SD)
     ggplot2::geom_ribbon(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, ymin = .data$pan_ymin, ymax = .data$pan_ymax),
-      fill = pan_color, alpha = ribbon_alpha
-    ) +
-    ggplot2::geom_ribbon(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, ymin = .data$core_ymin, ymax = .data$core_ymax),
-      fill = core_color, alpha = ribbon_alpha
+      data = plot_long,
+      ggplot2::aes(x = .data$x, ymin = .data$ymin, ymax = .data$ymax,
+                   fill = .data$type),
+      alpha = ribbon_alpha
     ) +
 
     # Fitted curves
     ggplot2::geom_line(
-      data = smooth_df,
-      ggplot2::aes(x = .data$x, y = .data$pan),
-      color = pan_color, linewidth = line_size
-    ) +
-    ggplot2::geom_line(
-      data = smooth_df,
-      ggplot2::aes(x = .data$x, y = .data$core),
-      color = core_color, linewidth = line_size
+      data = smooth_long,
+      ggplot2::aes(x = .data$x, y = .data$y, color = .data$type),
+      linewidth = line_size
     ) +
 
     # Data points
     ggplot2::geom_point(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, y = .data$pan_y),
-      color = pan_color, size = point_size, shape = 16
-    ) +
-    ggplot2::geom_point(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, y = .data$core_y),
-      color = core_color, size = point_size, shape = 16
+      data = plot_long,
+      ggplot2::aes(x = .data$x, y = .data$y, color = .data$type),
+      size = point_size, shape = 16
     ) +
 
     # Error bars
     ggplot2::geom_errorbar(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, ymin = .data$pan_ymin, ymax = .data$pan_ymax),
-      color = pan_color, width = errorbar_width, linewidth = 0.5
-    ) +
-    ggplot2::geom_errorbar(
-      data = plot_df,
-      ggplot2::aes(x = .data$x, ymin = .data$core_ymin, ymax = .data$core_ymax),
-      color = core_color, width = errorbar_width, linewidth = 0.5
+      data = plot_long,
+      ggplot2::aes(x = .data$x, ymin = .data$ymin, ymax = .data$ymax,
+                   color = .data$type),
+      width = errorbar_width, linewidth = 0.5
     ) +
 
-    # Curve labels
-    ggplot2::annotate("text",
-      x = label_x, y = pan_label_y,
-      label = "Pan-genome",
-      color = pan_color, fontface = "bold", hjust = 1, size = 3.8
-    ) +
-    ggplot2::annotate("text",
-      x = label_x, y = core_label_y,
-      label = "Core genome",
-      color = core_color, fontface = "bold", hjust = 1, size = 3.8
-    ) +
+    # Color / fill scales with legend
+    ggplot2::scale_color_manual(values = color_map, name = NULL) +
+    ggplot2::scale_fill_manual(values = color_map, guide = "none") +
 
     # Axes
     ggplot2::scale_x_continuous(
@@ -285,7 +283,7 @@ plot_pangenome_rarefaction <- function(
     ) +
 
     # Theme
-    theme_prism() +
+    ggprism::theme_prism() +
     ggplot2::theme(
       plot.title    = ggplot2::element_text(face = "bold", size = 14),
       plot.subtitle = ggplot2::element_text(color = "grey50", size = 10),
