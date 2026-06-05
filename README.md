@@ -1,350 +1,319 @@
-# bioRtools 🧬
+# bioRtools
 
-[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/) [![Version](https://img.shields.io/badge/version-1.3.0-green)](https://github.com/lixiang117423/bioRtools) [![License](https://img.shields.io/badge/license-MIT-yellow)](https://claude.ai/chat/LICENSE.md)
+[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
+[![Version](https://img.shields.io/badge/version-1.16.1-green)](https://github.com/lixiang117423/bioRtools)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
----
+`bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
 
-### 📋 Introduction
+## Key Features
 
-`bioRtools` is a comprehensive R package designed for biological data processing, providing a suite of convenience functions for biological data analysis and visualization. The package standardizes complex analytical workflows across omics data types and provides consistent, publication-quality visualization outputs with minimal code requirements.
+- Multi-omics analysis helpers for transcriptomics, microbiomics, metabolomics, and population genetics
+- Multivariate workflows: PCA, PCoA, RDA, sPLS-DA, OPLS-DA, PERMANOVA
+- Differential analysis: DESeq2-based DEG/DAM detection and LEfSe biomarker analysis
+- qPCR workflows: standard curves, delta Ct, delta-delta Ct, and efficiency correction
+- Genomics visualization: Manhattan plots, QQ plots, LD heatmaps, synteny, motifs, gene structures, PFAM domains, and pangenome rarefaction
+- Publication-ready ggplot themes, academic palettes, and color/fill/colour scales
 
-### ✨ Key Features
+## Requirements
 
-- **🧬 Multi-omics Support**: Transcriptomics, metabolomics, microbiomics, population genetics
-- **📊 Multivariate Analysis**: PCA, PCoA, RDA, sPLS-DA, OPLS-DA
-- **🔬 Statistical Analysis**: ANOVA, correlation analysis, linear regression, PERMANOVA
-- **📈 High-Quality Visualization**: Publication-ready plots including volcano plots, Manhattan plots
-- **⚡ Easy to Use**: Simplified function interfaces with standardized output formats
-- **🎨 Beautiful Themes**: Built-in themes for biological data visualization
+- R >= 2.10, as declared in `DESCRIPTION`
+- R >= 4.0.0 is recommended for a smoother dependency experience
 
-### 💻 System Requirements
+## Installation
 
-- **R Version**: R (≥ 2.10)
-- **Recommended**: R ≥ 4.0.0 for optimal performance
-
-### 📦 Installation
-
-#### Install Development Version from GitHub (Recommended)
+Install the development version from GitHub:
 
 ```r
-# Install required dependencies
-if (!require(devtools)) install.packages("devtools")
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
 
-# Install bioRtools
 devtools::install_github("lixiang117423/bioRtools")
 ```
 
-#### Manual Dependency Installation
-
-If you encounter dependency issues, install manually:
+If dependency installation needs to be handled manually, install the main Bioconductor and CRAN dependencies first:
 
 ```r
-# Install Bioconductor packages
-if (!require(BiocManager)) install.packages("BiocManager")
-BiocManager::install(c("DESeq2", "clusterProfiler", "lefser", "SummarizedExperiment"))
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
 
-# Install CRAN packages
-install.packages(c("ggplot2", "dplyr", "vegan", "mixOmics", "ropls", 
-                   "factoextra", "FactoMineR", "ggsci", "ggprism", "ggrepel",
-                   "rstatix", "broom", "scales", "tidyr"))
+BiocManager::install(c(
+  "clusterProfiler", "DESeq2", "ggtree", "lefser",
+  "SummarizedExperiment", "WGCNA"
+))
+
+install.packages(c(
+  "agricolae", "ape", "broom", "data.table", "dplyr",
+  "factoextra", "FactoMineR", "forcats", "ggplot2", "ggprism",
+  "ggrepel", "ggsci", "ggtext", "ggthemes", "janitor", "magrittr",
+  "mixOmics", "multcomp", "patchwork", "purrr", "rlang", "ropls",
+  "rstatix", "scales", "stringr", "tibble", "tidyr", "vegan"
+))
 ```
 
-### 🛠️ Main Function Modules
+Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
 
-#### 🔧 General Analysis Functions
+## Function Modules
 
-- `pca_analysis()` - Principal Component Analysis (PCA)
-- `cor_analysis()` - Correlation analysis and visualization
-- `lm_analysis()` - Linear regression analysis and visualization
-- `find_outliers()` - Outlier detection
-- `theme_bio()` - Biological data visualization theme
-- `reorder_heatmap()` - Heatmap data reordering
+### General Analysis and Statistics
+
+- `pca_analysis()` - Principal component analysis
+- `cor_analysis()` - Correlation analysis and heatmap-ready output
+- `lm_analysis()`, `get_lm_stats()`, `get_lm_stats_summary()`, `extract_lm_stats()`, `format_lm_stats()` - Linear model analysis helpers
 - `anova_posthoc()` - ANOVA with post-hoc tests
+- `find_outliers()` - Outlier detection
+- `label_signif()`, `label_significance()` - Significance labels
+- `reorder_heatmap()`, `gg_heatmap()`, `create_heatmap_trees()` - Heatmap utilities
 
-#### 🧪 Metabolomics Analysis
+### Microbiome Analysis
 
-- `opls_analysis()` - Orthogonal Partial Least Squares Discriminant Analysis (OPLS-DA)
-- `spls_analysis()` - Sparse Partial Least Squares Discriminant Analysis (sPLS-DA)
-
-#### 🦠 Microbiome Analysis
-
-- `pcoa_analysis()` - Principal Coordinate Analysis (PCoA)
-- `rda_analysis()` - Redundancy Analysis (RDA)
+- `pcoa_analysis()` - Principal coordinate analysis
+- `rda_analysis()` - Redundancy analysis
+- `permanova_test()` - PERMANOVA test
 - `find_dams_deseq2()` - DESeq2-based differential abundance analysis
-- `find_dams_lefse()` - LEfSe differential analysis
-- `permanova_test()` - PERMANOVA permutation test
-- `rarefy_table()` - Rarefaction sampling
-- `top_taxa()` - Extract top taxa
+- `find_dams_lefse()` - LEfSe differential abundance analysis
+- `rarefy_table()` - Rarefaction
+- `top_taxa()` - Top taxa extraction
+- `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
 
-#### 🧬 Transcriptomics Analysis
+### Transcriptomics and Enrichment
 
 - `find_degs_deseq2()` - DESeq2 differential expression analysis
-- `enrich_go()` - GO enrichment analysis
-- `enrich_kegg()` - KEGG pathway enrichment analysis
-- `plot_volcano()` - Volcano plot generation
+- `enrich_go()` - GO enrichment
+- `enrich_kegg()` - KEGG enrichment
+- `plot_volcano()`, `plot_multi_volcano()` - Volcano plots
+- `run_wgcna_analysis()` - WGCNA workflow
 
-#### 🧮 Population Genetics Analysis
+### qPCR Analysis
 
-- `manhattan_plot()` - Manhattan plot generation
-- `admixture_phylo_analysis()` - Population structure and phylogenetic analysis
-- `plot_LDheatmap()` - LD heatmap plotting
+- `calc_standard_curve()` - Standard curve fitting
+- `calc_expression_qpcr_efficiency()` - qPCR efficiency calculation
+- `calc_expression_delta_ct()` - Delta Ct analysis
+- `calc_expression_delta_delta_ct()` - Delta-delta Ct analysis
+- `calc_expression_standard_curve()` - Standard-curve-based expression analysis
 
-#### 🔧 Utility Functions
+### Metabolomics and Multivariate Models
+
+- `opls_analysis()` - OPLS-DA
+- `spls_analysis()` - sPLS-DA
+
+### Population Genetics and Genomics
+
+- `manhattan_plot()`, `plot_manhattan()` - Manhattan plots
+- `plot_gwas_qq()` - GWAS QQ plot
+- `plot_LDheatmap()` - LD heatmap
+- `ld_decay_threshold()` - LD decay threshold calculation
+- `admixture_phylo_analysis()`, `extract_tree_hierarchy()` - Population structure and tree helpers
+- `pav_gwas()` - PAV-GWAS helper
+
+### Gene, Motif, Domain, and Synteny Visualization
+
+- `plot_gene_structure()`, `plot_gene_features()`, `plot_gene_features_labeled()` - Gene structure and feature plots
+- `plot_motif_location()`, `get_motif_from_meme()` - Motif parsing and visualization
+- `plot_pfam()`, `quick_pfam_plot()` - PFAM domain plots
+- `plot_synteny()` - Synteny plot
+- `plot_pangenome_rarefaction()` - Pangenome rarefaction plot
+- `get_hap_from_heatmap()` - Haplotype extraction from heatmap-like data
+
+### Data Conversion and Row Utilities
 
 - `df_to_list()` - Convert data frame to list
-- `plot_manhattan()` - Generic Manhattan plot function
-- `scale01()` - Data normalization functions
-- `row_mean()`, `row_sd()` - Row-wise statistical functions
+- `df2fasta()`, `fasta2df()` - FASTA/data-frame conversion
+- `get_methylkit_data()` - Extract methylKit data
+- `normalize_int()`, `scale01()`, `scale01_rows()`, `scale01_groups()`, `mutate_scale01()`, `mutate_scale01_named()` - Normalization helpers
+- `row_mean()`, `row_sd()`, `row_cv()`, `row_min()`, `row_max()` - Row statistics
 
-### 🚀 Quick Start
+### Themes and Palettes
 
-#### Principal Component Analysis (PCA)
+- `theme_bio()`, `theme_prism()` - Plot themes
+- `pal_sci()`, `pal_nature()`, `pal_science()`, `pal_cell()`, `pal_jacs()`, `pal_fuel()`, `pal_chem_eng()`, `pal_nat_comm()`, `pal_shinkai()`, `pal_research()` - Academic palettes
+- `scale_color_*()`, `scale_colour_*()`, and `scale_fill_*()` variants are available for discrete and continuous palette scales
+
+## Quick Start
+
+### PCA
 
 ```r
 library(bioRtools)
 
-# Prepare data
-data <- iris[,1:4]
+iris_data <- iris[, 1:4]
 sample_info <- data.frame(
-  sample = paste0("sample", 1:150),
+  sample_id = paste0("sample_", seq_len(nrow(iris))),
   species = iris$Species
 )
+rownames(iris_data) <- sample_info$sample_id
 
-# Perform PCA analysis
 pca_result <- pca_analysis(
-  data = data, 
+  data = iris_data,
   sample = sample_info,
   color.by = "species"
 )
 
-# View results
 print(pca_result$plots$score_plot)
 print(pca_result$eigenvalues)
 ```
 
-#### Correlation Analysis
+### Correlation Analysis
 
 ```r
-# Correlation analysis between two datasets
 cor_result <- cor_analysis(
-  data.1 = iris[,1:2], 
-  data.2 = iris[,3:4],
+  data.1 = iris[, 1:2],
+  data.2 = iris[, 3:4],
   method = "pearson"
 )
 
-# View correlation heatmap
 print(cor_result$plot.cor)
 ```
 
-#### LEfSe Differential Analysis
+### LEfSe Differential Abundance
 
 ```r
-# Microbiome differential analysis example
+data(df.call_DAMs_LEfSe.otu)
+data(df.call_DAMs_LEfSe.sample)
+
 lefse_result <- find_dams_lefse(
-  data = abundance_matrix,           # Feature abundance matrix
-  sample = sample_metadata,          # Sample information
-  groupCol = "treatment",            # Group column name
-  lda.threshold = 2.0               # LDA threshold
+  data = df.call_DAMs_LEfSe.otu,
+  sample = df.call_DAMs_LEfSe.sample,
+  groupCol = "group",
+  lda.threshold = 1.0
 )
 
-# View significantly different features
-print(head(lefse_result))
+head(lefse_result)
 ```
 
-#### Volcano Plot
+### Volcano Plot
 
 ```r
-# Generate volcano plot for differential expression
-volcano_plot <- plot_volcano(
-  data = deg_results,               # Differential analysis results
-  x = "log2FoldChange", 
+data(df.rnaseq.plot_volcano)
+
+volcano_result <- plot_volcano(
+  data = df.rnaseq.plot_volcano,
+  x = "log2FoldChange",
   y = "padj",
-  label = "gene"
+  title = "Differential Expression"
 )
 
-print(volcano_plot)
+print(volcano_result$plot.volcano)
+print(volcano_result$data.summary)
 ```
 
-### 📊 Data Format Requirements
-
-#### Expression/Abundance Matrix
-
-- **Rows**: Genes/Features/OTUs
-- **Columns**: Samples
-- **Values**: Raw counts, normalized expression, or relative abundance
-
-#### Sample Information Table
-
-- **Rows**: Samples
-- **Columns**: Experimental factors and covariates
-- **Requirement**: Sample names must match expression matrix column names
-
-#### Annotation Database Format
-
-- **GO Database**: Must contain `gene`, `go.id`, `go.term` columns
-- **KEGG Database**: Must contain `gene`, `kegg.id`, `kegg.term` columns
-
-### 🎨 Advanced Usage
-
-#### Custom Visualization Themes
+## RNA-seq Workflow Example
 
 ```r
-library(ggplot2)
-
-# Using bioRtools theme
-p <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point(aes(color = Species), size = 2) +
-  theme_bio(base_size = 12) +
-  labs(title = "Scatter Plot with bioRtools Theme",
-       x = "Sepal Length", y = "Sepal Width")
-
-print(p)
-```
-
-#### Batch Analysis Workflow
-
-```r
-# Complete RNA-seq differential analysis workflow
 perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
-  
-  # 1. Differential expression analysis
-  cat("🔬 Performing differential expression analysis...\n")
   degs <- find_degs_deseq2(
-    count.table = count_data,
-    sample.table = sample_data,
-    design = ~ condition,
-    contrast = c("condition", "treatment", "control")
+    data = count_data,
+    sample = sample_data,
+    formula = ~group
   )
-  
-  # 2. GO enrichment analysis
-  cat("📊 Performing GO enrichment analysis...\n")
-  sig_genes <- degs$degs$gene[degs$degs$padj < 0.05]
+
+  sig_genes <- degs$gene[degs$padj < 0.05 & degs$regulation != "Not significant"]
+
   go_enrichment <- enrich_go(gene = sig_genes, go.db = go_db)
-  
-  # 3. KEGG enrichment analysis
-  cat("🧬 Performing KEGG enrichment analysis...\n")
   kegg_enrichment <- enrich_kegg(gene = sig_genes, kegg.db = kegg_db)
-  
-  # 4. Generate volcano plot
-  cat("📈 Generating visualization plots...\n")
-  volcano_plot <- plot_volcano(
-    data = degs$degs,
+
+  volcano_result <- plot_volcano(
+    data = degs,
     x = "log2FoldChange",
     y = "padj"
   )
-  
-  return(list(
+
+  list(
     degs = degs,
     go_enrichment = go_enrichment,
     kegg_enrichment = kegg_enrichment,
-    volcano_plot = volcano_plot
-  ))
+    volcano_plot = volcano_result$plot.volcano
+  )
 }
 ```
 
-### ⚠️ Troubleshooting
+## Data Format Requirements
 
-#### Common Issues and Solutions
+### Expression, Count, or Abundance Matrix
 
-**Issue 1**: Dependency installation failure
+- Rows are genes, features, taxa, OTUs, ASVs, or markers
+- Columns are samples
+- Row names and column names should be stable identifiers
+- DESeq2 workflows require raw non-negative integer counts
+
+### Sample Metadata
+
+- Rows are samples
+- Columns are experimental factors, grouping variables, batches, and covariates
+- Sample identifiers must match the input matrix sample names
+
+### Enrichment Annotation Tables
+
+- GO annotation tables should contain `gene`, `go.id`, and `go.term`
+- KEGG annotation tables should contain `gene`, `kegg.id`, and `kegg.term`
+
+## Troubleshooting
+
+### Dependency Installation Fails
 
 ```r
-# Solution: Update R and package managers
 update.packages(ask = FALSE)
 install.packages("BiocManager")
+BiocManager::install(ask = FALSE)
 ```
 
-**Issue 2**: Memory insufficient error
+### Memory Pressure
 
 ```r
-# Solution: Increase memory limit (Windows)
-memory.limit(size = 16000)
-# Or clean workspace
 rm(list = ls())
 gc()
 ```
 
-**Issue 3**: Font display issues
+On Windows, you can also raise the memory limit in older R versions:
 
 ```r
-# macOS
+memory.limit(size = 16000)
+```
+
+### Font Display Issues
+
+```r
 theme_bio(base_family = "Arial")
-# Windows  
-theme_bio(base_family = "Arial")
-# Ubuntu
-theme_bio(base_family = "DejaVu Sans")
+theme_prism(base_family = "Arial")
 ```
 
-### 🤝 Contributing
+## Version History
 
-We welcome contributions of all kinds!
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.16.1`.
 
-1. **🐛 Report Bugs**: Report in [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues)
+## Citation
 
-2. **💡 Feature Requests**: Suggest new features through Issues
+If you use `bioRtools` in your research, please cite:
 
-3. 💻 Code Contributions
-
-   :
-
-   - Fork the repository
-   - Create a feature branch (`git checkout -b feature/amazing-feature`)
-   - Commit your changes (`git commit -m 'Add amazing feature'`)
-   - Push to branch (`git push origin feature/amazing-feature`)
-   - Open a Pull Request
-
-### 📝 Version History
-
-- **v1.3.0**: Current stable version with comprehensive features
-- **v0.0.0.5**: Refactored all code, optimized function interfaces
-- **v0.0.0.4**: Added population genetics analysis functions
-- **v0.0.0.3**: Extended metabolomics analysis tools
-- **v0.0.0.2**: Enhanced microbiome analysis
-- **v0.0.0.1**: Initial release
-
-### 📖 Citation
-
-If you use bioRtools in your research, please cite:
-
-```
-Li, X. (2024). bioRtools: Convenience Functions for Biological Data Processing. 
-R package version 1.3.0. https://github.com/lixiang117423/bioRtools
+```text
+Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
+R package version 1.16.1. https://github.com/lixiang117423/bioRtools
 ```
 
-### 📄 License
+## Contributing
 
-This project is licensed under the MIT License. See [LICENSE.md](https://claude.ai/chat/LICENSE.md) for details.
+Contributions are welcome:
 
-### 👨‍💻 Author Information
+1. Report bugs in [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues)
+2. Suggest features through Issues
+3. Fork the repository, create a feature branch, commit your changes, push the branch, and open a pull request
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
+
+## Author
 
 **Xiang LI**
 
-- 🔧 Project Maintainer
-- 📧 Email: lixiang117423@gmail.com
-- 🐙 GitHub: [@lixiang117423](https://github.com/lixiang117423)
+- Maintainer
+- Email: lixiang117423@gmail.com
+- GitHub: [@lixiang117423](https://github.com/lixiang117423)
 
-### 🙏 Acknowledgments
+## Links
 
-Thanks to all developers and users who contributed to this project, and the following excellent R packages:
-
-- **Bioconductor**: DESeq2, clusterProfiler, SummarizedExperiment
-- **tidyverse**: ggplot2, dplyr, tidyr, purrr
-- **Multivariate Analysis**: vegan, mixOmics, FactoMineR, factoextra
-- **Visualization Enhancement**: ggsci, ggprism, ggrepel, ggtext
-
-------
-
-## 🔗 Links
-
-- **📂 GitHub Repository**: https://github.com/lixiang117423/bioRtools
-- **📚 Documentation**: https://lixiang117423.github.io/bioRtools/
-- **🐛 Bug Reports**: https://github.com/lixiang117423/bioRtools/issues
-- **🌐 Package Website**: https://lixiang117423.github.io/bioRtools/
-
-------
-
-<div align="center">
-
-**🌟 Star this repository if you find it useful! 🌟**
-
-Made with ❤️ for the bioinformatics community
+- GitHub Repository: <https://github.com/lixiang117423/bioRtools>
+- Documentation: <https://lixiang117423.github.io/bioRtools/>
+- Bug Reports: <https://github.com/lixiang117423/bioRtools/issues>
