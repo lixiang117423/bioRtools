@@ -1,337 +1,319 @@
-# bioRtools 🧬
+# bioRtools
 
-[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/) [![Version](https://img.shields.io/badge/version-1.3.0-green)](https://github.com/lixiang117423/bioRtools) [![License](https://img.shields.io/badge/license-MIT-yellow)](https://claude.ai/chat/LICENSE.md)
+[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
+[![Version](https://img.shields.io/badge/version-1.16.1-green)](https://github.com/lixiang117423/bioRtools)
+[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
----
+`bioRtools` 是一个面向生物数据分析、统计和发表级可视化的 R 工具包。它整合了转录组、微生物组、代谢组、群体遗传、基因结构可视化、qPCR 分析以及常用绘图主题等工作流中的便利函数。
 
-### 📋 简介
+## 主要特性
 
-`bioRtools` 是一个专为生物数据处理设计的综合性R包，提供便利函数套件用于生物数据分析和可视化。该包标准化了跨组学数据类型的复杂分析流程，以最少的代码要求提供一致的、发表质量的可视化输出。
+- 支持转录组、微生物组、代谢组和群体遗传等多组学分析场景
+- 多变量分析工作流：PCA、PCoA、RDA、sPLS-DA、OPLS-DA、PERMANOVA
+- 差异分析：基于 DESeq2 的 DEG/DAM 分析和 LEfSe 标志物分析
+- qPCR 分析：标准曲线、delta Ct、delta-delta Ct 和扩增效率校正
+- 基因组可视化：曼哈顿图、QQ 图、LD 热图、共线性、motif、基因结构、PFAM 结构域和泛基因组稀释曲线
+- 发表级 ggplot 主题、学术配色和 color/fill/colour 标尺
 
-### ✨ 主要特性
+## 系统要求
 
-- **🧬 多组学支持**: 转录组学、代谢组学、微生物组学、群体遗传学
-- **📊 多变量分析**: PCA、PCoA、RDA、sPLS-DA、OPLS-DA
-- **🔬 统计分析**: ANOVA、相关性分析、线性回归、PERMANOVA
-- **📈 高质量可视化**: 发表级别的图表，包括火山图、曼哈顿图等
-- **⚡ 易于使用**: 简化的函数接口，标准化的输出格式
-- **🎨 美观主题**: 内置生物数据可视化主题
+- `DESCRIPTION` 声明的最低版本为 R >= 2.10
+- 推荐使用 R >= 4.0.0，以获得更顺畅的依赖安装体验
 
-### 💻 系统要求
+## 安装
 
-- **R版本**: R (≥ 2.10)
-- **推荐版本**: R ≥ 4.0.0 以获得最佳性能
-
-### 📦 安装
-
-#### 从GitHub安装开发版本（推荐）
+从 GitHub 安装开发版本：
 
 ```r
-# 安装必要的依赖包
-if (!require(devtools)) install.packages("devtools")
+if (!requireNamespace("devtools", quietly = TRUE)) {
+  install.packages("devtools")
+}
 
-# 安装bioRtools
 devtools::install_github("lixiang117423/bioRtools")
 ```
 
-#### 手动安装依赖包
-
-如果遇到依赖问题，请手动安装：
+如果依赖安装失败，可先手动安装主要 Bioconductor 和 CRAN 依赖：
 
 ```r
-# 安装Bioconductor包
-if (!require(BiocManager)) install.packages("BiocManager")
-BiocManager::install(c("DESeq2", "clusterProfiler", "lefser", "SummarizedExperiment"))
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
 
-# 安装CRAN包
-install.packages(c("ggplot2", "dplyr", "vegan", "mixOmics", "ropls", 
-                   "factoextra", "FactoMineR", "ggsci", "ggprism", "ggrepel",
-                   "rstatix", "broom", "scales", "tidyr"))
+BiocManager::install(c(
+  "clusterProfiler", "DESeq2", "ggtree", "lefser",
+  "SummarizedExperiment", "WGCNA"
+))
+
+install.packages(c(
+  "agricolae", "ape", "broom", "data.table", "dplyr",
+  "factoextra", "FactoMineR", "forcats", "ggplot2", "ggprism",
+  "ggrepel", "ggsci", "ggtext", "ggthemes", "janitor", "magrittr",
+  "mixOmics", "multcomp", "patchwork", "purrr", "rlang", "ropls",
+  "rstatix", "scales", "stringr", "tibble", "tidyr", "vegan"
+))
 ```
 
-### 🛠️ 主要功能模块
+可选建议包包括 `chemhelper`、`ggpmisc`、`knitr`、`normentR`、`rmarkdown` 和 `testthat`。
 
-#### 🔧 通用分析函数
+## 功能模块
 
-- `pca_analysis()` - 主成分分析 (PCA)
-- `cor_analysis()` - 相关性分析和可视化
-- `lm_analysis()` - 线性回归分析和可视化
+### 通用分析与统计
+
+- `pca_analysis()` - 主成分分析
+- `cor_analysis()` - 相关性分析及热图数据输出
+- `lm_analysis()`、`get_lm_stats()`、`get_lm_stats_summary()`、`extract_lm_stats()`、`format_lm_stats()` - 线性模型分析辅助函数
+- `anova_posthoc()` - 方差分析和事后检验
 - `find_outliers()` - 异常值检测
-- `theme_bio()` - 生物数据可视化主题
-- `reorder_heatmap()` - 热图数据重排序
-- `anova_posthoc()` - 方差分析及事后检验
+- `label_signif()`、`label_significance()` - 显著性标签
+- `reorder_heatmap()`、`gg_heatmap()`、`create_heatmap_trees()` - 热图辅助函数
 
-#### 🧪 代谢组学分析
+### 微生物组分析
 
-- `opls_analysis()` - 正交偏最小二乘判别分析 (OPLS-DA)
-- `spls_analysis()` - 稀疏偏最小二乘判别分析 (sPLS-DA)
-
-#### 🦠 微生物组学分析
-
-- `pcoa_analysis()` - 主坐标分析 (PCoA)
-- `rda_analysis()` - 冗余分析 (RDA)
-- `find_dams_deseq2()` - DESeq2差异丰度分析
-- `find_dams_lefse()` - LEfSe差异分析
-- `permanova_test()` - PERMANOVA置换检验
+- `pcoa_analysis()` - 主坐标分析
+- `rda_analysis()` - 冗余分析
+- `permanova_test()` - PERMANOVA 检验
+- `find_dams_deseq2()` - 基于 DESeq2 的差异丰度分析
+- `find_dams_lefse()` - LEfSe 差异丰度分析
 - `rarefy_table()` - 稀释抽样
-- `top_taxa()` - 获取主要分类群
+- `top_taxa()` - 主要分类群提取
+- `identify_core_microbiome()`、`fit_sloan_neutral_model()` - 核心微生物组和中性模型分析
 
-#### 🧬 转录组学分析
+### 转录组与富集分析
 
-- `find_degs_deseq2()` - DESeq2差异表达分析
-- `enrich_go()` - GO功能富集分析
-- `enrich_kegg()` - KEGG通路富集分析
-- `plot_volcano()` - 火山图绘制
+- `find_degs_deseq2()` - 基于 DESeq2 的差异表达分析
+- `enrich_go()` - GO 富集分析
+- `enrich_kegg()` - KEGG 富集分析
+- `plot_volcano()`、`plot_multi_volcano()` - 火山图
+- `run_wgcna_analysis()` - WGCNA 分析工作流
 
-#### 🧮 群体遗传学分析
+### qPCR 分析
 
-- `manhattan_plot()` - 曼哈顿图绘制
-- `admixture_phylo_analysis()` - 群体结构和系统发育分析
-- `plot_LDheatmap()` - 绘制LD热图
+- `calc_standard_curve()` - 标准曲线拟合
+- `calc_expression_qpcr_efficiency()` - qPCR 扩增效率计算
+- `calc_expression_delta_ct()` - delta Ct 分析
+- `calc_expression_delta_delta_ct()` - delta-delta Ct 分析
+- `calc_expression_standard_curve()` - 基于标准曲线的表达量分析
 
-#### 🔧 实用工具函数
+### 代谢组和多变量模型
 
-- `df_to_list()` - 数据框转换为列表
-- `plot_manhattan()` - 通用曼哈顿图绘制
-- `scale01()` - 数据标准化函数
-- `row_mean()`, `row_sd()` - 行统计函数
+- `opls_analysis()` - OPLS-DA
+- `spls_analysis()` - sPLS-DA
 
-### 🚀 快速开始
+### 群体遗传和基因组分析
 
-#### 主成分分析 (PCA)
+- `manhattan_plot()`、`plot_manhattan()` - 曼哈顿图
+- `plot_gwas_qq()` - GWAS QQ 图
+- `plot_LDheatmap()` - LD 热图
+- `ld_decay_threshold()` - LD 衰减阈值计算
+- `admixture_phylo_analysis()`、`extract_tree_hierarchy()` - 群体结构和系统树辅助函数
+- `pav_gwas()` - PAV-GWAS 辅助函数
+
+### 基因、motif、结构域和共线性可视化
+
+- `plot_gene_structure()`、`plot_gene_features()`、`plot_gene_features_labeled()` - 基因结构和特征图
+- `plot_motif_location()`、`get_motif_from_meme()` - motif 解析和可视化
+- `plot_pfam()`、`quick_pfam_plot()` - PFAM 结构域图
+- `plot_synteny()` - 共线性图
+- `plot_pangenome_rarefaction()` - 泛基因组稀释曲线
+- `get_hap_from_heatmap()` - 从热图式数据中提取单倍型
+
+### 数据转换和行统计工具
+
+- `df_to_list()` - 数据框转列表
+- `df2fasta()`、`fasta2df()` - FASTA 和数据框互转
+- `get_methylkit_data()` - 提取 methylKit 数据
+- `normalize_int()`、`scale01()`、`scale01_rows()`、`scale01_groups()`、`mutate_scale01()`、`mutate_scale01_named()` - 标准化辅助函数
+- `row_mean()`、`row_sd()`、`row_cv()`、`row_min()`、`row_max()` - 行统计函数
+
+### 主题与配色
+
+- `theme_bio()`、`theme_prism()` - 绘图主题
+- `pal_sci()`、`pal_nature()`、`pal_science()`、`pal_cell()`、`pal_jacs()`、`pal_fuel()`、`pal_chem_eng()`、`pal_nat_comm()`、`pal_shinkai()`、`pal_research()` - 学术配色
+- `scale_color_*()`、`scale_colour_*()` 和 `scale_fill_*()` 系列提供离散和连续配色标尺
+
+## 快速开始
+
+### PCA
 
 ```r
 library(bioRtools)
 
-# 准备数据
-data <- iris[,1:4]
+iris_data <- iris[, 1:4]
 sample_info <- data.frame(
-  sample = paste0("sample", 1:150),
+  sample_id = paste0("sample_", seq_len(nrow(iris))),
   species = iris$Species
 )
+rownames(iris_data) <- sample_info$sample_id
 
-# 进行PCA分析
 pca_result <- pca_analysis(
-  data = data, 
+  data = iris_data,
   sample = sample_info,
   color.by = "species"
 )
 
-# 查看结果
 print(pca_result$plots$score_plot)
 print(pca_result$eigenvalues)
 ```
 
-#### 相关性分析
+### 相关性分析
 
 ```r
-# 两组数据的相关性分析
 cor_result <- cor_analysis(
-  data.1 = iris[,1:2], 
-  data.2 = iris[,3:4],
+  data.1 = iris[, 1:2],
+  data.2 = iris[, 3:4],
   method = "pearson"
 )
 
-# 查看相关性热图
 print(cor_result$plot.cor)
 ```
 
-#### LEfSe差异分析
+### LEfSe 差异丰度分析
 
 ```r
-# 微生物组差异分析示例
+data(df.call_DAMs_LEfSe.otu)
+data(df.call_DAMs_LEfSe.sample)
+
 lefse_result <- find_dams_lefse(
-  data = abundance_matrix,           # 特征丰度矩阵
-  sample = sample_metadata,          # 样本信息
-  groupCol = "treatment",            # 分组列名
-  lda.threshold = 2.0               # LDA阈值
+  data = df.call_DAMs_LEfSe.otu,
+  sample = df.call_DAMs_LEfSe.sample,
+  groupCol = "group",
+  lda.threshold = 1.0
 )
 
-# 查看显著差异特征
-print(head(lefse_result))
+head(lefse_result)
 ```
 
-#### 火山图绘制
+### 火山图
 
 ```r
-# 绘制差异表达基因火山图
-volcano_plot <- plot_volcano(
-  data = deg_results,               # 差异分析结果
-  x = "log2FoldChange", 
+data(df.rnaseq.plot_volcano)
+
+volcano_result <- plot_volcano(
+  data = df.rnaseq.plot_volcano,
+  x = "log2FoldChange",
   y = "padj",
-  label = "gene"
+  title = "Differential Expression"
 )
 
-print(volcano_plot)
+print(volcano_result$plot.volcano)
+print(volcano_result$data.summary)
 ```
 
-### 📊 数据格式要求
-
-#### 表达/丰度矩阵
-
-- **行**: 基因/特征/OTU
-- **列**: 样本
-- **数值**: 原始计数、标准化表达量或相对丰度
-
-#### 样本信息表
-
-- **行**: 样本
-- **列**: 实验因子和协变量
-- **要求**: 样本名需与表达矩阵列名对应
-
-#### 注释数据库格式
-
-- **GO数据库**: 包含 `gene`, `go.id`, `go.term` 列
-- **KEGG数据库**: 包含 `gene`, `kegg.id`, `kegg.term` 列
-
-### 🎨 高级用法
-
-#### 自定义可视化主题
+## RNA-seq 工作流示例
 
 ```r
-library(ggplot2)
-
-# 使用bioRtools主题
-p <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point(aes(color = Species), size = 2) +
-  theme_bio(base_size = 12) +
-  labs(title = "使用bioRtools主题的散点图",
-       x = "萼片长度", y = "萼片宽度")
-
-print(p)
-```
-
-#### 批量分析工作流
-
-```r
-# 完整的转录组差异分析流程
 perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
-  
-  # 1. 差异表达分析
-  cat("🔬 执行差异表达分析...\n")
   degs <- find_degs_deseq2(
-    count.table = count_data,
-    sample.table = sample_data,
-    design = ~ condition,
-    contrast = c("condition", "treatment", "control")
+    data = count_data,
+    sample = sample_data,
+    formula = ~group
   )
-  
-  # 2. GO富集分析
-  cat("📊 执行GO富集分析...\n")
-  sig_genes <- degs$degs$gene[degs$degs$padj < 0.05]
+
+  sig_genes <- degs$gene[degs$padj < 0.05 & degs$regulation != "Not significant"]
+
   go_enrichment <- enrich_go(gene = sig_genes, go.db = go_db)
-  
-  # 3. KEGG富集分析
-  cat("🧬 执行KEGG富集分析...\n")
   kegg_enrichment <- enrich_kegg(gene = sig_genes, kegg.db = kegg_db)
-  
-  # 4. 生成火山图
-  cat("📈 生成可视化图表...\n")
-  volcano_plot <- plot_volcano(
-    data = degs$degs,
+
+  volcano_result <- plot_volcano(
+    data = degs,
     x = "log2FoldChange",
     y = "padj"
   )
-  
-  return(list(
+
+  list(
     degs = degs,
     go_enrichment = go_enrichment,
     kegg_enrichment = kegg_enrichment,
-    volcano_plot = volcano_plot
-  ))
+    volcano_plot = volcano_result$plot.volcano
+  )
 }
 ```
 
-### ⚠️ 故障排除
+## 数据格式要求
 
-#### 常见问题解决方案
+### 表达、计数或丰度矩阵
 
-**问题1**: 安装依赖包失败
+- 行为基因、特征、分类群、OTU、ASV 或标记
+- 列为样本
+- 行名和列名应使用稳定的标识符
+- DESeq2 工作流要求输入原始非负整数计数
+
+### 样本信息表
+
+- 行为样本
+- 列为实验因子、分组变量、批次和协变量
+- 样本标识符必须和输入矩阵中的样本名对应
+
+### 富集注释表
+
+- GO 注释表应包含 `gene`、`go.id` 和 `go.term`
+- KEGG 注释表应包含 `gene`、`kegg.id` 和 `kegg.term`
+
+## 故障排除
+
+### 依赖安装失败
 
 ```r
-# 解决方案：更新R和包管理器
 update.packages(ask = FALSE)
 install.packages("BiocManager")
+BiocManager::install(ask = FALSE)
 ```
 
-**问题2**: 内存不足错误
+### 内存压力较大
 
 ```r
-# 解决方案：增加内存限制（Windows）
-memory.limit(size = 16000)
-# 或者清理工作环境
 rm(list = ls())
 gc()
 ```
 
-**问题3**: 中文字体显示问题
+在旧版 Windows R 中，也可以提高内存限制：
 
 ```r
-# macOS系统
-theme_bio(base_family = "STSong")
-# Windows系统  
-theme_bio(base_family = "SimSun")
-# Ubuntu系统
-theme_bio(base_family = "WenQuanYi Micro Hei")
+memory.limit(size = 16000)
 ```
 
-### 🤝 贡献指南
+### 字体显示问题
 
-我们欢迎各种形式的贡献！
-
-1. **🐛 报告Bug**: 在[GitHub Issues](https://github.com/lixiang117423/bioRtools/issues)中报告
-
-2. **💡 功能建议**: 通过Issues提出新功能建议
-
-3. 💻 代码贡献
-
-   :
-
-   - Fork本项目
-   - 创建功能分支 (`git checkout -b feature/amazing-feature`)
-   - 提交更改 (`git commit -m 'Add amazing feature'`)
-   - 推送到分支 (`git push origin feature/amazing-feature`)
-   - 开启Pull Request
-
-### 📝 版本历史
-
-- **v1.3.0**: 当前稳定版本，功能完善
-- **v0.0.0.5**: 重构所有代码，优化函数接口
-- **v0.0.0.4**: 添加群体遗传学分析功能
-- **v0.0.0.3**: 扩展代谢组学分析工具
-- **v0.0.0.2**: 完善微生物组学分析
-- **v0.0.0.1**: 初始版本发布
-
-### 📖 引用
-
-如果您在研究中使用了bioRtools，请引用：
-
-```
-Li, X. (2024). bioRtools: Convenience Functions for Biological Data Processing. 
-R package version 1.3.0. https://github.com/lixiang117423/bioRtools
+```r
+theme_bio(base_family = "Arial")
+theme_prism(base_family = "Arial")
 ```
 
-### 📄 许可证
+## 版本历史
 
-本项目采用MIT许可证。详见[LICENSE.md](https://claude.ai/chat/LICENSE.md)文件。
+完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.16.1`。
 
-### 👨‍💻 作者信息
+## 引用
+
+如果你在研究中使用了 `bioRtools`，请引用：
+
+```text
+Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
+R package version 1.16.1. https://github.com/lixiang117423/bioRtools
+```
+
+## 贡献
+
+欢迎参与贡献：
+
+1. 在 [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues) 中报告问题
+2. 通过 Issues 提出功能建议
+3. Fork 仓库，创建功能分支，提交修改，推送分支并发起 Pull Request
+
+## 许可证
+
+本项目采用 MIT 许可证。详见 [LICENSE.md](LICENSE.md)。
+
+## 作者
 
 **Xiang LI**
 
-- 🔧 项目维护者
-- 📧 Email: lixiang117423@gmail.com
-- 🐙 GitHub: [@lixiang117423](https://github.com/lixiang117423)
+- 项目维护者
+- Email: lixiang117423@gmail.com
+- GitHub: [@lixiang117423](https://github.com/lixiang117423)
 
-### 🙏 致谢
+## 链接
 
-感谢所有为此项目做出贡献的开发者和用户，以及以下优秀的R包：
-
-- **Bioconductor**: DESeq2, clusterProfiler, SummarizedExperiment
-- **tidyverse**: ggplot2, dplyr, tidyr, purrr
-- **多变量分析**: vegan, mixOmics, FactoMineR, factoextra
-- **可视化增强**: ggsci, ggprism, ggrepel, ggtext
-
-------
-
-</div>
+- GitHub 仓库：<https://github.com/lixiang117423/bioRtools>
+- 文档网站：<https://lixiang117423.github.io/bioRtools/>
+- 问题反馈：<https://github.com/lixiang117423/bioRtools/issues>
