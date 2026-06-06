@@ -28,18 +28,21 @@ plot_mantel(
 )
 }
 \arguments{
-\item{data.spec}{Feature abundance table. Samples as rows, features
-(ASVs/OTUs) as columns.}
+\item{data.spec}{Feature abundance table. First column is feature ID
+(e.g., "asv"), remaining columns are samples (features × samples).
+Auto-transposed internally.}
 
-\item{data.env}{Environmental data table. Samples as rows, environmental
-variables as columns. Must contain the same samples as \code{data.spec}.}
+\item{data.env}{Environmental data table. Must contain a \code{sample}
+column and environmental variable columns (either in long format with
+\code{sample}, \code{indicator}, \code{value}, or in wide format).
+Auto-detected.}
 
-\item{data.sample}{Sample metadata table. Must contain a sample ID column
-(first column) matching rownames of \code{data.spec} and \code{data.env},
+\item{data.sample}{Sample metadata table. Must contain a \code{sample}
+column matching samples in \code{data.spec} and \code{data.env},
 and a group column.}
 
 \item{group_col}{Column name in \code{data.sample} defining sample groups.
-Default is \code{"group"}.}
+Default is \code{"group"}. Falls back to auto-detection if not found.}
 
 \item{spec_select_method}{How to select characteristic features per group:
 \code{"prevalence"} (features present above threshold, default) or
@@ -104,6 +107,17 @@ heatmap with Mantel test results. For each sample group (defined by
 against environmental variables via \pkg{linkET}.
 }
 \details{
+The function accepts flexible input formats:
+\itemize{
+  \item \code{data.env}: either long format (\code{sample}, \code{indicator},
+        \code{value}) or wide format (\code{sample} + indicators as columns).
+        Auto-detected.
+  \item \code{data.spec}: features × samples, first column is feature ID.
+        Auto-transposed to samples × features.
+  \item \code{data.sample}: must have \code{sample} and group columns.
+        \code{group_col} is auto-detected if \code{NULL}.
+}
+
 The workflow:
 \enumerate{
   \item Match samples across all three input tables
@@ -124,20 +138,15 @@ Requires \pkg{linkET} and \pkg{RColorBrewer}.
 \dontrun{
 df.phy <- readxl::read_excel("理化性质.xlsx") \%>\%
   dplyr::select(sample, indicator, value) \%>\%
-  tidyr::pivot_wider(names_from = indicator, values_from = value) \%>\%
-  tibble::column_to_rownames(var = "sample")
+  tidyr::pivot_wider(names_from = indicator, values_from = value)
 
 df.asv <- readxl::read_excel("ASV丰度表.xlsx") \%>\%
-  dplyr::select(asv, rownames(df.phy)) \%>\%
-  tibble::column_to_rownames(var = "asv") \%>\%
-  t() \%>\% as.data.frame()
+  dplyr::select(asv, df.phy$sample)
 
 df.sample <- readxl::read_excel("样品信息表.xlsx") \%>\%
-  dplyr::filter(sample \%in\% rownames(df.asv)) \%>\%
-  dplyr::select(sample, alt) \%>\%
-  dplyr::rename(group = alt)
+  dplyr::filter(sample \%in\% df.phy$sample)
 
-result <- plot_mantel(df.asv, df.phy, df.sample, group_col = "group")
+result <- plot_mantel(df.asv, df.phy, df.sample)
 result$plot
 }
 
