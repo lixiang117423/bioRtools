@@ -2,266 +2,69 @@
 % Please edit documentation in R/find_dams_lefse.R
 \name{find_dams_lefse}
 \alias{find_dams_lefse}
-\title{Identify Differentially Abundant Microorganisms Using LEfSe Analysis}
+\title{Identify Differentially Abundant Microorganisms Using LEfSe (Pairwise)}
 \usage{
 find_dams_lefse(
   data,
   sample,
   groupCol = "group",
-  kruskal.threshold = 0.05,
   wilcox.threshold = 0.05,
-  lda.threshold = 1,
-  strict.wilcox = TRUE,
-  bootstrap.iterations = 30
+  lda.threshold = 2
 )
 }
 \arguments{
-\item{data}{Feature abundance matrix where rows represent microbial features
-(OTUs, ASVs, taxa, etc.) and columns represent samples. Can be raw counts
-or relative abundances. Row names should be feature identifiers and column
-names should match sample identifiers in the sample metadata}
+\item{data}{Feature count matrix (rows = features, cols = samples).
+If a data.frame with a non-numeric first column, that column is used as
+row names (feature IDs). Accepts raw counts; the function converts to
+relative abundances internally.}
 
-\item{sample}{Data frame containing sample metadata where rows represent
-samples and columns contain experimental factors and covariates. Row names
-should match column names in the feature data. Must contain the grouping
-variable specified in groupCol parameter}
+\item{sample}{Data frame of sample metadata. Row names should match
+\code{colnames(data)}. If row names are missing, the function will try
+to find a column whose values match \code{colnames(data)} and use it as
+row names.}
 
-\item{groupCol}{Character string specifying the column name in sample metadata
-that contains the main grouping variable for comparison (default: "group").
-This variable will be used for the LEfSe analysis to identify biomarkers}
+\item{groupCol}{Column name in \code{sample} containing group labels
+(default: "group").}
 
-\item{kruskal.threshold}{P-value threshold for the Kruskal-Wallis test
-(default: 0.05). Features must pass this threshold to proceed to pairwise
-testing. The Kruskal-Wallis test assesses whether at least one group differs
-from the others}
+\item{wilcox.threshold}{P-value threshold for Wilcoxon rank-sum test
+(default: 0.05).}
 
-\item{wilcox.threshold}{P-value threshold for pairwise Wilcoxon rank-sum tests
-(default: 0.05). Features must pass both Kruskal-Wallis and all relevant
-pairwise Wilcoxon tests to be considered for LDA analysis}
-
-\item{lda.threshold}{Minimum Linear Discriminant Analysis (LDA) effect size
-threshold (default: 1.0). Features must have LDA scores above this threshold
-to be considered biologically meaningful biomarkers. Higher values indicate
-stronger discriminatory power}
-
-\item{strict.wilcox}{Logical indicating whether to apply strict Wilcoxon
-testing (default: TRUE). If TRUE, features must pass all relevant pairwise
-comparisons. If FALSE, more lenient testing is applied}
-
-\item{bootstrap.iterations}{Number of bootstrap iterations for LDA stability
-assessment (default: 30). More iterations provide more stable results but
-increase computation time}
+\item{lda.threshold}{Minimum absolute LDA score (default: 2.0).}
 }
 \value{
-A data frame containing LEfSe analysis results with columns:
+A data frame with columns:
   \itemize{
-    \item \code{features}: Feature identifiers (e.g., OTU IDs, taxa names)
-    \item \code{scores}: LDA scores representing discriminatory power
-    \item \code{class}: Group/class where the feature shows highest abundance
-    \item \code{pvalue}: Combined p-value from statistical tests
-    \item \code{lda.score}: Absolute LDA effect size
-    \item \code{direction}: Direction of enrichment relative to comparison
+    \item \code{features}: Feature identifiers
+    \item \code{scores}: LDA scores (positive = enriched in first group,
+      negative = enriched in second group)
+    \item \code{class}: Group where the feature is enriched
+    \item \code{pvalue}: Wilcoxon test p-value (NA when using lefser)
+    \item \code{comparison}: Pair label, e.g. "CK vs Treatment"
+    \item \code{lda.score}: Absolute LDA score
+    \item \code{method}: "lefser" or "wilcox_lda"
   }
-
-  Only features that pass all statistical thresholds (Kruskal-Wallis, Wilcoxon,
-  and LDA) are included in the results.
 }
 \description{
-This function performs Linear Discriminant Analysis (LDA) Effect Size (LEfSe)
-analysis to identify microbial biomarkers that are differentially abundant
-between groups. LEfSe uses a combination of non-parametric statistical tests
-(Kruskal-Wallis and Wilcoxon rank-sum) followed by LDA to identify features
-that are both statistically significant and biologically meaningful.
-}
-\details{
-LEfSe (Linear Discriminant Analysis Effect Size) workflow:
-\enumerate{
-  \item \strong{Kruskal-Wallis test}: Non-parametric test to identify features
-    with significantly different distributions among groups
-  \item \strong{Wilcoxon rank-sum test}: Pairwise comparisons between groups
-    to ensure consistent differences
-  \item \strong{Linear Discriminant Analysis}: Estimates effect size and
-    identifies the group where each feature is most abundant
-}
-
-Key advantages of LEfSe:
-\itemize{
-  \item Non-parametric approach suitable for non-normal distributions
-  \item Combines statistical significance with biological effect size
-  \item Robust to outliers and varying sample sizes
-  \item Provides interpretable biomarker rankings
-}
-
-Considerations:
-\itemize{
-  \item Works best with at least 6-10 samples per group
-  \item Results depend on threshold parameter choices
-  \item May be conservative with strict multiple testing correction
-  \item LDA assumes linear separability between groups
-}
-}
-\note{
-\itemize{
-  \item Input data can be raw counts or relative abundances
-  \item LEfSe internally handles data transformation and normalization
-  \item Very low-abundance features may not be detected reliably
-  \item Consider pre-filtering rare features for computational efficiency
-  \item Ensure balanced sample sizes between groups when possible
-}
+Performs LEfSe-style analysis on all pairwise group combinations. For each
+pair, the function first attempts \code{lefser::lefser()}. If that fails
+(common with small sample sizes or high-dimensional data), it falls back to
+a manual implementation: Wilcoxon rank-sum test + Fisher's linear
+discriminant effect size. Results from all pairs are combined into a single
+data frame with a \code{comparison} column.
 }
 \examples{
-library(bioRtools)
-library(dplyr)
-
-# Example 1: Basic LEfSe analysis
-\dontrun{
-# Load example microbiome data
-data(df.call_DAMs_LEfSe.otu)     # Feature abundance table
-data(df.call_DAMs_LEfSe.sample)  # Sample metadata
-
-# Basic LEfSe analysis
-lefse_results <- find_dams_lefse(
-  data = df.call_DAMs_LEfSe.otu,
-  sample = df.call_DAMs_LEfSe.sample
-)
-
-# View results
-print(head(lefse_results))
-print(paste("Found", nrow(lefse_results), "significant biomarkers"))
-
-# Top biomarkers by LDA score
-top_biomarkers <- lefse_results \%>\%
-  arrange(desc(abs(scores))) \%>\%
-  head(10)
-print(top_biomarkers)
-}
-
-# Example 2: Stringent analysis parameters
-\dontrun{
-# More conservative thresholds
-lefse_strict <- find_dams_lefse(
-  data = df.call_DAMs_LEfSe.otu,
-  sample = df.call_DAMs_LEfSe.sample,
-  groupCol = "treatment",
-  kruskal.threshold = 0.01,        # More stringent Kruskal-Wallis
-  wilcox.threshold = 0.01,         # More stringent Wilcoxon
-  lda.threshold = 2.0,             # Higher LDA threshold
-  bootstrap.iterations = 50        # More bootstrap iterations
-)
-
-print(paste("Strict analysis found", nrow(lefse_strict), "biomarkers"))
-
-# Compare effect sizes
-if (nrow(lefse_strict) > 0) {
-  print("Top strict biomarkers:")
-  print(lefse_strict[1:min(5, nrow(lefse_strict)),
-    c("features", "class", "scores")])
-}
-}
-
-# Example 3: Multi-group comparison
-\dontrun{
-# Assume sample metadata has multiple treatment groups
-# Create sample data with multiple groups for demonstration
-multi_sample <- df.call_DAMs_LEfSe.sample
-multi_sample$treatment_type <- rep(c("Drug_A", "Drug_B", "Placebo"),
-  length.out = nrow(multi_sample))
-
-# LEfSe with multiple groups
-multi_lefse <- find_dams_lefse(
-  data = df.call_DAMs_LEfSe.otu,
-  sample = multi_sample,
-  groupCol = "treatment_type",
-  lda.threshold = 1.5
-)
-
-# Examine biomarkers by group
-if (nrow(multi_lefse) > 0) {
-  biomarker_summary <- multi_lefse \%>\%
-    group_by(class) \%>\%
-    summarise(
-      n_biomarkers = n(),
-      mean_lda_score = mean(abs(scores)),
-      .groups = "drop"
-    )
-  print("Biomarkers by group:")
-  print(biomarker_summary)
-}
-}
-
-# Example 4: Creating sample data format
-# This demonstrates the required data structure
 set.seed(42)
-n_features <- 50
-n_samples <- 24
-
-# Create mock abundance data (can be counts or relative abundances)
-mock_abundance <- matrix(
-  runif(n_features * n_samples, min = 0, max = 100),
-  nrow = n_features,
-  ncol = n_samples,
-  dimnames = list(
-    paste0("Feature_", 1:n_features),
-    paste0("Sample_", 1:n_samples)
-  )
-)
-
-# Create mock sample metadata
-mock_sample_meta <- data.frame(
-  row.names = colnames(mock_abundance),
-  group = rep(c("Healthy", "Disease"), each = 12),
-  age = sample(20:80, n_samples),
-  sex = sample(c("Male", "Female"), n_samples, replace = TRUE),
-  study_site = rep(c("Site_A", "Site_B"), times = 12)
-)
-
-\dontrun{
-# Run LEfSe on mock data
-mock_lefse <- find_dams_lefse(
-  data = mock_abundance,
-  sample = mock_sample_meta,
-  groupCol = "group"
-)
-
-print("Mock data LEfSe results:")
-if (nrow(mock_lefse) > 0) {
-  print(mock_lefse)
-} else {
-  print("No significant biomarkers found (expected with random data)")
-}
-}
-
-# Example 5: Preprocessing and filtering
-\dontrun{
-# Pre-filter low abundance features
-abundance_filter <- rowMeans(df.call_DAMs_LEfSe.otu) > 0.01  # 1\% mean abundance
-filtered_data <- df.call_DAMs_LEfSe.otu[abundance_filter, ]
-
-print(paste("Retained", nrow(filtered_data), "of", nrow(df.call_DAMs_LEfSe.otu),
-  "features after filtering"))
-
-# Run LEfSe on filtered data
-filtered_lefse <- find_dams_lefse(
-  data = filtered_data,
-  sample = df.call_DAMs_LEfSe.sample,
-  lda.threshold = 1.0
-)
-
-print(paste("Filtered analysis found", nrow(filtered_lefse), "biomarkers"))
-
-# Compare with unfiltered results
-print("Comparison of filtering effects completed")
-}
+mat <- matrix(floor(runif(60 * 18, 0, 100)), nrow = 60, ncol = 18,
+  dimnames = list(paste0("ASV_", 1:60), paste0("S", 1:18)))
+meta <- data.frame(row.names = colnames(mat),
+  treatment = rep(c("A", "B", "C"), each = 6))
+res <- find_dams_lefse(mat, meta, groupCol = "treatment")
 
 }
 \references{
-Segata, N., et al. (2011). Metagenomic biomarker discovery and explanation.
-Genome Biology, 12(6), R60.
+Segata, N. et al. (2011). Metagenomic biomarker discovery and explanation.
+\emph{Genome Biology}, 12(6), R60.
 }
 \seealso{
-\itemize{
-  \item \code{\link{find_dams_deseq2}} for DESeq2-based differential abundance
-  \item \code{\link{rarefy_table}} for rarefaction preprocessing
-  \item \code{\link{permanova_test}} for community-level differences
-}
+\code{\link{find_dams_deseq2}}
 }
