@@ -4,14 +4,17 @@
 \alias{anova_posthoc}
 \title{Perform ANOVA and Post-hoc Multiple Comparison Tests}
 \usage{
-anova_posthoc(data, group, value, method = "Tukey", level = 0.95)
+anova_posthoc(data, group, value = NULL, method = "Tukey", level = 0.95)
 }
 \arguments{
 \item{data}{A data frame or grouped data frame containing the variables for analysis}
 
-\item{group}{Column name (as string) containing group information for comparison}
+\item{group}{Either a column name (as string) containing group information,
+or a formula like \code{value ~ group} (e.g., \code{Sepal.Length ~ Species}).
+When a formula is passed, the \code{value} parameter is ignored.}
 
-\item{value}{Column name (as string) containing the numeric values to compare}
+\item{value}{Column name (as string) containing the numeric values to compare.
+Ignored when \code{group} is a formula.}
 
 \item{method}{Method for post-hoc comparison. Either "Tukey" (default) for
 Tukey's Honest Significant Difference test or "Duncan" for Duncan's Multiple
@@ -54,38 +57,25 @@ library(dplyr)
 # Load iris dataset
 data(iris)
 
-# Basic usage: Perform ANOVA with Tukey post-hoc test
+# Basic usage: formula interface
+tukey_result <- anova_posthoc(iris, Sepal.Length ~ Species)
+print(tukey_result)
+
+# Traditional string interface (still supported)
 tukey_result <- anova_posthoc(
   data = iris,
   group = "Species",
   value = "Sepal.Length"
 )
-print(tukey_result)
 
 # With Duncan post-hoc test
-duncan_result <- anova_posthoc(
-  data = iris,
-  group = "Species",
-  value = "Sepal.Length",
-  method = "Duncan"
-)
-print(duncan_result)
+duncan_result <- anova_posthoc(iris, Sepal.Length ~ Species, method = "Duncan")
 
 # Using grouped data
-library(tidyr)
-
-# Create example data with multiple factors
-iris_long <- iris \%>\%
-  mutate(Size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) \%>\%
-  group_by(Size)
-
-# Perform ANOVA for each Size group
-grouped_result <- anova_posthoc(
-  data = iris_long,
-  group = "Species",
-  value = "Sepal.Length"
-)
-print(grouped_result)
+iris \%>\%
+  dplyr::mutate(Size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) \%>\%
+  dplyr::group_by(Size) \%>\%
+  anova_posthoc(Sepal.Length ~ Species)
 
 # Multiple grouping variables
 mtcars_grouped <- mtcars \%>\%
