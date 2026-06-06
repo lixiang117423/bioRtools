@@ -17,9 +17,9 @@ top_tax_n(
   abundance_transform = "none",
   show_statistics = TRUE,
   color_palette = "d3",
-  plot_type = "stacked_bar",
-  group_col = "group",
-  plot_by = "sample",
+  plot_type = "alluvial",
+  group_col = "treatment",
+  plot_by = "group",
   show_labels = FALSE,
   verbose = TRUE
 )
@@ -66,7 +66,8 @@ symbols on the plot. Default is TRUE.}
 "d3", "viridis", "brewer", "custom". Default is "d3".}
 
 \item{plot_type}{Character string specifying plot type. Options: "stacked_bar",
-"grouped_bar", "heatmap". Default is "stacked_bar".}
+"alluvial". Default is "stacked_bar". "alluvial" creates a flow/alluvial
+diagram using \pkg{ggalluvial}.}
 
 \item{group_col}{Character string specifying the column name in the sample
 table that defines groups. Default is "group".}
