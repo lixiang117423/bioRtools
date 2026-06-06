@@ -226,7 +226,7 @@
 #'   plot(all_results$log2FoldChange, -log10(all_results$padj))
 #' }
 #'
-#' @section Best Practices for Successful Analysis
+#' @section Best Practices:
 #'
 #' \enumerate{
 #'   \item \strong{Validate Input Data}

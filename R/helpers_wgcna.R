@@ -4,7 +4,6 @@
 #' These functions break down the complex WGCNA analysis into manageable steps.
 #'
 #' @keywords internal
-#' @noRd
 
 # ============================================================================
 # WGCNA Input Validation
