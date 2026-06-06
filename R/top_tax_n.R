@@ -35,7 +35,8 @@
 #' @param color_palette Character string specifying color palette. Options:
 #'   "d3", "viridis", "brewer", "custom". Default is "d3".
 #' @param plot_type Character string specifying plot type. Options: "stacked_bar",
-#'   "grouped_bar", "heatmap". Default is "stacked_bar".
+#'   "alluvial". Default is "stacked_bar". "alluvial" creates a flow/alluvial
+#'   diagram using \pkg{ggalluvial}.
 #' @param group_col Character string specifying the column name in the sample
 #'   table that defines groups. Default is "group".
 #' @param plot_by Character string specifying the aggregation level for plotting.
@@ -144,9 +145,9 @@ top_tax_n <- function(data,
                      abundance_transform = "none",
                      show_statistics = TRUE,
                      color_palette = "d3",
-                     plot_type = "stacked_bar",
-                     group_col = "group",
-                     plot_by = "sample",
+                     plot_type = "alluvial",
+                     group_col = "treatment",
+                     plot_by = "group",
                      show_labels = FALSE,
                      verbose = TRUE) {
 
@@ -419,29 +420,62 @@ top_tax_n <- function(data,
   if (verbose) message("Creating visualization...")
 
   if (plot_by == "group") {
-    # Group-level stacked bar
-    abundance_plot <- data_processed %>%
-      ggplot2::ggplot(ggplot2::aes(
-        x = group, y = relative_abundance, fill = taxon
-      )) +
-      ggplot2::geom_col() +
-      ggplot2::scale_y_continuous(labels = scales::percent) +
-      ggplot2::labs(
-        x = "Group",
-        y = "Relative abundance",
-        fill = stringr::str_to_title(which),
-        title = paste("Top", n_top, stringr::str_to_title(which), "Composition")
-      )
 
-    if (show_labels) {
-      abundance_plot <- abundance_plot +
-        ggplot2::geom_text(
-          ggplot2::aes(
-            label = scales::percent(relative_abundance, accuracy = 1)
-          ),
-          position = ggplot2::position_stack(vjust = 0.5),
-          size = 3
+    if (plot_type == "alluvial") {
+      # Alluvial / flow diagram
+      if (!requireNamespace("ggalluvial", quietly = TRUE)) {
+        stop("Package 'ggalluvial' is required for alluvial plots. ",
+             "Install with: install.packages('ggalluvial')")
+      }
+      abundance_plot <- data_processed %>%
+        ggplot2::ggplot(ggplot2::aes(
+          x = group, y = relative_abundance,
+          alluvium = taxon, stratum = taxon
+        )) +
+        ggalluvial::geom_alluvium(
+          ggplot2::aes(fill = taxon), color = NA, width = 0.4
+        ) +
+        ggalluvial::geom_stratum(
+          ggplot2::aes(fill = taxon), color = NA, width = 0.4
+        ) +
+        ggplot2::scale_y_continuous(
+          labels = scales::percent, limits = c(0, 1), expand = c(0, 0)
+        ) +
+        ggplot2::scale_x_discrete(expand = c(0, 0)) +
+        ggplot2::labs(
+          x = stringr::str_to_title(group_col),
+          y = "Relative abundance (%)",
+          fill = stringr::str_to_title(which),
+          color = stringr::str_to_title(which)
         )
+
+    } else {
+      # Group-level stacked bar
+      abundance_plot <- data_processed %>%
+        ggplot2::ggplot(ggplot2::aes(
+          x = group, y = relative_abundance, fill = taxon
+        )) +
+        ggplot2::geom_col(width = 0.8) +
+        ggplot2::scale_x_discrete(expand = c(0, 0)) +
+        ggplot2::scale_y_continuous(
+          labels = scales::percent, limits = c(0, 1), expand = c(0, 0)
+        ) +
+        ggplot2::labs(
+          x = stringr::str_to_title(group_col),
+          y = "Relative abundance (%)",
+          fill = stringr::str_to_title(which)
+        )
+
+      if (show_labels) {
+        abundance_plot <- abundance_plot +
+          ggplot2::geom_text(
+            ggplot2::aes(
+              label = scales::percent(relative_abundance, accuracy = 1)
+            ),
+            position = ggplot2::position_stack(vjust = 0.5),
+            size = 3
+          )
+      }
     }
 
   } else {
@@ -507,12 +541,21 @@ top_tax_n <- function(data,
   }
 
   # Apply theme
-  abundance_plot <- abundance_plot +
-    theme_bio() +
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-      legend.position = "bottom"
-    )
+  if (plot_by == "group") {
+    abundance_plot <- abundance_plot +
+      ggplot2::theme_bw() +
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_text(angle = 20, hjust = 1, vjust = 1),
+        legend.position = "right"
+      )
+  } else {
+    abundance_plot <- abundance_plot +
+      ggprism::theme_prism() +
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+        legend.position = "right"
+      )
+  }
 
   # ── Analysis parameters ──────────────────────────────────────────────────
   analysis_params <- data.frame(
