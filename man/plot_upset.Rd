@@ -2,82 +2,71 @@
 % Please edit documentation in R/plot_upset.R
 \name{plot_upset}
 \alias{plot_upset}
-\title{UpSet Plot of Shared and Unique Features}
+\title{UpSet Plot from a Group-Value Data Frame}
 \usage{
 plot_upset(
   data,
-  sample,
-  taxo = NULL,
-  group_col = "treatment",
-  which = NULL,
+  group = "comparison",
+  value = "feature_id",
   n_intersections = 20,
   order_by = "freq",
   fill = "#2874A6",
-  show_counts = TRUE,
-  verbose = TRUE
+  show_counts = TRUE
 )
 }
 \arguments{
-\item{data}{ASV/OTU abundance table. Can be in either orientation:
-features × samples (first column is feature ID) or
-samples × features (rownames are sample IDs). Auto-detected.}
+\item{data}{A data frame with at least two columns: one for group
+labels and one for value/feature identifiers.}
 
-\item{sample}{Sample metadata table. Must contain sample names matching
-those in data.}
+\item{group}{Column name in \code{data} containing the group labels.
+Default is \code{"comparison"}.}
 
-\item{taxo}{Optional taxonomy table. If provided and \code{which} is
-specified, aggregation is done at that taxonomic level instead of
-OTU level.}
-
-\item{group_col}{Column name in the sample table defining groups.
-Default is "treatment".}
-
-\item{which}{Taxonomic level to analyze (e.g., "phylum", "genus").
-Must be a column name in \code{taxo}. Default is NULL (OTU level).}
+\item{value}{Column name in \code{data} containing the value/feature
+identifiers. Default is \code{"feature_id"}.}
 
 \item{n_intersections}{Integer, maximum number of intersections to show.
 Default is 20.}
 
-\item{order_by}{How to order intersections: "freq" (by count, default)
-or "degree" (by number of groups).}
+\item{order_by}{How to order intersections: \code{"freq"} (by count,
+default) or \code{"degree"} (by number of groups).}
 
-\item{fill}{Bar fill color. Default is "#2874A6".}
+\item{fill}{Bar fill color. Default is \code{"#2874A6"}.}
 
 \item{show_counts}{Logical. Show count labels on top of bars.
-Default is TRUE.}
-
-\item{verbose}{Logical. Print progress messages. Default is TRUE.}
+Default is \code{TRUE}.}
 }
 \value{
 A list containing:
 \describe{
   \item{plot}{A ggplot object with the UpSet plot.}
-  \item{data.upset}{A data frame with the feature-group membership data
+  \item{data.upset}{A data frame with the value-group membership data
     used for plotting.}
+  \item{data.pav}{A presence/absence matrix (value × group).}
 }
 }
 \description{
-Create an UpSet plot showing how many features (OTUs/ASVs/taxa) are
+Create an UpSet plot from a data frame containing group and value
+columns (e.g., comparison and feature_id). Shows which values are
 shared or unique across groups. Uses \pkg{ggupset} to produce
 publication-quality combination matrix plots.
 }
 \details{
 The workflow:
 \enumerate{
-  \item Merge abundance, sample metadata, and (optionally) taxonomy
-  \item Convert to presence/absence
-  \item For each feature, record which groups it appears in
+  \item Select group and value columns from the input data frame
+  \item Deduplicate to get unique group-value pairs
+  \item For each value, record which groups it appears in
   \item Create UpSet plot via \code{ggupset::scale_x_upset()}
+  \item Build a presence/absence matrix
 }
 
 Requires \pkg{ggupset}.
 }
 \examples{
 \dontrun{
-result <- plot_upset(df.asv, df.sample, df.tax,
-  which = "phylum", group_col = "treatment"
-)
-result$plot
+df.deg \%>\%
+  dplyr::select(comparison, feature_id) \%>\%
+  bioRtools::plot_upset()
 }
 
 }
