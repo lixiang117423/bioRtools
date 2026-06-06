@@ -41,6 +41,8 @@ Imports:
     ggsci,
     ggtext,
     ggthemes,
+    linkET,
+    RColorBrewer,
     ggtree,
     janitor,
     lefser,
