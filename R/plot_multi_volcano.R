@@ -166,10 +166,21 @@ plot_multi_volcano <- function(data,
       inherit.aes = FALSE, alpha = band_alpha
     ) +
     ggplot2::scale_fill_manual(values = group_colors, guide = "none") +
-    ggplot2::geom_jitter(ggplot2::aes(color = type), stroke = 0) +
+    # NS points: grey, no legend
+    ggplot2::geom_point(
+      data = df[df$type == "NS", ],
+      ggplot2::aes(x = group, y = log2FC),
+      color = "grey70", size = 0.8, stroke = 0, show.legend = FALSE
+    ) +
+    # Significant points: colored, with legend
+    ggplot2::geom_jitter(
+      data = df[df$type != "NS", ],
+      ggplot2::aes(x = group, y = log2FC, color = type),
+      stroke = 0
+    ) +
     ggplot2::scale_color_manual(
-      values = c("NS" = "grey70", "Down" = down_color, "Up" = up_color),
-      drop = FALSE
+      values = c("Down" = down_color, "Up" = up_color),
+      labels = c("Down", "Up")
     ) +
     ggrepel::geom_text_repel(
       data = label_df,
