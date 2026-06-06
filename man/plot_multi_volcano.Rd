@@ -2,143 +2,98 @@
 % Please edit documentation in R/plot_multi_volcano.R
 \name{plot_multi_volcano}
 \alias{plot_multi_volcano}
-\title{Plot Multi-Group Volcano Plot}
+\alias{detect_volcano_cols}
+\title{Multi-Group Volcano Plot (Manhattan Style)}
 \usage{
 plot_multi_volcano(
   data,
-  fc_column = "avg_log2FC",
-  cluster_column = "cluster",
-  gene_column = "gene",
-  pval_column = "p_val_adj",
-  fc_threshold = 1,
-  pval_threshold = 0.05,
-  label_n = 5,
-  cluster_colors = c("#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00", "#C51B7D",
-    "#7F3B08", "#B2ABD2", "#ABDDA4", "#FC8D62"),
+  groupCol = NULL,
+  featureCol = NULL,
+  log2FCCol = NULL,
+  padjCol = NULL,
+  log2FC_thr = 1,
+  padj_thr = 0.05,
+  topN = 5,
+  label_size = 2.5,
+  group_colors = "default",
   up_color = "#0073C2FF",
   down_color = "#EE0000FF",
-  y_limits = c(-3, 7),
-  y_breaks = c(-3, -2, -1, 0, 2, 4, 6),
+  band_alpha = 0.3,
+  y_limits = NULL,
+  y_breaks = NULL,
   legend_position = c(0.08, 0.9)
 )
+
+detect_volcano_cols(data, groupCol, featureCol, log2FCCol, padjCol)
 }
 \arguments{
-\item{data}{A data frame containing the volcano plot data with columns
-specified by \code{fc_column}, \code{cluster_column}, \code{gene_column},
-and \code{pval_column}.}
+\item{data}{A data frame. Two formats are auto-detected:
+\itemize{
+  \item Original: columns \code{cluster}, \code{gene},
+    \code{avg_log2FC}, \code{p_val_adj}
+  \item \code{find_dams_deseq2} output: columns \code{comparison},
+    \code{feature_id}, \code{log2FoldChange}, \code{padj}
+}}
 
-\item{fc_column}{Character string. Name of the column containing fold change
-values (typically log2 fold change). Default is "avg_log2FC".}
+\item{groupCol}{Column for grouping (default: auto-detect).}
 
-\item{cluster_column}{Character string. Name of the column containing group
-or cluster identifiers. Default is "cluster".}
+\item{featureCol}{Column for feature labels (default: auto-detect).}
 
-\item{gene_column}{Character string. Name of the column containing gene
-names or identifiers. Default is "gene".}
+\item{log2FCCol}{Column for log2 fold change (default: auto-detect).}
 
-\item{pval_column}{Character string. Name of the column containing adjusted
-p-values. Default is "p_val_adj".}
+\item{padjCol}{Column for adjusted p-values (default: auto-detect).}
 
-\item{fc_threshold}{Numeric value. Absolute fold change threshold for
-labeling significant genes. Default is 1.}
+\item{log2FC_thr}{Absolute log2FC threshold for significance coloring
+(default: 1).}
 
-\item{pval_threshold}{Numeric value between 0 and 1. P-value threshold for
-filtering genes to label. Default is 0.05.}
+\item{padj_thr}{Adjusted p-value threshold for significance coloring
+(default: 0.05).}
 
-\item{label_n}{Integer. Number of top up-regulated and down-regulated genes
-to label per cluster. Default is 5.}
+\item{topN}{Number of top features to label per group per direction
+(default: 5).}
 
-\item{cluster_colors}{Character vector. Color palette for cluster
-background strips. Default uses scientific color palette.}
+\item{label_size}{Font size for feature labels (default: 2.5).}
 
-\item{up_color}{Character string. Color for up-regulated genes.
-Default is "#0073C2FF" (blue).}
+\item{group_colors}{Fill colors for background bands, or a palette name
+from \code{\link{scale_fill_research}} (e.g. "default",
+"nature_genomics"). Default: "default". Recycled if needed.}
 
-\item{down_color}{Character string. Color for down-regulated genes.
-Default is "#EE0000FF" (red).}
+\item{up_color}{Color for up-regulated points (default: "#0073C2FF").}
 
-\item{y_limits}{Numeric vector of length 2. Y-axis limits as c(min, max).
-Default is c(-3, 7).}
+\item{down_color}{Color for down-regulated points (default: "#EE0000FF").}
 
-\item{y_breaks}{Numeric vector. Y-axis break points. Default is
-c(-3, -2, -1, 0, 2, 4, 6).}
+\item{band_alpha}{Alpha for center bands (default: 0.3).}
 
-\item{legend_position}{Character string or numeric vector. Position of the
-legend. Default is c(0.08, 0.9) for top-left.}
+\item{y_limits}{Y-axis limits. If NULL, auto-computed.}
+
+\item{y_breaks}{Y-axis breaks. If NULL, auto-computed.}
+
+\item{legend_position}{Legend position (default: \code{c(0.08, 0.9)}).}
 }
 \value{
-A ggplot object that can be further customized or saved using
-  \code{ggplot2::ggsave()}.
+A ggplot object.
 }
 \description{
-Create a multi-group volcano plot to visualize differential expression
-analysis results across multiple clusters or groups. The plot displays
-fold change values on the y-axis with different groups shown as separate
-columns on the x-axis. Points are color-coded by up/down regulation and
-significant genes can be labeled.
-}
-\details{
-The function creates a volcano plot with the following features:
-\itemize{
-  \item Each cluster/group is shown as a separate column
-  \item Background strips indicate cluster boundaries
-  \item Points are color-coded by regulation direction
-  \item Significant genes are labeled based on fold change and p-value
-  \item Cluster names are displayed in the center of each column
-}
-
-Genes are labeled based on the following criteria:
-\enumerate{
-  \item Adjusted p-value < \code{pval_threshold}
-  \item Absolute fold change > \code{fc_threshold}
-  \item Top \code{label_n} up-regulated and down-regulated genes per cluster
-}
-}
-\note{
-\itemize{
-  \item The function requires \code{ggrepel} and \code{ggprism} packages
-  \item Cluster order is preserved from the input data
-  \item Labels may overlap if many genes meet the criteria
-  \item Adjust \code{label_n} to control the number of labels
-}
+Creates a Manhattan-style volcano plot for visualizing differential analysis
+results across multiple groups. Auto-detects input format: works with the
+original cluster format (Seurat-style) and \code{\link{find_dams_deseq2}}
+output directly.
 }
 \examples{
+# With original cluster format
 \dontrun{
-library(bioRtools)
-library(dplyr)
-library(readr)
+df <- read.delim("data.tsv")
+plot_multi_volcano(df)
+}
 
-# Read data
-df <- read_tsv("data.tsv")
-
-# Basic multi-group volcano plot
-p <- plot_multi_volcano(df)
-print(p)
-
-# Customize with different thresholds
-p_custom <- plot_multi_volcano(
-  df,
-  fc_threshold = 1.5,
-  pval_threshold = 0.01,
-  label_n = 3
-)
-print(p_custom)
-
-# Save the plot
-ggplot2::ggsave("multi_volcano.png", p, width = 10, height = 6, dpi = 300)
-
-# Custom colors and axis limits
-p_custom2 <- plot_multi_volcano(
-  df,
-  cluster_colors = c("#E41A1C", "#377EB8", "#4DAF4A"),
-  y_limits = c(-5, 10),
-  up_color = "#FF6B6B",
-  down_color = "#6B6BFF"
-)
-print(p_custom2)
+# With find_dams_deseq2 output
+\dontrun{
+res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+plot_multi_volcano(res)
 }
 
 }
-\author{
-Xiang LI \email{lixiang117423@foxmail.com}
+\seealso{
+\code{\link{find_dams_deseq2}}, \code{\link{find_dams_lefse}}
 }
+\keyword{internal}
