@@ -6,15 +6,18 @@
 #' \code{group_col}), characteristic features are selected and tested
 #' against environmental variables via \pkg{linkET}.
 #'
-#' @param data.spec Feature abundance table. Samples as rows, features
-#'   (ASVs/OTUs) as columns.
-#' @param data.env Environmental data table. Samples as rows, environmental
-#'   variables as columns. Must contain the same samples as \code{data.spec}.
-#' @param data.sample Sample metadata table. Must contain a sample ID column
-#'   (first column) matching rownames of \code{data.spec} and \code{data.env},
+#' @param data.spec Feature abundance table. First column is feature ID
+#'   (e.g., "asv"), remaining columns are samples (features × samples).
+#'   Auto-transposed internally.
+#' @param data.env Environmental data table. Must contain a \code{sample}
+#'   column and environmental variable columns (either in long format with
+#'   \code{sample}, \code{indicator}, \code{value}, or in wide format).
+#'   Auto-detected.
+#' @param data.sample Sample metadata table. Must contain a \code{sample}
+#'   column matching samples in \code{data.spec} and \code{data.env},
 #'   and a group column.
 #' @param group_col Column name in \code{data.sample} defining sample groups.
-#'   Default is \code{"group"}.
+#'   Default is \code{"group"}. Falls back to auto-detection if not found.
 #' @param spec_select_method How to select characteristic features per group:
 #'   \code{"prevalence"} (features present above threshold, default) or
 #'   \code{"abundance"} (top N by mean abundance).
@@ -56,6 +59,17 @@
 #' }
 #'
 #' @details
+#' The function accepts flexible input formats:
+#' \itemize{
+#'   \item \code{data.env}: either long format (\code{sample}, \code{indicator},
+#'         \code{value}) or wide format (\code{sample} + indicators as columns).
+#'         Auto-detected.
+#'   \item \code{data.spec}: features × samples, first column is feature ID.
+#'         Auto-transposed to samples × features.
+#'   \item \code{data.sample}: must have \code{sample} and group columns.
+#'         \code{group_col} is auto-detected if \code{NULL}.
+#' }
+#'
 #' The workflow:
 #' \enumerate{
 #'   \item Match samples across all three input tables
@@ -78,20 +92,15 @@
 #' \dontrun{
 #' df.phy <- readxl::read_excel("理化性质.xlsx") %>%
 #'   dplyr::select(sample, indicator, value) %>%
-#'   tidyr::pivot_wider(names_from = indicator, values_from = value) %>%
-#'   tibble::column_to_rownames(var = "sample")
+#'   tidyr::pivot_wider(names_from = indicator, values_from = value)
 #'
 #' df.asv <- readxl::read_excel("ASV丰度表.xlsx") %>%
-#'   dplyr::select(asv, rownames(df.phy)) %>%
-#'   tibble::column_to_rownames(var = "asv") %>%
-#'   t() %>% as.data.frame()
+#'   dplyr::select(asv, df.phy$sample)
 #'
 #' df.sample <- readxl::read_excel("样品信息表.xlsx") %>%
-#'   dplyr::filter(sample %in% rownames(df.asv)) %>%
-#'   dplyr::select(sample, alt) %>%
-#'   dplyr::rename(group = alt)
+#'   dplyr::filter(sample %in% df.phy$sample)
 #'
-#' result <- plot_mantel(df.asv, df.phy, df.sample, group_col = "group")
+#' result <- plot_mantel(df.asv, df.phy, df.sample)
 #' result$plot
 #' }
 #'
@@ -126,35 +135,83 @@ plot_mantel <- function(data.spec,
   spec_select_method <- match.arg(spec_select_method)
 
   # ── Input validation ──────────────────────────────────────────────────────
-  if (!is.data.frame(data.spec)) stop("'data.spec' must be a data frame")
-  if (!is.data.frame(data.env))  stop("'data.env' must be a data frame")
+  if (!is.data.frame(data.spec))   stop("'data.spec' must be a data frame")
+  if (!is.data.frame(data.env))    stop("'data.env' must be a data frame")
   if (!is.data.frame(data.sample)) stop("'data.sample' must be a data frame")
+
+  if (!"sample" %in% colnames(data.sample)) {
+    stop("'data.sample' must contain a 'sample' column")
+  }
+
+  # ── Auto-detect group column ──────────────────────────────────────────────
+  if (!group_col %in% colnames(data.sample)) {
+    if (verbose) message("'", group_col, "' not found, auto-detecting group column...")
+    cand <- setdiff(colnames(data.sample), "sample")
+    if (length(cand) == 0) stop("No group column found in 'data.sample'")
+    n_uniq <- vapply(data.sample[cand], function(x) length(unique(x)), integer(1))
+    cand <- cand[n_uniq > 1]
+    if (length(cand) == 0) stop("No group column with >1 unique values found in 'data.sample'")
+    n_uniq <- vapply(data.sample[cand], function(x) length(unique(x)), integer(1))
+    group_col <- cand[which.min(n_uniq)]
+    if (verbose) message("Auto-detected group column: '", group_col, "'")
+  }
+
   if (!group_col %in% colnames(data.sample)) {
     stop("'", group_col, "' column not found in 'data.sample'")
   }
 
-  # ── Harmonize sample IDs ──────────────────────────────────────────────────
-  data.spec  <- as.data.frame(data.spec)
-  data.env   <- as.data.frame(data.env)
-  sample_id_col <- colnames(data.sample)[1]
+  # ── Parse data.env: auto-detect long vs wide format ────────────────────────
+  data.env <- as.data.frame(data.env)
+  has_indicator_value <- all(c("indicator", "value") %in% colnames(data.env)) &&
+    "sample" %in% colnames(data.env)
 
+  if (has_indicator_value) {
+    if (verbose) message("Detected data.env in long format, pivoting...")
+    data.env <- data.env %>%
+      dplyr::select(sample, indicator, value) %>%
+      tidyr::pivot_wider(names_from = indicator, values_from = value)
+  }
+
+  if (!"sample" %in% colnames(data.env)) {
+    stop("'data.env' must contain a 'sample' column")
+  }
+
+  # ── Parse data.spec: features × samples → samples × features ──────────────
+  data.spec <- as.data.frame(data.spec)
+  feature_col <- colnames(data.spec)[1]
+  feature_names <- as.character(data.spec[[feature_col]])
+
+  if (verbose) message("Transposing data.spec: features × samples → samples × features")
+
+  data.spec <- data.spec %>%
+    dplyr::select(-dplyr::all_of(feature_col)) %>%
+    t() %>%
+    as.data.frame()
+  colnames(data.spec) <- feature_names
+  data.spec$sample <- rownames(data.spec)
+
+  # ── Harmonize samples ─────────────────────────────────────────────────────
   common_samples <- Reduce(intersect, list(
-    rownames(data.spec),
-    rownames(data.env),
-    as.character(data.sample[[sample_id_col]])
+    data.spec$sample,
+    data.env$sample,
+    as.character(data.sample$sample)
   ))
 
   if (length(common_samples) == 0) {
-    stop("No common samples found across 'data.spec', 'data.env' and 'data.sample'")
+    stop("No common samples found across input tables")
   }
 
-  if (verbose) {
-    message("Common samples: ", length(common_samples))
-  }
+  if (verbose) message("Common samples: ", length(common_samples))
 
-  data.spec  <- data.spec[common_samples, , drop = FALSE]
-  data.env   <- data.env[common_samples, , drop = FALSE]
-  data.sample <- data.sample[match(common_samples, as.character(data.sample[[sample_id_col]])), , drop = FALSE]
+  data.spec <- data.spec[match(common_samples, data.spec$sample), , drop = FALSE]
+  data.env  <- data.env[match(common_samples, data.env$sample), , drop = FALSE]
+  data.sample <- data.sample[match(common_samples, data.sample$sample), , drop = FALSE]
+
+  # Set sample as rowname for downstream use
+  rownames(data.spec) <- data.spec$sample
+  data.spec$sample <- NULL
+  rownames(data.env) <- data.env$sample
+  data.env$sample <- NULL
 
   # Keep only numeric columns in env
   env_numeric <- vapply(data.env, is.numeric, logical(1))
