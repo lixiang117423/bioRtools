@@ -2,71 +2,65 @@
 % Please edit documentation in R/plot_upset.R
 \name{plot_upset}
 \alias{plot_upset}
-\title{UpSet Plot from a Group-Value Data Frame}
+\title{UpSet Plot from a Group-Feature Data Frame}
 \usage{
 plot_upset(
   data,
-  group = "comparison",
-  value = "feature_id",
-  n_intersections = 20,
+  group = NULL,
+  feature = NULL,
+  n_intersections = 30,
   order_by = "freq",
   fill = "#2874A6",
   show_counts = TRUE
 )
 }
 \arguments{
-\item{data}{A data frame with at least two columns: one for group
-labels and one for value/feature identifiers.}
+\item{data}{A data frame with at least two columns: one for group labels
+and one for feature identifiers.}
 
-\item{group}{Column name in \code{data} containing the group labels.
-Default is \code{"comparison"}.}
+\item{group}{Column name for group labels (default: auto-detect
+"comparison" or "cluster").}
 
-\item{value}{Column name in \code{data} containing the value/feature
-identifiers. Default is \code{"feature_id"}.}
+\item{feature}{Column name for feature identifiers (default: auto-detect
+"feature_id" or "gene").}
 
-\item{n_intersections}{Integer, maximum number of intersections to show.
-Default is 20.}
+\item{n_intersections}{Maximum number of intersections to show (default: 30).}
 
-\item{order_by}{How to order intersections: \code{"freq"} (by count,
-default) or \code{"degree"} (by number of groups).}
+\item{order_by}{How to order intersections: "freq" (default) or "degree".}
 
-\item{fill}{Bar fill color. Default is \code{"#2874A6"}.}
+\item{fill}{Bar fill color (default: "#2874A6").}
 
-\item{show_counts}{Logical. Show count labels on top of bars.
-Default is \code{TRUE}.}
+\item{show_counts}{Show count labels on bars (default: TRUE).}
 }
 \value{
-A list containing:
-\describe{
-  \item{plot}{A ggplot object with the UpSet plot.}
-  \item{data.upset}{A data frame with the value-group membership data
-    used for plotting.}
-  \item{data.pav}{A presence/absence matrix (value × group).}
-}
+A list:
+  \describe{
+    \item{plot}{ggplot object.}
+    \item{data.pav}{Presence/absence matrix (feature × group).}
+  }
 }
 \description{
-Create an UpSet plot from a data frame containing group and value
-columns (e.g., comparison and feature_id). Shows which values are
-shared or unique across groups. Uses \pkg{ggupset} to produce
-publication-quality combination matrix plots.
+Creates an UpSet plot from a simple two-column data frame where one column
+is the group label and the other is the feature identifier. Useful for
+visualizing overlap of differential features across pairwise comparisons.
 }
 \details{
-The workflow:
-\enumerate{
-  \item Select group and value columns from the input data frame
-  \item Deduplicate to get unique group-value pairs
-  \item For each value, record which groups it appears in
-  \item Create UpSet plot via \code{ggupset::scale_x_upset()}
-  \item Build a presence/absence matrix
+Works directly with \code{\link{find_dams_deseq2}} output:
+\preformatted{
+res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+plot_upset(res, group = "comparison", feature = "feature_id")
 }
-
-Requires \pkg{ggupset}.
 }
 \examples{
+# With find_dams_deseq2 output
 \dontrun{
-df.deg \%>\%
-  dplyr::select(comparison, feature_id) \%>\%
-  bioRtools::plot_upset()
+res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+result <- plot_upset(res, group = "comparison", feature = "feature_id")
+result$plot
+head(result$data.pav)
 }
 
+}
+\seealso{
+\code{\link{find_dams_deseq2}}, \code{\link{plot_tax_upset}}
 }

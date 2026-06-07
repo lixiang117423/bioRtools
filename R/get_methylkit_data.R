@@ -1,8 +1,3 @@
-# 确保已加载必要的包
-# 如果尚未安装，请运行 install.packages("methylKit") 和 install.packages("magrittr")
-library(methylKit)
-library(magrittr) # 用于 %>% 管道操作符
-
 #' @title 从methylKit对象提取全面的甲基化数据（包含上下文信息）
 #' @description 该函数接收一个methylKit对象，进行过滤和标准化，然后生成一个包含
 #'              完整信息的宽格式数据框。对于每个样本，它会保留原始的覆盖度(coverage)、

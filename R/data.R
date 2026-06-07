@@ -143,7 +143,7 @@
 
 #' Test data.
 #'
-#' @format ## `df.top10.calss`
+#' @format ## `df.top10.class`
 #' A data frame with 9 rows and 2 columns:
 #' \describe{
 #' }
