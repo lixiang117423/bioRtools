@@ -175,9 +175,14 @@ run_wgcna_analysis <- function(
       "\nPlease install them first.")
   }
 
-  # Load libraries quietly
+  # Load required packages
+  pkgs <- c("WGCNA", "patchwork", "readxl", "pheatmap")
+  for (pkg in pkgs) {
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      stop(sprintf("Package '%s' is required. Install it with install.packages('%s')", pkg, pkg))
+    }
+  }
   suppressPackageStartupMessages({
-    library(tidyverse)
     library(WGCNA)
     library(patchwork)
     library(readxl)

@@ -40,15 +40,9 @@ plot_pfam <- function(data,
                       tree_layout = "ellipse",
                       rounded_corners = FALSE,
                       corner_radius = 0.1) {
-  # Load required packages
-  library(readr)
-  library(dplyr)
-  library(magrittr)
-  library(ggplot2)
-
-  # Load ggforce if rounded corners are requested
-  if (rounded_corners) {
-    library(ggforce)
+  # Check optional packages
+  if (rounded_corners && !requireNamespace("ggforce", quietly = TRUE)) {
+    stop("Package 'ggforce' is required for rounded corners. Install with install.packages('ggforce')")
   }
 
   # Read pfam data
@@ -86,9 +80,12 @@ plot_pfam <- function(data,
 
   # If phylogenetic tree file is provided
   else {
-    # Load phylogenetic tree related packages
-    library(ggtree)
-    library(aplot)
+    if (!requireNamespace("ggtree", quietly = TRUE)) {
+      stop("Package 'ggtree' is required for tree visualization. Install from Bioconductor.")
+    }
+    if (!requireNamespace("aplot", quietly = TRUE)) {
+      stop("Package 'aplot' is required. Install with install.packages('aplot')")
+    }
 
     # Read phylogenetic tree
     tree <- ggtree::read.tree(tree_file)
