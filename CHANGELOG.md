@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2026-06-08
+
+### Added
+- `pairwise_oplsda`: pairwise OPLS-DA across all group combinations
+- `col2file`: export a data frame column to plain text file (default append=TRUE)
+- `ggsave2`: ggsave wrapper with width=8, height=6, dpi=600 defaults
+- `find_degs_deseq2`: add pairwise=TRUE for automatic pairwise DESeq2 analysis
+
+### Fixed
+- `fasta2df`: strip leading '>' from ID column
+- `pairwise_oplsda`: scores output changed from list to data.frame with comparison column
+- Removed obsolete `df_to_list`, cleaned up man page duplicates and typos
+
+
 ## [1.16.1] - 2026-05-20
 
 ### Changed
