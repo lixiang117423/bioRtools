@@ -15,7 +15,7 @@
 #'   Must have the same length as the number of rows in data. For two-group
 #'   comparisons, a binary factor is required. Multi-group OPLS-DA is supported
 #'   for more than two groups
-#' @param vip.threshold Numerical threshold for Variable Importance in Projection
+#' @param vip_threshold Numerical threshold for Variable Importance in Projection
 #'   (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
 #'   are considered important for group discrimination. Common thresholds:
 #'   \itemize{
@@ -23,10 +23,10 @@
 #'     \item 1.5: More stringent selection for highly important variables
 #'     \item 0.8: More liberal selection for exploratory analysis
 #'   }
-#' @param ortho.components Number of orthogonal components to calculate (default: 1).
+#' @param ortho_components Number of orthogonal components to calculate (default: 1).
 #'   Orthogonal components capture variation unrelated to group differences.
 #'   Typically 1-3 components are sufficient for most datasets
-#' @param pred.components Number of predictive components (default: 1 for binary,
+#' @param pred_components Number of predictive components (default: 1 for binary,
 #'   automatically determined for multi-group). Usually 1 for two-group comparisons,
 #'   more may be needed for complex multi-group analyses
 #' @param scaling Method for data scaling (default: "standard"). Options include:
@@ -41,7 +41,7 @@
 #'     \item "CV": Cross-validation for model assessment
 #'     \item "none": No validation (faster but no performance metrics)
 #'   }
-#' @param cv.folds Number of cross-validation folds (default: 7). Only used when
+#' @param cv_folds Number of cross-validation folds (default: 7). Only used when
 #'   validation = "CV". Should be <= number of samples in smallest group
 #'
 #' @return A named list containing:
@@ -174,9 +174,9 @@
 #' oplsda_strict <- opls_analysis(
 #'   data = meta_filtered,
 #'   group = sample_filtered$treatment,
-#'   vip.threshold = 1.5,        # More stringent VIP cutoff
+#'   vip_threshold = 1.5,        # More stringent VIP cutoff
 #'   scaling = "pareto",          # Pareto scaling for metabolomics
-#'   cv.folds = 5                 # 5-fold cross-validation
+#'   cv_folds = 5                 # 5-fold cross-validation
 #' )
 #'
 #' print("Strict model performance:")
@@ -202,8 +202,8 @@
 #' multigroup_oplsda <- opls_analysis(
 #'   data = multi_group_meta,
 #'   group = multi_group_samples$group,
-#'   pred.components = 2,         # May need more components for multiple groups
-#'   vip.threshold = 1.2
+#'   pred_components = 2,         # May need more components for multiple groups
+#'   vip_threshold = 1.2
 #' )
 #'
 #' print("Multi-group model summary:")
@@ -335,9 +335,9 @@
 #' print(paste("Best scaling method based on Q2Y:", best_scaling))
 #' }
 #'
-opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1,
-                          pred.components = NULL, scaling = "standard",
-                          validation = "CV", cv.folds = 7) {
+opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1,
+                          pred_components = NULL, scaling = "standard",
+                          validation = "CV", cv_folds = 7) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
     !methods::is(data, "SummarizedExperiment") &&
@@ -391,23 +391,23 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
   }
 
   # Validate parameters
-  if (!is.numeric(vip.threshold) || length(vip.threshold) != 1 || vip.threshold < 0) {
-    stop("'vip.threshold' must be a single non-negative number")
+  if (!is.numeric(vip_threshold) || length(vip_threshold) != 1 || vip_threshold < 0) {
+    stop("'vip_threshold' must be a single non-negative number")
   }
 
-  if (!is.numeric(ortho.components) || length(ortho.components) != 1 ||
-    ortho.components < 0 || ortho.components != round(ortho.components)) {
-    stop("'ortho.components' must be a single non-negative integer")
+  if (!is.numeric(ortho_components) || length(ortho_components) != 1 ||
+    ortho_components < 0 || ortho_components != round(ortho_components)) {
+    stop("'ortho_components' must be a single non-negative integer")
   }
 
-  if (!is.null(pred.components)) {
-    if (!is.numeric(pred.components) || length(pred.components) != 1 ||
-      pred.components < 1 || pred.components != round(pred.components)) {
-      stop("'pred.components' must be a single positive integer")
+  if (!is.null(pred_components)) {
+    if (!is.numeric(pred_components) || length(pred_components) != 1 ||
+      pred_components < 1 || pred_components != round(pred_components)) {
+      stop("'pred_components' must be a single positive integer")
     }
   } else {
     # Auto-determine predictive components
-    pred.components <- min(n_groups - 1, 3)  # Usually sufficient
+    pred_components <- min(n_groups - 1, 3)  # Usually sufficient
   }
 
   valid_scaling <- c("none", "center", "standard", "pareto")
@@ -421,15 +421,15 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
   }
 
   if (validation == "CV") {
-    if (!is.numeric(cv.folds) || length(cv.folds) != 1 ||
-      cv.folds < 2 || cv.folds != round(cv.folds)) {
-      stop("'cv.folds' must be a single integer >= 2")
+    if (!is.numeric(cv_folds) || length(cv_folds) != 1 ||
+      cv_folds < 2 || cv_folds != round(cv_folds)) {
+      stop("'cv_folds' must be a single integer >= 2")
     }
 
-    if (cv.folds > min_group_size) {
-      warning(paste("cv.folds (", cv.folds, ") > smallest group size (", min_group_size,
+    if (cv_folds > min_group_size) {
+      warning(paste("cv_folds (", cv_folds, ") > smallest group size (", min_group_size,
         "). Reducing to", min_group_size))
-      cv.folds <- min_group_size
+      cv_folds <- min_group_size
     }
   }
 
@@ -468,10 +468,10 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
         opls_model <- ropls::opls(
           x = data_matrix,
           y = group,
-          predI = pred.components,
-          orthoI = ortho.components,
+          predI = pred_components,
+          orthoI = ortho_components,
           scaleC = scaling,
-          crossvalI = cv.folds,
+          crossvalI = cv_folds,
           fig.pdfC = "none",  # Suppress automatic plots
           info.txtC = "none"  # Suppress verbose output
         )
@@ -479,8 +479,8 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
         opls_model <- ropls::opls(
           x = data_matrix,
           y = group,
-          predI = pred.components,
-          orthoI = ortho.components,
+          predI = pred_components,
+          orthoI = ortho_components,
           scaleC = scaling,
           crossvalI = 0,  # No cross-validation
           fig.pdfC = "none",
@@ -534,7 +534,7 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
         data.frame(
           feature = variable_names,
           vip = as.numeric(vip_values),
-          important = as.numeric(vip_values) >= vip.threshold
+          important = as.numeric(vip_values) >= vip_threshold
         ) %>%
           dplyr::arrange(desc(vip))
       }
@@ -574,8 +574,8 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
         Q2Y = if ("Q2Y" %in% names(summary_df)) summary_df$Q2Y else NA,
         RMSEE = if ("RMSEE" %in% names(summary_df)) summary_df$RMSEE else NA,
         RMSECV = if ("RMSECV" %in% names(summary_df)) summary_df$RMSECV else NA,
-        n_pred_components = pred.components,
-        n_ortho_components = ortho.components,
+        n_pred_components = pred_components,
+        n_ortho_components = ortho_components,
         n_variables = ncol(data_matrix),
         n_samples = nrow(data_matrix),
         n_groups = n_groups,
@@ -588,8 +588,8 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
       warning(paste("Error extracting model summary:", e$message))
       list(
         R2Y = NA, Q2Y = NA, RMSEE = NA, RMSECV = NA,
-        n_pred_components = pred.components,
-        n_ortho_components = ortho.components,
+        n_pred_components = pred_components,
+        n_ortho_components = ortho_components,
         n_variables = ncol(data_matrix),
         n_samples = nrow(data_matrix),
         n_groups = n_groups
@@ -614,7 +614,7 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
   attr(results, "n_variables") <- ncol(data_matrix)
   attr(results, "n_groups") <- n_groups
   attr(results, "n_important_vars") <- n_important_vars
-  attr(results, "vip_threshold") <- vip.threshold
+  attr(results, "vip_threshold") <- vip_threshold
   attr(results, "scaling_method") <- scaling
 
   # Print summary if interactive
@@ -625,8 +625,8 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
     cat("Variables:", ncol(data_matrix), "\n")
     cat("Groups:", n_groups, "(", paste(names(group_sizes), collapse = ", "), ")\n")
     cat("Group sizes:", paste(group_sizes, collapse = ", "), "\n")
-    cat("Predictive components:", pred.components, "\n")
-    cat("Orthogonal components:", ortho.components, "\n")
+    cat("Predictive components:", pred_components, "\n")
+    cat("Orthogonal components:", ortho_components, "\n")
     cat("Scaling method:", scaling, "\n\n")
 
     if (!is.na(model_summary$R2Y) && !is.na(model_summary$Q2Y)) {
@@ -644,7 +644,7 @@ opls_analysis <- function(data, group, vip.threshold = 1.0, ortho.components = 1
     }
 
     cat("\nVariable Selection:\n")
-    cat("VIP threshold:", vip.threshold, "\n")
+    cat("VIP threshold:", vip_threshold, "\n")
     cat("Important variables:", n_important_vars,
       paste0("(", round(100 * n_important_vars / ncol(data_matrix), 1), "%)"), "\n")
 

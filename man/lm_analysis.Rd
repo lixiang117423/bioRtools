@@ -11,7 +11,7 @@ lm_analysis(
   group,
   color,
   alpha = 0.05,
-  conf.level = 0.95,
+  conf_level = 0.95,
   method = "lm",
   se = TRUE
 )
@@ -39,7 +39,7 @@ different to show additional data dimensions}
 \item{alpha}{Significance level for regression p-values (default: 0.05).
 Used to determine statistical significance in the results summary}
 
-\item{conf.level}{Confidence level for regression confidence intervals
+\item{conf_level}{Confidence level for regression confidence intervals
 (default: 0.95). Used in both statistical calculations and plot confidence bands}
 
 \item{method}{Regression method for line fitting (default: "lm" for linear model).

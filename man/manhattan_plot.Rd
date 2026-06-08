@@ -6,12 +6,12 @@
 \usage{
 manhattan_plot(
   df,
-  p.threshold = NA,
-  highlight.threshold = NULL,
-  label.threshold = NULL,
-  chr.colors = c("#1F77B4", "#FF7F0E"),
-  point.size.range = c(0.5, 3),
-  max.overlaps = 20,
+  p_threshold = NA,
+  highlight_threshold = NULL,
+  label_threshold = NULL,
+  chr_colors = c("#1F77B4", "#FF7F0E"),
+  point_size_range = c(0.5, 3),
+  max_overlaps = 20,
   title = "Manhattan Plot",
   subtitle = "Genome-wide Association Study Results"
 )
@@ -30,23 +30,23 @@ Additional optional columns:
   \item \code{gene}: Nearest gene name for annotation
 }}
 
-\item{p.threshold}{Significance threshold for drawing horizontal reference line
+\item{p_threshold}{Significance threshold for drawing horizontal reference line
 (default: Bonferroni correction = 0.05 / number of SNPs). Can be set to
 custom values like 5e-8 (genome-wide significance) or 1e-5 (suggestive)}
 
-\item{highlight.threshold}{P-value threshold for highlighting significant SNPs
-(default: same as p.threshold). SNPs below this threshold will be emphasized}
+\item{highlight_threshold}{P-value threshold for highlighting significant SNPs
+(default: same as p_threshold). SNPs below this threshold will be emphasized}
 
-\item{label.threshold}{P-value threshold for labeling SNPs (default: p.threshold).
+\item{label_threshold}{P-value threshold for labeling SNPs (default: p_threshold).
 Only SNPs more significant than this threshold will be labeled with text}
 
-\item{chr.colors}{Vector of colors for alternating chromosomes (default: blue and orange).
+\item{chr_colors}{Vector of colors for alternating chromosomes (default: blue and orange).
 Should have at least 2 colors that will be recycled across chromosomes}
 
-\item{point.size.range}{Range of point sizes for SNPs (default: c(0.5, 3)).
+\item{point_size_range}{Range of point sizes for SNPs (default: c(0.5, 3)).
 Points are sized by -log10(p-value) within this range}
 
-\item{max.overlaps}{Maximum number of overlapping labels allowed (default: 20).
+\item{max_overlaps}{Maximum number of overlapping labels allowed (default: 20).
 Helps prevent overcrowded labels in regions of high significance}
 
 \item{title}{Plot title (default: "Manhattan Plot"). Set to NULL to remove title}
@@ -136,9 +136,9 @@ print(paste("Suggestive SNPs (p < 1e-5):",
 # Manhattan plot with genome-wide significance threshold
 manhattan_gwas <- manhattan_plot(
   df = simulated_gwas,
-  p.threshold = 5e-8,           # Genome-wide significance
-  highlight.threshold = 5e-8,    # Highlight genome-wide significant
-  label.threshold = 1e-10,       # Label only very significant SNPs
+  p_threshold = 5e-8,           # Genome-wide significance
+  highlight_threshold = 5e-8,    # Highlight genome-wide significant
+  label_threshold = 1e-10,       # Label only very significant SNPs
   title = "GWAS: Height Association",
   subtitle = "Genome-wide significance threshold: p < 5×10⁻⁸"
 )
@@ -159,9 +159,9 @@ print(manhattan_annotated)
 # Create plot with both genome-wide and suggestive thresholds
 manhattan_multi <- manhattan_plot(
   df = simulated_gwas,
-  p.threshold = 5e-8,
-  chr.colors = c("#E31A1C", "#1F78B4"),  # Red and blue
-  point.size.range = c(0.3, 2.5)
+  p_threshold = 5e-8,
+  chr_colors = c("#E31A1C", "#1F78B4"),  # Red and blue
+  point_size_range = c(0.3, 2.5)
 ) +
   # Add suggestive significance line
   geom_hline(yintercept = -log10(1e-5),
@@ -196,7 +196,7 @@ sample_gwas_data$label <- ifelse(sample_gwas_data$p < 5e-8,
 # Create Manhattan plot
 real_world_plot <- manhattan_plot(
   df = sample_gwas_data,
-  p.threshold = 5e-8,
+  p_threshold = 5e-8,
   title = "Real-world GWAS Example",
   subtitle = "22 chromosomes, 22,000 SNPs"
 )
@@ -208,10 +208,10 @@ print(real_world_plot)
 # Highly customized Manhattan plot
 custom_manhattan <- manhattan_plot(
   df = simulated_gwas,
-  p.threshold = 5e-8,
-  chr.colors = c("#2E8B57", "#CD853F", "#4682B4", "#D2691E"),  # 4 colors
-  point.size.range = c(0.2, 4),
-  max.overlaps = 50,
+  p_threshold = 5e-8,
+  chr_colors = c("#2E8B57", "#CD853F", "#4682B4", "#D2691E"),  # 4 colors
+  point_size_range = c(0.2, 4),
+  max_overlaps = 50,
   title = NULL  # Remove title for publication
 ) +
   theme_minimal() +

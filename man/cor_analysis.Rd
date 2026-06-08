@@ -5,19 +5,19 @@
 \title{Calculate Correlation Coefficients and Statistical Significance}
 \usage{
 cor_analysis(
-  data.1,
-  data.2 = NULL,
+  data_1,
+  data_2 = NULL,
   method = "pearson",
   cor = 0.6,
   pvalue = 0.05
 )
 }
 \arguments{
-\item{data.1}{First data frame where each column represents a feature/variable.
+\item{data_1}{First data frame where each column represents a feature/variable.
 All columns should be numeric.}
 
-\item{data.2}{Optional second data frame for cross-dataset correlation analysis.
-If NULL (default), correlations are calculated within data.1. Each column
+\item{data_2}{Optional second data frame for cross-dataset correlation analysis.
+If NULL (default), correlations are calculated within data_1. Each column
 should represent a feature/variable and be numeric.}
 
 \item{method}{Correlation method to use. Options are:
@@ -50,8 +50,8 @@ statistical significance thresholds.
 }
 \details{
 The function uses WGCNA::corAndPvalue() for efficient correlation calculation
-with significance testing. When data.2 is NULL, it performs within-dataset
-correlations and excludes self-correlations (from != to). When data.2 is
+with significance testing. When data_2 is NULL, it performs within-dataset
+correlations and excludes self-correlations (from != to). When data_2 is
 provided, it performs between-dataset correlations.
 
 The results are filtered to include only correlations that meet both the
@@ -73,12 +73,12 @@ library(dplyr)
 iris_numeric <- iris[, 1:4]
 
 # Basic correlation analysis
-cor_result1 <- cor_analysis(data.1 = iris_numeric)
+cor_result1 <- cor_analysis(data_1 = iris_numeric)
 print(cor_result1)
 
 # Example 2: Custom thresholds
 cor_result2 <- cor_analysis(
-  data.1 = iris_numeric,
+  data_1 = iris_numeric,
   method = "spearman",
   cor = 0.7,        # Higher correlation threshold
   pvalue = 0.01     # More stringent significance
@@ -91,8 +91,8 @@ morphology <- iris[, 1:2]  # Sepal measurements
 anatomy <- iris[, 3:4]     # Petal measurements
 
 cor_result3 <- cor_analysis(
-  data.1 = morphology,
-  data.2 = anatomy,
+  data_1 = morphology,
+  data_2 = anatomy,
   method = "pearson"
 )
 print(cor_result3)

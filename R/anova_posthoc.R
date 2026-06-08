@@ -19,9 +19,9 @@
 #' @return A data frame containing:
 #'   - Grouping columns (if data was grouped)
 #'   - \code{group}: Group levels
-#'   - \code{anova.pvalue}: Overall ANOVA p-value
-#'   - \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
-#'   - \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
+#'   - \code{anova_pvalue}: Overall ANOVA p-value
+#'   - \code{anova_signif}: ANOVA significance levels (NS, *, **, ***)
+#'   - \code{tukey_signif} or \code{duncan_signif}: Post-hoc significance letters
 #'
 #' @details
 #' The function first performs a one-way ANOVA to test for overall differences
@@ -159,8 +159,8 @@ anova_single_group <- function(data, group, value, method, level) {
     warning("Not enough valid observations for analysis in this group")
     return(tibble::tibble(
       group = character(),
-      anova.pvalue = numeric(),
-      anova.signif = character()
+      anova_pvalue = numeric(),
+      anova_signif = character()
     ))
   }
 
@@ -170,8 +170,8 @@ anova_single_group <- function(data, group, value, method, level) {
     warning("Need at least 2 groups for ANOVA in this group")
     return(tibble::tibble(
       group = as.character(unique(data.new$group.anova)),
-      anova.pvalue = NA_real_,
-      anova.signif = "NS"
+      anova_pvalue = NA_real_,
+      anova_signif = "NS"
     ))
   }
 
@@ -188,8 +188,8 @@ anova_single_group <- function(data, group, value, method, level) {
   if (is.null(fit)) {
     return(tibble::tibble(
       group = character(),
-      anova.pvalue = numeric(),
-      anova.signif = character()
+      anova_pvalue = numeric(),
+      anova_signif = character()
     ))
   }
 
@@ -210,18 +210,18 @@ anova_single_group <- function(data, group, value, method, level) {
     if (is.null(posthoc_result)) {
       return(tibble::tibble(
         group = as.character(unique(data.new$group.anova)),
-        anova.pvalue = anova_pvalue,
-        anova.signif = get_anova_signif(anova_pvalue),
-        Tukey.signif = NA_character_
+        anova_pvalue = anova_pvalue,
+        anova_signif = get_anova_signif(anova_pvalue),
+        tukey_signif = NA_character_
       ))
     }
 
     res <- posthoc_result[["mcletters"]][["Letters"]] %>%
       as.data.frame() %>%
       tibble::rownames_to_column() %>%
-      magrittr::set_names(c("group", "Tukey.signif")) %>%
-      dplyr::mutate(anova.pvalue = anova_pvalue) %>%
-      dplyr::select(group, anova.pvalue, Tukey.signif)
+      magrittr::set_names(c("group", "tukey_signif")) %>%
+      dplyr::mutate(anova_pvalue = anova_pvalue) %>%
+      dplyr::select(group, anova_pvalue, tukey_signif)
 
   } else if (method == "Duncan") {
     duncan_result <- tryCatch(
@@ -241,27 +241,27 @@ anova_single_group <- function(data, group, value, method, level) {
     if (is.null(duncan_result)) {
       return(tibble::tibble(
         group = as.character(unique(data.new$group.anova)),
-        anova.pvalue = anova_pvalue,
-        anova.signif = get_anova_signif(anova_pvalue),
-        Duncan.signif = NA_character_
+        anova_pvalue = anova_pvalue,
+        anova_signif = get_anova_signif(anova_pvalue),
+        duncan_signif = NA_character_
       ))
     }
 
     res <- duncan_result[["groups"]] %>%
       as.data.frame() %>%
       tibble::rownames_to_column() %>%
-      dplyr::mutate(anova.pvalue = anova_pvalue) %>%
-      dplyr::select(rowname, anova.pvalue, groups) %>%
-      magrittr::set_names(c("group", "anova.pvalue", "Duncan.signif"))
+      dplyr::mutate(anova_pvalue = anova_pvalue) %>%
+      dplyr::select(rowname, anova_pvalue, groups) %>%
+      magrittr::set_names(c("group", "anova_pvalue", "duncan_signif"))
   }
 
   # Add ANOVA significance levels
   anova_result <- res %>%
     dplyr::mutate(
-      anova.signif = get_anova_signif(anova.pvalue)
+      anova_signif = get_anova_signif(anova_pvalue)
     ) %>%
-    # Reorder columns: group, anova.pvalue, anova.signif, posthoc results
-    dplyr::select(group, anova.pvalue, anova.signif, dplyr::everything())
+    # Reorder columns: group, anova_pvalue, anova_signif, posthoc results
+    dplyr::select(group, anova_pvalue, anova_signif, dplyr::everything())
 
   return(anova_result)
 }

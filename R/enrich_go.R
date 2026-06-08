@@ -8,7 +8,7 @@
 #' @param gene Character vector containing gene identifiers (e.g., gene symbols,
 #'   Ensembl IDs, or other identifiers) that correspond to differentially
 #'   expressed genes for enrichment analysis
-#' @param go.db Data frame containing GO annotation information. Must include
+#' @param go_db Data frame containing GO annotation information. Must include
 #'   the following columns:
 #'   \itemize{
 #'     \item \code{gene}: Gene identifiers matching those in the gene parameter
@@ -27,11 +27,11 @@
 #'     \item \code{"fdr"}: Synonym for "BH"
 #'     \item \code{"none"}: No correction
 #'   }
-#' @param p.adjust Significance threshold for adjusted p-values (default: 0.05).
+#' @param p_adjust Significance threshold for adjusted p-values (default: 0.05).
 #'   Only GO terms with adjusted p-values below this threshold will be returned
-#' @param min.gene.set Minimum number of genes required in a GO term for testing
+#' @param min_gene_set Minimum number of genes required in a GO term for testing
 #'   (default: 3). GO terms with fewer genes will be excluded
-#' @param max.gene.set Maximum number of genes allowed in a GO term for testing
+#' @param max_gene_set Maximum number of genes allowed in a GO term for testing
 #'   (default: length of input gene list). Very large GO terms can be excluded
 #'
 #' @return A data frame containing enrichment results with columns:
@@ -81,7 +81,7 @@
 #' # Basic enrichment analysis
 #' go_results <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
-#'   go.db = df.rnaseq.go
+#'   go_db = df.rnaseq.go
 #' )
 #'
 #' print(head(go_results))
@@ -93,17 +93,17 @@
 #' # More stringent analysis with Bonferroni correction
 #' go_results_strict <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
-#'   go.db = df.rnaseq.go,
+#'   go_db = df.rnaseq.go,
 #'   pAdjustMethod = "bonferroni",
-#'   p.adjust = 0.01,
-#'   min.gene.set = 5
+#'   p_adjust = 0.01,
+#'   min_gene_set = 5
 #' )
 #'
 #' print(go_results_strict)
 #' }
 #'
 #' # Example 3: Creating a simple GO database format
-#' # This shows the required structure for go.db parameter
+#' # This shows the required structure for go_db parameter
 #' sample_go_db <- data.frame(
 #'   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5"),
 #'   go.id = c("GO:0008150", "GO:0008150", "GO:0008150",
@@ -119,8 +119,8 @@
 #' \dontrun{
 #' sample_results <- enrich_go(
 #'   gene = sample_genes,
-#'   go.db = sample_go_db,
-#'   p.adjust = 1.0  # Accept all terms for demonstration
+#'   go_db = sample_go_db,
+#'   p_adjust = 1.0  # Accept all terms for demonstration
 #' )
 #' print(sample_results)
 #' }
@@ -133,30 +133,30 @@
 #'
 #' bp_results <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
-#'   go.db = bp_go_db,
+#'   go_db = bp_go_db,
 #'   pAdjustMethod = "BH",
-#'   p.adjust = 0.05
+#'   p_adjust = 0.05
 #' )
 #'
 #' print(paste("Biological process terms found:", nrow(bp_results)))
 #' }
 #'
-enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
-                      min.gene.set = 3, max.gene.set = NULL) {
+enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
+                      min_gene_set = 3, max_gene_set = NULL) {
   # Input validation
   if (!is.character(gene) || length(gene) == 0) {
     stop("'gene' must be a non-empty character vector")
   }
 
-  if (!is.data.frame(go.db) || nrow(go.db) == 0) {
-    stop("'go.db' must be a non-empty data frame")
+  if (!is.data.frame(go_db) || nrow(go_db) == 0) {
+    stop("'go_db' must be a non-empty data frame")
   }
 
-  # Check required columns in go.db
+  # Check required columns in go_db
   required_cols <- c("gene", "go.id", "go.term")
-  missing_cols <- setdiff(required_cols, names(go.db))
+  missing_cols <- setdiff(required_cols, names(go_db))
   if (length(missing_cols) > 0) {
-    stop(paste("Missing required columns in go.db:", paste(missing_cols, collapse = ", ")))
+    stop(paste("Missing required columns in go_db:", paste(missing_cols, collapse = ", ")))
   }
 
   # Validate adjustment method
@@ -165,20 +165,20 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
     stop(paste("Invalid pAdjustMethod. Choose from:", paste(valid_methods, collapse = ", ")))
   }
 
-  # Validate p.adjust threshold
-  if (!is.numeric(p.adjust) || length(p.adjust) != 1 || p.adjust <= 0 || p.adjust > 1) {
-    stop("'p.adjust' must be a single numeric value between 0 and 1")
+  # Validate p_adjust threshold
+  if (!is.numeric(p_adjust) || length(p_adjust) != 1 || p_adjust <= 0 || p_adjust > 1) {
+    stop("'p_adjust' must be a single numeric value between 0 and 1")
   }
 
   # Validate gene set size parameters
-  if (!is.numeric(min.gene.set) || min.gene.set < 1) {
-    stop("'min.gene.set' must be a positive integer")
+  if (!is.numeric(min_gene_set) || min_gene_set < 1) {
+    stop("'min_gene_set' must be a positive integer")
   }
 
-  if (is.null(max.gene.set)) {
-    max.gene.set <- length(gene)
-  } else if (!is.numeric(max.gene.set) || max.gene.set < min.gene.set) {
-    stop("'max.gene.set' must be numeric and >= min.gene.set")
+  if (is.null(max_gene_set)) {
+    max_gene_set <- length(gene)
+  } else if (!is.numeric(max_gene_set) || max_gene_set < min_gene_set) {
+    stop("'max_gene_set' must be numeric and >= min_gene_set")
   }
 
   # Remove duplicates from input genes and warn if found
@@ -195,16 +195,16 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
   }
 
   # Clean GO database
-  go.db_clean <- go.db %>%
+  go_db_clean <- go_db %>%
     dplyr::filter(!is.na(gene), !is.na(go.id), !is.na(go.term)) %>%
     dplyr::distinct()
 
-  if (nrow(go.db_clean) == 0) {
-    stop("No valid annotations remain in go.db after removing missing values")
+  if (nrow(go_db_clean) == 0) {
+    stop("No valid annotations remain in go_db after removing missing values")
   }
 
   # Check overlap between input genes and GO database
-  db_genes <- unique(go.db_clean$gene)
+  db_genes <- unique(go_db_clean$gene)
   overlapping_genes <- intersect(gene, db_genes)
 
   if (length(overlapping_genes) == 0) {
@@ -217,11 +217,11 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
   }
 
   # Prepare TERM2GENE and TERM2NAME mappings
-  term2gene <- go.db_clean %>%
+  term2gene <- go_db_clean %>%
     dplyr::select(go.id, gene) %>%
     dplyr::distinct()
 
-  term2name <- go.db_clean %>%
+  term2name <- go_db_clean %>%
     dplyr::select(go.id, go.term) %>%
     dplyr::distinct() %>%
     # Handle cases where one GO ID has multiple descriptions
@@ -232,10 +232,10 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
   # Check gene set sizes and filter if necessary
   term_sizes <- term2gene %>%
     dplyr::count(go.id, name = "term_size") %>%
-    dplyr::filter(term_size >= min.gene.set, term_size <= max.gene.set)
+    dplyr::filter(term_size >= min_gene_set, term_size <= max_gene_set)
 
   if (nrow(term_sizes) == 0) {
-    stop(paste("No GO terms meet the size criteria (", min.gene.set, "-", max.gene.set, " genes)"))
+    stop(paste("No GO terms meet the size criteria (", min_gene_set, "-", max_gene_set, " genes)"))
   }
 
   # Filter TERM2GENE to include only terms meeting size criteria
@@ -249,10 +249,10 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
         gene = gene,
         TERM2GENE = term2gene_filtered,
         TERM2NAME = term2name,
-        qvalueCutoff = p.adjust,
+        qvalueCutoff = p_adjust,
         pAdjustMethod = pAdjustMethod,
-        minGSSize = min.gene.set,
-        maxGSSize = max.gene.set
+        minGSSize = min_gene_set,
+        maxGSSize = max_gene_set
       )
     },
     error = function(e) {
@@ -306,7 +306,7 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
   attr(go_results, "genes_in_database") <- length(overlapping_genes)
   attr(go_results, "total_go_terms_tested") <- nrow(term_sizes)
   attr(go_results, "adjustment_method") <- pAdjustMethod
-  attr(go_results, "significance_threshold") <- p.adjust
+  attr(go_results, "significance_threshold") <- p_adjust
 
   # Print summary if interactive
   if (interactive() && nrow(go_results) > 0) {
@@ -316,7 +316,7 @@ enrich_go <- function(gene, go.db, pAdjustMethod = "BH", p.adjust = 0.05,
     cat("GO terms tested:", nrow(term_sizes), "\n")
     cat("Significantly enriched terms:", nrow(go_results), "\n")
     cat("Adjustment method:", pAdjustMethod, "\n")
-    cat("Significance threshold:", p.adjust, "\n\n")
+    cat("Significance threshold:", p_adjust, "\n\n")
 
     if (nrow(go_results) > 0) {
       cat("Top 5 enriched terms:\n")

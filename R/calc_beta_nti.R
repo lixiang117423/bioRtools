@@ -8,8 +8,8 @@
 #' @param data Community data matrix (rows = taxa, cols = samples) or a
 #'   data.frame where the first column contains taxon IDs.
 #' @param tree A phylogenetic tree object (\code{ape::phylo}).
-#' @param beta.reps Number of randomizations (default: 999).
-#' @param abundance.weighted Logical; weight by species abundance (default: TRUE).
+#' @param beta_reps Number of randomizations (default: 999).
+#' @param abundance_weighted Logical; weight by species abundance (default: TRUE).
 #' @param verbose Print progress messages (default: TRUE).
 #'
 #' @return A data frame in long format with columns: \code{from}, \code{to},
@@ -23,11 +23,11 @@
 #' tree <- read.tree("tree.nwk")
 #' otu <- read.delim("asv_table.txt", row.names = 1)
 #'
-#' res <- calc_beta_nti(otu, tree, beta.reps = 999)
+#' res <- calc_beta_nti(otu, tree, beta_reps = 999)
 #' head(res)
 #' }
-calc_beta_nti <- function(data, tree, beta.reps = 999,
-                          abundance.weighted = TRUE, verbose = TRUE) {
+calc_beta_nti <- function(data, tree, beta_reps = 999,
+                          abundance_weighted = TRUE, verbose = TRUE) {
 
   # --- Prepare data ---
   data <- as.data.frame(data)
@@ -55,24 +55,24 @@ calc_beta_nti <- function(data, tree, beta.reps = 999,
   # --- Observed betaMNTD ---
   beta_mntd <- as.matrix(picante::comdistnt(
     t(otu_matched), cophenetic_mat,
-    abundance.weighted = abundance.weighted
+    abundance.weighted = abundance_weighted
   ))
 
   n_samp <- ncol(otu_matched)
-  if (verbose) message(sprintf("Randomizing (%d reps, %d sample pairs)...", beta.reps, n_samp * (n_samp - 1) / 2))
+  if (verbose) message(sprintf("Randomizing (%d reps, %d sample pairs)...", beta_reps, n_samp * (n_samp - 1) / 2))
 
   # --- Null distribution via taxa shuffle ---
-  rand_bmntd <- array(NA_real_, dim = c(n_samp, n_samp, beta.reps))
+  rand_bmntd <- array(NA_real_, dim = c(n_samp, n_samp, beta_reps))
 
-  for (rep in seq_len(beta.reps)) {
+  for (rep in seq_len(beta_reps)) {
     rand_tree_coph <- picante::taxaShuffle(cophenetic_mat)
     rand_bmntd[, , rep] <- as.matrix(picante::comdistnt(
       t(otu_matched), rand_tree_coph,
-      abundance.weighted = abundance.weighted,
+      abundance.weighted = abundance_weighted,
       exclude.conspecifics = FALSE
     ))
     if (verbose && rep %% 100 == 0) {
-      message(sprintf("  Rep %d / %d (%s)", rep, beta.reps, date()))
+      message(sprintf("  Rep %d / %d (%s)", rep, beta_reps, date()))
     }
   }
 

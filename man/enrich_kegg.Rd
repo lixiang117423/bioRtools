@@ -6,11 +6,11 @@
 \usage{
 enrich_kegg(
   gene,
-  kegg.db,
+  kegg_db,
   pAdjustMethod = "BH",
-  p.adjust = 0.05,
-  min.pathway.size = 3,
-  max.pathway.size = 500
+  p_adjust = 0.05,
+  min_pathway_size = 3,
+  max_pathway_size = 500
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ enrich_kegg(
 Entrez IDs, Ensembl IDs, or other identifiers) that correspond to
 differentially expressed genes for pathway enrichment analysis}
 
-\item{kegg.db}{Data frame containing KEGG pathway annotation information.
+\item{kegg_db}{Data frame containing KEGG pathway annotation information.
 Must include the following columns:
 \itemize{
   \item \code{gene}: Gene identifiers matching those in the gene parameter
@@ -39,13 +39,13 @@ Must include the following columns:
   \item \code{"none"}: No correction (not recommended)
 }}
 
-\item{p.adjust}{Significance threshold for adjusted p-values (default: 0.05).
+\item{p_adjust}{Significance threshold for adjusted p-values (default: 0.05).
 Only KEGG pathways with adjusted p-values below this threshold will be returned}
 
-\item{min.pathway.size}{Minimum number of genes required in a pathway for testing
+\item{min_pathway_size}{Minimum number of genes required in a pathway for testing
 (default: 3). Pathways with fewer genes will be excluded from analysis}
 
-\item{max.pathway.size}{Maximum number of genes allowed in a pathway for testing
+\item{max_pathway_size}{Maximum number of genes allowed in a pathway for testing
 (default: 500). Very large pathways can be excluded to focus on specific processes}
 }
 \value{
@@ -111,7 +111,7 @@ data(df.rnaseq.degs)   # Differentially expressed genes
 # Basic pathway enrichment analysis
 kegg_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
-  kegg.db = df.rnaseq.kegg
+  kegg_db = df.rnaseq.kegg
 )
 
 print(head(kegg_results))
@@ -127,18 +127,18 @@ print(top_pathways[, c("ID", "Description", "pvalue", "p.adjust", "Count")])
 # More conservative analysis
 kegg_strict <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
-  kegg.db = df.rnaseq.kegg,
+  kegg_db = df.rnaseq.kegg,
   pAdjustMethod = "bonferroni",
-  p.adjust = 0.01,
-  min.pathway.size = 5,
-  max.pathway.size = 200
+  p_adjust = 0.01,
+  min_pathway_size = 5,
+  max_pathway_size = 200
 )
 
 print(paste("Strict analysis found", nrow(kegg_strict), "pathways"))
 }
 
 # Example 3: Creating a KEGG database format
-# This demonstrates the required structure for kegg.db parameter
+# This demonstrates the required structure for kegg_db parameter
 sample_kegg_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5", "GENE6"),
   kegg.id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
@@ -155,8 +155,8 @@ sample_genes <- c("GENE1", "GENE2", "GENE4", "GENE6")
 # Run pathway analysis with sample data
 sample_results <- enrich_kegg(
   gene = sample_genes,
-  kegg.db = sample_kegg_db,
-  p.adjust = 1.0  # Accept all pathways for demonstration
+  kegg_db = sample_kegg_db,
+  p_adjust = 1.0  # Accept all pathways for demonstration
 )
 print(sample_results)
 }
@@ -169,7 +169,7 @@ metabolism_kegg <- df.rnaseq.kegg \%>\%
 
 metabolism_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
-  kegg.db = metabolism_kegg,
+  kegg_db = metabolism_kegg,
   pAdjustMethod = "BH"
 )
 
@@ -181,7 +181,7 @@ signaling_kegg <- df.rnaseq.kegg \%>\%
 
 signaling_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
-  kegg.db = signaling_kegg
+  kegg_db = signaling_kegg
 )
 
 print(paste("Signaling pathways enriched:", nrow(signaling_results)))
