@@ -4,7 +4,16 @@
 \alias{write_data}
 \title{Write Data File by Extension}
 \usage{
-write_data(data, file, col = 1, ...)
+write_data(
+  data,
+  file,
+  col = 1,
+  col_names = TRUE,
+  width = 8,
+  height = 6,
+  dpi = 600,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame (or ggplot object for image formats) to write.}

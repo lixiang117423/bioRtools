@@ -18,3 +18,4 @@ A combined theme_bio_list object
 Custom + operator to combine two theme_bio_list objects or add
 a theme to a theme_bio_list.
 }
+\keyword{internal}

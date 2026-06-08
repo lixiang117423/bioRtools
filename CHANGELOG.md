@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.21.0] - 2026-06-08
+
+### Added
+- `summarise_stats`: grouped descriptive statistics (max, min, mean, median, sd, se, cv, iqr, range, sum, n, n_na)
+- `calc_beta_nti`: betaNTI for phylogenetic beta diversity analysis
+- `net2gephi`: export network to Gephi CSV format
+
+
 ## [1.20.3] - 2026-06-08
 
 ### Added
