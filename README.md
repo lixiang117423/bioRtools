@@ -77,8 +77,9 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 - `rarefy_table()` - Rarefaction
 - `top_taxa()` - Top taxa extraction
 - `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
-- `microbiome_net()` - Microbiome network analysis via SpiecEasi (construction, centrality, hubs, clusters, multi-group comparison)
+- `microbiome_net()` - Microbiome network analysis (construction, centrality, hubs, clusters, multi-group comparison). Methods: `"mb"`/`"glasso"` (huge+pulsar) or `"cor"` (Spearman correlation, fast and low memory)
 - `net2ggnetview()` - Convert microbiome_net result to ggNetView-compatible tbl_graph for network visualization
+- `net2gephi()` - Export microbiome_net result as Gephi-compatible nodes/edges CSV files
 
 ### Transcriptomics and Enrichment
 
