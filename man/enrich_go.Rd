@@ -6,11 +6,11 @@
 \usage{
 enrich_go(
   gene,
-  go.db,
+  go_db,
   pAdjustMethod = "BH",
-  p.adjust = 0.05,
-  min.gene.set = 3,
-  max.gene.set = NULL
+  p_adjust = 0.05,
+  min_gene_set = 3,
+  max_gene_set = NULL
 )
 }
 \arguments{
@@ -18,7 +18,7 @@ enrich_go(
 Ensembl IDs, or other identifiers) that correspond to differentially
 expressed genes for enrichment analysis}
 
-\item{go.db}{Data frame containing GO annotation information. Must include
+\item{go_db}{Data frame containing GO annotation information. Must include
 the following columns:
 \itemize{
   \item \code{gene}: Gene identifiers matching those in the gene parameter
@@ -39,13 +39,13 @@ the following columns:
   \item \code{"none"}: No correction
 }}
 
-\item{p.adjust}{Significance threshold for adjusted p-values (default: 0.05).
+\item{p_adjust}{Significance threshold for adjusted p-values (default: 0.05).
 Only GO terms with adjusted p-values below this threshold will be returned}
 
-\item{min.gene.set}{Minimum number of genes required in a GO term for testing
+\item{min_gene_set}{Minimum number of genes required in a GO term for testing
 (default: 3). GO terms with fewer genes will be excluded}
 
-\item{max.gene.set}{Maximum number of genes allowed in a GO term for testing
+\item{max_gene_set}{Maximum number of genes allowed in a GO term for testing
 (default: length of input gene list). Very large GO terms can be excluded}
 }
 \value{
@@ -100,7 +100,7 @@ data(df.rnaseq.degs)   # Differentially expressed genes
 # Basic enrichment analysis
 go_results <- enrich_go(
   gene = df.rnaseq.degs$gene,
-  go.db = df.rnaseq.go
+  go_db = df.rnaseq.go
 )
 
 print(head(go_results))
@@ -112,17 +112,17 @@ print(paste("Found", nrow(go_results), "enriched GO terms"))
 # More stringent analysis with Bonferroni correction
 go_results_strict <- enrich_go(
   gene = df.rnaseq.degs$gene,
-  go.db = df.rnaseq.go,
+  go_db = df.rnaseq.go,
   pAdjustMethod = "bonferroni",
-  p.adjust = 0.01,
-  min.gene.set = 5
+  p_adjust = 0.01,
+  min_gene_set = 5
 )
 
 print(go_results_strict)
 }
 
 # Example 3: Creating a simple GO database format
-# This shows the required structure for go.db parameter
+# This shows the required structure for go_db parameter
 sample_go_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5"),
   go.id = c("GO:0008150", "GO:0008150", "GO:0008150",
@@ -138,8 +138,8 @@ sample_genes <- c("GENE1", "GENE2", "GENE4")
 \dontrun{
 sample_results <- enrich_go(
   gene = sample_genes,
-  go.db = sample_go_db,
-  p.adjust = 1.0  # Accept all terms for demonstration
+  go_db = sample_go_db,
+  p_adjust = 1.0  # Accept all terms for demonstration
 )
 print(sample_results)
 }
@@ -152,9 +152,9 @@ bp_go_db <- df.rnaseq.go \%>\%
 
 bp_results <- enrich_go(
   gene = df.rnaseq.degs$gene,
-  go.db = bp_go_db,
+  go_db = bp_go_db,
   pAdjustMethod = "BH",
-  p.adjust = 0.05
+  p_adjust = 0.05
 )
 
 print(paste("Biological process terms found:", nrow(bp_results)))

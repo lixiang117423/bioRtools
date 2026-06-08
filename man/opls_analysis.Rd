@@ -7,12 +7,12 @@
 opls_analysis(
   data,
   group,
-  vip.threshold = 1,
-  ortho.components = 1,
-  pred.components = NULL,
+  vip_threshold = 1,
+  ortho_components = 1,
+  pred_components = NULL,
   scaling = "standard",
   validation = "CV",
-  cv.folds = 7
+  cv_folds = 7
 )
 }
 \arguments{
@@ -27,7 +27,7 @@ Must have the same length as the number of rows in data. For two-group
 comparisons, a binary factor is required. Multi-group OPLS-DA is supported
 for more than two groups}
 
-\item{vip.threshold}{Numerical threshold for Variable Importance in Projection
+\item{vip_threshold}{Numerical threshold for Variable Importance in Projection
 (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
 are considered important for group discrimination. Common thresholds:
 \itemize{
@@ -36,11 +36,11 @@ are considered important for group discrimination. Common thresholds:
   \item 0.8: More liberal selection for exploratory analysis
 }}
 
-\item{ortho.components}{Number of orthogonal components to calculate (default: 1).
+\item{ortho_components}{Number of orthogonal components to calculate (default: 1).
 Orthogonal components capture variation unrelated to group differences.
 Typically 1-3 components are sufficient for most datasets}
 
-\item{pred.components}{Number of predictive components (default: 1 for binary,
+\item{pred_components}{Number of predictive components (default: 1 for binary,
 automatically determined for multi-group). Usually 1 for two-group comparisons,
 more may be needed for complex multi-group analyses}
 
@@ -58,7 +58,7 @@ more may be needed for complex multi-group analyses}
   \item "none": No validation (faster but no performance metrics)
 }}
 
-\item{cv.folds}{Number of cross-validation folds (default: 7). Only used when
+\item{cv_folds}{Number of cross-validation folds (default: 7). Only used when
 validation = "CV". Should be <= number of samples in smallest group}
 }
 \value{
@@ -183,9 +183,9 @@ print(important_vars)
 oplsda_strict <- opls_analysis(
   data = meta_filtered,
   group = sample_filtered$treatment,
-  vip.threshold = 1.5,        # More stringent VIP cutoff
+  vip_threshold = 1.5,        # More stringent VIP cutoff
   scaling = "pareto",          # Pareto scaling for metabolomics
-  cv.folds = 5                 # 5-fold cross-validation
+  cv_folds = 5                 # 5-fold cross-validation
 )
 
 print("Strict model performance:")
@@ -211,8 +211,8 @@ multi_group_meta <- df.splsda.meta \%>\%
 multigroup_oplsda <- opls_analysis(
   data = multi_group_meta,
   group = multi_group_samples$group,
-  pred.components = 2,         # May need more components for multiple groups
-  vip.threshold = 1.2
+  pred_components = 2,         # May need more components for multiple groups
+  vip_threshold = 1.2
 )
 
 print("Multi-group model summary:")

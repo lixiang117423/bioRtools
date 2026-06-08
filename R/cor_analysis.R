@@ -5,10 +5,10 @@
 #' coefficients, p-values, and allows filtering based on correlation strength and
 #' statistical significance thresholds.
 #'
-#' @param data.1 First data frame where each column represents a feature/variable.
+#' @param data_1 First data frame where each column represents a feature/variable.
 #'   All columns should be numeric.
-#' @param data.2 Optional second data frame for cross-dataset correlation analysis.
-#'   If NULL (default), correlations are calculated within data.1. Each column
+#' @param data_2 Optional second data frame for cross-dataset correlation analysis.
+#'   If NULL (default), correlations are calculated within data_1. Each column
 #'   should represent a feature/variable and be numeric.
 #' @param method Correlation method to use. Options are:
 #'   \itemize{
@@ -31,8 +31,8 @@
 #'
 #' @details
 #' The function uses WGCNA::corAndPvalue() for efficient correlation calculation
-#' with significance testing. When data.2 is NULL, it performs within-dataset
-#' correlations and excludes self-correlations (from != to). When data.2 is
+#' with significance testing. When data_2 is NULL, it performs within-dataset
+#' correlations and excludes self-correlations (from != to). When data_2 is
 #' provided, it performs between-dataset correlations.
 #'
 #' The results are filtered to include only correlations that meet both the
@@ -56,12 +56,12 @@
 #' iris_numeric <- iris[, 1:4]
 #'
 #' # Basic correlation analysis
-#' cor_result1 <- cor_analysis(data.1 = iris_numeric)
+#' cor_result1 <- cor_analysis(data_1 = iris_numeric)
 #' print(cor_result1)
 #'
 #' # Example 2: Custom thresholds
 #' cor_result2 <- cor_analysis(
-#'   data.1 = iris_numeric,
+#'   data_1 = iris_numeric,
 #'   method = "spearman",
 #'   cor = 0.7,        # Higher correlation threshold
 #'   pvalue = 0.01     # More stringent significance
@@ -74,8 +74,8 @@
 #' anatomy <- iris[, 3:4]     # Petal measurements
 #'
 #' cor_result3 <- cor_analysis(
-#'   data.1 = morphology,
-#'   data.2 = anatomy,
+#'   data_1 = morphology,
+#'   data_2 = anatomy,
 #'   method = "pearson"
 #' )
 #' print(cor_result3)
@@ -96,14 +96,14 @@
 #' print("Spearman correlations:")
 #' print(spearman_result)
 #'
-cor_analysis <- function(data.1, data.2 = NULL, method = "pearson", cor = 0.6, pvalue = 0.05) {
+cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, pvalue = 0.05) {
   # Input validation
-  if (!is.data.frame(data.1)) {
-    stop("'data.1' must be a data frame")
+  if (!is.data.frame(data_1)) {
+    stop("'data_1' must be a data frame")
   }
 
-  if (!is.null(data.2) && !is.data.frame(data.2)) {
-    stop("'data.2' must be a data frame or NULL")
+  if (!is.null(data_2) && !is.data.frame(data_2)) {
+    stop("'data_2' must be a data frame or NULL")
   }
 
   if (!method %in% c("pearson", "kendall", "spearman")) {
@@ -118,43 +118,43 @@ cor_analysis <- function(data.1, data.2 = NULL, method = "pearson", cor = 0.6, p
     stop("'pvalue' must be a numeric value between 0 and 1")
   }
 
-  # Check if data.1 has numeric columns
-  numeric_cols_1 <- sapply(data.1, is.numeric)
+  # Check if data_1 has numeric columns
+  numeric_cols_1 <- sapply(data_1, is.numeric)
   if (!any(numeric_cols_1)) {
-    stop("'data.1' must contain at least one numeric column")
+    stop("'data_1' must contain at least one numeric column")
   }
 
   # Filter to numeric columns only and warn if non-numeric columns removed
   if (!all(numeric_cols_1)) {
-    data.1 <- data.1[, numeric_cols_1, drop = FALSE]
-    warning("Non-numeric columns removed from data.1")
+    data_1 <- data_1[, numeric_cols_1, drop = FALSE]
+    warning("Non-numeric columns removed from data_1")
   }
 
-  # Check data.2 if provided
-  if (!is.null(data.2)) {
-    numeric_cols_2 <- sapply(data.2, is.numeric)
+  # Check data_2 if provided
+  if (!is.null(data_2)) {
+    numeric_cols_2 <- sapply(data_2, is.numeric)
     if (!any(numeric_cols_2)) {
-      stop("'data.2' must contain at least one numeric column")
+      stop("'data_2' must contain at least one numeric column")
     }
     if (!all(numeric_cols_2)) {
-      data.2 <- data.2[, numeric_cols_2, drop = FALSE]
-      warning("Non-numeric columns removed from data.2")
+      data_2 <- data_2[, numeric_cols_2, drop = FALSE]
+      warning("Non-numeric columns removed from data_2")
     }
   }
 
   # Check for minimum number of observations
-  if (nrow(data.1) < 3) {
-    stop("'data.1' must have at least 3 observations for correlation analysis")
+  if (nrow(data_1) < 3) {
+    stop("'data_1' must have at least 3 observations for correlation analysis")
   }
 
-  if (!is.null(data.2) && nrow(data.2) < 3) {
-    stop("'data.2' must have at least 3 observations for correlation analysis")
+  if (!is.null(data_2) && nrow(data_2) < 3) {
+    stop("'data_2' must have at least 3 observations for correlation analysis")
   }
 
-  # Calculate correlations based on whether data.2 is provided
-  if (is.null(data.2)) {
+  # Calculate correlations based on whether data_2 is provided
+  if (is.null(data_2)) {
     # Within-dataset correlation
-    cor_result <- WGCNA::corAndPvalue(x = data.1, method = method)
+    cor_result <- WGCNA::corAndPvalue(x = data_1, method = method)
 
     # Convert correlation matrix to long format
     df_cor <- cor_result$cor %>%
@@ -187,11 +187,11 @@ cor_analysis <- function(data.1, data.2 = NULL, method = "pearson", cor = 0.6, p
 
   } else {
     # Between-dataset correlation
-    if (nrow(data.1) != nrow(data.2)) {
-      stop("'data.1' and 'data.2' must have the same number of rows for between-dataset correlation")
+    if (nrow(data_1) != nrow(data_2)) {
+      stop("'data_1' and 'data_2' must have the same number of rows for between-dataset correlation")
     }
 
-    cor_result <- WGCNA::corAndPvalue(x = data.1, y = data.2, method = method)
+    cor_result <- WGCNA::corAndPvalue(x = data_1, y = data_2, method = method)
 
     # Convert correlation matrix to long format
     df_cor <- cor_result$cor %>%
@@ -239,7 +239,7 @@ cor_analysis <- function(data.1, data.2 = NULL, method = "pearson", cor = 0.6, p
   attr(result_cor, "method") <- method
   attr(result_cor, "cor_threshold") <- cor
   attr(result_cor, "pvalue_threshold") <- pvalue
-  attr(result_cor, "analysis_type") <- if (is.null(data.2)) "within-dataset" else "between-dataset"
+  attr(result_cor, "analysis_type") <- if (is.null(data_2)) "within-dataset" else "between-dataset"
 
   # Print summary if interactive
   if (interactive()) {

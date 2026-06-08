@@ -18,23 +18,23 @@
 #'     \item Grouping variables for visualization (e.g., treatment, condition, species)
 #'     \item Optional covariates for interpretation
 #'   }
-#' @param n.components Maximum number of principal components to calculate and
+#' @param n_components Maximum number of principal components to calculate and
 #'   return (default: 5). Should be <= min(n_samples-1, n_variables). More
 #'   components provide more detailed analysis but increase computation time
-#' @param scale.data Logical indicating whether to scale variables to unit variance
+#' @param scale_data Logical indicating whether to scale variables to unit variance
 #'   (default: TRUE). Recommended when variables have different units or scales.
 #'   Set to FALSE if data is already standardized or when preserving original scales
-#' @param center.data Logical indicating whether to center variables to zero mean
+#' @param center_data Logical indicating whether to center variables to zero mean
 #'   (default: TRUE). Almost always recommended for PCA analysis
-#' @param x.axis Principal component for X-axis in score plot (default: "PC1").
+#' @param x_axis Principal component for X-axis in score plot (default: "PC1").
 #'   Can be "PC1", "PC2", "PC3", etc., up to the number of calculated components
-#' @param y.axis Principal component for Y-axis in score plot (default: "PC2").
-#'   Should be different from x.axis for meaningful 2D visualization
-#' @param color.by Column name in sample metadata for point colors (default: "group").
+#' @param y_axis Principal component for Y-axis in score plot (default: "PC2").
+#'   Should be different from x_axis for meaningful 2D visualization
+#' @param color_by Column name in sample metadata for point colors (default: "group").
 #'   Used to visualize sample groupings or experimental conditions
-#' @param shape.by Column name in sample metadata for point shapes (default: same as color.by).
-#'   Can be the same as color.by or different to show additional sample attributes
-#' @param plot.type Type of plots to generate (default: "all"). Options:
+#' @param shape_by Column name in sample metadata for point shapes (default: same as color_by).
+#'   Can be the same as color_by or different to show additional sample attributes
+#' @param plot_type Type of plots to generate (default: "all"). Options:
 #'   \itemize{
 #'     \item "all": Generate all available plots
 #'     \item "scores": Only sample score plots
@@ -70,7 +70,7 @@
 #'         \item \code{PC1, PC2, ...}: Loading values on each component
 #'         \item \code{cos2_PC1, cos2_PC2, ...}: Quality of representation
 #'       }}
-#'     \item{\code{plots}}{List of ggplot2 objects (when plot.type != "none"):
+#'     \item{\code{plots}}{List of ggplot2 objects (when plot_type != "none"):
 #'       \itemize{
 #'         \item \code{score_plot}: Sample scores with grouping
 #'         \item \code{scree_plot}: Variance explained by each component
@@ -159,7 +159,7 @@
 #' pca_results <- pca_analysis(
 #'   data = iris_data,
 #'   sample = iris_samples,
-#'   color.by = "species"
+#'   color_by = "species"
 #' )
 #'
 #' # View variance explained
@@ -177,11 +177,11 @@
 #' pca_custom <- pca_analysis(
 #'   data = iris_data,
 #'   sample = iris_samples,
-#'   n.components = 3,           # Calculate 3 components
-#'   x.axis = "PC1",             # X-axis component
-#'   y.axis = "PC3",             # Y-axis component (skip PC2)
-#'   color.by = "species",       # Color by species
-#'   shape.by = "sepal_size",    # Shape by sepal size
+#'   n_components = 3,           # Calculate 3 components
+#'   x_axis = "PC1",             # X-axis component
+#'   y_axis = "PC3",             # Y-axis component (skip PC2)
+#'   color_by = "species",       # Color by species
+#'   shape_by = "sepal_size",    # Shape by sepal size
 #'   conf.ellipses = TRUE,       # Add confidence ellipses
 #'   ellipse.level = 0.95        # 95% confidence ellipses
 #' )
@@ -213,10 +213,10 @@
 #' metabolomics_pca <- pca_analysis(
 #'   data = metabolite_data,
 #'   sample = metabolite_samples,
-#'   scale.data = TRUE,          # Scale for different metabolite ranges
-#'   color.by = "treatment",
-#'   shape.by = "timepoint",
-#'   plot.type = "all"
+#'   scale_data = TRUE,          # Scale for different metabolite ranges
+#'   color_by = "treatment",
+#'   shape_by = "timepoint",
+#'   plot_type = "all"
 #' )
 #'
 #' # Check for batch effects
@@ -322,17 +322,17 @@
 #' pca_unscaled <- pca_analysis(
 #'   data = iris_data,
 #'   sample = iris_samples,
-#'   scale.data = FALSE,
-#'   color.by = "species",
-#'   plot.type = "scores"
+#'   scale_data = FALSE,
+#'   color_by = "species",
+#'   plot_type = "scores"
 #' )
 #'
 #' pca_scaled <- pca_analysis(
 #'   data = iris_data,
 #'   sample = iris_samples,
-#'   scale.data = TRUE,
-#'   color.by = "species",
-#'   plot.type = "scores"
+#'   scale_data = TRUE,
+#'   color_by = "species",
+#'   plot_type = "scores"
 #' )
 #'
 #' # Compare variance explained
@@ -354,9 +354,9 @@
 #' )
 #' }
 #'
-pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
-                         center.data = TRUE, x.axis = "PC1", y.axis = "PC2",
-                         color.by = "group", shape.by = NULL, plot.type = "all",
+pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
+                         center_data = TRUE, x_axis = "PC1", y_axis = "PC2",
+                         color_by = "group", shape_by = NULL, plot_type = "all",
                          conf.ellipses = FALSE, ellipse.level = 0.95) {
   # Input validation
   if (!is.data.frame(data) && !is.matrix(data)) {
@@ -407,53 +407,53 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
   sample_aligned <- sample[match(data_samples, sample$sample_id), ]
 
   # Validate parameters
-  if (!is.numeric(n.components) || length(n.components) != 1 ||
-    n.components < 1 || n.components != round(n.components)) {
-    stop("'n.components' must be a positive integer")
+  if (!is.numeric(n_components) || length(n_components) != 1 ||
+    n_components < 1 || n_components != round(n_components)) {
+    stop("'n_components' must be a positive integer")
   }
 
   max_components <- min(nrow(data) - 1, ncol(data))
-  if (n.components > max_components) {
-    warning(paste("n.components reduced from", n.components, "to", max_components))
-    n.components <- max_components
+  if (n_components > max_components) {
+    warning(paste("n_components reduced from", n_components, "to", max_components))
+    n_components <- max_components
   }
 
-  if (!is.logical(scale.data) || length(scale.data) != 1) {
-    stop("'scale.data' must be a single logical value")
+  if (!is.logical(scale_data) || length(scale_data) != 1) {
+    stop("'scale_data' must be a single logical value")
   }
 
-  if (!is.logical(center.data) || length(center.data) != 1) {
-    stop("'center.data' must be a single logical value")
+  if (!is.logical(center_data) || length(center_data) != 1) {
+    stop("'center_data' must be a single logical value")
   }
 
   # Validate axis specifications
-  valid_axes <- paste0("PC", 1:n.components)
-  if (!x.axis %in% valid_axes) {
-    stop(paste("'x.axis' must be one of:", paste(valid_axes, collapse = ", ")))
+  valid_axes <- paste0("PC", 1:n_components)
+  if (!x_axis %in% valid_axes) {
+    stop(paste("'x_axis' must be one of:", paste(valid_axes, collapse = ", ")))
   }
 
-  if (!y.axis %in% valid_axes) {
-    stop(paste("'y.axis' must be one of:", paste(valid_axes, collapse = ", ")))
+  if (!y_axis %in% valid_axes) {
+    stop(paste("'y_axis' must be one of:", paste(valid_axes, collapse = ", ")))
   }
 
-  if (x.axis == y.axis) {
-    stop("'x.axis' and 'y.axis' must be different")
+  if (x_axis == y_axis) {
+    stop("'x_axis' and 'y_axis' must be different")
   }
 
   # Validate grouping variables
-  if (!color.by %in% names(sample_aligned)) {
-    stop(paste("'color.by' column '", color.by, "' not found in sample metadata"))
+  if (!color_by %in% names(sample_aligned)) {
+    stop(paste("'color_by' column '", color_by, "' not found in sample metadata"))
   }
 
-  if (is.null(shape.by)) {
-    shape.by <- color.by
-  } else if (!shape.by %in% names(sample_aligned)) {
-    stop(paste("'shape.by' column '", shape.by, "' not found in sample metadata"))
+  if (is.null(shape_by)) {
+    shape_by <- color_by
+  } else if (!shape_by %in% names(sample_aligned)) {
+    stop(paste("'shape_by' column '", shape_by, "' not found in sample metadata"))
   }
 
   valid_plot_types <- c("all", "scores", "loadings", "variance", "none")
-  if (!plot.type %in% valid_plot_types) {
-    stop(paste("'plot.type' must be one of:", paste(valid_plot_types, collapse = ", ")))
+  if (!plot_type %in% valid_plot_types) {
+    stop(paste("'plot_type' must be one of:", paste(valid_plot_types, collapse = ", ")))
   }
 
   # Data quality checks
@@ -475,8 +475,8 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     {
       pca_model <- FactoMineR::PCA(
         X = data_matrix,
-        ncp = n.components,
-        scale.unit = scale.data,
+        ncp = n_components,
+        scale.unit = scale_data,
         graph = FALSE,
         ind.sup = NULL,
         quanti.sup = NULL
@@ -501,10 +501,10 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     error = function(e) {
       warning(paste("Error extracting eigenvalues:", e$message))
       data.frame(
-        component = paste0("PC", 1:n.components),
-        eigenvalue = rep(NA, n.components),
-        variance_percent = rep(NA, n.components),
-        cumulative_percent = rep(NA, n.components)
+        component = paste0("PC", 1:n_components),
+        eigenvalue = rep(NA, n_components),
+        variance_percent = rep(NA, n_components),
+        cumulative_percent = rep(NA, n_components)
       )
     })
 
@@ -551,32 +551,32 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
       data.frame(variable = colnames(data))
     })
 
-  # Generate plots based on plot.type
+  # Generate plots based on plot_type
   plots <- list()
 
-  if (plot.type %in% c("all", "scores")) {
+  if (plot_type %in% c("all", "scores")) {
     # Score plot
-    x_pc_num <- as.numeric(gsub("PC", "", x.axis))
-    y_pc_num <- as.numeric(gsub("PC", "", y.axis))
+    x_pc_num <- as.numeric(gsub("PC", "", x_axis))
+    y_pc_num <- as.numeric(gsub("PC", "", y_axis))
 
     x_variance <- eigenvalue_data$variance_percent[x_pc_num]
     y_variance <- eigenvalue_data$variance_percent[y_pc_num]
 
     score_plot <- sample_scores %>%
-      ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x.axis), y = !!rlang::sym(y.axis),
-        color = !!rlang::sym(color.by),
-        shape = !!rlang::sym(shape.by))) +
+      ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x_axis), y = !!rlang::sym(y_axis),
+        color = !!rlang::sym(color_by),
+        shape = !!rlang::sym(shape_by))) +
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60", alpha = 0.7) +
       ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60", alpha = 0.7) +
       ggplot2::geom_point(size = 3, alpha = 0.8) +
       ggplot2::labs(
-        x = paste0(x.axis, " (", x_variance, "%)"),
-        y = paste0(y.axis, " (", y_variance, "%)"),
+        x = paste0(x_axis, " (", x_variance, "%)"),
+        y = paste0(y_axis, " (", y_variance, "%)"),
         title = "PCA Score Plot",
-        subtitle = paste("First", n.components, "components explain",
-          round(eigenvalue_data$cumulative_percent[n.components], 1), "% of variance"),
-        color = tools::toTitleCase(gsub("[._]", " ", color.by)),
-        shape = tools::toTitleCase(gsub("[._]", " ", shape.by))
+        subtitle = paste("First", n_components, "components explain",
+          round(eigenvalue_data$cumulative_percent[n_components], 1), "% of variance"),
+        color = tools::toTitleCase(gsub("[._]", " ", color_by)),
+        shape = tools::toTitleCase(gsub("[._]", " ", shape_by))
       ) +
       ggplot2::theme_minimal() +
       ggplot2::theme(
@@ -589,14 +589,14 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     # Add confidence ellipses if requested
     if (conf.ellipses) {
       score_plot <- score_plot +
-        ggplot2::stat_ellipse(ggplot2::aes(color = !!rlang::sym(color.by)),
+        ggplot2::stat_ellipse(ggplot2::aes(color = !!rlang::sym(color_by)),
           level = ellipse.level, type = "norm", alpha = 0.3)
     }
 
     plots$score_plot <- score_plot
   }
 
-  if (plot.type %in% c("all", "variance")) {
+  if (plot_type %in% c("all", "variance")) {
     # Scree plot
     scree_plot <- eigenvalue_data %>%
       ggplot2::ggplot(ggplot2::aes(x = factor(1:nrow(eigenvalue_data)), y = variance_percent)) +
@@ -615,7 +615,7 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     plots$scree_plot <- scree_plot
   }
 
-  if (plot.type %in% c("all", "loadings")) {
+  if (plot_type %in% c("all", "loadings")) {
     # Loading plot
     x_loadings <- paste0("PC", x_pc_num)
     y_loadings <- paste0("PC", y_pc_num)
@@ -630,8 +630,8 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
       ggplot2::geom_text(ggplot2::aes(label = variable),
         vjust = -0.5, hjust = 0.5, size = 3, alpha = 0.8) +
       ggplot2::labs(
-        x = paste0(x.axis, " Loadings"),
-        y = paste0(y.axis, " Loadings"),
+        x = paste0(x_axis, " Loadings"),
+        y = paste0(y_axis, " Loadings"),
         title = "PCA Loading Plot",
         subtitle = "Variable contributions to principal components"
       ) +
@@ -641,7 +641,7 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     plots$loading_plot <- loading_plot
   }
 
-  if (plot.type == "all") {
+  if (plot_type == "all") {
     # Biplot (combined scores and loadings)
     # Scale loadings for better visualization
     loading_scale <- 3
@@ -650,10 +650,10 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     scaled_loadings[[y_loadings]] <- scaled_loadings[[y_loadings]] * loading_scale
 
     biplot <- sample_scores %>%
-      ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x.axis), y = !!rlang::sym(y.axis))) +
+      ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x_axis), y = !!rlang::sym(y_axis))) +
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60", alpha = 0.7) +
       ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60", alpha = 0.7) +
-      ggplot2::geom_point(ggplot2::aes(color = !!rlang::sym(color.by)), size = 2, alpha = 0.7) +
+      ggplot2::geom_point(ggplot2::aes(color = !!rlang::sym(color_by)), size = 2, alpha = 0.7) +
       ggplot2::geom_segment(data = scaled_loadings,
         ggplot2::aes(x = 0, y = 0,
           xend = !!rlang::sym(x_loadings),
@@ -666,11 +666,11 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
           label = variable),
         color = "red", size = 2.5, alpha = 0.8) +
       ggplot2::labs(
-        x = paste0(x.axis, " (", x_variance, "%)"),
-        y = paste0(y.axis, " (", y_variance, "%)"),
+        x = paste0(x_axis, " (", x_variance, "%)"),
+        y = paste0(y_axis, " (", y_variance, "%)"),
         title = "PCA Biplot",
         subtitle = "Samples (points) and variables (arrows)",
-        color = tools::toTitleCase(gsub("[._]", " ", color.by))
+        color = tools::toTitleCase(gsub("[._]", " ", color_by))
       ) +
       ggplot2::theme_minimal()
 
@@ -678,7 +678,7 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
 
     # Contribution plot
     contrib_data <- variable_loadings %>%
-      dplyr::select(variable, dplyr::all_of(paste0("cos2_PC", 1:min(3, n.components)))) %>%
+      dplyr::select(variable, dplyr::all_of(paste0("cos2_PC", 1:min(3, n_components)))) %>%
       tidyr::pivot_longer(cols = -variable, names_to = "component", values_to = "contribution") %>%
       dplyr::mutate(component = gsub("cos2_", "", component))
 
@@ -706,7 +706,7 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     broken_stick = {
       # Broken stick model for component selection
       n_vars <- ncol(data)
-      broken_stick_values <- sapply(1:n.components, function(i) {
+      broken_stick_values <- sapply(1:n_components, function(i) {
         100 * sum(1 / ((i:n_vars))) / n_vars
       })
       eigenvalue_data$component[eigenvalue_data$variance_percent > broken_stick_values]
@@ -722,7 +722,7 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     eigenvalues = eigenvalue_data,
     sample_scores = sample_scores,
     variable_loadings = variable_loadings,
-    plots = if (plot.type != "none") plots else NULL,
+    plots = if (plot_type != "none") plots else NULL,
     summary_stats = summary_stats
   )
 
@@ -730,9 +730,9 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
   attr(results, "analysis_type") <- "PCA"
   attr(results, "n_samples") <- nrow(data)
   attr(results, "n_variables") <- ncol(data)
-  attr(results, "n_components") <- n.components
-  attr(results, "scaled") <- scale.data
-  attr(results, "centered") <- center.data
+  attr(results, "n_components") <- n_components
+  attr(results, "scaled") <- scale_data
+  attr(results, "centered") <- center_data
 
   # Interactive summary
   if (interactive()) {
@@ -740,9 +740,9 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     cat("====================================\n")
     cat("Samples:", nrow(data), "\n")
     cat("Variables:", ncol(data), "\n")
-    cat("Components calculated:", n.components, "\n")
-    cat("Data scaling:", ifelse(scale.data, "Applied", "Not applied"), "\n")
-    cat("Data centering:", ifelse(center.data, "Applied", "Not applied"), "\n\n")
+    cat("Components calculated:", n_components, "\n")
+    cat("Data scaling:", ifelse(scale_data, "Applied", "Not applied"), "\n")
+    cat("Data centering:", ifelse(center_data, "Applied", "Not applied"), "\n\n")
 
     cat("Variance Explanation:\n")
     for (i in 1:min(3, nrow(eigenvalue_data))) {
@@ -753,8 +753,8 @@ pca_analysis <- function(data, sample, n.components = 5, scale.data = TRUE,
     }
 
     cat(sprintf("  First %d components: %.1f%% total variance\n",
-      min(3, n.components),
-      eigenvalue_data$cumulative_percent[min(3, n.components)]))
+      min(3, n_components),
+      eigenvalue_data$cumulative_percent[min(3, n_components)]))
 
     cat("\nComponent Selection Criteria:\n")
     cat("  Kaiser criterion (eigenvalue > 1):", length(summary_stats$kaiser_criterion), "components\n")

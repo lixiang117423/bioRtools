@@ -7,14 +7,14 @@
 pca_analysis(
   data,
   sample,
-  n.components = 5,
-  scale.data = TRUE,
-  center.data = TRUE,
-  x.axis = "PC1",
-  y.axis = "PC2",
-  color.by = "group",
-  shape.by = NULL,
-  plot.type = "all",
+  n_components = 5,
+  scale_data = TRUE,
+  center_data = TRUE,
+  x_axis = "PC1",
+  y_axis = "PC2",
+  color_by = "group",
+  shape_by = NULL,
+  plot_type = "all",
   conf.ellipses = FALSE,
   ellipse.level = 0.95
 )
@@ -33,30 +33,30 @@ matching the row names of the data matrix. Must include:
   \item Optional covariates for interpretation
 }}
 
-\item{n.components}{Maximum number of principal components to calculate and
+\item{n_components}{Maximum number of principal components to calculate and
 return (default: 5). Should be <= min(n_samples-1, n_variables). More
 components provide more detailed analysis but increase computation time}
 
-\item{scale.data}{Logical indicating whether to scale variables to unit variance
+\item{scale_data}{Logical indicating whether to scale variables to unit variance
 (default: TRUE). Recommended when variables have different units or scales.
 Set to FALSE if data is already standardized or when preserving original scales}
 
-\item{center.data}{Logical indicating whether to center variables to zero mean
+\item{center_data}{Logical indicating whether to center variables to zero mean
 (default: TRUE). Almost always recommended for PCA analysis}
 
-\item{x.axis}{Principal component for X-axis in score plot (default: "PC1").
+\item{x_axis}{Principal component for X-axis in score plot (default: "PC1").
 Can be "PC1", "PC2", "PC3", etc., up to the number of calculated components}
 
-\item{y.axis}{Principal component for Y-axis in score plot (default: "PC2").
-Should be different from x.axis for meaningful 2D visualization}
+\item{y_axis}{Principal component for Y-axis in score plot (default: "PC2").
+Should be different from x_axis for meaningful 2D visualization}
 
-\item{color.by}{Column name in sample metadata for point colors (default: "group").
+\item{color_by}{Column name in sample metadata for point colors (default: "group").
 Used to visualize sample groupings or experimental conditions}
 
-\item{shape.by}{Column name in sample metadata for point shapes (default: same as color.by).
-Can be the same as color.by or different to show additional sample attributes}
+\item{shape_by}{Column name in sample metadata for point shapes (default: same as color_by).
+Can be the same as color_by or different to show additional sample attributes}
 
-\item{plot.type}{Type of plots to generate (default: "all"). Options:
+\item{plot_type}{Type of plots to generate (default: "all"). Options:
 \itemize{
   \item "all": Generate all available plots
   \item "scores": Only sample score plots
@@ -95,7 +95,7 @@ A named list containing comprehensive PCA results:
         \item \code{PC1, PC2, ...}: Loading values on each component
         \item \code{cos2_PC1, cos2_PC2, ...}: Quality of representation
       }}
-    \item{\code{plots}}{List of ggplot2 objects (when plot.type != "none"):
+    \item{\code{plots}}{List of ggplot2 objects (when plot_type != "none"):
       \itemize{
         \item \code{score_plot}: Sample scores with grouping
         \item \code{scree_plot}: Variance explained by each component
@@ -175,7 +175,7 @@ rownames(iris_data) <- iris_samples$sample_id
 pca_results <- pca_analysis(
   data = iris_data,
   sample = iris_samples,
-  color.by = "species"
+  color_by = "species"
 )
 
 # View variance explained
@@ -193,11 +193,11 @@ print(paste("Total variance in first 2 PCs:",
 pca_custom <- pca_analysis(
   data = iris_data,
   sample = iris_samples,
-  n.components = 3,           # Calculate 3 components
-  x.axis = "PC1",             # X-axis component
-  y.axis = "PC3",             # Y-axis component (skip PC2)
-  color.by = "species",       # Color by species
-  shape.by = "sepal_size",    # Shape by sepal size
+  n_components = 3,           # Calculate 3 components
+  x_axis = "PC1",             # X-axis component
+  y_axis = "PC3",             # Y-axis component (skip PC2)
+  color_by = "species",       # Color by species
+  shape_by = "sepal_size",    # Shape by sepal size
   conf.ellipses = TRUE,       # Add confidence ellipses
   ellipse.level = 0.95        # 95\% confidence ellipses
 )
@@ -229,10 +229,10 @@ metabolite_samples <- data.frame(
 metabolomics_pca <- pca_analysis(
   data = metabolite_data,
   sample = metabolite_samples,
-  scale.data = TRUE,          # Scale for different metabolite ranges
-  color.by = "treatment",
-  shape.by = "timepoint",
-  plot.type = "all"
+  scale_data = TRUE,          # Scale for different metabolite ranges
+  color_by = "treatment",
+  shape_by = "timepoint",
+  plot_type = "all"
 )
 
 # Check for batch effects
@@ -338,17 +338,17 @@ if (nrow(outlier_summary) > 0) {
 pca_unscaled <- pca_analysis(
   data = iris_data,
   sample = iris_samples,
-  scale.data = FALSE,
-  color.by = "species",
-  plot.type = "scores"
+  scale_data = FALSE,
+  color_by = "species",
+  plot_type = "scores"
 )
 
 pca_scaled <- pca_analysis(
   data = iris_data,
   sample = iris_samples,
-  scale.data = TRUE,
-  color.by = "species",
-  plot.type = "scores"
+  scale_data = TRUE,
+  color_by = "species",
+  plot_type = "scores"
 )
 
 # Compare variance explained

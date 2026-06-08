@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0] - 2026-06-08
+
+### Changed
+- Standardize all exported function parameter names to snake_case (affects 10 functions: `calc_beta_nti`, `cor_analysis`, `enrich_kegg`, `enrich_go`, `lm_analysis`, `manhattan_plot`, `pca_analysis`, `opls_analysis`, `anova_posthoc`, `rf_taxa_classification`)
+- Standardize output column names to snake_case (`anova.pvalue`→`anova_pvalue`, `Tukey.signif`→`tukey_signif`, `Duncan.signif`→`duncan_signif`, `tax.group`→`tax_group`)
+
+
 ## [1.22.0] - 2026-06-08
 
 ### Changed

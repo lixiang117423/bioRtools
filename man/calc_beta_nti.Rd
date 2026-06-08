@@ -7,8 +7,8 @@
 calc_beta_nti(
   data,
   tree,
-  beta.reps = 999,
-  abundance.weighted = TRUE,
+  beta_reps = 999,
+  abundance_weighted = TRUE,
   verbose = TRUE
 )
 }
@@ -18,9 +18,9 @@ data.frame where the first column contains taxon IDs.}
 
 \item{tree}{A phylogenetic tree object (\code{ape::phylo}).}
 
-\item{beta.reps}{Number of randomizations (default: 999).}
+\item{beta_reps}{Number of randomizations (default: 999).}
 
-\item{abundance.weighted}{Logical; weight by species abundance (default: TRUE).}
+\item{abundance_weighted}{Logical; weight by species abundance (default: TRUE).}
 
 \item{verbose}{Print progress messages (default: TRUE).}
 }
@@ -40,7 +40,7 @@ library(ape)
 tree <- read.tree("tree.nwk")
 otu <- read.delim("asv_table.txt", row.names = 1)
 
-res <- calc_beta_nti(otu, tree, beta.reps = 999)
+res <- calc_beta_nti(otu, tree, beta_reps = 999)
 head(res)
 }
 }

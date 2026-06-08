@@ -23,7 +23,7 @@
 #'   different to show additional data dimensions
 #' @param alpha Significance level for regression p-values (default: 0.05).
 #'   Used to determine statistical significance in the results summary
-#' @param conf.level Confidence level for regression confidence intervals
+#' @param conf_level Confidence level for regression confidence intervals
 #'   (default: 0.95). Used in both statistical calculations and plot confidence bands
 #' @param method Regression method for line fitting (default: "lm" for linear model).
 #'   Can also be "glm", "gam", "loess", or other methods supported by ggplot2::geom_smooth
@@ -117,7 +117,7 @@
 #'
 #' print(paste("Significant relationships found in", nrow(significant_groups), "groups"))
 #'
-lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.95,
+lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.95,
                         method = "lm", se = TRUE) {
   # Input validation
   if (!is.data.frame(data)) {
@@ -156,8 +156,8 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
     stop("'alpha' must be a single number between 0 and 1")
   }
 
-  if (!is.numeric(conf.level) || length(conf.level) != 1 || conf.level <= 0 || conf.level >= 1) {
-    stop("'conf.level' must be a single number between 0 and 1")
+  if (!is.numeric(conf_level) || length(conf_level) != 1 || conf_level <= 0 || conf_level >= 1) {
+    stop("'conf_level' must be a single number between 0 and 1")
   }
 
   if (!is.logical(se) || length(se) != 1) {
@@ -273,7 +273,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
           })
       }),
       # Extract statistics
-      stats = purrr::map(model, ~ get_regression_stats(.x, conf.level))
+      stats = purrr::map(model, ~ get_regression_stats(.x, conf_level))
     ) %>%
     dplyr::select(-data, -model) %>%
     tidyr::unnest(cols = stats) %>%
@@ -305,11 +305,11 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
         ggplot2::ggplot(ggplot2::aes(x = !!rlang::sym(x), y = !!rlang::sym(y),
           color = !!rlang::sym(color))) +
         ggplot2::geom_point(alpha = 0.7, size = 2) +
-        ggplot2::geom_smooth(method = method, se = se, level = conf.level) +
+        ggplot2::geom_smooth(method = method, se = se, level = conf_level) +
         ggplot2::labs(
           title = paste("Linear Regression Analysis by", group),
           subtitle = paste("Method:", method, "| Confidence level:",
-            paste0(round(conf.level * 100, 1), "%")),
+            paste0(round(conf_level * 100, 1), "%")),
           x = tools::toTitleCase(gsub("[._]", " ", x)),
           y = tools::toTitleCase(gsub("[._]", " ", y)),
           color = tools::toTitleCase(gsub("[._]", " ", color))
@@ -346,7 +346,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
     cat("Groups with significant relationships:", n_significant,
       paste0("(", round(100 * n_significant / n_groups, 1), "%)"), "\n")
     cat("Significance level:", alpha, "\n")
-    cat("Confidence level:", conf.level, "\n\n")
+    cat("Confidence level:", conf_level, "\n\n")
 
     if (n_significant > 0) {
       cat("Significant relationships:\n")
@@ -381,7 +381,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf.level = 0.9
   attr(result, "n_groups") <- n_groups
   attr(result, "n_significant") <- n_significant
   attr(result, "alpha_level") <- alpha
-  attr(result, "confidence_level") <- conf.level
+  attr(result, "confidence_level") <- conf_level
   attr(result, "regression_method") <- method
 
   return(result)

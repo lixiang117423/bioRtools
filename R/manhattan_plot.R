@@ -18,18 +18,18 @@
 #'     \item \code{label}: Custom labels for significant SNPs
 #'     \item \code{gene}: Nearest gene name for annotation
 #'   }
-#' @param p.threshold Significance threshold for drawing horizontal reference line
+#' @param p_threshold Significance threshold for drawing horizontal reference line
 #'   (default: Bonferroni correction = 0.05 / number of SNPs). Can be set to
 #'   custom values like 5e-8 (genome-wide significance) or 1e-5 (suggestive)
-#' @param highlight.threshold P-value threshold for highlighting significant SNPs
-#'   (default: same as p.threshold). SNPs below this threshold will be emphasized
-#' @param label.threshold P-value threshold for labeling SNPs (default: p.threshold).
+#' @param highlight_threshold P-value threshold for highlighting significant SNPs
+#'   (default: same as p_threshold). SNPs below this threshold will be emphasized
+#' @param label_threshold P-value threshold for labeling SNPs (default: p_threshold).
 #'   Only SNPs more significant than this threshold will be labeled with text
-#' @param chr.colors Vector of colors for alternating chromosomes (default: blue and orange).
+#' @param chr_colors Vector of colors for alternating chromosomes (default: blue and orange).
 #'   Should have at least 2 colors that will be recycled across chromosomes
-#' @param point.size.range Range of point sizes for SNPs (default: c(0.5, 3)).
+#' @param point_size_range Range of point sizes for SNPs (default: c(0.5, 3)).
 #'   Points are sized by -log10(p-value) within this range
-#' @param max.overlaps Maximum number of overlapping labels allowed (default: 20).
+#' @param max_overlaps Maximum number of overlapping labels allowed (default: 20).
 #'   Helps prevent overcrowded labels in regions of high significance
 #' @param title Plot title (default: "Manhattan Plot"). Set to NULL to remove title
 #' @param subtitle Plot subtitle (default: "Genome-wide Association Study Results")
@@ -124,9 +124,9 @@
 #' # Manhattan plot with genome-wide significance threshold
 #' manhattan_gwas <- manhattan_plot(
 #'   df = simulated_gwas,
-#'   p.threshold = 5e-8,           # Genome-wide significance
-#'   highlight.threshold = 5e-8,    # Highlight genome-wide significant
-#'   label.threshold = 1e-10,       # Label only very significant SNPs
+#'   p_threshold = 5e-8,           # Genome-wide significance
+#'   highlight_threshold = 5e-8,    # Highlight genome-wide significant
+#'   label_threshold = 1e-10,       # Label only very significant SNPs
 #'   title = "GWAS: Height Association",
 #'   subtitle = "Genome-wide significance threshold: p < 5×10⁻⁸"
 #' )
@@ -147,9 +147,9 @@
 #' # Create plot with both genome-wide and suggestive thresholds
 #' manhattan_multi <- manhattan_plot(
 #'   df = simulated_gwas,
-#'   p.threshold = 5e-8,
-#'   chr.colors = c("#E31A1C", "#1F78B4"),  # Red and blue
-#'   point.size.range = c(0.3, 2.5)
+#'   p_threshold = 5e-8,
+#'   chr_colors = c("#E31A1C", "#1F78B4"),  # Red and blue
+#'   point_size_range = c(0.3, 2.5)
 #' ) +
 #'   # Add suggestive significance line
 #'   geom_hline(yintercept = -log10(1e-5),
@@ -184,7 +184,7 @@
 #' # Create Manhattan plot
 #' real_world_plot <- manhattan_plot(
 #'   df = sample_gwas_data,
-#'   p.threshold = 5e-8,
+#'   p_threshold = 5e-8,
 #'   title = "Real-world GWAS Example",
 #'   subtitle = "22 chromosomes, 22,000 SNPs"
 #' )
@@ -196,10 +196,10 @@
 #' # Highly customized Manhattan plot
 #' custom_manhattan <- manhattan_plot(
 #'   df = simulated_gwas,
-#'   p.threshold = 5e-8,
-#'   chr.colors = c("#2E8B57", "#CD853F", "#4682B4", "#D2691E"),  # 4 colors
-#'   point.size.range = c(0.2, 4),
-#'   max.overlaps = 50,
+#'   p_threshold = 5e-8,
+#'   chr_colors = c("#2E8B57", "#CD853F", "#4682B4", "#D2691E"),  # 4 colors
+#'   point_size_range = c(0.2, 4),
+#'   max_overlaps = 50,
 #'   title = NULL  # Remove title for publication
 #' ) +
 #'   theme_minimal() +
@@ -253,9 +253,9 @@
 #' }
 #' }
 #'
-manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
-                           label.threshold = NULL, chr.colors = c("#1F77B4", "#FF7F0E"),
-                           point.size.range = c(0.5, 3), max.overlaps = 20,
+manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
+                           label_threshold = NULL, chr_colors = c("#1F77B4", "#FF7F0E"),
+                           point_size_range = c(0.5, 3), max_overlaps = 20,
                            title = "Manhattan Plot",
                            subtitle = "Genome-wide Association Study Results") {
   # Input validation
@@ -356,21 +356,21 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
   }
 
   # Set default thresholds
-  if (is.na(p.threshold)) {
-    p.threshold <- 0.05 / nrow(standardized_df)  # Bonferroni correction
+  if (is.na(p_threshold)) {
+    p_threshold <- 0.05 / nrow(standardized_df)  # Bonferroni correction
   }
 
-  if (is.null(highlight.threshold)) {
-    highlight.threshold <- p.threshold
+  if (is.null(highlight_threshold)) {
+    highlight_threshold <- p_threshold
   }
 
-  if (is.null(label.threshold)) {
-    label.threshold <- p.threshold
+  if (is.null(label_threshold)) {
+    label_threshold <- p_threshold
   }
 
   # Validate thresholds
-  if (!is.numeric(p.threshold) || p.threshold <= 0 || p.threshold > 1) {
-    stop("'p.threshold' must be a number between 0 and 1")
+  if (!is.numeric(p_threshold) || p_threshold <= 0 || p_threshold > 1) {
+    stop("'p_threshold' must be a number between 0 and 1")
   }
 
   # Calculate cumulative positions for continuous x-axis
@@ -402,11 +402,11 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
   # Create labels for significant SNPs
   if ("label" %in% names(gwas_data)) {
     # Use existing labels
-    gwas_data$plot_label <- ifelse(gwas_data$p <= label.threshold & !is.na(gwas_data$label),
+    gwas_data$plot_label <- ifelse(gwas_data$p <= label_threshold & !is.na(gwas_data$label),
       gwas_data$label, NA)
   } else if ("snp" %in% names(gwas_data)) {
     # Create labels from SNP IDs for significant hits
-    gwas_data$plot_label <- ifelse(gwas_data$p <= label.threshold, gwas_data$snp, NA)
+    gwas_data$plot_label <- ifelse(gwas_data$p <= label_threshold, gwas_data$snp, NA)
   } else {
     # No labels available
     gwas_data$plot_label <- NA
@@ -414,10 +414,10 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
 
   # Prepare colors (ensure sufficient colors for all chromosomes)
   n_chrs <- length(unique(gwas_data$chr))
-  if (length(chr.colors) < n_chrs) {
-    chr.colors <- rep(chr.colors, ceiling(n_chrs / length(chr.colors)))
+  if (length(chr_colors) < n_chrs) {
+    chr_colors <- rep(chr_colors, ceiling(n_chrs / length(chr_colors)))
   }
-  chr.colors <- chr.colors[1:n_chrs]
+  chr_colors <- chr_colors[1:n_chrs]
 
   # Create the Manhattan plot
   tryCatch(
@@ -426,7 +426,7 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
         ggplot2::ggplot(ggplot2::aes(x = posi_cum, y = -log10(p))) +
 
         # Add significance threshold line
-        ggplot2::geom_hline(yintercept = -log10(p.threshold),
+        ggplot2::geom_hline(yintercept = -log10(p_threshold),
           color = "red", linetype = "dashed", alpha = 0.7) +
 
         # Add points colored by chromosome
@@ -444,7 +444,7 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
               point.padding = 0.2,
               segment.color = "grey50",
               segment.size = 0.3,
-              max.overlaps = max.overlaps,
+              max.overlaps = max_overlaps,
               min.segment.length = 0
             )
           }
@@ -461,8 +461,8 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
           limits = c(0, y_max),
           breaks = scales::pretty_breaks(n = 6)
         ) +
-        ggplot2::scale_color_manual(values = chr.colors) +
-        ggplot2::scale_size_continuous(range = point.size.range, guide = "none") +
+        ggplot2::scale_color_manual(values = chr_colors) +
+        ggplot2::scale_size_continuous(range = point_size_range, guide = "none") +
 
         # Labels and theme
         ggplot2::labs(
@@ -491,13 +491,13 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
 
   # Add summary statistics as attributes
   n_total <- nrow(gwas_data)
-  n_significant <- sum(gwas_data$p < highlight.threshold, na.rm = TRUE)
+  n_significant <- sum(gwas_data$p < highlight_threshold, na.rm = TRUE)
   n_labeled <- sum(!is.na(gwas_data$plot_label))
 
   attr(manhattan_plot, "n_snps") <- n_total
   attr(manhattan_plot, "n_significant") <- n_significant
   attr(manhattan_plot, "n_labeled") <- n_labeled
-  attr(manhattan_plot, "p_threshold") <- p.threshold
+  attr(manhattan_plot, "p_threshold") <- p_threshold
   attr(manhattan_plot, "min_p") <- min_p
   attr(manhattan_plot, "chromosomes") <- sort(unique(gwas_data$chr))
 
@@ -507,7 +507,7 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
     cat("======================\n")
     cat("Total SNPs plotted:", format(n_total, big.mark = ","), "\n")
     cat("Chromosomes:", paste(sort(unique(gwas_data$chr)), collapse = ", "), "\n")
-    cat("Significance threshold:", format(p.threshold, scientific = TRUE), "\n")
+    cat("Significance threshold:", format(p_threshold, scientific = TRUE), "\n")
     cat("Significant SNPs:", format(n_significant, big.mark = ","),
       paste0("(", round(100 * n_significant / n_total, 2), "%)"), "\n")
     cat("Labeled SNPs:", n_labeled, "\n")
@@ -516,7 +516,7 @@ manhattan_plot <- function(df, p.threshold = NA, highlight.threshold = NULL,
     if (n_significant > 0) {
       # Show top hits
       top_hits <- gwas_data %>%
-        dplyr::filter(p < highlight.threshold) %>%
+        dplyr::filter(p < highlight_threshold) %>%
         dplyr::arrange(p) %>%
         dplyr::select(chr, posi, p, dplyr::any_of(c("snp", "plot_label"))) %>%
         head(5)

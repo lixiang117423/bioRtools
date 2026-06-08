@@ -270,7 +270,7 @@ rf_taxa_classification <- function(data,
         dplyr::arrange(desc(importance)) %>%
         dplyr::left_join(distinct_tax, by = "tmp") %>%
         dplyr::select(tax, importance) %>%
-        dplyr::mutate(tax.group = level)
+        dplyr::mutate(tax_group = level)
 
       all.importance <- dplyr::bind_rows(all.importance, imp_df)
     }
@@ -291,7 +291,7 @@ rf_taxa_classification <- function(data,
   # ── Top features boxplot ─────────────────────────────────────────────────
   plot.top <- NULL
   top_features <- all.importance %>%
-    dplyr::filter(tax.group == "OTU") %>%
+    dplyr::filter(tax_group == "OTU") %>%
     dplyr::arrange(desc(importance)) %>%
     dplyr::slice_head(n = top_n) %>%
     dplyr::pull(tax)

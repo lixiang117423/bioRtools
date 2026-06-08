@@ -26,9 +26,9 @@ Range Test}
 A data frame containing:
   - Grouping columns (if data was grouped)
   - \code{group}: Group levels
-  - \code{anova.pvalue}: Overall ANOVA p-value
-  - \code{anova.signif}: ANOVA significance levels (NS, *, **, ***)
-  - \code{Tukey.signif} or \code{Duncan.signif}: Post-hoc significance letters
+  - \code{anova_pvalue}: Overall ANOVA p-value
+  - \code{anova_signif}: ANOVA significance levels (NS, *, **, ***)
+  - \code{tukey_signif} or \code{duncan_signif}: Post-hoc significance letters
 }
 \description{
 This function performs one-way ANOVA followed by post-hoc multiple comparison

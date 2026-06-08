@@ -9,7 +9,7 @@
 #' @param gene Character vector containing gene identifiers (e.g., gene symbols,
 #'   Entrez IDs, Ensembl IDs, or other identifiers) that correspond to
 #'   differentially expressed genes for pathway enrichment analysis
-#' @param kegg.db Data frame containing KEGG pathway annotation information.
+#' @param kegg_db Data frame containing KEGG pathway annotation information.
 #'   Must include the following columns:
 #'   \itemize{
 #'     \item \code{gene}: Gene identifiers matching those in the gene parameter
@@ -28,11 +28,11 @@
 #'     \item \code{"fdr"}: Synonym for "BH"
 #'     \item \code{"none"}: No correction (not recommended)
 #'   }
-#' @param p.adjust Significance threshold for adjusted p-values (default: 0.05).
+#' @param p_adjust Significance threshold for adjusted p-values (default: 0.05).
 #'   Only KEGG pathways with adjusted p-values below this threshold will be returned
-#' @param min.pathway.size Minimum number of genes required in a pathway for testing
+#' @param min_pathway_size Minimum number of genes required in a pathway for testing
 #'   (default: 3). Pathways with fewer genes will be excluded from analysis
-#' @param max.pathway.size Maximum number of genes allowed in a pathway for testing
+#' @param max_pathway_size Maximum number of genes allowed in a pathway for testing
 #'   (default: 500). Very large pathways can be excluded to focus on specific processes
 #'
 #' @return A data frame containing pathway enrichment results with columns:
@@ -98,7 +98,7 @@
 #' # Basic pathway enrichment analysis
 #' kegg_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
-#'   kegg.db = df.rnaseq.kegg
+#'   kegg_db = df.rnaseq.kegg
 #' )
 #'
 #' print(head(kegg_results))
@@ -114,18 +114,18 @@
 #' # More conservative analysis
 #' kegg_strict <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
-#'   kegg.db = df.rnaseq.kegg,
+#'   kegg_db = df.rnaseq.kegg,
 #'   pAdjustMethod = "bonferroni",
-#'   p.adjust = 0.01,
-#'   min.pathway.size = 5,
-#'   max.pathway.size = 200
+#'   p_adjust = 0.01,
+#'   min_pathway_size = 5,
+#'   max_pathway_size = 200
 #' )
 #'
 #' print(paste("Strict analysis found", nrow(kegg_strict), "pathways"))
 #' }
 #'
 #' # Example 3: Creating a KEGG database format
-#' # This demonstrates the required structure for kegg.db parameter
+#' # This demonstrates the required structure for kegg_db parameter
 #' sample_kegg_db <- data.frame(
 #'   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5", "GENE6"),
 #'   kegg.id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
@@ -142,8 +142,8 @@
 #' # Run pathway analysis with sample data
 #' sample_results <- enrich_kegg(
 #'   gene = sample_genes,
-#'   kegg.db = sample_kegg_db,
-#'   p.adjust = 1.0  # Accept all pathways for demonstration
+#'   kegg_db = sample_kegg_db,
+#'   p_adjust = 1.0  # Accept all pathways for demonstration
 #' )
 #' print(sample_results)
 #' }
@@ -156,7 +156,7 @@
 #'
 #' metabolism_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
-#'   kegg.db = metabolism_kegg,
+#'   kegg_db = metabolism_kegg,
 #'   pAdjustMethod = "BH"
 #' )
 #'
@@ -168,7 +168,7 @@
 #'
 #' signaling_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
-#'   kegg.db = signaling_kegg
+#'   kegg_db = signaling_kegg
 #' )
 #'
 #' print(paste("Signaling pathways enriched:", nrow(signaling_results)))
@@ -191,22 +191,22 @@
 #' print(kegg_for_plot[, c("ID", "pathway_short", "enrichment.score", "Count")])
 #' }
 #'
-enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
-                        min.pathway.size = 3, max.pathway.size = 500) {
+enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
+                        min_pathway_size = 3, max_pathway_size = 500) {
   # Input validation
   if (!is.character(gene) || length(gene) == 0) {
     stop("'gene' must be a non-empty character vector")
   }
 
-  if (!is.data.frame(kegg.db) || nrow(kegg.db) == 0) {
-    stop("'kegg.db' must be a non-empty data frame")
+  if (!is.data.frame(kegg_db) || nrow(kegg_db) == 0) {
+    stop("'kegg_db' must be a non-empty data frame")
   }
 
-  # Check required columns in kegg.db
+  # Check required columns in kegg_db
   required_cols <- c("gene", "kegg.id", "kegg.term")
-  missing_cols <- setdiff(required_cols, names(kegg.db))
+  missing_cols <- setdiff(required_cols, names(kegg_db))
   if (length(missing_cols) > 0) {
-    stop(paste("Missing required columns in kegg.db:", paste(missing_cols, collapse = ", ")))
+    stop(paste("Missing required columns in kegg_db:", paste(missing_cols, collapse = ", ")))
   }
 
   # Validate adjustment method
@@ -216,16 +216,16 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
   }
 
   # Validate parameters
-  if (!is.numeric(p.adjust) || length(p.adjust) != 1 || p.adjust <= 0 || p.adjust > 1) {
-    stop("'p.adjust' must be a single numeric value between 0 and 1")
+  if (!is.numeric(p_adjust) || length(p_adjust) != 1 || p_adjust <= 0 || p_adjust > 1) {
+    stop("'p_adjust' must be a single numeric value between 0 and 1")
   }
 
-  if (!is.numeric(min.pathway.size) || min.pathway.size < 1) {
-    stop("'min.pathway.size' must be a positive integer")
+  if (!is.numeric(min_pathway_size) || min_pathway_size < 1) {
+    stop("'min_pathway_size' must be a positive integer")
   }
 
-  if (!is.numeric(max.pathway.size) || max.pathway.size < min.pathway.size) {
-    stop("'max.pathway.size' must be numeric and >= min.pathway.size")
+  if (!is.numeric(max_pathway_size) || max_pathway_size < min_pathway_size) {
+    stop("'max_pathway_size' must be numeric and >= min_pathway_size")
   }
 
   # Remove duplicates and missing values from input genes
@@ -242,19 +242,19 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
   }
 
   # Clean KEGG database
-  kegg.db_clean <- kegg.db %>%
+  kegg_db_clean <- kegg_db %>%
     dplyr::filter(
       !is.na(gene), !is.na(kegg.id), !is.na(kegg.term),
       gene != "", kegg.id != "", kegg.term != ""
     ) %>%
     dplyr::distinct()
 
-  if (nrow(kegg.db_clean) == 0) {
-    stop("No valid annotations remain in kegg.db after removing missing values")
+  if (nrow(kegg_db_clean) == 0) {
+    stop("No valid annotations remain in kegg_db after removing missing values")
   }
 
   # Check overlap between input genes and KEGG database
-  db_genes <- unique(kegg.db_clean$gene)
+  db_genes <- unique(kegg_db_clean$gene)
   overlapping_genes <- intersect(gene, db_genes)
 
   if (length(overlapping_genes) == 0) {
@@ -268,11 +268,11 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
   }
 
   # Prepare TERM2GENE and TERM2NAME mappings
-  term2gene <- kegg.db_clean %>%
+  term2gene <- kegg_db_clean %>%
     dplyr::select(kegg.id, gene) %>%
     dplyr::distinct()
 
-  term2name <- kegg.db_clean %>%
+  term2name <- kegg_db_clean %>%
     dplyr::select(kegg.id, kegg.term) %>%
     dplyr::distinct() %>%
     # Handle cases where one KEGG ID has multiple descriptions
@@ -283,11 +283,11 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
   # Check pathway sizes and filter
   pathway_sizes <- term2gene %>%
     dplyr::count(kegg.id, name = "pathway_size") %>%
-    dplyr::filter(pathway_size >= min.pathway.size, pathway_size <= max.pathway.size)
+    dplyr::filter(pathway_size >= min_pathway_size, pathway_size <= max_pathway_size)
 
   if (nrow(pathway_sizes) == 0) {
     stop(paste("No KEGG pathways meet the size criteria (",
-      min.pathway.size, "-", max.pathway.size, " genes)"))
+      min_pathway_size, "-", max_pathway_size, " genes)"))
   }
 
   # Filter TERM2GENE to include only pathways meeting size criteria
@@ -307,10 +307,10 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
         gene = gene,
         TERM2GENE = term2gene_filtered,
         TERM2NAME = term2name,
-        qvalueCutoff = p.adjust,
+        qvalueCutoff = p_adjust,
         pAdjustMethod = pAdjustMethod,
-        minGSSize = min.pathway.size,
-        maxGSSize = max.pathway.size
+        minGSSize = min_pathway_size,
+        maxGSSize = max_pathway_size
       )
     },
     error = function(e) {
@@ -377,9 +377,9 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
   attr(kegg_results, "genes_in_database") <- length(overlapping_genes)
   attr(kegg_results, "pathways_tested") <- n_pathways_to_test
   attr(kegg_results, "adjustment_method") <- pAdjustMethod
-  attr(kegg_results, "significance_threshold") <- p.adjust
-  attr(kegg_results, "min_pathway_size") <- min.pathway.size
-  attr(kegg_results, "max_pathway_size") <- max.pathway.size
+  attr(kegg_results, "significance_threshold") <- p_adjust
+  attr(kegg_results, "min_pathway_size") <- min_pathway_size
+  attr(kegg_results, "max_pathway_size") <- max_pathway_size
 
   # Print comprehensive summary if interactive
   if (interactive() && nrow(kegg_results) > 0) {
@@ -389,10 +389,10 @@ enrich_kegg <- function(gene, kegg.db, pAdjustMethod = "BH", p.adjust = 0.05,
     cat("Genes found in database:", length(overlapping_genes),
       paste0("(", round(100 * length(overlapping_genes) / length(gene), 1), "%)"), "\n")
     cat("Pathways tested:", n_pathways_to_test, "\n")
-    cat("Pathway size range:", min.pathway.size, "-", max.pathway.size, "genes\n")
+    cat("Pathway size range:", min_pathway_size, "-", max_pathway_size, "genes\n")
     cat("Significantly enriched pathways:", nrow(kegg_results), "\n")
     cat("Adjustment method:", pAdjustMethod, "\n")
-    cat("Significance threshold:", p.adjust, "\n\n")
+    cat("Significance threshold:", p_adjust, "\n\n")
 
     # Show top pathways
     cat("Top enriched pathways:\n")
