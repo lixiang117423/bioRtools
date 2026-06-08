@@ -12,6 +12,8 @@ microbiome_net(
   method = "mb",
   minSamples = 0.1,
   minReads = 10,
+  cor.threshold = 0.5,
+  cor.pvalue = 0.05,
   hubQuant = 0.95,
   clustMethod = "cluster_fast_greedy",
   pulsar.params = list(rep.num = 20),
@@ -30,7 +32,9 @@ sample names in \code{data} and a \code{groupCol} column for grouping.}
 \item{taxonomy}{Optional data frame of feature taxonomy. Row names or first
 column should match feature IDs in \code{data}.}
 
-\item{method}{SpiecEasi estimation method: "mb" (default) or "glasso".}
+\item{method}{Network construction method: "mb" (default), "glasso", or "cor".
+"mb" and "glasso" use sparse inverse covariance via huge+pulsar (memory-intensive).
+"cor" uses Spearman correlation with threshold filtering (fast, low memory).}
 
 \item{minSamples}{Minimum sample prevalence to keep a feature. If < 1,
 treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).}

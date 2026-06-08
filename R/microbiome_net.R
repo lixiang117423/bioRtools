@@ -11,7 +11,9 @@
 #' @param groupCol Column name in \code{sample} for grouping (default: "group").
 #' @param taxonomy Optional data frame of feature taxonomy. Row names or first
 #'   column should match feature IDs in \code{data}.
-#' @param method SpiecEasi estimation method: "mb" (default) or "glasso".
+#' @param method Network construction method: "mb" (default), "glasso", or "cor".
+#'   "mb" and "glasso" use sparse inverse covariance via huge+pulsar (memory-intensive).
+#'   "cor" uses Spearman correlation with threshold filtering (fast, low memory).
 #' @param minSamples Minimum sample prevalence to keep a feature. If < 1,
 #'   treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).
 #' @param minReads Minimum total reads to keep a feature (default: 10).
@@ -47,6 +49,7 @@
 #' }
 microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
                            method = "mb", minSamples = 0.1, minReads = 10,
+                           cor.threshold = 0.5, cor.pvalue = 0.05,
                            hubQuant = 0.95, clustMethod = "cluster_fast_greedy",
                            pulsar.params = list(rep.num = 20),
                            verbose = TRUE) {
@@ -139,52 +142,97 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
     if (verbose) message(sprintf("  Samples: %d, Features: %d", ncol(d_sub), nrow(d_sub)))
 
-    # CLR transformation (samples x features)
-    X <- t(d_sub) + 1  # pseudocount
-    X_clr <- scale(log(X), center = TRUE, scale = FALSE)
-    X_clr <- X_clr / sqrt(apply(X_clr^2, 1, sum))
-
-    # Sparse inverse covariance via huge + pulsar
-    est <- tryCatch({
-      huge::huge(X_clr, method = method, verbose = FALSE, cov.output = TRUE)
-    }, error = function(e) {
-      stop(sprintf("huge estimation failed for group '%s': %s", grp, e$message))
-    })
-
-    # Model selection via pulsar StARS
-    pp <- pulsar.params
-    if (is.null(pp$rep.num)) pp$rep.num <- 20
-    if (is.null(pp$thresh)) pp$thresh <- 0.05
-    pp$criterion <- "stars"
-
-    pulsar_out <- tryCatch({
-      pulsar::pulsar(X_clr,
-        fun = function(data, ...) huge::huge(data, method = method, cov.output = TRUE, ...),
-        fargs = list(lambda = est$lambda),
-        criterion = pp$criterion,
-        thresh = pp$thresh,
-        rep.num = pp$rep.num)
-    }, error = function(e) {
-      stop(sprintf("Pulsar model selection failed for group '%s': %s", grp, e$message))
-    })
-
-    opt_idx <- pulsar::opt.index(pulsar_out, "stars")
-    if (is.null(opt_idx) || is.na(opt_idx)) opt_idx <- length(est$lambda)
-
-    # Extract adjacency matrix at optimal lambda
-    if (method == "glasso") {
-      icov <- est$icov[[opt_idx]]
-      secor <- stats::cov2cor(solve(icov))
-      refit <- est$path[[opt_idx]]
-      adja <- as.matrix(secor * refit)
-    } else {
-      # mb method: symmetrize beta
-      beta <- as.matrix(est$beta[[opt_idx]])
-      adja <- (abs(beta) + t(abs(beta))) / 2
-      sign_mat <- sign(beta + t(beta))
-      adja <- adja * sign_mat
+    # Warn if features >> samples (memory risk in huge/pulsar)
+    if (nrow(d_sub) > ncol(d_sub) * 100) {
+      warning(sprintf(
+        "Group '%s': %d features / %d samples (ratio %.0f:1). Sparse estimation may be unstable or crash.\n  Consider increasing minSamples/minReads to reduce features to < %d.",
+        grp, nrow(d_sub), ncol(d_sub), round(nrow(d_sub) / ncol(d_sub)),
+        ncol(d_sub) * 50
+      ))
     }
-    colnames(adja) <- rownames(adja) <- rownames(d_sub)
+
+    # --- Build adjacency matrix ---
+    if (method == "cor") {
+      # Spearman correlation + threshold (fast, low memory)
+      if (verbose) message("  Method: Spearman correlation")
+      cor_mat <- stats::cor(t(d_sub), method = "spearman", use = "pairwise.complete.obs")
+
+      # P-value matrix
+      n_feat <- nrow(cor_mat)
+      p_upper <- numeric(n_feat * (n_feat - 1) / 2)
+      k <- 0
+      for (i in seq_len(n_feat - 1)) {
+        for (j in (i + 1):n_feat) {
+          k <- k + 1
+          p_upper[k] <- stats::cor.test(d_sub[i, ], d_sub[j, ],
+            method = "spearman", exact = FALSE)$p.value
+        }
+      }
+      p_adj_upper <- stats::p.adjust(p_upper, method = "BH")
+
+      # Reconstruct symmetric adjusted p-value matrix
+      p_adj <- matrix(1, n_feat, n_feat)
+      p_adj[upper.tri(p_adj)] <- p_adj_upper
+      p_adj[lower.tri(p_adj)] <- t(p_adj)[lower.tri(p_adj)]
+
+      # Threshold: |r| >= threshold AND padj < pvalue
+      adja <- cor_mat
+      adja[abs(cor_mat) < cor.threshold | p_adj >= cor.pvalue] <- 0
+      diag(adja) <- 0
+      colnames(adja) <- rownames(adja) <- rownames(d_sub)
+
+      # Store dummy objects for consistent output
+      est <- NULL
+      pulsar_out <- NULL
+      opt_idx <- NA
+    } else {
+      # CLR transformation (samples x features)
+      X <- t(d_sub) + 1  # pseudocount
+      X_clr <- scale(log(X), center = TRUE, scale = FALSE)
+      X_clr <- X_clr / sqrt(apply(X_clr^2, 1, sum))
+
+      # Sparse inverse covariance via huge + pulsar
+      if (verbose) message(sprintf("  Method: %s (huge + pulsar)", method))
+      est <- tryCatch({
+        huge::huge(X_clr, method = method, verbose = FALSE, cov.output = TRUE)
+      }, error = function(e) {
+        stop(sprintf("huge estimation failed for group '%s': %s", grp, e$message))
+      })
+
+      # Model selection via pulsar StARS
+      pp <- pulsar.params
+      if (is.null(pp$rep.num)) pp$rep.num <- 20
+      if (is.null(pp$thresh)) pp$thresh <- 0.05
+      pp$criterion <- "stars"
+
+      pulsar_out <- tryCatch({
+        pulsar::pulsar(X_clr,
+          fun = function(data, ...) huge::huge(data, method = method, cov.output = TRUE, ...),
+          fargs = list(lambda = est$lambda),
+          criterion = pp$criterion,
+          thresh = pp$thresh,
+          rep.num = pp$rep.num)
+      }, error = function(e) {
+        stop(sprintf("Pulsar model selection failed for group '%s': %s", grp, e$message))
+      })
+
+      opt_idx <- pulsar::opt.index(pulsar_out, "stars")
+      if (is.null(opt_idx) || is.na(opt_idx)) opt_idx <- length(est$lambda)
+
+      # Extract adjacency matrix at optimal lambda
+      if (method == "glasso") {
+        icov <- est$icov[[opt_idx]]
+        secor <- stats::cov2cor(solve(icov))
+        refit <- est$path[[opt_idx]]
+        adja <- as.matrix(secor * refit)
+      } else {
+        beta <- as.matrix(est$beta[[opt_idx]])
+        adja <- (abs(beta) + t(abs(beta))) / 2
+        sign_mat <- sign(beta + t(beta))
+        adja <- adja * sign_mat
+      }
+      colnames(adja) <- rownames(adja) <- rownames(d_sub)
+    }
 
     # Convert to igraph (absolute weights for structure, sign stored as edge attr)
     abs_adja <- abs(adja)
