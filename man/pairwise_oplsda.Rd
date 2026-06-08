@@ -47,9 +47,9 @@ A named list with:
     \item{\code{model_summary}}{Data frame with one row per comparison,
       containing R2Y, Q2Y, n_samples, n_variables, n_important, and the
       comparison label.}
-    \item{\code{scores}}{Named list of score data frames, one per comparison.
-      Each has columns \code{t1}, \code{to1} (if available), \code{sample_id},
-      and \code{group}.}
+    \item{\code{scores}}{Data frame of sample scores for all comparisons,
+      with columns \code{t1}, \code{to1} (if available), \code{sample_id},
+      \code{group}, and \code{comparison}.}
     \item{\code{models}}{Named list of raw \code{ropls} model objects.}
   }
 }
