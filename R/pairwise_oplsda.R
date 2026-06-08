@@ -27,9 +27,9 @@
 #'     \item{\code{model_summary}}{Data frame with one row per comparison,
 #'       containing R2Y, Q2Y, n_samples, n_variables, n_important, and the
 #'       comparison label.}
-#'     \item{\code{scores}}{Named list of score data frames, one per comparison.
-#'       Each has columns \code{t1}, \code{to1} (if available), \code{sample_id},
-#'       and \code{group}.}
+#'     \item{\code{scores}}{Data frame of sample scores for all comparisons,
+#'       with columns \code{t1}, \code{to1} (if available), \code{sample_id},
+#'       \code{group}, and \code{comparison}.}
 #'     \item{\code{models}}{Named list of raw \code{ropls} model objects.}
 #'   }
 #'
@@ -154,6 +154,7 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
       t1 = opls_model@scoreMN[, 1],
       sample_id = rownames(data_sub),
       group = group_sub,
+      comparison = comp_label,
       stringsAsFactors = FALSE
     )
     if (!is.null(opls_model@orthoScoreMN) && ncol(opls_model@orthoScoreMN) > 0) {
@@ -186,7 +187,7 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
     return(list(
       vip_scores    = data.frame(),
       model_summary = data.frame(),
-      scores        = list(),
+      scores        = data.frame(),
       models        = list()
     ))
   }
@@ -198,15 +199,16 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
   summary_combined <- do.call(rbind, lapply(results, `[[`, "summary"))
   rownames(summary_combined) <- NULL
 
-  scores_list <- setNames(lapply(results, `[[`, "scores"),
-                          sapply(results, function(x) x$summary$comparison))
+  scores_combined <- do.call(rbind, lapply(results, `[[`, "scores"))
+  rownames(scores_combined) <- NULL
+
   models_list <- setNames(lapply(results, `[[`, "model"),
                           sapply(results, function(x) x$summary$comparison))
 
   list(
     vip_scores    = vip_combined,
     model_summary = summary_combined,
-    scores        = scores_list,
+    scores        = scores_combined,
     models        = models_list
   )
 }

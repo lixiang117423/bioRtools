@@ -245,7 +245,7 @@ result <- pav_gwas(
 result <- pav_gwas(
   pav_data = df.kmer.gwas,     # With positional information
   phenotype_data = df.sample.gwas,
-  output_dir = "D://OneDrive/NAS/01.科研相关/00.博后/02.data/03.大豆根腐项目/result/01.两个基因变异情况/kmer_gwas/"
+  output_dir = tempdir()
 )
 
 # Three-class phenotype analysis

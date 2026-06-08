@@ -5,7 +5,7 @@
 \alias{df.top10.class}
 \title{Test data.}
 \format{
-## `df.top10.calss`
+## `df.top10.class`
 A data frame with 9 rows and 2 columns:
 \describe{
 }

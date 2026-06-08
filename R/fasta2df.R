@@ -541,7 +541,7 @@ fasta2df <- function(fasta,
   }
 
   # Pre-allocate result vectors for optimal memory usage
-  sequence_ids <- lines[header_positions]
+  sequence_ids <- sub("^>", "", lines[header_positions])
   sequences <- character(n_sequences)
 
   # Efficiently determine sequence boundaries
