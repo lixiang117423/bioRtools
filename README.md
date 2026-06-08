@@ -1,7 +1,7 @@
 # bioRtools
 
 [![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.16.1-green)](https://github.com/lixiang117423/bioRtools)
+[![Version](https://img.shields.io/badge/version-1.20.1-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
 `bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
@@ -77,10 +77,12 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 - `rarefy_table()` - Rarefaction
 - `top_taxa()` - Top taxa extraction
 - `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
+- `microbiome_net()` - Microbiome network analysis via SpiecEasi (construction, centrality, hubs, clusters, multi-group comparison)
+- `net2ggnetview()` - Convert microbiome_net result to ggNetView-compatible tbl_graph for network visualization
 
 ### Transcriptomics and Enrichment
 
-- `find_degs_deseq2()` - DESeq2 differential expression analysis
+- `find_degs_deseq2()` - DESeq2 differential expression analysis (supports pairwise mode)
 - `enrich_go()` - GO enrichment
 - `enrich_kegg()` - KEGG enrichment
 - `plot_volcano()`, `plot_multi_volcano()` - Volcano plots
@@ -97,6 +99,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 ### Metabolomics and Multivariate Models
 
 - `opls_analysis()` - OPLS-DA
+- `pairwise_oplsda()` - Pairwise OPLS-DA across all group combinations
 - `spls_analysis()` - sPLS-DA
 
 ### Population Genetics and Genomics
@@ -119,15 +122,18 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 
 ### Data Conversion and Row Utilities
 
-- `df_to_list()` - Convert data frame to list
 - `df2fasta()`, `fasta2df()` - FASTA/data-frame conversion
+- `read_data()`, `write_data()` - Auto-detect file format read/write (xlsx, csv, tsv, txt, fasta, rds, sh, pdf, png)
+- `col2file()` - Export a data frame column to plain text
+- `replace_na_as()` - Replace all NA values in a data frame (default: 0)
+- `ggsave2()` - ggsave wrapper with width=8, height=6, dpi=600 defaults
 - `get_methylkit_data()` - Extract methylKit data
 - `normalize_int()`, `scale01()`, `scale01_rows()`, `scale01_groups()`, `mutate_scale01()`, `mutate_scale01_named()` - Normalization helpers
 - `row_mean()`, `row_sd()`, `row_cv()`, `row_min()`, `row_max()` - Row statistics
 
 ### Themes and Palettes
 
-- `theme_bio()`, `theme_prism()` - Plot themes
+- `theme_prism()` - Publication-ready plot theme
 - `pal_sci()`, `pal_nature()`, `pal_science()`, `pal_cell()`, `pal_jacs()`, `pal_fuel()`, `pal_chem_eng()`, `pal_nat_comm()`, `pal_shinkai()`, `pal_research()` - Academic palettes
 - `scale_color_*()`, `scale_colour_*()`, and `scale_fill_*()` variants are available for discrete and continuous palette scales
 
@@ -281,7 +287,7 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.16.1`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.20.1`.
 
 ## Citation
 
@@ -289,7 +295,7 @@ If you use `bioRtools` in your research, please cite:
 
 ```text
 Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.16.1. https://github.com/lixiang117423/bioRtools
+R package version 1.20.1. https://github.com/lixiang117423/bioRtools
 ```
 
 ## Contributing
