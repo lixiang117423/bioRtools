@@ -98,7 +98,7 @@ calc_expression_delta_delta_ct <- function(cq_table,
   summary_with_stats <- add_statistical_annotations(summary_table, statistical_results)
 
   # Create plot
-  plot_result <- create_ddct_plot(summary_with_stats, plot_type, plot_ncol)
+  plot_result <- create_ddct_plot(summary_with_stats, expression_data, plot_type, plot_ncol)
 
   return(list(
     expression_data = expression_data,
@@ -378,7 +378,7 @@ add_statistical_annotations <- function(summary_table, statistical_results) {
 
 #' Create delta-delta Ct plot
 #' @keywords internal
-create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
+create_ddct_plot <- function(summary_data, expression_data, plot_type, plot_ncol) {
 
   if (nrow(summary_data) == 0) {
     warning("No data available for plotting")
@@ -423,17 +423,26 @@ create_ddct_plot <- function(summary_data, plot_type, plot_ncol) {
         axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)
       )
 
-  } else { # box plot style with bars
-    p <- ggplot2::ggplot(plot_data, ggplot2::aes(.data$treatment, .data$expression,
-      fill = .data$treatment)) +
+  } else { # box plot with individual data points
+    p <- ggplot2::ggplot(summary_data, ggplot2::aes(.data$group, .data$mean_expression,
+      fill = .data$group)) +
       ggplot2::geom_col(alpha = 0.7, width = 0.6) +
       ggplot2::geom_errorbar(
-        ggplot2::aes(ymin = pmax(0, .data$expression - .data$se_expr),
-          ymax = .data$expression + .data$se_expr),
+        ggplot2::aes(ymin = pmax(0, .data$mean_expression - .data$se_expression),
+          ymax = .data$mean_expression + .data$se_expression),
         width = 0.2
       ) +
+      ggplot2::geom_jitter(
+        data = expression_data,
+        ggplot2::aes(x = .data$group, y = .data$relative_expression),
+        width = 0.15,
+        size = 1.5,
+        alpha = 0.6,
+        inherit.aes = FALSE
+      ) +
       ggplot2::geom_text(
-        ggplot2::aes(y = .data$expression + .data$se_expr + max(.data$expression) * 0.05,
+        data = summary_data,
+        ggplot2::aes(y = .data$mean_expression + .data$se_expression + max(.data$mean_expression) * 0.05,
           label = .data$significance),
         vjust = 0,
         size = 4
@@ -491,29 +500,4 @@ CalExp2ddCt <- function(cq.table, design.table, ref.gene = "OsUBQ",
     })
 }
 
-# Output column explanations:
-#
-# expression_data:
-# - group: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed (excludes reference gene)
-# - bio_rep: Biological replicate identifier
-# - relative_expression: Relative expression calculated using 2^-ddCt method
-# - delta_ct: Delta Ct value (target gene Cq - reference gene Cq)
-# - delta_delta_ct: Delta-delta Ct value (delta_ct - delta_ct_reference_group)
-#
-# summary_table:
-# - group: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed
-# - n_replicates: Number of biological replicates
-# - mean_expression: Mean relative expression level (2^-ddCt)
-# - sd_expression: Standard deviation of relative expression values
-# - se_expression: Standard error of relative expression values
-# - mean_delta_ct: Mean delta Ct value
-# - mean_delta_delta_ct: Mean delta-delta Ct value
-# - significance: Statistical significance annotation (*, **, ***, NS)
-#
-# statistical_results:
-# - gene: Target gene name
-# - group: Treatment group (compared to reference group)
-# - p: P-value from statistical test
-# - significance: Significance level or letters for multiple comparisons
+

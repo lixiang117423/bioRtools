@@ -541,44 +541,4 @@ CalExpCurve <- function(cq.table, curve.table, design.table,
     })
 }
 
-# Output column explanations:
-#
-# expression_data:
-# - treatment: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed
-# - expression: Calculated expression value (normalized if reference gene used)
-#
-# summary_table:
-# - treatment: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed
-# - n_replicates: Number of replicates per group
-# - mean_expression: Mean expression level
-# - sd_expression: Standard deviation of expression values
-# - se_expression: Standard error of expression values
-# - min_expression: Minimum expression value
-# - max_expression: Maximum expression value
-# - significance: Statistical significance annotation (*, **, ***, NS, letters; empty for reference group)
-#
-# Additional statistical columns (depending on method):
-# For t.test:
-# - p_value: P-value from t-test (NA for reference group)
-# - t_statistic: T-statistic value (NA for reference group)
-# - df: Degrees of freedom (NA for reference group)
-#
-# For wilcox.test:
-# - p_value: P-value from Wilcoxon test (NA for reference group)
-# - w_statistic: W-statistic value (NA for reference group)
-#
-# For anova:
-# - f_statistic: F-statistic from ANOVA
-# - p_value_anova: P-value from ANOVA F-test
-# - df1, df2: Degrees of freedom
-#
-# curve_warnings:
-# - out_of_range_positions: Positions with Cq values outside curve range
-# - message: Warning message about out-of-range values
-#
-# Expression calculation:
-# 1. Standard curve: expression = 10^((Cq - Intercept) / Slope)
-# 2. Reference normalization: normalized_expression = target_expression / reference_expression
-# 3. Quality control: warnings for Cq values outside calibration range
+

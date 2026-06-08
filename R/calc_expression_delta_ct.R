@@ -122,14 +122,14 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
     dplyr::select(-group_biorep) %>%
     dplyr::mutate(
       delta_ct = .data$cq - .data$mean_ref_cq,
-      expre = 2^(.data$mean_ref_cq - .data$cq)  # Keep original variable name
+      relative_expression = 2^(.data$mean_ref_cq - .data$cq)
     ) %>%
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::mutate(
-      n = dplyr::n(),
-      mean.expre = mean(.data$expre, na.rm = TRUE),
-      sd.expre = stats::sd(.data$expre, na.rm = TRUE),
-      se.expre = .data$sd.expre / sqrt(.data$n)
+      n_replicates = dplyr::n(),
+      mean_expression = mean(.data$relative_expression, na.rm = TRUE),
+      sd_expression = stats::sd(.data$relative_expression, na.rm = TRUE),
+      se_expression = .data$sd_expression / sqrt(.data$n_replicates)
     ) %>%
     dplyr::ungroup()
 
@@ -144,8 +144,8 @@ calculate_expression_summary <- function(expression_data) {
     dplyr::group_by(.data$group, .data$gene) %>%
     dplyr::summarise(
       n_replicates = dplyr::n(),
-      mean_expression = mean(.data$expre, na.rm = TRUE),
-      sd_expression = stats::sd(.data$expre, na.rm = TRUE),
+      mean_expression = mean(.data$relative_expression, na.rm = TRUE),
+      sd_expression = stats::sd(.data$relative_expression, na.rm = TRUE),
       se_expression = .data$sd_expression / sqrt(.data$n_replicates),
       mean_delta_ct = mean(.data$delta_ct, na.rm = TRUE),
       sd_delta_ct = stats::sd(.data$delta_ct, na.rm = TRUE),
@@ -185,13 +185,13 @@ create_expression_plot <- function(summary_table) {
       position = ggplot2::position_dodge(width = 0.8),
       alpha = 0.7,
       color = "black",
-      size = 0.3
+      linewidth = 0.3
     ) +
     ggplot2::geom_errorbar(
       ggplot2::aes(ymin = .data$error_min, ymax = .data$error_max),
       position = ggplot2::position_dodge(width = 0.8),
       width = 0.25,
-      size = 0.5
+      linewidth = 0.5
     ) +
     ggplot2::facet_wrap(~ .data$gene, scales = "free_y", ncol = 3) +
     ggplot2::labs(
@@ -213,76 +213,14 @@ create_expression_plot <- function(summary_table) {
   return(plot_result)
 }
 
-# 为向后兼容保留原函数名和行为
+# For backward compatibility
 CalExp2dCt <- function(cq.table, design.table, ref.gene = "Actin") {
-  # 直接使用原有逻辑，保持完全兼容
-  merged_data <- cq.table %>%
-    dplyr::left_join(design.table, by = "Position") %>%
-    dplyr::rename(
-      position = Position,
-      cq = Cq,
-      group = Group,
-      gene = Gene,
-      biorep = BioRep
-    )
-
-  # 计算参考基因平均值
-  reference_stats <- merged_data %>%
-    dplyr::filter(.data$gene == ref.gene) %>%
-    dplyr::group_by(.data$group, .data$biorep) %>%
-    dplyr::mutate(
-      mean.cq = mean(.data$cq),
-      temp = paste0(.data$group, .data$biorep)
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(.data$temp, .data$mean.cq) %>%
-    dplyr::distinct_all()
-
-  # 计算目标基因表达量
-  expression_results <- merged_data %>%
-    dplyr::filter(.data$gene != ref.gene) %>%
-    dplyr::mutate(temp = paste0(.data$group, .data$biorep)) %>%
-    dplyr::left_join(reference_stats, by = "temp") %>%
-    dplyr::select(-temp) %>%
-    dplyr::mutate(expre = 2^(.data$mean.cq - .data$cq)) %>%
-    dplyr::group_by(.data$group, .data$gene) %>%
-    dplyr::mutate(
-      n = dplyr::n(),
-      mean.expre = mean(.data$expre),
-      sd.expre = stats::sd(.data$expre),
-      se.expre = .data$sd.expre / sqrt(.data$n)
-    ) %>%
-    dplyr::ungroup()
-
-  return(expression_results)
+  calc_expression_delta_ct(
+    cq_table = cq.table,
+    design_table = design.table,
+    reference_gene = ref.gene,
+    create_plot = FALSE
+  )$expression_data
 }
 
-# Output column explanations:
-#
-# For calc_expression_delta_ct():
-# expression_data:
-# - position: Original well position from the qPCR plate
-# - cq: Quantification cycle value for the target gene
-# - group: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed
-# - bio_rep: Biological replicate identifier
-# - mean_ref_cq: Mean Cq value of the reference gene for the same biological replicate
-# - delta_ct: Delta Ct value (target Cq - reference Cq)
-# - expre: Relative expression calculated as 2^(mean_ref_cq - cq) using 2^-ΔCt method
-# - n: Number of technical replicates for each group-gene combination
-# - mean.expre: Mean relative expression across technical replicates
-# - sd.expre: Standard deviation of relative expression values
-# - se.expre: Standard error of relative expression (sd.expre / sqrt(n))
-#
-# summary_table:
-# - group: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed
-# - n_replicates: Number of technical replicates
-# - mean_expression: Mean relative expression level
-# - sd_expression: Standard deviation of expression values
-# - se_expression: Standard error of expression values
-# - mean_delta_ct: Mean delta Ct value
-# - sd_delta_ct: Standard deviation of delta Ct values
-#
-# For CalExp2dCt() (backward compatibility):
-# Same as expression_data above, maintaining exact original output format
+

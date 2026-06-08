@@ -402,30 +402,4 @@ CalCurve <- function(cq.table, concentration.table, highest.concentration,
   return(result)
 }
 
-# Output column explanations:
-#
-# table:
-# - Gene: Gene name (from concentration_table, provided gene_name, or "Unknown_Gene")
-# - Formula: Linear regression equation (y = slope*log_conc + intercept)
-# - Slope: Slope of the regression line
-# - Intercept: Y-intercept of the regression line
-# - R2: R-squared value (coefficient of determination)
-# - P_value: P-value of the regression model
-# - Max_Cq: Maximum Cq value in the dataset for this gene
-# - Min_Cq: Minimum Cq value in the dataset for this gene
-# - Efficiency: Amplification efficiency (calculated as dilution_factor^(-1/slope) - 1)
-# - Efficiency_Percent: Efficiency expressed as percentage
-# - Efficiency_Quality: Quality assessment of efficiency (Excellent/Good/Acceptable/Poor)
-# - Method_Recommendation: Recommended qPCR quantification method based on efficiency
-# - Date: Date of analysis
-#
-# Efficiency interpretation:
-# - 90-110%: Excellent - Can use 2^-ΔΔCt method
-# - 80-120%: Good - Efficiency correction recommended
-# - 70-130%: Acceptable - Standard curve method preferred
-# - <70% or >130%: Poor - Check primer design and PCR conditions
-#
-# Method recommendations:
-# - 2^-ΔΔCt method: For high efficiency primers (90-110%)
-# - Efficiency correction method: For good efficiency primers (80-120%)
-# - Standard curve method: Required for poor efficiency primers
+

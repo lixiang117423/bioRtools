@@ -4,7 +4,7 @@
 \alias{create_ddct_plot}
 \title{Create delta-delta Ct plot}
 \usage{
-create_ddct_plot(summary_data, plot_type, plot_ncol)
+create_ddct_plot(summary_data, expression_data, plot_type, plot_ncol)
 }
 \description{
 Create delta-delta Ct plot
