@@ -86,7 +86,7 @@
 
 #' Test data.
 #'
-#' @format ## `df.rnaseq.plot_volcano`
+#' @format ## `df.rnaseq.plot.volcano`
 #' A data frame with 57,359 rows and 8 columns:
 #' \describe{
 #'   \item{gene}{gene name}
@@ -99,7 +99,7 @@
 #'   \item{group}{group}
 #' }
 #' @source Xiang Li
-"df.rnaseq.plot_volcano"
+"df.rnaseq.plot.volcano"
 
 #' Test data.
 #'
@@ -152,21 +152,21 @@
 
 #' Test data.
 #'
-#' @format ## `df.call_DAMs_LEfSe.otu`
+#' @format ## `df.call_dams_lefse.otu`
 #' A data frame with 9 rows and 2 columns:
 #' \describe{
 #' }
 #' @source Xiang Li
-"df.call_DAMs_LEfSe.otu"
+"df.call_dams_lefse.otu"
 
 #' Test data.
 #'
-#' @format ## `df.call_DAMs_LEfSe.sample`
+#' @format ## `df.call_dams_lefse.sample`
 #' A data frame with 9 rows and 2 columns:
 #' \describe{
 #' }
 #' @source Xiang Li
-"df.call_DAMs_LEfSe.sample"
+"df.call_dams_lefse.sample"
 
 #' Test data.
 #'

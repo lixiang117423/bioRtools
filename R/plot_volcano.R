@@ -65,10 +65,10 @@
 #' library(bioRtools)
 #'
 #' # Load example data
-#' data(df.rnaseq.plot_volcano)
+#' data(df.rnaseq.plot.volcano)
 #'
 #' # Basic volcano plot
-#' volcano_result <- plot_volcano(data = df.rnaseq.plot_volcano)
+#' volcano_result <- plot_volcano(data = df.rnaseq.plot.volcano)
 #' volcano_result$plot.volcano
 #'
 #' # View summary statistics
@@ -76,7 +76,7 @@
 #'
 #' # Customized volcano plot with different thresholds
 #' volcano_custom <- plot_volcano(
-#'   data = df.rnaseq.plot_volcano,
+#'   data = df.rnaseq.plot.volcano,
 #'   xintercept_abs = 1.5,
 #'   yintercept = 0.01,
 #'   title = "Differential Expression Analysis",
@@ -86,7 +86,7 @@
 #'
 #' # Using different column names
 #' plot_volcano(
-#'   data = df.rnaseq.plot_volcano,
+#'   data = df.rnaseq.plot.volcano,
 #'   x = "log2FoldChange",
 #'   y = "pvalue",  # Use raw p-values instead of adjusted
 #'   color = "group",

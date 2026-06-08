@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0] - 2026-06-08
+
+### Changed
+- Standardize qPCR function output column names to snake_case (`expre`→`relative_expression`, `Expre4Stat`→`expression_value`, `Expression`→`mean_expression`, `SD`→`sd_expression`, `SE`→`se_expression`, `signif`→`significance`, etc.)
+- Fix `create_ddct_plot` box/bar plot duplication (box now shows individual data points)
+- Replace deprecated `tidyr::spread` with `tidyr::pivot_wider`
+- Replace deprecated ggplot2 `size` with `linewidth` for line elements
+- Rename data files for naming consistency: `df.call_DAMs_LEfSe.*`→`df.call_dams_lefse.*`, `df.rnaseq.plot_volcano`→`df.rnaseq.plot.volcano`
+- Remove redundant bottom-of-file comments from qPCR functions
+
+
 ## [1.21.0] - 2026-06-08
 
 ### Added

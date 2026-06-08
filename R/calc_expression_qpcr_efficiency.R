@@ -24,7 +24,7 @@
 #'
 #' @importFrom dplyr left_join filter group_by mutate ungroup select summarise
 #'   case_when n rename
-#' @importFrom tidyr spread
+#' @importFrom tidyr pivot_wider
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_bar geom_errorbar
 #'   geom_text facet_wrap labs theme element_text
 #' @importFrom ggthemes theme_pander
@@ -105,14 +105,12 @@ calc_expression_qpcr_efficiency <- function(cq_table,
 
   # Clean up results to include statistical information
   final_results <- results_with_stats %>%
-    dplyr::select(-.data$temp, -.data$eff) %>%
-    # Reorder columns to have main results first, then statistical info
-    dplyr::select(.data$group, .data$gene, .data$biorep, .data$Expre4Stat,
-      .data$Expression, .data$SD, .data$SE, .data$signif,
+    dplyr::select(-.data$temp, -.data$efficiency) %>%
+    dplyr::select(.data$group, .data$gene, .data$bio_rep, .data$expression_value,
+      .data$mean_expression, .data$sd_expression, .data$se_expression, .data$significance,
       dplyr::everything()) %>%
-    # Round numerical columns for better display
     dplyr::mutate(
-      across(c(.data$Expre4Stat, .data$Expression, .data$SD, .data$SE), ~ round(.x, 4)),
+      across(c(.data$expression_value, .data$mean_expression, .data$sd_expression, .data$se_expression), ~ round(.x, 4)),
       across(matches("p_value|statistic"), ~ round(.x, 6))
     )
 
@@ -130,9 +128,9 @@ merge_qpcr_data <- function(cq_table, design_table) {
       cq = Cq,
       group = Group,
       gene = Gene,
-      biorep = BioRep,
-      techrep = TechRep,
-      eff = Eff
+      bio_rep = BioRep,
+      tech_rep = TechRep,
+      efficiency = Eff
     )
 
   return(df)
@@ -147,7 +145,7 @@ validate_qpcr_inputs_fixed <- function(merged_data, statistical_method, plot_typ
   }
 
   # Check required columns in merged data
-  required_cols <- c("position", "cq", "group", "gene", "biorep", "techrep", "eff")
+  required_cols <- c("position", "cq", "group", "gene", "bio_rep", "tech_rep", "efficiency")
   missing_cols <- setdiff(required_cols, names(merged_data))
   if (length(missing_cols) > 0) {
     stop(sprintf("Merged data missing required columns: %s",
@@ -163,7 +161,7 @@ validate_qpcr_inputs_fixed <- function(merged_data, statistical_method, plot_typ
     stop("All Cq values are missing")
   }
 
-  if (all(is.na(merged_data$eff))) {
+  if (all(is.na(merged_data$efficiency))) {
     stop("All efficiency values are missing")
   }
 
@@ -185,18 +183,18 @@ validate_qpcr_inputs_fixed <- function(merged_data, statistical_method, plot_typ
 calculate_qpcr_expression <- function(df) {
 
   df_expression <- df %>%
-    dplyr::group_by(.data$biorep, .data$group, .data$gene) %>%
+    dplyr::group_by(.data$bio_rep, .data$group, .data$gene) %>%
     dplyr::mutate(
-      mean.cq = mean(.data$cq, na.rm = TRUE),
-      sd.cq = stats::sd(.data$cq, na.rm = TRUE),
-      sd.cq = ifelse(is.na(.data$sd.cq), 0, .data$sd.cq)
+      mean_cq = mean(.data$cq, na.rm = TRUE),
+      sd_cq = stats::sd(.data$cq, na.rm = TRUE),
+      sd_cq = ifelse(is.na(.data$sd_cq), 0, .data$sd_cq)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::group_by(.data$biorep, .data$gene) %>%
+    dplyr::group_by(.data$bio_rep, .data$gene) %>%
     dplyr::mutate(
-      min.mean.cq = min(.data$mean.cq),
-      QCq = .data$eff^(.data$min.mean.cq - .data$mean.cq),
-      SD_QCq = .data$sd.cq * .data$QCq * log(.data$eff)
+      min_mean_cq = min(.data$mean_cq),
+      corrected_cq = .data$efficiency^(.data$min_mean_cq - .data$mean_cq),
+      sd_corrected_cq = .data$sd_cq * .data$corrected_cq * log(.data$efficiency)
     ) %>%
     dplyr::ungroup()
 
@@ -217,11 +215,11 @@ find_reference_genes_original <- function(df_expression) {
     {
       # Reproduce original GeNorm algorithm exactly
       df_ref <- df_expression %>%
-        dplyr::select(.data$group, .data$gene, .data$cq, .data$biorep, .data$techrep) %>%
+        dplyr::select(.data$group, .data$gene, .data$cq, .data$bio_rep, .data$tech_rep) %>%
         dplyr::mutate(
-          Treatment = paste0(.data$group, .data$biorep, .data$techrep)
+          Treatment = paste0(.data$group, .data$bio_rep, .data$tech_rep)
         ) %>%
-        tidyr::spread(key = .data$gene, value = .data$cq)
+        tidyr::pivot_wider(names_from = .data$gene, values_from = .data$cq)
 
       df_temp <- df_ref[, 5:ncol(df_ref)] %>% as.data.frame()
 
@@ -345,21 +343,21 @@ calculate_normalization_factors_original <- function(df_expression, reference_ge
 
   df_factor <- df_expression %>%
     dplyr::filter(.data$gene %in% reference_gene) %>%
-    dplyr::mutate(temp_2 = paste0(.data$group, .data$biorep, .data$gene))
+    dplyr::mutate(temp_2 = paste0(.data$group, .data$bio_rep, .data$gene))
 
   df_factor <- df_factor[!duplicated(df_factor$temp_2), ] %>% as.data.frame()
 
   factor_df <- data.frame()
 
-  for (i in unique(df_factor$biorep)) {
-    df_temp <- df_factor %>% dplyr::filter(.data$biorep == i)
+  for (i in unique(df_factor$bio_rep)) {
+    df_temp <- df_factor %>% dplyr::filter(.data$bio_rep == i)
     for (j in unique(df_temp$group)) {
       df_temp_2 <- df_temp %>%
         dplyr::filter(.data$group == j) %>%
-        dplyr::select(.data$group, .data$QCq)
+        dplyr::select(.data$group, .data$corrected_cq)
 
       if (nrow(df_temp_2) > 0) {
-        fac <- data.frame(group = j, biorep = i, factor = geometric_mean(df_temp_2$QCq))
+        fac <- data.frame(group = j, bio_rep = i, factor = geometric_mean(df_temp_2$corrected_cq))
         factor_df <- rbind(factor_df, fac)
       }
     }
@@ -370,15 +368,15 @@ calculate_normalization_factors_original <- function(df_expression, reference_ge
   }
 
   factor_df <- factor_df %>%
-    dplyr::mutate(temp_2 = paste0(.data$group, .data$biorep)) %>%
+    dplyr::mutate(temp_2 = paste0(.data$group, .data$bio_rep)) %>%
     dplyr::select(.data$temp_2, .data$factor)
 
   df_factor <- df_factor %>%
-    dplyr::mutate(temp_2 = paste0(.data$group, .data$biorep)) %>%
+    dplyr::mutate(temp_2 = paste0(.data$group, .data$bio_rep)) %>%
     merge(factor_df, by = "temp_2") %>%
-    dplyr::mutate(SD.factor = (.data$SD_QCq / (length(reference_gene) * (.data$QCq)))^2) %>%
-    dplyr::group_by(.data$biorep, .data$group) %>%
-    dplyr::mutate(SD.factor = sqrt(sum(.data$SD.factor, na.rm = TRUE)) * .data$factor)
+    dplyr::mutate(sd_factor = (.data$sd_corrected_cq / (length(reference_gene) * (.data$corrected_cq)))^2) %>%
+    dplyr::group_by(.data$bio_rep, .data$group) %>%
+    dplyr::mutate(sd_factor = sqrt(sum(.data$sd_factor, na.rm = TRUE)) * .data$factor)
 
   return(df_factor)
 }
@@ -389,42 +387,39 @@ calculate_corrected_expression_original <- function(df_expression, reference_gen
 
   df_goi <- df_expression %>%
     dplyr::filter(!.data$gene %in% reference_gene) %>%
-    dplyr::mutate(temp_2 = paste0(.data$group, .data$biorep)) %>%
-    merge(df_factor[, c("temp_2", "factor", "SD.factor")], by = "temp_2") %>%
+    dplyr::mutate(temp_2 = paste0(.data$group, .data$bio_rep)) %>%
+    merge(df_factor[, c("temp_2", "factor", "sd_factor")], by = "temp_2") %>%
     dplyr::mutate(
-      expression = .data$QCq / .data$factor,
-      SD_1 = .data$expression * sqrt((.data$SD_QCq / .data$QCq)^2 + (.data$SD.factor / .data$factor)^2),
-      SE_1 = .data$SD_1 / sqrt(2)
+      expression = .data$corrected_cq / .data$factor,
+      sd_value = .data$expression * sqrt((.data$sd_corrected_cq / .data$corrected_cq)^2 + (.data$sd_factor / .data$factor)^2),
+      se_value = .data$sd_value / sqrt(2)
     )
 
-  # Calculate mean expression exactly as original
+  # Calculate mean expression
   res_all <- df_goi %>%
     dplyr::ungroup() %>%
     dplyr::group_by(.data$gene, .data$group) %>%
     dplyr::mutate(
-      mean.expression = mean(unique(.data$expression), na.rm = TRUE),
-      sd.expression = stats::sd(unique(.data$expression), na.rm = TRUE),
-      se.expression = .data$sd.expression / sqrt(length(unique(.data$biorep)))
+      mean_expression = mean(unique(.data$expression), na.rm = TRUE),
+      sd_expression = stats::sd(unique(.data$expression), na.rm = TRUE),
+      se_expression = .data$sd_expression / sqrt(length(unique(.data$bio_rep)))
     ) %>%
     dplyr::ungroup() %>%
     dplyr::group_by(.data$gene) %>%
     dplyr::mutate(
-      min.expression = min(.data$mean.expression, na.rm = TRUE),
-      mean.expression = .data$mean.expression / .data$min.expression,
-      sd.expression = .data$sd.expression / .data$min.expression,
-      se.expression = .data$se.expression / .data$min.expression
+      min_expression = min(.data$mean_expression, na.rm = TRUE),
+      mean_expression = .data$mean_expression / .data$min_expression,
+      sd_expression = .data$sd_expression / .data$min_expression,
+      se_expression = .data$se_expression / .data$min_expression
     ) %>%
     dplyr::select(
-      .data$group, .data$gene, .data$eff, .data$expression, .data$biorep,
-      .data$mean.expression, .data$sd.expression, .data$se.expression
+      .data$group, .data$gene, .data$efficiency, .data$expression, .data$bio_rep,
+      .data$mean_expression, .data$sd_expression, .data$se_expression
     ) %>%
     dplyr::rename(
-      Expre4Stat = .data$expression,
-      Expression = .data$mean.expression,
-      SD = .data$sd.expression,
-      SE = .data$se.expression
+      expression_value = .data$expression
     ) %>%
-    dplyr::mutate(temp = paste0(.data$group, .data$gene, .data$biorep)) %>%
+    dplyr::mutate(temp = paste0(.data$group, .data$gene, .data$bio_rep)) %>%
     dplyr::filter(!duplicated(.data$temp)) %>%
     dplyr::select(-.data$temp) %>%
     dplyr::mutate(temp = paste0(.data$gene, .data$group))
@@ -442,13 +437,13 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
         # Perform t-test for all non-reference groups
         stat_results <- res_all %>%
           dplyr::group_by(.data$gene) %>%
-          rstatix::t_test(.data$Expre4Stat ~ .data$group, ref.group = reference_group) %>%
+          rstatix::t_test(.data$expression_value ~ .data$group, ref.group = reference_group) %>%
           dplyr::ungroup() %>%
           dplyr::select(.data$gene, .data$group2, .data$p, .data$statistic, .data$df) %>%
           dplyr::mutate(
             p_value = round(.data$p, 6),
             t_statistic = round(.data$statistic, 4),
-            signif = dplyr::case_when(
+            significance = dplyr::case_when(
               .data$p < 0.001 ~ "***",
               .data$p > 0.001 & .data$p < 0.01 ~ "**",
               .data$p > 0.01 & .data$p < 0.05 ~ "*",
@@ -457,7 +452,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
           ) %>%
           dplyr::rename(group = .data$group2) %>%
           dplyr::mutate(temp = paste0(.data$gene, .data$group)) %>%
-          dplyr::select(.data$temp, .data$p_value, .data$t_statistic, .data$df, .data$signif)
+          dplyr::select(.data$temp, .data$p_value, .data$t_statistic, .data$df, .data$significance)
 
         # Add empty statistics for reference group (no statistical annotation)
         ref_stat <- res_all %>%
@@ -469,7 +464,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
             p_value = NA_real_,
             t_statistic = NA_real_,
             df = NA_real_,
-            signif = ""
+            significance = ""
           )
 
         # Combine all significance results
@@ -482,13 +477,13 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
         # Perform wilcox test for all non-reference groups
         stat_results <- res_all %>%
           dplyr::group_by(.data$gene) %>%
-          rstatix::wilcox_test(.data$Expre4Stat ~ .data$group, ref.group = reference_group) %>%
+          rstatix::wilcox_test(.data$expression_value ~ .data$group, ref.group = reference_group) %>%
           dplyr::ungroup() %>%
           dplyr::select(.data$gene, .data$group2, .data$p, .data$statistic) %>%
           dplyr::mutate(
             p_value = round(.data$p, 6),
             w_statistic = round(.data$statistic, 4),
-            signif = dplyr::case_when(
+            significance = dplyr::case_when(
               .data$p < 0.001 ~ "***",
               .data$p > 0.001 & .data$p < 0.01 ~ "**",
               .data$p > 0.01 & .data$p < 0.05 ~ "*",
@@ -497,7 +492,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
           ) %>%
           dplyr::rename(group = .data$group2) %>%
           dplyr::mutate(temp = paste0(.data$gene, .data$group)) %>%
-          dplyr::select(.data$temp, .data$p_value, .data$w_statistic, .data$signif)
+          dplyr::select(.data$temp, .data$p_value, .data$w_statistic, .data$significance)
 
         # Add empty statistics for reference group (no statistical annotation)
         ref_stat <- res_all %>%
@@ -508,7 +503,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
           dplyr::mutate(
             p_value = NA_real_,
             w_statistic = NA_real_,
-            signif = ""
+            significance = ""
           )
 
         # Combine all significance results
@@ -529,7 +524,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
 
           if (length(unique(df_sub$group)) > 1) {
             # ANOVA F-test
-            fit <- stats::aov(.data$Expre4Stat ~ .data$group, data = df_sub)
+            fit <- stats::aov(.data$expression_value ~ .data$group, data = df_sub)
             anova_summary <- summary(fit)
             f_value <- anova_summary[[1]]["group", "F value"]
             p_value <- anova_summary[[1]]["group", "Pr(>F)"]
@@ -555,14 +550,14 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
               as.data.frame() %>%
               dplyr::mutate(gene = i) %>%
               tibble::rownames_to_column(var = "group") %>%
-              magrittr::set_colnames(c("group", "signif", "gene")) %>%
-              dplyr::select(.data$group, .data$gene, .data$signif) %>%
+              magrittr::set_colnames(c("group", "significance", "gene")) %>%
+              dplyr::select(.data$group, .data$gene, .data$significance) %>%
               dplyr::mutate(temp = paste0(.data$gene, .data$group)) %>%
-              dplyr::select(.data$temp, .data$signif)
+              dplyr::select(.data$temp, .data$significance)
 
             # For ANOVA, make reference group letter empty
             letters_df <- letters_df %>%
-              dplyr::mutate(signif = ifelse(grepl(paste0(reference_group, "$"), .data$temp), "", .data$signif))
+              dplyr::mutate(significance = ifelse(grepl(paste0(reference_group, "$"), .data$temp), "", .data$significance))
 
             df_stat <- rbind(df_stat, letters_df)
           }
@@ -575,7 +570,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
             dplyr::mutate(temp = paste0(.data$gene, .data$group)) %>%
             dplyr::left_join(df_stat, by = "temp")
         } else {
-          res_all$signif <- ""
+          res_all$significance <- ""
           res_all$f_statistic <- NA_real_
           res_all$p_value_anova <- NA_real_
           res_all$df1 <- NA_real_
@@ -585,14 +580,14 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
 
       # Ensure reference group has empty significance
       res_all <- res_all %>%
-        dplyr::mutate(signif = ifelse(.data$group == reference_group, "", .data$signif))
+        dplyr::mutate(significance = ifelse(.data$group == reference_group, "", .data$significance))
 
       return(res_all)
 
     },
     error = function(e) {
       warning("Statistical analysis failed: ", e$message)
-      res_all$signif <- ""
+      res_all$significance <- ""
       res_all$p_value <- NA_real_
       return(res_all)
     })
@@ -610,27 +605,26 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
   df_plot <- res_all %>%
     dplyr::rename(
       Treatment = .data$group,
-      gene = .data$gene,
-      expre = .data$Expre4Stat,
-      mean.expre = .data$Expression,
-      sd.expre = .data$SD,
-      se.expre = .data$SE
+      expression = .data$expression_value,
+      mean_expression = .data$mean_expression,
+      sd_expression = .data$sd_expression,
+      se_expression = .data$se_expression
     ) %>%
     dplyr::group_by(.data$gene, .data$Treatment) %>%
     dplyr::mutate(n = dplyr::n()) %>%
     dplyr::ungroup()
 
-  # Ensure signif column exists
-  if (!"signif" %in% names(df_plot)) {
-    df_plot$signif <- "NS"
+  # Ensure significance column exists
+  if (!"significance" %in% names(df_plot)) {
+    df_plot$significance <- "NS"
   }
 
   if (plot_type == "box") {
     p <- df_plot %>%
-      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$expre, fill = .data$Treatment)) +
+      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$expression, fill = .data$Treatment)) +
       ggplot2::geom_boxplot(width = 0.6) +
       ggplot2::facet_wrap(. ~ .data$gene, scales = "free_y", ncol = plot_ncol) +
-      ggplot2::geom_text(ggplot2::aes(.data$Treatment, min(.data$expre, na.rm = TRUE), label = .data$signif),
+      ggplot2::geom_text(ggplot2::aes(.data$Treatment, min(.data$expression, na.rm = TRUE), label = .data$significance),
         check_overlap = TRUE, size = 3, color = "black"
       ) +
       ggthemes::theme_pander() +
@@ -642,19 +636,19 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
   } else if (plot_type == "bar") {
     p <- df_plot %>%
       dplyr::group_by(.data$gene) %>%
-      dplyr::mutate(max.temp = max(.data$mean.expre, na.rm = TRUE)) %>%
+      dplyr::mutate(max_temp = max(.data$mean_expression, na.rm = TRUE)) %>%
       dplyr::ungroup() %>%
-      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$mean.expre / .data$n, fill = .data$Treatment)) +
+      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$mean_expression / .data$n, fill = .data$Treatment)) +
       ggplot2::geom_bar(stat = "identity", width = 0.6) +
       ggplot2::geom_errorbar(ggplot2::aes(.data$Treatment,
-        ymin = pmax(0, .data$mean.expre - .data$sd.expre),
-        ymax = .data$mean.expre + .data$sd.expre
+        ymin = pmax(0, .data$mean_expression - .data$sd_expression),
+        ymax = .data$mean_expression + .data$sd_expression
       ),
       width = 0.2
       ) +
-      ggplot2::geom_hline(ggplot2::aes(yintercept = .data$max.temp * 1.15), color = NA) +
+      ggplot2::geom_hline(ggplot2::aes(yintercept = .data$max_temp * 1.15), color = NA) +
       ggplot2::facet_wrap(. ~ .data$gene, scales = "free_y", ncol = plot_ncol) +
-      ggplot2::geom_text(ggplot2::aes(.data$Treatment, (.data$mean.expre + .data$sd.expre) * 1.08, label = .data$signif),
+      ggplot2::geom_text(ggplot2::aes(.data$Treatment, (.data$mean_expression + .data$sd_expression) * 1.08, label = .data$significance),
         check_overlap = TRUE, size = 4, color = "black"
       ) +
       ggthemes::theme_pander() +
@@ -701,35 +695,4 @@ CalExpRqPCR <- function(cq.table,
     })
 }
 
-# Output column explanations:
-#
-# table:
-# - group: Experimental treatment or condition group
-# - gene: Name of the target gene being analyzed (excludes reference genes)
-# - biorep: Biological replicate identifier
-# - Expre4Stat: Individual expression values used for statistical analysis
-# - Expression: Mean relative expression level (normalized and efficiency-corrected)
-# - SD: Standard deviation of expression values
-# - SE: Standard error of expression values
-# - signif: Statistical significance annotation (*, **, ***, NS, or letters for ANOVA; empty for reference group)
-#
-# Additional statistical columns (depending on method used):
-# For t.test:
-# - p_value: P-value from t-test (NA for reference group)
-# - t_statistic: T-statistic value (NA for reference group)
-# - df: Degrees of freedom (NA for reference group)
-#
-# For wilcox.test:
-# - p_value: P-value from Wilcoxon test (NA for reference group)
-# - w_statistic: W-statistic value (NA for reference group)
-#
-# For anova:
-# - f_statistic: F-statistic from ANOVA (same for all groups of each gene)
-# - p_value_anova: P-value from ANOVA F-test (same for all groups of each gene)
-# - df1: Degrees of freedom (numerator)
-# - df2: Degrees of freedom (denominator)
-#
-# The expression values are calculated using:
-# 1. Efficiency correction: QCq = efficiency^(min_Cq - observed_Cq)
-# 2. GeNorm normalization: expression = QCq_target / geometric_mean(QCq_reference_genes)
-# 3. Relative scaling: normalized to minimum expression within each gene
+
