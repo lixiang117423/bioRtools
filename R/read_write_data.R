@@ -62,7 +62,8 @@ read_data <- function(file, ...) {
 #' write_data(df, "output/table.csv")
 #' write_data(df, "output/table.tsv")
 #' }
-write_data <- function(data, file, col = 1, ...) {
+write_data <- function(data, file, col = 1,
+                       width = 8, height = 6, dpi = 600, ...) {
   ext <- tolower(tools::file_ext(file))
 
   switch(ext,
@@ -73,8 +74,8 @@ write_data <- function(data, file, col = 1, ...) {
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
-    pdf = , png = , svg = , tiff = , jpg = , jpeg = , eps = ,
-      ggplot2::ggsave(filename = file, plot = data, width = 8, height = 6, dpi = 600, ...),
+    pdf = , png = , svg = , tiff = , jpg = , jpeg = , eps =
+      ggplot2::ggsave(filename = file, plot = data, width = width, height = height, dpi = dpi, ...),
     stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .txt, .sh, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
   )
   invisible(data)
