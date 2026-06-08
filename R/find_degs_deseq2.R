@@ -298,7 +298,7 @@
 #'
 find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1, padj = 0.05,
                              shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1,
-                             remove_problematic_genes = TRUE) {
+                             remove_problematic_genes = TRUE, pairwise = TRUE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop(err_invalid_input("data", "a matrix or data frame"))
@@ -483,6 +483,91 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   if (min(lib_sizes) < 1000) {
     warning("Very small library sizes detected (<1000 counts). Results may be unreliable.")
   }
+
+  # --- Pairwise mode --------------------------------------------------------
+  if (pairwise) {
+    groups <- unique(as.character(sample_aligned[[main_factor]]))
+    if (length(groups) < 2) stop("Need at least 2 groups for pairwise analysis")
+    pairs <- utils::combn(groups, 2, simplify = FALSE)
+
+    # Remove zero-count genes globally (once)
+    data_matrix <- data_matrix[!zero_count_genes, , drop = FALSE]
+
+    run_one_pair <- function(pair) {
+      idx <- sample_aligned[[main_factor]] %in% pair
+      d_sub <- data_matrix[, idx, drop = FALSE]
+      s_sub <- sample_aligned[idx, , drop = FALSE]
+      s_sub[[main_factor]] <- factor(as.character(s_sub[[main_factor]]), levels = pair)
+
+      if (any(table(s_sub[[main_factor]]) < 2)) return(NULL)
+
+      pair_formula <- as.formula(paste0("~", main_factor))
+      comp_label <- paste(pair[1], "vs", pair[2])
+
+      dds <- tryCatch(
+        DESeq2::DESeqDataSetFromMatrix(countData = d_sub, colData = s_sub, design = pair_formula),
+        error = function(e) NULL
+      )
+      if (is.null(dds)) return(NULL)
+
+      dds <- tryCatch(DESeq2::DESeq(dds, quiet = TRUE), error = function(e) NULL)
+      if (is.null(dds)) return(NULL)
+
+      res <- tryCatch({
+        if (shrink.lfc) {
+          res_raw <- tryCatch(
+            DESeq2::lfcShrink(dds,
+              coef = DESeq2::resultsNames(dds)[length(DESeq2::resultsNames(dds))],
+              type = "apeglm", quiet = TRUE),
+            error = function(e) DESeq2::results(dds, alpha = alpha,
+              independentFiltering = independent.filtering))
+        } else {
+          res_raw <- DESeq2::results(dds, alpha = alpha,
+            independentFiltering = independent.filtering)
+        }
+        as.data.frame(res_raw)
+      }, error = function(e) NULL)
+      if (is.null(res)) return(NULL)
+
+      res <- tibble::rownames_to_column(res, "gene")
+      res$padj <- ifelse(is.na(res$padj), 1, res$padj)
+      res$regulation <- ifelse(res$log2FoldChange > log2FoldChange & res$padj < padj, "Up-regulated",
+                        ifelse(res$log2FoldChange < -log2FoldChange & res$padj < padj, "Down-regulated", "Not significant"))
+      res$fold_change <- 2^res$log2FoldChange
+      res$abs_log2fc <- abs(res$log2FoldChange)
+      res$comparison <- comp_label
+      res
+    }
+
+    pair_results <- lapply(pairs, run_one_pair)
+    pair_results <- pair_results[!sapply(pair_results, is.null)]
+
+    if (length(pair_results) == 0) {
+      message("No pairwise comparisons produced results")
+      return(data.frame())
+    }
+
+    combined <- do.call(rbind, pair_results)
+    rownames(combined) <- NULL
+    combined <- combined[order(combined$comparison, combined$padj, -combined$abs_log2fc), ]
+
+    if (interactive()) {
+      cat("DESeq2 Pairwise Differential Expression Summary:\n")
+      cat("=================================================\n")
+      cat("Comparisons:", length(pair_results), "\n")
+      for (comp in unique(combined$comparison)) {
+        sub <- combined[combined$comparison == comp, ]
+        n_up <- sum(sub$regulation == "Up-regulated")
+        n_down <- sum(sub$regulation == "Down-regulated")
+        cat(sprintf("  %s: %d up, %d down, %d total DE\n", comp, n_up, n_down, n_up + n_down))
+      }
+      cat("\n")
+    }
+
+    return(combined)
+  }
+
+  # --- Single comparison (original logic) -----------------------------------
 
   # Create DESeqDataSet
   tryCatch(

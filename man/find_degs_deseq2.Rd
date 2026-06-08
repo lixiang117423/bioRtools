@@ -13,7 +13,8 @@ find_degs_deseq2(
   shrink.lfc = TRUE,
   independent.filtering = TRUE,
   alpha = 0.1,
-  remove_problematic_genes = TRUE
+  remove_problematic_genes = TRUE,
+  pairwise = TRUE
 )
 }
 \arguments{
