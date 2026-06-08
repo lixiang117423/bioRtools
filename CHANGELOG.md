@@ -19,6 +19,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed obsolete `df_to_list`, cleaned up man page duplicates and typos
 
 
+## [1.17.0] - 2026-06-07
+
+### Added
+- `pairwise_oplsda`: pairwise OPLS-DA across all group combinations (later refined: scores as data.frame)
+
+### Fixed
+- `fasta2df`: strip leading '>' from ID column
+- Removed obsolete `df_to_list`, cleaned up man page duplicates and typos
+
+
 ## [1.16.1] - 2026-05-20
 
 ### Changed
