@@ -62,15 +62,15 @@ read_data <- function(file, ...) {
 #' write_data(df, "output/table.csv")
 #' write_data(df, "output/table.tsv")
 #' }
-write_data <- function(data, file, col = 1,
+write_data <- function(data, file, col = 1, col_names = TRUE,
                        width = 8, height = 6, dpi = 600, ...) {
   ext <- tolower(tools::file_ext(file))
 
   switch(ext,
     xlsx = writexl::write_xlsx(data, path = file, ...),
-    csv  = readr::write_csv(data, file = file, ...),
-    tsv  = readr::write_tsv(data, file = file, ...),
-    txt  = readr::write_delim(data, file = file, delim = "\t", ...),
+    csv  = readr::write_csv(data, file = file, col_names = col_names, ...),
+    tsv  = readr::write_tsv(data, file = file, col_names = col_names, ...),
+    txt  = readr::write_delim(data, file = file, delim = "\t", col_names = col_names, ...),
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
