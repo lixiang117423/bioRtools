@@ -7,7 +7,7 @@
 write_data(data, file, col = 1, ...)
 }
 \arguments{
-\item{data}{A data frame to write.}
+\item{data}{A data frame (or ggplot object for image formats) to write.}
 
 \item{file}{File path. The extension determines the output format.}
 
@@ -19,12 +19,16 @@ The input \code{data}, invisibly.
 \description{
 Writes a data frame to file using the appropriate function based on file
 extension. Supports Excel (.xlsx), CSV (.csv), TSV (.tsv), tab-delimited
-text (.txt), RDS (.rds), and shell script (.sh) files.
+text (.txt), RDS (.rds), shell script (.sh), and image formats
+(.pdf/.png/.svg/.tiff/.jpg/.eps) for saving ggplot objects.
 }
 \details{
 For .sh files, writes the first column (or the \code{col} column) of the
 data frame as plain text with no header and no quoting, suitable for
 shell scripts or sample lists.
+
+For image formats, calls \code{ggplot2::ggsave} with sensible defaults
+(width=8, height=6, dpi=600).
 }
 \examples{
 \dontrun{

@@ -38,13 +38,17 @@ read_data <- function(file, ...) {
 #'
 #' Writes a data frame to file using the appropriate function based on file
 #' extension. Supports Excel (.xlsx), CSV (.csv), TSV (.tsv), tab-delimited
-#' text (.txt), RDS (.rds), and shell script (.sh) files.
+#' text (.txt), RDS (.rds), shell script (.sh), and image formats
+#' (.pdf/.png/.svg/.tiff/.jpg/.eps) for saving ggplot objects.
 #'
 #' For .sh files, writes the first column (or the \code{col} column) of the
 #' data frame as plain text with no header and no quoting, suitable for
 #' shell scripts or sample lists.
 #'
-#' @param data A data frame to write.
+#' For image formats, calls \code{ggplot2::ggsave} with sensible defaults
+#' (width=8, height=6, dpi=600).
+#'
+#' @param data A data frame (or ggplot object for image formats) to write.
 #' @param file File path. The extension determines the output format.
 #' @param ... Additional arguments passed to the underlying write function.
 #'
@@ -69,7 +73,9 @@ write_data <- function(data, file, col = 1, ...) {
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
-    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .txt, .sh, .rds")
+    pdf = , png = , svg = , tiff = , jpg = , jpeg = , eps = ,
+      ggplot2::ggsave(filename = file, plot = data, width = 8, height = 6, dpi = 600, ...),
+    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .txt, .sh, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
   )
   invisible(data)
 }
