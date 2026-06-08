@@ -114,7 +114,7 @@
 #'   If return_list is TRUE: A list containing 'theme' and scale objects
 #'   that can be added to any ggplot.
 #'
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' library(dplyr)
@@ -565,7 +565,7 @@ theme_bio <- function(base_size = 10,
 #'
 #' @return A combined theme_bio_list object
 #'
-#' @export
+#' @keywords internal
 `+.theme_bio_list` <- function(e1, e2) {
   if (inherits(e2, "theme_bio_list")) {
     # Adding two theme_bio_list objects

@@ -285,7 +285,7 @@ quick_install <- function(force = TRUE) {
   message("Quick install...")
 
   generate_documentation(check = FALSE)
-  devtools::install_local(force = force)
+  pak::pak("local::.", upgrade = FALSE)
 
   message("✓ Package installed!\n")
   invisible(TRUE)
