@@ -6,13 +6,19 @@
 \usage{
 opls_analysis(
   data,
-  group,
+  sample = NULL,
+  sample_col = "sample",
+  group_col = "group",
+  group = NULL,
   vip_threshold = 1,
   ortho_components = 1,
   pred_components = NULL,
   scaling = "standard",
   validation = "CV",
-  cv_folds = 7
+  cv_folds = 7,
+  ref_group = NULL,
+  p_threshold = 0.05,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -22,10 +28,22 @@ columns represent variables (features/metabolites/genes). Missing values (NA)
 are allowed and will be handled by the OPLS algorithm. For metabolomics data,
 this typically contains peak intensities or concentrations}
 
+\item{sample}{Optional data frame containing sample metadata. When provided together
+with \code{sample_col} and \code{group_col}, the function filters \code{data}
+rows to match samples in \code{sample} and extracts the group vector automatically.
+If NULL (default), uses the \code{group} parameter directly.}
+
+\item{sample_col}{Character string specifying the column in \code{sample} that
+contains sample IDs. Used to match rows in \code{data} (matched by row names).
+Default is "sample".}
+
+\item{group_col}{Character string specifying the column in \code{sample} that
+contains group labels. Default is "group".}
+
 \item{group}{Factor vector specifying group membership for discriminant analysis.
-Must have the same length as the number of rows in data. For two-group
-comparisons, a binary factor is required. Multi-group OPLS-DA is supported
-for more than two groups}
+Must have the same length as the number of rows in data. Ignored when
+\code{sample} is provided. For two-group comparisons, a binary factor is
+required. Multi-group OPLS-DA is supported for more than two groups}
 
 \item{vip_threshold}{Numerical threshold for Variable Importance in Projection
 (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
@@ -60,40 +78,20 @@ more may be needed for complex multi-group analyses}
 
 \item{cv_folds}{Number of cross-validation folds (default: 7). Only used when
 validation = "CV". Should be <= number of samples in smallest group}
+
+\item{ref_group}{Character string specifying the reference group for differential
+analysis. When specified, each non-reference group is compared against this group
+using t-tests with log2FC calculation. If NULL (default), no differential analysis
+is performed. Similar to \code{rstatix::t_test(ref.group = )}.}
+
+\item{p_threshold}{Numeric p-value threshold for significance labeling (default: 0.05).
+Used in conjunction with log2FC direction to label features as Up/Down.}
+
+\item{verbose}{Logical, whether to print progress messages during pairwise model fitting
+(default: FALSE).}
 }
 \value{
-A named list containing:
-  \describe{
-    \item{\code{model}}{Complete OPLS model object from ropls package containing:
-      \itemize{
-        \item Model parameters and coefficients
-        \item Cross-validation metrics (R2Y, Q2Y)
-        \item Model diagnostics and loadings
-      }}
-    \item{\code{scores}}{Data frame with sample scores (coordinates) for visualization:
-      \itemize{
-        \item \code{t1, t2, ...}: Predictive component scores
-        \item \code{to1, to2, ...}: Orthogonal component scores
-        \item \code{sample_id}: Sample identifiers
-        \item \code{group}: Group labels for coloring plots
-      }}
-    \item{\code{vip_scores}}{Data frame with Variable Importance in Projection:
-      \itemize{
-        \item \code{feature}: Variable/feature names
-        \item \code{vip}: VIP score values
-        \item \code{important}: Logical indicating if VIP >= threshold
-      }
-      Sorted by VIP score in descending order}
-    \item{\code{loadings}}{Data frame with variable loadings on components}
-    \item{\code{model_summary}}{List with model performance metrics:
-      \itemize{
-        \item \code{R2Y}: Fraction of Y-variance explained
-        \item \code{Q2Y}: Cross-validated predictive ability
-        \item \code{n_components}: Number of predictive/orthogonal components
-        \item \code{n_variables}: Number of variables in model
-        \item \code{n_samples}: Number of samples
-      }}
-  }
+
 }
 \description{
 This function performs Orthogonal Partial Least Squares Discriminant Analysis

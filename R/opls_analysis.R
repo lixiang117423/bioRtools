@@ -58,52 +58,22 @@
 #'   is performed. Similar to \code{rstatix::t_test(ref.group = )}.
 #' @param p_threshold Numeric p-value threshold for significance labeling (default: 0.05).
 #'   Used in conjunction with log2FC direction to label features as Up/Down.
+#' @param verbose Logical, whether to print progress messages during pairwise model fitting
+#'   (default: FALSE).
 #'
 #' @return A named list containing:
 #'   \describe{
-#'     \item{\code{model}}{Complete OPLS model object from ropls package containing:
-#'       \itemize{
-#'         \item Model parameters and coefficients
-#'         \item Cross-validation metrics (R2Y, Q2Y)
-#'         \item Model diagnostics and loadings
-#'       }}
-#'     \item{\code{scores}}{Data frame with sample scores (coordinates) for visualization:
-#'       \itemize{
-#'         \item \code{t1, t2, ...}: Predictive component scores
-#'         \item \code{to1, to2, ...}: Orthogonal component scores
-#'         \item \code{sample_id}: Sample identifiers
-#'         \item \code{group}: Group labels for coloring plots
-#'       }}
-#'     \item{\code{vip_scores}}{Data frame with Variable Importance in Projection:
-#'       \itemize{
-#'         \item \code{feature}: Variable/feature names
-#'         \item \code{vip}: VIP score values
-#'         \item \code{important}: Logical indicating if VIP >= threshold
-#'       }
-#'       Sorted by VIP score in descending order}
-#'     \item{\code{loadings}}{Data frame with variable loadings on components}
-#'     \item{\code{differential_analysis}}{Data frame with differential analysis results
-#'       (only when \code{ref_group} is specified). Contains:
-#'       \itemize{
-#'         \item \code{feature}: Variable/feature name
-#'         \item \code{group}: Non-reference group name
-#'         \item \code{ref_group}: Reference group name
-#'         \item \code{log2_fc}: log2 fold change (log2(mean_group / mean_ref_group))
-#'         \item \code{p_value}: Raw p-value from t-test
-#'         \item \code{p_adjust}: BH-adjusted p-value
-#'         \item \code{vip}: VIP score from OPLS-DA model
-#'         \item \code{regulation}: "Up", "Down", or "NS" based on log2FC direction
-#'           and adjusted p-value
-#'       }}
-#'     }
-#'     \item{\code{model_summary}}{List with model performance metrics:
-#'       \itemize{
-#'         \item \code{R2Y}: Fraction of Y-variance explained
-#'         \item \code{Q2Y}: Cross-validated predictive ability
-#'         \item \code{n_components}: Number of predictive/orthogonal components
-#'         \item \code{n_variables}: Number of variables in model
-#'         \item \code{n_samples}: Number of samples
-#'       }}
+#'     \item{\code{model}}{OPLS model object from ropls package. In pairwise mode,
+#'       this is the first pairwise model.}
+#'     \item{\code{scores}}{Data frame with sample scores for visualization.
+#'       In pairwise mode, includes a \code{comparison} column.}
+#'     \item{\code{vip_scores}}{Data frame with VIP scores, sorted by VIP descending.
+#'       In pairwise mode, includes \code{group} and \code{ref_group} columns.}
+#'     \item{\code{loadings}}{Data frame with variable loadings.}
+#'     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
+#'       regulation labels for each group vs ref_group. NULL if no ref_group.}
+#'     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
+#'       In pairwise mode, includes per-comparison results.}
 #'   }
 #'
 #' @details
@@ -370,7 +340,8 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           vip_threshold = 1.0, ortho_components = 1,
                           pred_components = NULL, scaling = "standard",
                           validation = "CV", cv_folds = 7,
-                          ref_group = NULL, p_threshold = 0.05) {
+                          ref_group = NULL, p_threshold = 0.05,
+                          verbose = FALSE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
     !methods::is(data, "SummarizedExperiment") &&
@@ -557,176 +528,384 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
   }
 
   # Run OPLS-DA analysis
-  tryCatch(
-    {
-      if (validation == "CV") {
-        opls_model <- ropls::opls(
-          x = data_matrix,
-          y = group,
-          predI = pred_components,
-          orthoI = ortho_components,
-          scaleC = scaling,
-          crossvalI = cv_folds,
-          fig.pdfC = "none",  # Suppress automatic plots
-          info.txtC = "none"  # Suppress verbose output
-        )
-      } else {
-        opls_model <- ropls::opls(
-          x = data_matrix,
-          y = group,
-          predI = pred_components,
-          orthoI = ortho_components,
-          scaleC = scaling,
-          crossvalI = 0,  # No cross-validation
-          fig.pdfC = "none",
-          info.txtC = "none"
+  # When ref_group is specified with >2 groups, fit pairwise binary OPLS-DA models
+  pairwise_models <- NULL
+  if (!is.null(ref_group) && n_groups > 2) {
+    # Pairwise mode: one OPLS-DA per (group vs ref_group)
+    other_groups <- setdiff(group_levels, ref_group)
+    pairwise_models <- list()
+    all_scores <- list()
+    all_vip <- list()
+    all_summaries <- list()
+
+    for (grp in other_groups) {
+      idx <- which(group %in% c(ref_group, grp))
+      sub_data <- data_matrix[idx, , drop = FALSE]
+      sub_group <- droplevels(factor(as.character(group[idx])))
+
+      grp_cv_folds <- cv_folds
+      min_grp_size <- min(table(sub_group))
+      if (grp_cv_folds > min_grp_size) {
+        grp_cv_folds <- min_grp_size
+      }
+
+      if (verbose) {
+        message("Fitting OPLS-DA: ", grp, " vs ", ref_group,
+          " (n=", nrow(sub_data), ", cv_folds=", grp_cv_folds, ")")
+      }
+
+      model <- tryCatch(
+        {
+          if (validation == "CV") {
+            ropls::opls(sub_data, sub_group,
+              predI = 1, orthoI = ortho_components, scaleC = scaling,
+              crossvalI = grp_cv_folds, fig.pdfC = "none", info.txtC = "none")
+          } else {
+            ropls::opls(sub_data, sub_group,
+              predI = 1, orthoI = ortho_components, scaleC = scaling,
+              crossvalI = 0, fig.pdfC = "none", info.txtC = "none")
+          }
+        },
+        error = function(e) {
+          warning("OPLS-DA failed for ", grp, " vs ", ref_group, ": ", e$message)
+          NULL
+        })
+
+      if (!is.null(model)) {
+        pairwise_models[[grp]] <- model
+
+        # Extract scores for this pair
+        tryCatch(
+          {
+            pair_scores <- chemhelper::get_scores(model) %>%
+              as.data.frame()
+            pair_scores$sample_id <- rownames(sub_data)
+            pair_scores$group <- as.character(sub_group)
+            pair_scores$comparison <- paste0(grp, " vs ", ref_group)
+            all_scores[[grp]] <- pair_scores
+          },
+          error = function(e) {
+            pair_scores <- data.frame(
+              t1 = model@scoreMN[, 1],
+              sample_id = rownames(sub_data),
+              group = as.character(sub_group),
+              comparison = paste0(grp, " vs ", ref_group)
+            )
+            if (!is.null(model@orthoScoreMN) && ncol(model@orthoScoreMN) > 0) {
+              pair_scores$to1 <- model@orthoScoreMN[, 1]
+            }
+            all_scores[[grp]] <- pair_scores
+          })
+
+        # Extract VIP
+        tryCatch(
+          {
+            vip_vals <- model@vipVn
+            all_vip[[grp]] <- data.frame(
+              feature = variable_names,
+              vip = as.numeric(vip_vals),
+              group = grp,
+              ref_group = ref_group,
+              stringsAsFactors = FALSE
+            )
+          },
+          error = function(e) {
+            all_vip[[grp]] <- data.frame(
+              feature = variable_names,
+              vip = NA_real_,
+              group = grp,
+              ref_group = ref_group,
+              stringsAsFactors = FALSE
+            )
+          })
+
+        # Extract summary
+        tryCatch(
+          {
+            s <- model@summaryDF
+            all_summaries[[grp]] <- list(
+              group = grp,
+              R2Y = if ("R2Y" %in% names(s)) s$R2Y else NA,
+              Q2Y = if ("Q2Y" %in% names(s)) s$Q2Y else NA,
+              R2X = if ("R2X(cum)" %in% names(s)) s$`R2X(cum)` else NA
+            )
+          },
+          error = function(e) NULL)
+      }
+    }
+
+    # Combine results
+    opls_model <- pairwise_models[[1]]  # Use first model as representative
+    scores_data <- do.call(rbind, all_scores)
+
+    # Merge sample metadata into scores if available
+    if (!is.null(sample_info)) {
+      scores_data <- scores_data %>%
+        dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
+    }
+
+    vip_data <- do.call(rbind, all_vip) %>%
+      dplyr::arrange(desc(vip))
+    vip_data$important <- vip_data$vip >= vip_threshold
+
+    # Build model_summary from pairwise summaries
+    model_summary <- list(
+      mode = "pairwise (ref_group)",
+      ref_group = ref_group,
+      pairwise_results = all_summaries,
+      R2Y = mean(sapply(all_summaries, function(x) x$R2Y), na.rm = TRUE),
+      Q2Y = mean(sapply(all_summaries, function(x) x$Q2Y), na.rm = TRUE),
+      n_groups = n_groups,
+      n_variables = ncol(data_matrix),
+      n_samples = nrow(data_matrix)
+    )
+
+    loadings_data <- data.frame(feature = variable_names)
+
+    # Pairwise differential analysis (log2FC + p-value for each comparison)
+    diff_analysis <- NULL
+    if (!is.null(ref_group)) {
+      diff_list <- list()
+      ref_idx <- which(group == ref_group)
+
+      for (grp in other_groups) {
+        grp_idx <- which(group == grp)
+        ref_data <- data_matrix[ref_idx, , drop = FALSE]
+        grp_data <- data_matrix[grp_idx, , drop = FALSE]
+
+        n_ref <- nrow(ref_data)
+        n_grp <- nrow(grp_data)
+        use_wilcox <- n_ref < 6 || n_grp < 6
+
+        log2fc_vals <- numeric(length(variable_names))
+        p_vals <- numeric(length(variable_names))
+
+        for (j in seq_along(variable_names)) {
+          ref_vals <- ref_data[, j]
+          grp_vals <- grp_data[, j]
+          ref_mean <- mean(ref_vals, na.rm = TRUE)
+          grp_mean <- mean(grp_vals, na.rm = TRUE)
+          log2fc_vals[j] <- log2((grp_mean + 1e-10) / (ref_mean + 1e-10))
+
+          valid_ref <- ref_vals[!is.na(ref_vals)]
+          valid_grp <- grp_vals[!is.na(grp_vals)]
+          if (length(valid_ref) >= 2 && length(valid_grp) >= 2 &&
+            stats::var(valid_ref) > 0 && stats::var(valid_grp) > 0) {
+            if (use_wilcox) {
+              test_result <- stats::wilcox.test(valid_grp, valid_ref)
+            } else {
+              test_result <- stats::t.test(valid_grp, valid_ref)
+            }
+            p_vals[j] <- test_result$p.value
+          } else {
+            p_vals[j] <- NA
+          }
+        }
+
+        diff_list[[grp]] <- data.frame(
+          feature = variable_names,
+          group = grp,
+          ref_group = ref_group,
+          log2_fc = round(log2fc_vals, 4),
+          p_value = p_vals,
+          stringsAsFactors = FALSE
         )
       }
-    },
-    error = function(e) {
-      stop(paste("OPLS model fitting failed:", e$message,
-        "\nTry reducing the number of components or checking data quality."))
-    })
 
-  # Extract scores for visualization
-  tryCatch(
-    {
-      scores_data <- chemhelper::get_scores(opls_model) %>%
-        as.data.frame() %>%
-        dplyr::mutate(
+      diff_analysis <- do.call(rbind, diff_list)
+      rownames(diff_analysis) <- NULL
+      diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
+
+      # Add VIP from pairwise results
+      vip_lookup <- vip_data %>%
+        dplyr::select(feature, group, vip)
+      diff_analysis <- diff_analysis %>%
+        dplyr::left_join(vip_lookup, by = c("feature", "group"))
+      diff_analysis$vip <- round(diff_analysis$vip, 4)
+
+      diff_analysis$regulation <- ifelse(
+        is.na(diff_analysis$p_adjust), "NS",
+        ifelse(diff_analysis$log2_fc > 0 & diff_analysis$p_adjust < p_threshold, "Up",
+          ifelse(diff_analysis$log2_fc < 0 & diff_analysis$p_adjust < p_threshold, "Down", "NS")
+        )
+      )
+      reg_order <- c("Up", "Down", "NS")
+      diff_analysis$regulation <- factor(diff_analysis$regulation, levels = reg_order)
+      diff_analysis <- diff_analysis[order(diff_analysis$regulation, -abs(diff_analysis$log2_fc)), ]
+      diff_analysis$regulation <- as.character(diff_analysis$regulation)
+    }
+
+  } else {
+    # Standard single-model mode (2 groups or no ref_group)
+    tryCatch(
+      {
+        if (validation == "CV") {
+          opls_model <- ropls::opls(
+            x = data_matrix,
+            y = group,
+            predI = pred_components,
+            orthoI = ortho_components,
+            scaleC = scaling,
+            crossvalI = cv_folds,
+            fig.pdfC = "none",
+            info.txtC = "none"
+          )
+        } else {
+          opls_model <- ropls::opls(
+            x = data_matrix,
+            y = group,
+            predI = pred_components,
+            orthoI = ortho_components,
+            scaleC = scaling,
+            crossvalI = 0,
+            fig.pdfC = "none",
+            info.txtC = "none"
+          )
+        }
+      },
+      error = function(e) {
+        stop(paste("OPLS model fitting failed:", e$message,
+          "\nTry reducing the number of components or checking data quality."))
+      })
+
+    # Extract scores for visualization
+    tryCatch(
+      {
+        scores_data <- chemhelper::get_scores(opls_model) %>%
+          as.data.frame() %>%
+          dplyr::mutate(
+            sample_id = sample_names,
+            group = group
+          )
+      },
+      error = function(e) {
+        warning(paste("Error extracting scores with chemhelper:", e$message))
+        scores_data <- data.frame(
+          t1 = opls_model@scoreMN[, 1],
           sample_id = sample_names,
           group = group
         )
-    },
-    error = function(e) {
-      warning(paste("Error extracting scores with chemhelper:", e$message))
-      # Fallback to manual extraction
-      scores_data <- data.frame(
-        t1 = opls_model@scoreMN[, 1],
-        sample_id = sample_names,
-        group = group
-      )
 
-      # Add orthogonal scores if available
-      if (!is.null(opls_model@orthoScoreMN) && ncol(opls_model@orthoScoreMN) > 0) {
-        scores_data$to1 <- opls_model@orthoScoreMN[, 1]
-      }
-    })
-
-  # Merge sample metadata into scores if available
-  if (!is.null(sample_info)) {
-    scores_data <- scores_data %>%
-      dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
-  }
-
-  # Annotate score columns with variance info
-  tryCatch(
-    {
-      r2x_cum <- opls_model@summaryDF$`R2X(cum)`
-      r2y_cum <- opls_model@summaryDF$`R2Y(cum)`
-      q2_cum <- opls_model@summaryDF$`Q2(cum)`
-
-      score_cols <- grep("^(t|to|p|o)\\d+$", names(scores_data), value = TRUE)
-      if (length(score_cols) > 0) {
-        pct_str <- paste0("R2X=", round(r2x_cum * 100, 1), "% R2Y=", round(r2y_cum * 100, 1), "% Q2=", round(q2_cum * 100, 1), "%")
-        for (col in score_cols) {
-          label <- if (grepl("^(t|p)", col)) {
-            paste0(col, " (", pct_str, ")")
-          } else {
-            paste0(col, " (orthogonal)")
-          }
-          names(scores_data)[names(scores_data) == col] <- label
+        if (!is.null(opls_model@orthoScoreMN) && ncol(opls_model@orthoScoreMN) > 0) {
+          scores_data$to1 <- opls_model@orthoScoreMN[, 1]
         }
-      }
-    },
-    error = function(e) {
-      # Keep original column names if annotation fails
-    })
+      })
 
-  # Extract VIP scores
-  vip_data <- tryCatch(
-    {
-      vip_values <- opls_model@vipVn
+    # Merge sample metadata into scores if available
+    if (!is.null(sample_info)) {
+      scores_data <- scores_data %>%
+        dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
+    }
 
-      if (is.null(vip_values)) {
-        warning("VIP scores not available in model")
+    # Annotate score columns with variance info
+    tryCatch(
+      {
+        r2x_cum <- opls_model@summaryDF$`R2X(cum)`
+        r2y_cum <- opls_model@summaryDF$`R2Y(cum)`
+        q2_cum <- opls_model@summaryDF$`Q2(cum)`
+
+        score_cols <- grep("^(t|to|p|o)\\d+$", names(scores_data), value = TRUE)
+        if (length(score_cols) > 0) {
+          pct_str <- paste0("R2X=", round(r2x_cum * 100, 1), "% R2Y=", round(r2y_cum * 100, 1), "% Q2=", round(q2_cum * 100, 1), "%")
+          for (col in score_cols) {
+            label <- if (grepl("^(t|p)", col)) {
+              paste0(col, " (", pct_str, ")")
+            } else {
+              paste0(col, " (orthogonal)")
+            }
+            names(scores_data)[names(scores_data) == col] <- label
+          }
+        }
+      },
+      error = function(e) {
+        # Keep original column names if annotation fails
+      })
+
+    # Extract VIP scores
+    vip_data <- tryCatch(
+      {
+        vip_values <- opls_model@vipVn
+
+        if (is.null(vip_values)) {
+          warning("VIP scores not available in model")
+          data.frame(
+            feature = variable_names,
+            vip = rep(NA, length(variable_names)),
+            important = rep(FALSE, length(variable_names))
+          )
+        } else {
+          data.frame(
+            feature = variable_names,
+            vip = as.numeric(vip_values),
+            important = as.numeric(vip_values) >= vip_threshold
+          ) %>%
+            dplyr::arrange(desc(vip))
+        }
+      },
+      error = function(e) {
+        warning(paste("Error extracting VIP scores:", e$message))
         data.frame(
           feature = variable_names,
           vip = rep(NA, length(variable_names)),
           important = rep(FALSE, length(variable_names))
         )
-      } else {
-        data.frame(
-          feature = variable_names,
-          vip = as.numeric(vip_values),
-          important = as.numeric(vip_values) >= vip_threshold
-        ) %>%
-          dplyr::arrange(desc(vip))
-      }
-    },
-    error = function(e) {
-      warning(paste("Error extracting VIP scores:", e$message))
-      data.frame(
-        feature = variable_names,
-        vip = rep(NA, length(variable_names)),
-        important = rep(FALSE, length(variable_names))
-      )
-    })
+      })
 
-  # Extract loadings
-  loadings_data <- tryCatch(
-    {
-      if (!is.null(opls_model@loadingMN)) {
-        loading_df <- as.data.frame(opls_model@loadingMN)
-        loading_df$feature <- variable_names
-        loading_df
-      } else {
+    # Extract loadings
+    loadings_data <- tryCatch(
+      {
+        if (!is.null(opls_model@loadingMN)) {
+          loading_df <- as.data.frame(opls_model@loadingMN)
+          loading_df$feature <- variable_names
+          loading_df
+        } else {
+          data.frame(feature = variable_names)
+        }
+      },
+      error = function(e) {
+        warning(paste("Error extracting loadings:", e$message))
         data.frame(feature = variable_names)
-      }
-    },
-    error = function(e) {
-      warning(paste("Error extracting loadings:", e$message))
-      data.frame(feature = variable_names)
-    })
+      })
 
-  # Extract model summary statistics
-  model_summary <- tryCatch(
-    {
-      summary_df <- opls_model@summaryDF
+    # Extract model summary statistics
+    model_summary <- tryCatch(
+      {
+        summary_df <- opls_model@summaryDF
 
-      list(
-        R2Y = if ("R2Y" %in% names(summary_df)) summary_df$R2Y else NA,
-        Q2Y = if ("Q2Y" %in% names(summary_df)) summary_df$Q2Y else NA,
-        RMSEE = if ("RMSEE" %in% names(summary_df)) summary_df$RMSEE else NA,
-        RMSECV = if ("RMSECV" %in% names(summary_df)) summary_df$RMSECV else NA,
-        n_pred_components = pred_components,
-        n_ortho_components = ortho_components,
-        n_variables = ncol(data_matrix),
-        n_samples = nrow(data_matrix),
-        n_groups = n_groups,
-        group_sizes = as.list(group_sizes),
-        scaling_method = scaling,
-        validation_method = validation
-      )
-    },
-    error = function(e) {
-      warning(paste("Error extracting model summary:", e$message))
-      list(
-        R2Y = NA, Q2Y = NA, RMSEE = NA, RMSECV = NA,
-        n_pred_components = pred_components,
-        n_ortho_components = ortho_components,
-        n_variables = ncol(data_matrix),
-        n_samples = nrow(data_matrix),
-        n_groups = n_groups
-      )
-    })
+        list(
+          R2Y = if ("R2Y" %in% names(summary_df)) summary_df$R2Y else NA,
+          Q2Y = if ("Q2Y" %in% names(summary_df)) summary_df$Q2Y else NA,
+          RMSEE = if ("RMSEE" %in% names(summary_df)) summary_df$RMSEE else NA,
+          RMSECV = if ("RMSECV" %in% names(summary_df)) summary_df$RMSECV else NA,
+          n_pred_components = pred_components,
+          n_ortho_components = ortho_components,
+          n_variables = ncol(data_matrix),
+          n_samples = nrow(data_matrix),
+          n_groups = n_groups,
+          group_sizes = as.list(group_sizes),
+          scaling_method = scaling,
+          validation_method = validation
+        )
+      },
+      error = function(e) {
+        warning(paste("Error extracting model summary:", e$message))
+        list(
+          R2Y = NA, Q2Y = NA, RMSEE = NA, RMSECV = NA,
+          n_pred_components = pred_components,
+          n_ortho_components = ortho_components,
+          n_variables = ncol(data_matrix),
+          n_samples = nrow(data_matrix),
+          n_groups = n_groups
+        )
+      })
+  } # end of else (standard single-model mode)
 
   # Count important variables
   n_important_vars <- sum(vip_data$important, na.rm = TRUE)
 
-  # Differential analysis against ref_group
+  # Differential analysis against ref_group (single-model mode only)
   diff_analysis <- NULL
-  if (!is.null(ref_group)) {
+  if (!is.null(ref_group) && is.null(pairwise_models)) {
     other_groups <- setdiff(group_levels, ref_group)
     ref_idx <- which(group == ref_group)
 
