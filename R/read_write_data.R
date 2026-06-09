@@ -1,14 +1,19 @@
 #' Read Data File by Extension
 #'
 #' Reads a data file using the appropriate function based on file extension.
-#' Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), tab-delimited text
-#' (.txt), FASTA (.fasta/.fa), and RDS (.rds) files.
+#' Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
+#' (.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
 #' First row is treated as column headers for tabular formats.
 #'
 #' @param file File path.
+#' @param delim Character string used as field separator for \code{.txt} files.
+#'   Default is \code{"\\t"} (tab). Ignored for other file types.
 #' @param ... Additional arguments passed to the underlying read function.
 #'
-#' @return A data frame.
+#' @return A data frame for tabular formats, the deserialized R object for
+#'   \code{.rds}/\code{.rdata} files, or a FASTA data frame for
+#'   \code{.fasta}/\code{.fa} files.
+#'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{write_data}}
@@ -18,15 +23,20 @@
 #' df <- read_data("data/samples.xlsx")
 #' df <- read_data("data/counts.csv")
 #' df <- read_data("data/table.tsv")
+#' df <- read_data("data/table.txt", delim = ",")
 #' }
-read_data <- function(file, ...) {
+read_data <- function(file, delim = "\t", ...) {
+  if (!file.exists(file)) {
+    stop("File not found: ", file)
+  }
+
   ext <- tolower(tools::file_ext(file))
 
   switch(ext,
     xlsx = , xls = readxl::read_excel(file, ...),
     csv  = readr::read_csv(file, ...),
     tsv  = readr::read_tsv(file, ...),
-    txt  = readr::read_delim(file, delim = "\t", ...),
+    txt  = readr::read_delim(file, delim = delim, ...),
     rds  = readRDS(file, ...),
     rdata = , rda = get(load(file, ...)),
     fasta = , fa = fasta2df(file, ...),
