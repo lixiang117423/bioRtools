@@ -143,3 +143,6 @@ print(paste("Significant relationships found in", nrow(significant_groups), "gro
   \item \code{\link{anova_posthoc}} for group comparisons
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -81,3 +81,6 @@ result <- plot_tax_upset(df.asv, df.sample, df.tax,
 result$plot
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

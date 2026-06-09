@@ -106,3 +106,32 @@ assembled with \code{patchwork}.
 Required packages: dplyr, ggplot2, readr, gtools, rlang.
 Additional package for density panel: patchwork.
 }
+\examples{
+\dontrun{
+# Basic Manhattan plot from a data frame
+result <- plot_manhattan(
+  data = gwas_results,
+  chr_col = "chr",
+  pos_col = "pos",
+  val_col = "p_value",
+  transform_log10 = TRUE,
+  threshold_line = 5e-8
+)
+result$plot.combined
+
+# Manhattan plot with SNP density panel
+result <- plot_manhattan(
+  data = gwas_results,
+  chr_col = "chr",
+  pos_col = "pos",
+  val_col = "p_value",
+  transform_log10 = TRUE,
+  threshold_line = 5e-8,
+  show_density = TRUE
+)
+}
+
+}
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

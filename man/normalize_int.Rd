@@ -68,3 +68,6 @@ qqnorm(transformed_row)
 qqline(transformed_row, col = "red")
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

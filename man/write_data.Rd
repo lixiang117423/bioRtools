@@ -49,3 +49,6 @@ write_data(df, "output/table.tsv")
 \seealso{
 \code{\link{read_data}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -32,3 +32,6 @@ summarise_stats(df, value)
 # Grouped
 df \%>\% dplyr::group_by(group) \%>\% summarise_stats(value)
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

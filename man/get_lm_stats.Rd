@@ -91,5 +91,5 @@ map_dfr(models, get_lm_stats, .id = "model")
 
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

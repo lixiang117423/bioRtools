@@ -23,3 +23,6 @@ df <- data.frame(a = c(1, NA, 3), b = c(NA, 2, NA))
 replace_na_as(df)
 replace_na_as(df, "Absent")
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

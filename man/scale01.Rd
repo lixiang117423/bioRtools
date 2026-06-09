@@ -42,5 +42,5 @@ scale01(c(1, 2, NA, 4, 5))
 \code{\link{scale}} for standardization (z-score normalization)
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

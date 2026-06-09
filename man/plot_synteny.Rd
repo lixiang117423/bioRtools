@@ -234,5 +234,5 @@ This function is inspired by the synteny plots commonly seen in comparative
 genomics papers, particularly in CELL, Nature, and Science journals.
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

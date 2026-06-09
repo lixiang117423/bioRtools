@@ -211,3 +211,6 @@ print(kegg_for_plot[, c("ID", "pathway_short", "enrichment.score", "Count")])
   \item \code{\link{find_degs_deseq2}} for differential expression analysis
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

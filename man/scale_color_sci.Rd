@@ -159,5 +159,5 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
   scale_color_sci(alpha = 0.7)
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

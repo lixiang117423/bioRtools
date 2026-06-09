@@ -198,5 +198,5 @@ ggplot(data, aes(x = x, y = y, fill = z)) +
   theme_minimal()
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

@@ -56,3 +56,6 @@ ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
   bioRtools::theme_prism()
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

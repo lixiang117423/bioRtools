@@ -323,3 +323,6 @@ count data. Genome Biology, 11, R106.
   \item \code{\link{enrich_kegg}} for pathway enrichment analysis
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

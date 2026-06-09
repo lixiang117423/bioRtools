@@ -34,3 +34,6 @@ col2file(df, "cmd", tf)
 readLines(tf)
 unlink(tf)
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

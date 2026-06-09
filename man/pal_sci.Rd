@@ -56,6 +56,10 @@ pal_research(
 \item{alpha}{Transparency level, a real number in (0, 1].
 See `alpha` in [grDevices::rgb()] for details.}
 }
+\value{
+A function that takes an integer argument and returns a vector of colors.
+  Compatible with \code{ggplot2} color/fill scales.
+}
 \description{
 Color palettes inspired by plots in academic journals.
 Designed for scientific data visualization with carefully selected colors
@@ -67,5 +71,5 @@ show_col(pal_sci("default")(10))
 show_col(pal_sci("default", alpha = 0.6)(10))
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

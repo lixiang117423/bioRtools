@@ -5,9 +5,9 @@
 \title{Mantel Test Correlogram}
 \usage{
 plot_mantel(
-  data.spec,
-  data.env,
-  data.sample,
+  data_spec,
+  data_env,
+  data_sample,
   group_col = "group",
   spec_select_method = c("prevalence", "abundance"),
   prevalence_threshold = 0.3,
@@ -28,20 +28,20 @@ plot_mantel(
 )
 }
 \arguments{
-\item{data.spec}{Feature abundance table. First column is feature ID
+\item{data_spec}{Feature abundance table. First column is feature ID
 (e.g., "asv"), remaining columns are samples (features × samples).
 Auto-transposed internally.}
 
-\item{data.env}{Environmental data table. Must contain a \code{sample}
+\item{data_env}{Environmental data table. Must contain a \code{sample}
 column and environmental variable columns (either in long format with
 \code{sample}, \code{indicator}, \code{value}, or in wide format).
 Auto-detected.}
 
-\item{data.sample}{Sample metadata table. Must contain a \code{sample}
-column matching samples in \code{data.spec} and \code{data.env},
+\item{data_sample}{Sample metadata table. Must contain a \code{sample}
+column matching samples in \code{data_spec} and \code{data_env},
 and a group column.}
 
-\item{group_col}{Column name in \code{data.sample} defining sample groups.
+\item{group_col}{Column name in \code{data_sample} defining sample groups.
 Default is \code{"group"}. Falls back to auto-detection if not found.}
 
 \item{spec_select_method}{How to select characteristic features per group:
@@ -109,12 +109,12 @@ against environmental variables via \pkg{linkET}.
 \details{
 The function accepts flexible input formats:
 \itemize{
-  \item \code{data.env}: either long format (\code{sample}, \code{indicator},
+  \item \code{data_env}: either long format (\code{sample}, \code{indicator},
         \code{value}) or wide format (\code{sample} + indicators as columns).
         Auto-detected.
-  \item \code{data.spec}: features × samples, first column is feature ID.
+  \item \code{data_spec}: features × samples, first column is feature ID.
         Auto-transposed to samples × features.
-  \item \code{data.sample}: must have \code{sample} and group columns.
+  \item \code{data_sample}: must have \code{sample} and group columns.
         \code{group_col} is auto-detected if \code{NULL}.
 }
 
@@ -150,4 +150,7 @@ result <- plot_mantel(df.asv, df.phy, df.sample)
 result$plot
 }
 
+}
+\author{
+Xiang LI <lixiang117423@gmail.com>
 }

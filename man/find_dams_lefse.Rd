@@ -68,3 +68,6 @@ Segata, N. et al. (2011). Metagenomic biomarker discovery and explanation.
 \seealso{
 \code{\link{find_dams_deseq2}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

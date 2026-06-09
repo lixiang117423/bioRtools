@@ -54,3 +54,6 @@ data(df.pcoa.sample)
 pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa.res
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

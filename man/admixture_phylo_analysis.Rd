@@ -161,3 +161,6 @@ result <- admixture_phylo_analysis(
 }
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

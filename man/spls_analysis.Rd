@@ -157,3 +157,6 @@ splsda_result$sample.scores \%>\%
   theme_minimal()
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}
