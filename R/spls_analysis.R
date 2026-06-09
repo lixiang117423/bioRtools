@@ -158,8 +158,11 @@ spls_analysis <- function(data,
   }
 
   # Validate group
+  if (is.data.frame(group)) {
+    stop("'group' must be a vector or factor, not a data frame. Did you mean group = df$column_name?")
+  }
   if (length(group) != nrow(data)) {
-    stop("Length of 'group' must equal the number of rows in 'data'")
+    stop("Length of 'group' (", length(group), ") must equal the number of rows in 'data' (", nrow(data), ")")
   }
 
   # Convert group to factor if not already
