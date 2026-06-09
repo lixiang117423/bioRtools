@@ -11,10 +11,19 @@
 #'   columns represent variables (features/metabolites/genes). Missing values (NA)
 #'   are allowed and will be handled by the OPLS algorithm. For metabolomics data,
 #'   this typically contains peak intensities or concentrations
+#' @param sample Optional data frame containing sample metadata. When provided together
+#'   with \code{sample_col} and \code{group_col}, the function filters \code{data}
+#'   rows to match samples in \code{sample} and extracts the group vector automatically.
+#'   If NULL (default), uses the \code{group} parameter directly.
+#' @param sample_col Character string specifying the column in \code{sample} that
+#'   contains sample IDs. Used to match rows in \code{data} (matched by row names).
+#'   Default is "sample".
+#' @param group_col Character string specifying the column in \code{sample} that
+#'   contains group labels. Default is "group".
 #' @param group Factor vector specifying group membership for discriminant analysis.
-#'   Must have the same length as the number of rows in data. For two-group
-#'   comparisons, a binary factor is required. Multi-group OPLS-DA is supported
-#'   for more than two groups
+#'   Must have the same length as the number of rows in data. Ignored when
+#'   \code{sample} is provided. For two-group comparisons, a binary factor is
+#'   required. Multi-group OPLS-DA is supported for more than two groups
 #' @param vip_threshold Numerical threshold for Variable Importance in Projection
 #'   (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
 #'   are considered important for group discrimination. Common thresholds:
@@ -356,7 +365,9 @@
 #' print(paste("Best scaling method based on Q2Y:", best_scaling))
 #' }
 #'
-opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1,
+opls_analysis <- function(data, sample = NULL, sample_col = "sample",
+                          group_col = "group", group = NULL,
+                          vip_threshold = 1.0, ortho_components = 1,
                           pred_components = NULL, scaling = "standard",
                           validation = "CV", cv_folds = 7,
                           ref_group = NULL, p_threshold = 0.05) {
@@ -367,12 +378,61 @@ opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1
     stop("'data' must be a matrix, data.frame, SummarizedExperiment, or ExpressionSet")
   }
 
-  if (!is.factor(group) && !is.character(group)) {
-    stop("'group' must be a factor or character vector")
+  # If sample data frame is provided, filter data and extract group
+  if (!is.null(sample)) {
+    if (!is.data.frame(sample)) {
+      stop("'sample' must be a data frame")
+    }
+    if (!sample_col %in% colnames(sample)) {
+      stop("'sample_col' (", sample_col, ") not found in 'sample'")
+    }
+    if (!group_col %in% colnames(sample)) {
+      stop("'group_col' (", group_col, ") not found in 'sample'")
+    }
+
+    # Convert data to matrix first to get row names
+    if (is.data.frame(data)) {
+      data <- as.matrix(data)
+    } else if (methods::is(data, "SummarizedExperiment")) {
+      data <- SummarizedExperiment::assay(data)
+    } else if (methods::is(data, "ExpressionSet")) {
+      data <- Biobase::exprs(data)
+    }
+
+    sample_ids <- sample[[sample_col]]
+    data_rownames <- rownames(data)
+    if (is.null(data_rownames)) {
+      stop("'data' must have row names matching sample IDs when using 'sample' parameter")
+    }
+
+    # Match and filter
+    common <- intersect(sample_ids, data_rownames)
+    if (length(common) == 0) {
+      stop("No matching samples between 'data' row names and 'sample'", call. = FALSE)
+    }
+
+    sample <- sample[match(common, sample[[sample_col]]), ]
+    data <- data[common, , drop = FALSE]
+    group <- sample[[group_col]]
+
+    if (nrow(data) < length(sample_ids)) {
+      warning(sprintf("Matched %d/%d samples from 'sample'", nrow(data), length(sample_ids)))
+    }
+  } else {
+    # Use group vector directly
+    if (is.null(group)) {
+      stop("Either 'sample' or 'group' must be provided")
+    }
+    if (!is.factor(group) && !is.character(group)) {
+      stop("'group' must be a factor or character vector")
+    }
   }
 
   # Convert data to matrix if needed
-  if (is.data.frame(data)) {
+  if (!is.null(sample)) {
+    # Already converted to matrix in sample branch above
+    data_matrix <- data
+  } else if (is.data.frame(data)) {
     data_matrix <- as.matrix(data)
   } else if (methods::is(data, "SummarizedExperiment")) {
     data_matrix <- SummarizedExperiment::assay(data)
