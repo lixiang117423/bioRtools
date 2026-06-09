@@ -46,9 +46,8 @@ row_sd <- function(data, cols = NULL, na.rm = TRUE) {
       cols_to_use <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
       cols_to_use <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -83,7 +82,7 @@ row_sd <- function(data, cols = NULL, na.rm = TRUE) {
   # 设置行名
   names(row_values) <- original_rownames
 
-  return(row_values)
+  row_values
 }
 
 #' Calculate row-wise coefficient of variation (CV)
@@ -129,9 +128,8 @@ row_cv <- function(data, cols = NULL, na.rm = TRUE) {
       cols_to_use <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
       cols_to_use <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -170,7 +168,7 @@ row_cv <- function(data, cols = NULL, na.rm = TRUE) {
   # 设置行名
   names(row_values) <- original_rownames
 
-  return(row_values)
+  row_values
 }
 
 #' Calculate row-wise mean
@@ -216,9 +214,8 @@ row_mean <- function(data, cols = NULL, na.rm = TRUE) {
       cols_to_use <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
       cols_to_use <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -238,7 +235,7 @@ row_mean <- function(data, cols = NULL, na.rm = TRUE) {
   # 设置行名
   names(row_values) <- original_rownames
 
-  return(row_values)
+  row_values
 }
 
 #' Calculate row-wise maximum
@@ -284,9 +281,8 @@ row_max <- function(data, cols = NULL, na.rm = TRUE) {
       cols_to_use <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
       cols_to_use <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -306,7 +302,7 @@ row_max <- function(data, cols = NULL, na.rm = TRUE) {
   # 设置行名
   names(row_values) <- original_rownames
 
-  return(row_values)
+  row_values
 }
 
 #' Calculate row-wise minimum
@@ -352,9 +348,8 @@ row_min <- function(data, cols = NULL, na.rm = TRUE) {
       cols_to_use <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
       cols_to_use <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -374,5 +369,5 @@ row_min <- function(data, cols = NULL, na.rm = TRUE) {
   # 设置行名
   names(row_values) <- original_rownames
 
-  return(row_values)
+  row_values
 }

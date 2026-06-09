@@ -134,7 +134,7 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     dplyr::arrange(P_value)
 
   # Return comprehensive results following project conventions
-  return(list(
+  list(
     result.permanova = result.permanova,
     raw.result = permanova.result,
     summary.stats = summary.stats

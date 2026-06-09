@@ -158,5 +158,5 @@ get_lm_stats_summary <- function(fit, digits = 3) {
     "n_obs"
   )
 
-  return(result)
+  result
 }

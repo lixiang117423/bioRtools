@@ -235,5 +235,5 @@ create_heatmap_trees <- function(data,
     col_order = tree_col$order
   )
 
-  return(result)
+  result
 }

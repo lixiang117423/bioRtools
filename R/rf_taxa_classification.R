@@ -143,9 +143,9 @@ rf_taxa_classification <- function(data,
 
   # Rename for internal use
   df_long <- df_long %>%
-    dplyr::rename(Run = !!rlang::sym(sample_col),
-                  Group = !!rlang::sym(group_col),
-                  OTU = !!rlang::sym(feature_col))
+    dplyr::rename(run = !!rlang::sym(sample_col),
+                  group = !!rlang::sym(group_col),
+                  otu = !!rlang::sym(feature_col))
 
   # Replace NA with "Unknown" in taxonomic columns
   df_long <- df_long %>% dplyr::mutate(dplyr::across(tidyselect::where(is.character),
@@ -166,7 +166,7 @@ rf_taxa_classification <- function(data,
 
     # Select the taxonomic column
     if (level == "OTU") {
-      tax_col <- "OTU"
+      tax_col <- "otu"
     } else {
       tax_col <- level
       # Map to actual column name
@@ -184,14 +184,14 @@ rf_taxa_classification <- function(data,
       }
     }
     if (level == "OTU") {
-      df_long$tax <- df_long$OTU
+      df_long$tax <- df_long$otu
     }
 
     # Aggregate
     df.tmp <- df_long %>%
-      dplyr::select(Run, Group, tax, value) %>%
-      dplyr::group_by(Run, tax, Group) %>%
-      dplyr::summarise(sum.value = sum(value), .groups = "drop")
+      dplyr::select(run, group, tax, value) %>%
+      dplyr::group_by(run, tax, group) %>%
+      dplyr::summarise(sum_value = sum(value), .groups = "drop")
 
     # Create code mapping for wide format
     distinct_tax <- df.tmp %>%
@@ -202,16 +202,16 @@ rf_taxa_classification <- function(data,
     # Wide format for ML
     df.ml <- df.tmp %>%
       dplyr::left_join(distinct_tax, by = "tax") %>%
-      dplyr::select(Run, Group, tmp, sum.value) %>%
-      tidyr::pivot_wider(names_from = "tmp", values_from = "sum.value",
+      dplyr::select(run, group, tmp, sum_value) %>%
+      tidyr::pivot_wider(names_from = "tmp", values_from = "sum_value",
                          values_fill = 0) %>%
-      dplyr::select(-Run)
+      dplyr::select(-run)
 
     # Replace NA with 0
     df.ml[is.na(df.ml)] <- 0
 
     # mlr3 task
-    task.rf <- mlr3::as_task_classif(df.ml, target = "Group")
+    task.rf <- mlr3::as_task_classif(df.ml, target = "group")
 
     # Train/test split
     set.seed(seed)
@@ -291,7 +291,7 @@ rf_taxa_classification <- function(data,
   # ── Top features boxplot ─────────────────────────────────────────────────
   plot.top <- NULL
   top_features <- all.importance %>%
-    dplyr::filter(tax_group == "OTU") %>%
+    dplyr::filter(tax_group == "otu") %>%
     dplyr::arrange(desc(importance)) %>%
     dplyr::slice_head(n = top_n) %>%
     dplyr::pull(tax)
@@ -302,15 +302,15 @@ rf_taxa_classification <- function(data,
       dplyr::select(dplyr::all_of(c(sample_col, group_col)))
 
     top_df <- df_long %>%
-      dplyr::filter(OTU %in% top_features) %>%
-      dplyr::select(Run, Group, OTU, value)
+      dplyr::filter(otu %in% top_features) %>%
+      dplyr::select(run, group, otu, value)
 
     plot.top <- top_df %>%
       ggplot2::ggplot(ggplot2::aes(
-        x = Group, y = value, fill = Group
+        x = group, y = value, fill = group
       )) +
       ggplot2::geom_boxplot() +
-      ggplot2::facet_wrap(~ OTU, scales = "free", ncol = 3) +
+      ggplot2::facet_wrap(~ otu, scales = "free", ncol = 3) +
       ggplot2::labs(x = NULL, y = "Abundance") +
       ggplot2::theme(
         legend.title = ggplot2::element_blank(),

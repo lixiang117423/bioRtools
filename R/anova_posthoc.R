@@ -62,8 +62,8 @@
 #'
 #' # Using grouped data
 #' iris %>%
-#'   dplyr::mutate(Size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) %>%
-#'   dplyr::group_by(Size) %>%
+#'   dplyr::mutate(size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) %>%
+#'   dplyr::group_by(size) %>%
 #'   anova_posthoc(Sepal.Length ~ Species)
 #'
 #' # Multiple grouping variables
@@ -263,7 +263,7 @@ anova_single_group <- function(data, group, value, method, level) {
     # Reorder columns: group, anova_pvalue, anova_signif, posthoc results
     dplyr::select(group, anova_pvalue, anova_signif, dplyr::everything())
 
-  return(anova_result)
+  anova_result
 }
 
 #' Helper function to get ANOVA significance label

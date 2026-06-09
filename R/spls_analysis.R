@@ -325,7 +325,7 @@ spls_analysis <- function(data,
   }
 
   # Return comprehensive results following project conventions
-  return(list(
+  list(
     result.splsda = splsda_result,
     sample.scores = sample_scores,
     variance.explained = variance_explained,

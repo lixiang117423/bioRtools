@@ -108,5 +108,5 @@ normalize_int <- function(data, feature_col, c = 3 / 8) {
     # It's good practice to ungroup after all grouped operations are done
     dplyr::ungroup()
 
-  return(transformed_data)
+  transformed_data
 }

@@ -331,5 +331,5 @@ enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
     }
   }
 
-  return(go_results)
+  go_results
 }

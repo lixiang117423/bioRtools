@@ -268,7 +268,7 @@ plot_manhattan <- function(data = NULL,
   }
 
   # ── Return ────────────────────────────────────────────────────────────────────
-  return(list(
+  list(
     plot.manhattan     = p_manhattan,
     plot.density       = p_density,
     plot.combined      = p_combined,

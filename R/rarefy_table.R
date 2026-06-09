@@ -249,7 +249,7 @@ rarefy_table <- function(data,
   }
 
   # Return comprehensive results following project conventions
-  return(list(
+  list(
     data.rarefied = rarefied_df,
     rarefaction.info = rarefaction_info,
     removed.samples = removed_samples,

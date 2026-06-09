@@ -788,5 +788,5 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
     cat("\n")
   }
 
-  return(results)
+  results
 }

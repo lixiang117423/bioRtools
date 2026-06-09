@@ -87,7 +87,7 @@ calc_standard_curve <- function(cq_table,
   # Create plot
   plot_result <- create_standard_curve_plot(processed_data, use_mean_cq)
 
-  return(list(table = regression_results, plot = plot_result))
+  list(table = regression_results, plot = plot_result))
 }
 
 #' Merge data and handle gene information flexibly
@@ -110,7 +110,7 @@ merge_standard_curve_data <- function(cq_table, concentration_table, gene_name) 
     message("No gene information provided. Using 'Unknown_Gene' as gene name.")
   }
 
-  return(merged_data)
+  merged_data
 }
 
 #' Validate input parameters (after merging)
@@ -204,7 +204,7 @@ prepare_data_fixed <- function(merged_data, highest_concentration,
       dplyr::ungroup()
   }
 
-  return(processed_data)
+  processed_data
 }
 
 #' Calculate regression statistics for each gene
@@ -314,7 +314,7 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
     stop("No valid results could be calculated for any gene")
   }
 
-  return(do.call(rbind, results_list))
+  do.call(rbind, results_list)
 }
 
 #' Create standard curve plot
@@ -382,7 +382,7 @@ create_standard_curve_plot <- function(processed_data, use_mean_cq) {
     p <- p + ggplot2::theme(legend.position = "none")
   }
 
-  return(p)
+  p
 }
 
 # For backward compatibility, create an alias with the original name
@@ -399,7 +399,7 @@ CalCurve <- function(cq.table, concentration.table, highest.concentration,
     use_mean_cq = use.mean.cq
   )
 
-  return(result)
+  result
 }
 
 

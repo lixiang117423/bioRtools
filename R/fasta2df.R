@@ -589,7 +589,7 @@ fasta2df <- function(fasta,
     trim_whitespace = trim_whitespace
   )
 
-  return(result)
+  result
 }
 
 # Utility function for performance benchmarking (not exported)

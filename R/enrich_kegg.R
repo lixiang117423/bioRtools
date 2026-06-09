@@ -414,5 +414,5 @@ enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
     cat("\n")
   }
 
-  return(kegg_results)
+  kegg_results
 }

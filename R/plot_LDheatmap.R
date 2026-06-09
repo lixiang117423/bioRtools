@@ -233,14 +233,11 @@ plot_LDheatmap <- function(vcf_file,
   }
 
   # Load required libraries
-  suppressWarnings(suppressMessages({
-    library(LDheatmap, quietly = TRUE)
-    if (ggplot_version) {
-      if (!requireNamespace("ggplot2", quietly = TRUE)) {
-        stop("ggplot2 package is required for ggplot_version = TRUE")
-      }
+  if (ggplot_version) {
+    if (!requireNamespace("ggplot2", quietly = TRUE)) {
+      stop("ggplot2 package is required for ggplot_version = TRUE")
     }
-  }))
+  }
 
   # -------------------------------------------------------------------------
   # Data preparation
@@ -370,7 +367,7 @@ plot_LDheatmap <- function(vcf_file,
 
   tryCatch(
     {
-      ld_heatmap <- LDheatmap(
+      ld_heatmap <- LDheatmap::LDheatmap(
         gdat = snp_matrix,
         genetic.distances = genetic_distances,
         color = plot_colors,
@@ -423,7 +420,7 @@ plot_LDheatmap <- function(vcf_file,
   }
 
   # Return results following bioRtools conventions
-  return(list(
+  list(
     plot.ld_heatmap = ld_heatmap,
     snp.matrix = snp_matrix,
     genetic.distances = genetic_distances,

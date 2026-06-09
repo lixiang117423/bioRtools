@@ -135,5 +135,5 @@ get_methylkit_data <- function(methyl_obj,
   }
 
   message("处理完成！最终综合性表格已生成。")
-  return(final_df)
+  final_df
 }

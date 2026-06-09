@@ -182,7 +182,7 @@ apply_labels_to_p_values <- function(p_values, ns, thresholds) {
   # Preserve NA values in output
   labels[is.na(p_values)] <- NA_character_
 
-  return(labels)
+  labels
 }
 
 

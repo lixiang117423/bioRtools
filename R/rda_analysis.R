@@ -333,7 +333,7 @@ rda_analysis <- function(data,
     })
 
   # Return comprehensive results following project conventions
-  return(list(
+  list(
     result.rda = rda_result,
     plot.rda = rda_plot,
     sample.scores = sample_coords,

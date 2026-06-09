@@ -109,9 +109,9 @@ scale01_rows <- function(data, cols = NULL, suffix = "_scaled", replace = TRUE) 
       cols_to_scale <- colnames(data)[cols]
     } else {
       # 对于其他tidyselect语法，使用dplyr
-      library(dplyr)
+      # 对于其他tidyselect语法，使用dplyr
       cols_to_scale <- data %>%
-        select({{ cols }}) %>%
+        dplyr::select({{ cols }}) %>%
         names()
     }
   }
@@ -160,7 +160,7 @@ scale01_rows <- function(data, cols = NULL, suffix = "_scaled", replace = TRUE) 
   # 确保保留原始行名
   rownames(result) <- original_rownames
 
-  return(result)
+  result
 }
 
 #' Scale values within groups using dplyr
@@ -194,16 +194,14 @@ scale01_rows <- function(data, cols = NULL, suffix = "_scaled", replace = TRUE) 
 #'
 #' @export
 scale01_groups <- function(data, cols, suffix = "_scaled", replace = FALSE) {
-  library(dplyr)
-
   result <- data %>%
-    mutate(
-      across({{ cols }},
+    dplyr::mutate(
+      dplyr::across({{ cols }},
         scale01,
         .names = if (replace) "{.col}" else paste0("{.col}", suffix))
     )
 
-  return(result)
+  result
 }
 
 #' Convenient function for scaling in dplyr pipelines
@@ -235,7 +233,7 @@ scale01_groups <- function(data, cols, suffix = "_scaled", replace = FALSE) {
 #'
 #' @export
 mutate_scale01 <- function(.data, ...) {
-  .data %>% mutate(across(c(...), scale01, .names = "{.col}_scaled"))
+  .data %>% dplyr::mutate(dplyr::across(c(...), scale01, .names = "{.col}_scaled"))
 }
 
 #' Convenient function for scaling with custom column names
@@ -270,5 +268,5 @@ mutate_scale01 <- function(.data, ...) {
 #'
 #' @export
 mutate_scale01_named <- function(.data, ...) {
-  .data %>% mutate(...)
+  .data %>% dplyr::mutate(...)
 }

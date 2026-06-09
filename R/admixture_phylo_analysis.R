@@ -551,9 +551,9 @@ admixture_phylo_analysis <- function(admixture_path,
   # Return list with all three plot objects
   if (verbose) message("Analysis completed! Returning plot objects.")
 
-  return(list(
+  list(
     combined_plot = combined_plot,    # aplot object (NULL if no tree)
     admixture_plot = p.admixture,    # ggplot2 object
     tree_plot = p.tree               # ggtree object (NULL if no tree)
-  ))
+  )
 }

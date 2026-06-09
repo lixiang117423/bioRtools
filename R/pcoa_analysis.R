@@ -38,12 +38,12 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
   pcoa.res$values %>%
     as.data.frame() %>%
     dplyr::select(2) %>%
-    dplyr::mutate(PCoA = paste0("PCo", seq_len(nrow(.)))) %>%
-    dplyr::select(PCoA, Relative_eig) %>%
+    dplyr::mutate(pcoa = paste0("PCo", seq_len(nrow(.)))) %>%
+    dplyr::select(pcoa, Relative_eig) %>%
     dplyr::mutate(
-      relative.eig = round(Relative_eig * 100, 2),
-      percentage = paste0(relative.eig, "%"),
-      label = paste0(PCoA, " (", percentage, ")")
+      relative_eig = round(Relative_eig * 100, 2),
+      percentage = paste0(relative_eig, "%"),
+      label = paste0(pcoa, " (", percentage, ")")
     ) -> eigenvalue.pcoa
 
   # Step 3: Extract coordinate data and merge with sample information
@@ -56,11 +56,11 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
 
   # Step 4: Create axis labels with explained variance
   x_label <- eigenvalue.pcoa %>%
-    dplyr::filter(PCoA == x) %>%
+    dplyr::filter(pcoa == x) %>%
     dplyr::pull(label)
 
   y_label <- eigenvalue.pcoa %>%
-    dplyr::filter(PCoA == y) %>%
+    dplyr::filter(pcoa == y) %>%
     dplyr::pull(label)
 
   # Step 5: Create PCoA plot
@@ -88,7 +88,7 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
     ggplot2::theme_bw()
 
   # Step 6: Return results as a list following project conventions
-  return(list(
+  list(
     result.pcoa = pcoa.res,
     plot.pcoa = plot.pcoa,
     point.data = point.data,

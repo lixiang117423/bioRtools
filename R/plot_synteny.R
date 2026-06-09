@@ -322,7 +322,7 @@ plot_synteny <- function(gene_data,
   )
 
   # Return results following project conventions
-  return(list(
+  list(
     plot.synteny = plot_synteny,
     data.summary = data_summary
   ))
@@ -493,7 +493,7 @@ auto_generate_synteny_links <- function(gene_data, synteny_groups,
     }
   }
 
-  return(syntenic_data)
+  syntenic_data
 }
 
 
@@ -554,7 +554,7 @@ auto_generate_synteny_links_from_col <- function(gene_data, syn_group_col,
     }
   }
 
-  return(syntenic_data)
+  syntenic_data
 }
 
 
@@ -581,7 +581,7 @@ process_gene_data <- function(gene_data, start_col, end_col, y_col, species_col)
     stop("No valid gene data remaining after filtering NA values", call. = FALSE)
   }
 
-  return(gene_data_clean)
+  gene_data_clean
 }
 
 
@@ -607,7 +607,7 @@ process_syntenic_data <- function(syntenic_data, x_col, y_synt_col, group_col) {
     stop("No valid synteny data remaining after filtering NA values", call. = FALSE)
   }
 
-  return(syntenic_data_clean)
+  syntenic_data_clean
 }
 
 
@@ -634,7 +634,7 @@ prepare_segment_data <- function(gene_data, start_col, end_col, y_col) {
       max = max + 3
     )
 
-  return(segment_df)
+  segment_df
 }
 
 
@@ -769,7 +769,7 @@ create_synteny_plot <- function(gene_data, syntenic_data, segment_data, ...) {
       subtitle = args$subtitle
     )
 
-  return(p)
+  p
 }
 
 
@@ -796,5 +796,5 @@ create_synteny_summary <- function(gene_data, syntenic_data, species_col, group_
 
   summary$total_links <- total_links
 
-  return(summary)
+  summary
 }
