@@ -7,6 +7,7 @@
 #' @param value Replacement value for NA (default: 0).
 #'
 #' @return The data frame with NA values replaced.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

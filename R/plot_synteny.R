@@ -171,7 +171,7 @@
 #' )$plot.synteny
 #'
 #' @export
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 plot_synteny <- function(gene_data,
                          syntenic_data = NULL,

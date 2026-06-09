@@ -50,6 +50,7 @@
 #'
 #' @seealso \code{\link{find_dams_deseq2}}, \code{\link{find_dams_lefse}}
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 plot_multi_volcano <- function(data,
                                groupCol = NULL,

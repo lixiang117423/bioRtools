@@ -85,6 +85,7 @@
 #'   \item \code{\link{anova_posthoc}} for group comparisons
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

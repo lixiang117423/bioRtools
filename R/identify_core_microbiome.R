@@ -50,7 +50,7 @@
 #'
 #'   \code{plot_neutral}: ggplot object showing neutral model fit
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @importFrom dplyr mutate group_by summarise ungroup left_join arrange desc
 #'   transmute select filter case_when slice
@@ -540,7 +540,7 @@ plot_neutral_model <- function(fitting_results, neutral_results) {
 
 
 #' Print Method for Core Microbiome Results
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 print.core_microbiome <- function(x, ...) {
   cat("Core Microbiome Analysis Results\n")
@@ -592,7 +592,7 @@ print.core_microbiome <- function(x, ...) {
 #' of gut microbial communities in the zebrafish over host development.
 #' The ISME Journal, 10(3), 655-664.
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @importFrom minpack.lm nlsLM
 #' @importFrom Hmisc binconf

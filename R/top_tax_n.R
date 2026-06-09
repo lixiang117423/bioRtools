@@ -93,6 +93,7 @@
 #'   \item Very low abundance taxa may be filtered out automatically
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

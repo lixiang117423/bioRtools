@@ -30,6 +30,7 @@
 #'   \item ACE: \code{vegan::estimateR()} — abundance-based coverage estimator
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

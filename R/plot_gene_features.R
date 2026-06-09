@@ -16,7 +16,8 @@
 #'
 #' @return A ggplot object showing gene structure with features
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{
@@ -241,7 +242,8 @@ plot_gene_features <- function(data,
 #'
 #' @return A ggplot object showing gene structure with gene labels
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

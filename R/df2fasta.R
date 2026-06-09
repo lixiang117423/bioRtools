@@ -78,7 +78,7 @@
 #' \code{\link{writeLines}} for file writing operations,
 #' \code{\link{Biostrings}} package for advanced sequence manipulation
 #'
-#' @author Optimized by Assistant
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @references
 #' FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 #'

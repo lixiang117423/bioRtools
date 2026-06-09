@@ -19,6 +19,7 @@
 #' @param ... Other arguments passed to graphics device.
 #'
 #' @return Invisibly returns the input \code{plot}.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link[ggplot2]{ggsave}}
 #'

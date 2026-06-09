@@ -25,7 +25,8 @@
 #'
 #'   \code{n_obs}: Number of observations
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

@@ -74,6 +74,7 @@
 #' This function requires the LDheatmap package and ttplot package for VCF file processing.
 #' If LDheatmap is not installed, it will be installed automatically from Bioconductor.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

@@ -11,6 +11,7 @@
 #'
 #' @return Invisibly returns a named list with \code{nodes} and \code{edges}
 #'   data frames.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{microbiome_net}}
 #'

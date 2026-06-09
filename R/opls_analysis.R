@@ -127,6 +127,7 @@
 #'   \item \code{\link[ropls]{opls}} for underlying OPLS implementation
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

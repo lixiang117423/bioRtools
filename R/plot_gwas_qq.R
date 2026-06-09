@@ -47,7 +47,8 @@
 #'   \item The function uses -log10 transformation for both axes
 #' }
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

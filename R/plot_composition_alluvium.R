@@ -90,7 +90,7 @@
 #' print(p_custom2)
 #' }
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 plot_composition_alluvium <- function(data,

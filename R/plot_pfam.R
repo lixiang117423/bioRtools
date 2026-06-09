@@ -12,6 +12,7 @@
 #'
 #' @return ggplot object or aplot combined plot object
 #' @note When rounded_corners = TRUE, the ggforce package is required
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples
@@ -145,6 +146,7 @@ plot_pfam <- function(data,
 #' @param ... Other parameters passed to plot_pfam
 #'
 #' @return ggplot object
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 
 quick_pfam_plot <- function(data, tree_file = NULL, ...) {

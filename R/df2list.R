@@ -31,6 +31,7 @@
 #'   \item Gene/feature comparison between conditions
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

@@ -45,6 +45,7 @@
 #'
 #' Requires \pkg{ggupset}.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

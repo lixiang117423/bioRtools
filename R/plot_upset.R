@@ -38,6 +38,7 @@
 #'
 #' @seealso \code{\link{find_dams_deseq2}}, \code{\link{plot_tax_upset}}
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 plot_upset <- function(data,
                        group = NULL,

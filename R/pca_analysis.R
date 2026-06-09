@@ -138,6 +138,7 @@
 #'   \item \code{\link[factoextra]{fviz_pca_ind}} for advanced PCA visualization
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

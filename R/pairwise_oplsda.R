@@ -36,6 +36,7 @@
 #' @seealso \code{\link{opls_analysis}} for single OPLS-DA analysis,
 #'   \code{\link{find_dams_deseq2}} for pairwise DESeq2 differential analysis.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

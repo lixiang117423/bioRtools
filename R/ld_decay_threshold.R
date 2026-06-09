@@ -102,7 +102,8 @@
 #' result$background_r2    # estimated background LD
 #' }
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 ld_decay_threshold <- function(
         data,
         n,

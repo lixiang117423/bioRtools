@@ -72,6 +72,7 @@
 #'   \item Consider the number of environmental variables relative to sample size
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

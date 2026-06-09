@@ -11,6 +11,7 @@
 #' @return A data frame with columns: \code{max}, \code{min}, \code{mean},
 #'   \code{median}, \code{sd}, \code{se}, \code{cv}, \code{iqr}, \code{range},
 #'   \code{sum}, \code{n}, \code{n_na}.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

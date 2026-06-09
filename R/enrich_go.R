@@ -66,6 +66,7 @@
 #'   \item Very small gene sets may not yield meaningful enrichment results
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

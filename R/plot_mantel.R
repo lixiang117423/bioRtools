@@ -86,6 +86,7 @@
 #'
 #' Requires \pkg{linkET} and \pkg{RColorBrewer}.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

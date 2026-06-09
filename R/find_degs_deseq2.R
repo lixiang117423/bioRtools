@@ -108,6 +108,7 @@
 #'   \item \code{\link{enrich_kegg}} for pathway enrichment analysis
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

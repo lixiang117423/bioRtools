@@ -32,7 +32,8 @@
 #'   Each tree can be added to a plot using `+` operator or used with
 #'   ggtree annotation functions.
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

@@ -38,6 +38,7 @@
 #'     \item{\code{spiecResults}}{Named list of raw spiec.easi output objects.}
 #'   }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link[SpiecEasi]{spiec.easi}}
 #'

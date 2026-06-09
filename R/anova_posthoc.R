@@ -37,6 +37,7 @@
 #'   - **: 0.001 < p ≤ 0.01
 #'   - ***: p ≤ 0.001
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

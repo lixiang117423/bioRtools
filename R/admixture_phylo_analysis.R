@@ -76,6 +76,7 @@
 #'   - Returns aplot object when tree provided, ggplot2 object otherwise
 #'   - No files are saved automatically - use ggsave() if needed
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @examples
 #' library(bioRtools)

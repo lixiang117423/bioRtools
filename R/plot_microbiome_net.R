@@ -9,6 +9,7 @@
 #' @return A \code{tidygraph::tbl_graph} object with node attributes
 #'   (name, Modularity, Degree, Strength) and edge attributes
 #'   (correlation, weight, corr_direction).
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{microbiome_net}}
 #'

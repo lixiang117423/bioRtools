@@ -29,7 +29,7 @@
 #' # With missing values
 #' scale01(c(1, 2, NA, 4, 5))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @seealso \code{\link{scale}} for standardization (z-score normalization)
 #'
@@ -88,7 +88,7 @@ scale01 <- function(x) {
 #' # Scale specific columns
 #' scale01_rows(df, cols = c("var1", "var2"))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 scale01_rows <- function(data, cols = NULL, suffix = "_scaled", replace = TRUE) {
@@ -190,7 +190,7 @@ scale01_rows <- function(data, cols = NULL, suffix = "_scaled", replace = TRUE) 
 #'   group_by(category) %>%
 #'   scale01_groups(cols = c("value1", "value2"))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 scale01_groups <- function(data, cols, suffix = "_scaled", replace = FALSE) {
@@ -229,7 +229,7 @@ scale01_groups <- function(data, cols, suffix = "_scaled", replace = FALSE) {
 #'   group_by(group) %>%
 #'   mutate_scale01(var1, var2)
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 mutate_scale01 <- function(.data, ...) {
@@ -264,7 +264,7 @@ mutate_scale01 <- function(.data, ...) {
 #'     cost_norm = scale01(cost)
 #'   )
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 mutate_scale01_named <- function(.data, ...) {

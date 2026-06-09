@@ -16,7 +16,7 @@
 #'       and statistical measures
 #'   }
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr rename mutate filter select left_join

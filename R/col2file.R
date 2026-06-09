@@ -13,6 +13,7 @@
 #' @return The input \code{data}, invisibly. This makes the function
 #'   pipe-friendly.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples
