@@ -8,8 +8,18 @@
 #'
 #' @param data Numeric matrix or data frame with observations as rows and
 #'   variables (features) as columns. Missing values (NAs) are allowed.
+#' @param sample Optional data frame containing sample metadata. When provided
+#'   together with \code{sample_col} and \code{group_col}, the function filters
+#'   \code{data} rows to match samples in \code{sample}, extracts the group vector,
+#'   and merges sample info into the output scores. If NULL (default), uses
+#'   \code{group} parameter directly.
+#' @param sample_col Character string specifying the column in \code{sample} that
+#'   contains sample IDs, matched against row names of \code{data}. Default is "sample".
+#' @param group_col Character string specifying the column in \code{sample} that
+#'   contains group labels. Default is "group".
 #' @param group A factor or character vector indicating the class membership
 #'   for each observation. Must have the same length as the number of rows in data.
+#'   Ignored when \code{sample} is provided.
 #' @param ncomp Positive integer specifying the number of components to include
 #'   in the model. Default is 3.
 #' @param keepX Numeric vector indicating the number of variables to keep in
@@ -128,7 +138,10 @@
 #'   theme_minimal()
 #'
 spls_analysis <- function(data,
-                          group,
+                          sample = NULL,
+                          sample_col = "sample",
+                          group_col = "group",
+                          group = NULL,
                           ncomp = 3,
                           keepX = NULL,
                           scale = TRUE,
@@ -144,12 +157,57 @@ spls_analysis <- function(data,
     stop("'data' must be a matrix or data frame")
   }
 
-  # Convert to matrix if data frame
-  if (is.data.frame(data)) {
-    if (!all(sapply(data, is.numeric))) {
-      stop("All columns in 'data' must be numeric")
+  # If sample data frame is provided, filter data and extract group
+  sample_info <- NULL
+  if (!is.null(sample)) {
+    if (!is.data.frame(sample)) {
+      stop("'sample' must be a data frame")
     }
-    data <- as.matrix(data)
+    if (!sample_col %in% colnames(sample)) {
+      stop("'sample_col' (", sample_col, ") not found in 'sample'")
+    }
+    if (!group_col %in% colnames(sample)) {
+      stop("'group_col' (", group_col, ") not found in 'sample'")
+    }
+
+    # Convert data to matrix first
+    if (is.data.frame(data)) {
+      if (!all(sapply(data, is.numeric))) {
+        stop("All columns in 'data' must be numeric")
+      }
+      data <- as.matrix(data)
+    }
+
+    sample_ids <- sample[[sample_col]]
+    data_rownames <- rownames(data)
+    if (is.null(data_rownames)) {
+      stop("'data' must have row names matching sample IDs when using 'sample' parameter")
+    }
+
+    common <- intersect(sample_ids, data_rownames)
+    if (length(common) == 0) {
+      stop("No matching samples between 'data' row names and 'sample'", call. = FALSE)
+    }
+
+    sample <- sample[match(common, sample[[sample_col]]), ]
+    data <- data[common, , drop = FALSE]
+    group <- sample[[group_col]]
+    sample_info <- sample
+
+    if (nrow(data) < length(sample_ids)) {
+      warning(sprintf("Matched %d/%d samples from 'sample'", nrow(data), length(sample_ids)))
+    }
+  } else {
+    if (is.null(group)) {
+      stop("Either 'sample' or 'group' must be provided")
+    }
+    # Convert to matrix if data frame
+    if (is.data.frame(data)) {
+      if (!all(sapply(data, is.numeric))) {
+        stop("All columns in 'data' must be numeric")
+      }
+      data <- as.matrix(data)
+    }
   }
 
   # Check dimensions
@@ -244,6 +302,14 @@ spls_analysis <- function(data,
     as.data.frame() %>%
     tibble::rownames_to_column(var = "sample") %>%
     dplyr::rename_with(~ paste0("comp", seq_along(.x)), -sample)
+
+  # Merge sample metadata into scores if available
+  if (!is.null(sample_info)) {
+    sample_scores <- sample_scores %>%
+      dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample"))
+  } else {
+    sample_scores$group <- group
+  }
 
   # Calculate variance explained and create labels
   variance_explained <- splsda_result$prop_expl_var$X %>%

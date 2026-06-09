@@ -414,6 +414,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     sample <- sample[match(common, sample[[sample_col]]), ]
     data <- data[common, , drop = FALSE]
     group <- sample[[group_col]]
+    sample_info <- sample
 
     if (nrow(data) < length(sample_ids)) {
       warning(sprintf("Matched %d/%d samples from 'sample'", nrow(data), length(sample_ids)))
@@ -426,6 +427,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     if (!is.factor(group) && !is.character(group)) {
       stop("'group' must be a factor or character vector")
     }
+    sample_info <- NULL
   }
 
   # Convert data to matrix if needed
@@ -610,6 +612,12 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
         scores_data$to1 <- opls_model@orthoScoreMN[, 1]
       }
     })
+
+  # Merge sample metadata into scores if available
+  if (!is.null(sample_info)) {
+    scores_data <- scores_data %>%
+      dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
+  }
 
   # Extract VIP scores
   vip_data <- tryCatch(
