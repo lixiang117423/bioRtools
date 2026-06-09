@@ -715,6 +715,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
       diff_analysis <- do.call(rbind, diff_list)
       rownames(diff_analysis) <- NULL
+      diff_analysis$comparison <- paste0(diff_analysis$group, " vs ", diff_analysis$ref_group)
       diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
 
       # Add VIP from pairwise results
@@ -967,6 +968,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
     diff_analysis <- do.call(rbind, diff_list)
     rownames(diff_analysis) <- NULL
+    diff_analysis$comparison <- paste0(diff_analysis$group, " vs ", diff_analysis$ref_group)
 
     # Adjust p-values across all comparisons
     diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
