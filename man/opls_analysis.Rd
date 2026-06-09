@@ -91,7 +91,20 @@ Used in conjunction with log2FC direction to label features as Up/Down.}
 (default: FALSE).}
 }
 \value{
-
+A named list containing:
+  \describe{
+    \item{\code{model}}{OPLS model object from ropls package. In pairwise mode,
+      this is the first pairwise model.}
+    \item{\code{scores}}{Data frame with sample scores for visualization.
+      In pairwise mode, includes a \code{comparison} column.}
+    \item{\code{vip_scores}}{Data frame with VIP scores, sorted by VIP descending.
+      In pairwise mode, includes \code{group} and \code{ref_group} columns.}
+    \item{\code{loadings}}{Data frame with variable loadings.}
+    \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
+      regulation labels for each group vs ref_group. NULL if no ref_group.}
+    \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
+      In pairwise mode, includes per-comparison results.}
+  }
 }
 \description{
 This function performs Orthogonal Partial Least Squares Discriminant Analysis
