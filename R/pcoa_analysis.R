@@ -51,7 +51,12 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
   pcoa.res$vectors %>%
     as.data.frame() %>%
     dplyr::select(1:5) %>%
-    magrittr::set_names(paste0("PCo", seq_len(ncol(.)))) %>%
+    {
+      df <- .
+      pco_labels <- paste0("PCo", seq_len(ncol(df)), " (",
+        eigenvalue.pcoa$percentage[seq_len(ncol(df))], ")")
+      magrittr::set_names(df, pco_labels)
+    } %>%
     tibble::rownames_to_column(var = "sample") %>%
     dplyr::left_join(sample, by = "sample") -> point.data
 

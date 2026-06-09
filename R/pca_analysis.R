@@ -514,7 +514,11 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
     {
       scores_matrix <- pca_model$ind$coord
       scores_df <- as.data.frame(scores_matrix)
-      names(scores_df) <- paste0("PC", 1:ncol(scores_df))
+
+      # Rename columns with variance percentage
+      pct_labels <- paste0("PC", 1:ncol(scores_df), " (",
+        round(eigenvalue_data$variance_percent[1:ncol(scores_df)], 2), "%)")
+      names(scores_df) <- pct_labels
 
       scores_df$sample_id <- data_samples
       scores_df <- scores_df %>%
