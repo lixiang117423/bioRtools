@@ -6,7 +6,10 @@
 \usage{
 spls_analysis(
   data,
-  group,
+  sample = NULL,
+  sample_col = "sample",
+  group_col = "group",
+  group = NULL,
   ncomp = 3,
   keepX = NULL,
   scale = TRUE,
@@ -23,8 +26,21 @@ spls_analysis(
 \item{data}{Numeric matrix or data frame with observations as rows and
 variables (features) as columns. Missing values (NAs) are allowed.}
 
+\item{sample}{Optional data frame containing sample metadata. When provided
+together with \code{sample_col} and \code{group_col}, the function filters
+\code{data} rows to match samples in \code{sample}, extracts the group vector,
+and merges sample info into the output scores. If NULL (default), uses
+\code{group} parameter directly.}
+
+\item{sample_col}{Character string specifying the column in \code{sample} that
+contains sample IDs, matched against row names of \code{data}. Default is "sample".}
+
+\item{group_col}{Character string specifying the column in \code{sample} that
+contains group labels. Default is "group".}
+
 \item{group}{A factor or character vector indicating the class membership
-for each observation. Must have the same length as the number of rows in data.}
+for each observation. Must have the same length as the number of rows in data.
+Ignored when \code{sample} is provided.}
 
 \item{ncomp}{Positive integer specifying the number of components to include
 in the model. Default is 3.}
