@@ -182,12 +182,7 @@ run_wgcna_analysis <- function(
       stop(sprintf("Package '%s' is required. Install it with install.packages('%s')", pkg, pkg))
     }
   }
-  suppressPackageStartupMessages({
-    library(WGCNA)
-    library(patchwork)
-    library(readxl)
-    library(pheatmap)
-  })
+  # Packages accessed via pkg::fun() namespace
 
   # Create output directory
   if (!dir.exists(output_dir)) {
@@ -706,7 +701,7 @@ run_wgcna_analysis <- function(
 
   class(results) <- c("wgcna_results", "list")
 
-  return(results)
+  results
 }
 
 #' Print method for WGCNA results

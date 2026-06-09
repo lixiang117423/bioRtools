@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0] - 2026-06-09
+
+### Changed
+- Enforce DEVELOP_GUIDE.md compliance across all R source files (45 files touched)
+- Remove `library()` calls in function bodies, replace with `pkg::fun()` namespace (pav_gwas, plot_LDheatmap, scale01, row_stat, run_wgcna)
+- Fix non-snake_case output column names: `PCoA`→`pcoa`, `mean.sample`→`mean_sample`, `Run/Group/OTU`→`run/group/otu`, `Treatment`→`treatment`
+- Fix non-snake_case parameter names: `plot_mantel` (`data.spec`→`data_spec`, `data.env`→`data_env`, `data.sample`→`data_sample`)
+- Remove unnecessary `return()` at end of functions across all exported functions
+
 ## [1.24.0] - 2026-06-09
 
 ### Changed

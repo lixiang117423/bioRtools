@@ -283,17 +283,7 @@ pav_gwas <- function(pav_data,
     cat("Optional packages missing (will use fallback methods):", paste(missing_optional, collapse = ", "), "\n")
   }
 
-  # Load required packages
-  suppressPackageStartupMessages({
-    library(data.table)
-    library(dplyr)
-    library(ggplot2)
-    library(parallel)
-    library(readr)
-    library(tidyr)
-    library(stringr)
-    library(magrittr)
-  })
+  # Packages loaded via NAMESPACE imports; use pkg::fun() for non-imported functions
 
   # Enhanced input validation
   if (!analysis_type %in% c("auto", "binary", "logit", "arcsine", "categorical", "continuous", "continuous_raw")) {
@@ -331,7 +321,7 @@ pav_gwas <- function(pav_data,
   } else if (is.data.frame(pav_data)) {
     # It's a data frame
     if (verbose) cat("Using provided PAV data frame\n")
-    pav_df <- as.data.table(pav_data)
+    pav_df <- data.table::as.data.table(pav_data)
 
   } else {
     stop("pav_data must be either a file path (character string) or a data frame")
@@ -374,7 +364,7 @@ pav_gwas <- function(pav_data,
   } else if (is.data.frame(phenotype_data)) {
     # It's a data frame
     if (verbose) cat("Using provided phenotype data frame\n")
-    pheno_df <- as.data.table(phenotype_data)
+    pheno_df <- data.table::as.data.table(phenotype_data)
 
   } else {
     stop("phenotype_data must be either a file path (character string) or a data frame")
@@ -1092,17 +1082,17 @@ pav_gwas <- function(pav_data,
   }
 
   # Set up parallel processing
-  cl <- makeCluster(n_cores)
-  clusterExport(cl, c("test_feature_association", "test_type", "transformed_phenotype", "covariates"),
+  cl <- parallel::makeCluster(n_cores)
+  parallel::clusterExport(cl, c("test_feature_association", "test_type", "transformed_phenotype", "covariates"),
     envir = environment())
-  clusterEvalQ(cl, {
+  parallel::clusterEvalQ(cl, {
     library(stats)
   })
 
   # Perform association tests
   start_time <- Sys.time()
 
-  results <- parLapply(cl, 1:nrow(filtered_matrix), function(i) {
+  results <- parallel::parLapply(cl, 1:nrow(filtered_matrix), function(i) {
     feature_presence <- filtered_matrix[i, ]
     result <- test_feature_association(feature_presence, transformed_phenotype, test_type, covariates)
     result$feature_id <- rownames(filtered_matrix)[i]
@@ -1110,7 +1100,7 @@ pav_gwas <- function(pav_data,
     return(result)
   })
 
-  stopCluster(cl)
+  parallel::stopCluster(cl)
 
   end_time <- Sys.time()
   if (verbose) {
@@ -1406,7 +1396,7 @@ pav_gwas <- function(pav_data,
   manhattan_plot <- gwas_results %>%
     ggplot(aes(x = abs_pos, y = neg_log10_p)) +
     geom_point(aes(color = chr_color), alpha = 0.7, size = 0.8) +
-    scale_color_identity()
+    ggplot2::scale_color_identity()
 
   # Add multiple threshold lines individually
   for (i in 1:nrow(threshold_lines)) {
@@ -1423,7 +1413,7 @@ pav_gwas <- function(pav_data,
       subtitle = paste("Analysis:", analysis_type, "| Test:", test_type,
         "| Samples:", analysis_summary$n_samples, "| Features:", nrow(gwas_results)),
       caption = paste("Threshold lines:", paste(threshold_lines$label, collapse = ", "))) +
-    theme_minimal() +
+    ggplot2::theme_minimal() +
     theme(
       panel.grid.minor = element_blank(),
       panel.grid.major.x = element_blank(),
@@ -1445,9 +1435,9 @@ pav_gwas <- function(pav_data,
         paste(threshold_lines$label, collapse = ", ")))
   }
 
-  ggsave(file.path(output_dir, "manhattan_plot.pdf"), manhattan_plot,
+  ggplot2::ggsave(file.path(output_dir, "manhattan_plot.pdf"), manhattan_plot,
     width = 14, height = 6, dpi = 300)
-  ggsave(file.path(output_dir, "manhattan_plot.png"), manhattan_plot,
+  ggplot2::ggsave(file.path(output_dir, "manhattan_plot.png"), manhattan_plot,
     width = 14, height = 6, dpi = 300, bg = "white")
 
   # Q-Q plot - UNCHANGED FROM ORIGINAL
@@ -1461,16 +1451,16 @@ pav_gwas <- function(pav_data,
   ) %>%
     ggplot(aes(x = expected, y = observed)) +
     geom_point(alpha = 0.6, color = "darkblue") +
-    geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+    ggplot2::geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
     labs(title = "Q-Q Plot of Association Test P-values",
       x = expression("Expected" ~ -log[10](P)),
       y = expression("Observed" ~ -log[10](P)),
       subtitle = "Deviation from diagonal indicates test calibration issues") +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
-  ggsave(file.path(output_dir, "qq_plot.pdf"), qq_plot,
+  ggplot2::ggsave(file.path(output_dir, "qq_plot.pdf"), qq_plot,
     width = 8, height = 6, dpi = 300)
-  ggsave(file.path(output_dir, "qq_plot.png"), qq_plot,
+  ggplot2::ggsave(file.path(output_dir, "qq_plot.png"), qq_plot,
     width = 8, height = 6, dpi = 300, bg = "white")
 
   # Enhanced phenotype distribution plot
@@ -1478,8 +1468,8 @@ pav_gwas <- function(pav_data,
     # For numeric data, use histogram
     pheno_dist_plot <- data.frame(phenotype = phenotype_values) %>%
       ggplot(aes(x = phenotype)) +
-      geom_histogram(bins = 30, fill = "lightblue", color = "black", alpha = 0.7) +
-      geom_density(aes(y = ..scaled.. * max(..count..)), color = "red", size = 1) +
+      ggplot2::geom_histogram(bins = 30, fill = "lightblue", color = "black", alpha = 0.7) +
+      ggplot2::geom_density(aes(y = ..scaled.. * max(..count..)), color = "red", size = 1) +
       labs(title = "Enhanced Phenotype Distribution Analysis",
         x = "Phenotype Value",
         y = "Frequency",
@@ -1487,7 +1477,7 @@ pav_gwas <- function(pav_data,
           "| Type:", analysis_type,
           "| Mean =", round(mean(phenotype_values, na.rm = TRUE), 3),
           "| CV =", round(pheno_stats$cv, 3))) +
-      theme_minimal()
+      ggplot2::theme_minimal()
   } else {
     # For categorical data, use bar plot
     pheno_counts <- table(phenotype_values)
@@ -1507,13 +1497,13 @@ pav_gwas <- function(pav_data,
         subtitle = paste("n =", length(phenotype_values),
           "| Type:", analysis_type,
           "| Categories =", pheno_stats$n_unique)) +
-      theme_minimal() +
+      ggplot2::theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   }
 
-  ggsave(file.path(output_dir, "phenotype_distribution.pdf"), pheno_dist_plot,
+  ggplot2::ggsave(file.path(output_dir, "phenotype_distribution.pdf"), pheno_dist_plot,
     width = 8, height = 6, dpi = 300)
-  ggsave(file.path(output_dir, "phenotype_distribution.png"), pheno_dist_plot,
+  ggplot2::ggsave(file.path(output_dir, "phenotype_distribution.png"), pheno_dist_plot,
     width = 8, height = 6, dpi = 300, bg = "white")
 
   # Population structure plot (if applicable) - UNCHANGED FROM ORIGINAL
@@ -1528,7 +1518,7 @@ pav_gwas <- function(pav_data,
         x = "Principal Component",
         y = "Variance Explained (%)",
         subtitle = paste("First", ncol(pca_results$pcs), "PCs used as covariates")) +
-      theme_minimal() +
+      ggplot2::theme_minimal() +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
     pc_scatter_plot <- data.frame(pca_results$pcs[, 1:min(2, ncol(pca_results$pcs))]) %>%
@@ -1539,19 +1529,19 @@ pav_gwas <- function(pav_data,
         y = if (ncol(pca_results$pcs) > 1)
           paste0("PC2 (", round(pca_results$var_explained[2] * 100, 1), "%)")
         else "PC1") +
-      theme_minimal()
+      ggplot2::theme_minimal()
 
     if (requireNamespace("gridExtra", quietly = TRUE)) {
       pop_structure_plot <- gridExtra::grid.arrange(pc_var_plot, pc_scatter_plot, nrow = 2)
-      ggsave(file.path(output_dir, "population_structure.pdf"), pop_structure_plot,
+      ggplot2::ggsave(file.path(output_dir, "population_structure.pdf"), pop_structure_plot,
         width = 8, height = 10, dpi = 300)
-      ggsave(file.path(output_dir, "population_structure.png"), pop_structure_plot,
+      ggplot2::ggsave(file.path(output_dir, "population_structure.png"), pop_structure_plot,
         width = 8, height = 10, dpi = 300, bg = "white")
     } else {
-      ggsave(file.path(output_dir, "pca_variance.pdf"), pc_var_plot, width = 8, height = 6, dpi = 300)
-      ggsave(file.path(output_dir, "pca_variance.png"), pc_var_plot, width = 8, height = 6, dpi = 300, bg = "white")
-      ggsave(file.path(output_dir, "pca_scatter.pdf"), pc_scatter_plot, width = 8, height = 6, dpi = 300)
-      ggsave(file.path(output_dir, "pca_scatter.png"), pc_scatter_plot, width = 8, height = 6, dpi = 300, bg = "white")
+      ggplot2::ggsave(file.path(output_dir, "pca_variance.pdf"), pc_var_plot, width = 8, height = 6, dpi = 300)
+      ggplot2::ggsave(file.path(output_dir, "pca_variance.png"), pc_var_plot, width = 8, height = 6, dpi = 300, bg = "white")
+      ggplot2::ggsave(file.path(output_dir, "pca_scatter.pdf"), pc_scatter_plot, width = 8, height = 6, dpi = 300)
+      ggplot2::ggsave(file.path(output_dir, "pca_scatter.png"), pc_scatter_plot, width = 8, height = 6, dpi = 300, bg = "white")
     }
   }
 
@@ -1668,14 +1658,14 @@ pav_gwas <- function(pav_data,
   }
 
   # Return enhanced results list
-  return(list(
+  list(
     gwas_results = gwas_results,
     phenotype_stats = pheno_stats,
     pca_results = pca_results,
     filtered_features = filtered_feature_info,
     analysis_summary = analysis_summary,
     threshold_results = threshold_info
-  ))
+  )
 }
 
 # Enhanced function information when loaded

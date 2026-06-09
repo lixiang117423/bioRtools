@@ -316,10 +316,10 @@ top_tax_n <- function(data,
         taxon = factor(taxon, levels = c(top_taxa_vec, "Other"))
       ) %>%
       dplyr::group_by(taxon, feature, group) %>%
-      dplyr::summarise(mean.sample = mean(abundance, na.rm = TRUE),
+      dplyr::summarise(mean_sample = mean(abundance, na.rm = TRUE),
                        .groups = "drop") %>%
       dplyr::group_by(taxon, group) %>%
-      dplyr::summarise(abundance = sum(mean.sample, na.rm = TRUE),
+      dplyr::summarise(abundance = sum(mean_sample, na.rm = TRUE),
                        .groups = "drop") %>%
       dplyr::group_by(group) %>%
       dplyr::mutate(

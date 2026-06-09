@@ -112,13 +112,13 @@ calc_expression_standard_curve <- function(cq_table,
   # Create plot
   plot_result <- create_curve_expression_plot(summary_with_stats, plot_type, plot_ncol)
 
-  return(list(
+  list(
     expression_data = expression_data,
     summary_table = summary_with_stats,
     statistical_results = statistical_results,
     curve_warnings = curve_warnings,
     plot = plot_result
-  ))
+  )
 }
 
 #' Calculate expression using standard curves
@@ -134,10 +134,8 @@ calculate_curve_expression <- function(cq_table, curve_table, design_table) {
     dplyr::filter(!is.na(.data$Cq), !is.na(.data$Slope), !is.na(.data$Intercept))
 
   # Standardize column names
-  if (treatment_col == "Group") {
-    merged_data <- merged_data %>%
-      dplyr::rename(Treatment = .data$Group)
-  }
+  merged_data <- merged_data %>%
+    dplyr::rename(treatment = dplyr::all_of(treatment_col))
 
   # Calculate expression values using standard curve equation
   expression_data <- merged_data %>%
@@ -146,14 +144,13 @@ calculate_curve_expression <- function(cq_table, curve_table, design_table) {
         .data$Cq > .data$max.Cq | .data$Cq < .data$min.Cq ~ "yes",
         TRUE ~ "no"
       ),
-      # Expression = 10^((Cq - Intercept) / Slope) for standard curve
       expression = 10^((.data$Cq - .data$Intercept) / .data$Slope)
     ) %>%
-    dplyr::select(.data$Position, .data$Treatment, .data$Gene, .data$Cq,
+    dplyr::select(.data$Position, .data$treatment, .data$Gene, .data$Cq,
       .data$expression, .data$out_of_range) %>%
-    dplyr::rename(treatment = .data$Treatment, gene = .data$Gene)
+    dplyr::rename(gene = .data$Gene)
 
-  return(expression_data)
+  expression_data
 }
 
 #' Validate input parameters for standard curve calculation (after merging)
@@ -226,7 +223,7 @@ check_curve_range <- function(expression_data) {
     warning(warnings_list$message)
   }
 
-  return(warnings_list)
+  warnings_list
 }
 
 #' Normalize expression by reference gene
@@ -248,7 +245,7 @@ normalize_by_reference_gene <- function(expression_data, reference_gene) {
     ) %>%
     dplyr::select(.data$treatment, .data$gene, expression = .data$normalized_expression)
 
-  return(normalized_data)
+  normalized_data
 }
 
 #' Calculate summary statistics
@@ -271,7 +268,7 @@ calculate_curve_summary <- function(expression_data) {
       se_expression = ifelse(is.na(.data$se_expression), 0, .data$se_expression)
     )
 
-  return(summary_stats)
+  summary_stats
 }
 
 #' Perform statistical analysis for standard curve data
@@ -426,7 +423,7 @@ add_curve_statistical_annotations <- function(summary_table, statistical_results
       )
   }
 
-  return(annotated_summary)
+  annotated_summary
 }
 
 #' Create standard curve expression plot
@@ -502,7 +499,7 @@ create_curve_expression_plot <- function(summary_data, plot_type, plot_ncol) {
       )
   }
 
-  return(p)
+  p
 }
 
 # For backward compatibility

@@ -237,7 +237,7 @@ create_motif_ggplot <- function(data, show_y_axis = TRUE) {
       )
   }
 
-  return(p)
+  p
 }
 
 
@@ -271,7 +271,7 @@ create_tree_plot <- function(tree_path, tree_annotation = NULL) {
       )
   }
 
-  return(p_tree)
+  p_tree
 }
 
 
@@ -321,7 +321,7 @@ create_motif_plot_with_tree <- function(data,
   combined_plot <- tree_plot + motif_plot +
     patchwork::plot_layout(guides = "collect")
 
-  return(combined_plot)
+  combined_plot
 }
 
 

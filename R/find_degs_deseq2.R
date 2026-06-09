@@ -789,5 +789,5 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
     cat("\n")
   }
 
-  return(results_processed)
+  results_processed
 }

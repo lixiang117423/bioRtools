@@ -224,7 +224,7 @@ plot_gene_features <- function(data,
       legend.position = "top"
     )
 
-  return(p)
+  p
 }
 
 

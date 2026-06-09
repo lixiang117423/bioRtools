@@ -251,5 +251,5 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
     cat("Significant correlations found:", nrow(result_cor), "\n\n")
   }
 
-  return(result_cor)
+  result_cor
 }

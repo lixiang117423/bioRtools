@@ -235,7 +235,7 @@ reorder_heatmap <- function(data,
   }
 
   # Return comprehensive results following project conventions
-  return(list(
+  list(
     data.reordered = final_data,
     column.order = result$column_order,
     row.order = result$row_order,
@@ -293,7 +293,7 @@ reorder_by_peak <- function(data, ties_method, verbose) {
     dplyr::select(col_var, row_var, value_var) %>%
     dplyr::arrange(col_var, row_var)
 
-  return(list(
+  list(
     data = reordered_data,
     column_order = as.character(column_order),
     row_order = levels(reordered_data$row_var),
@@ -345,7 +345,7 @@ reorder_by_clustering <- function(data, verbose) {
     n_cols = length(column_order)
   )
 
-  return(list(
+  list(
     data = reordered_data,
     column_order = column_order,
     row_order = row_order,
@@ -385,7 +385,7 @@ reorder_by_mean <- function(data, verbose) {
     col_means = "ordered by descending mean"
   )
 
-  return(list(
+  list(
     data = reordered_data,
     column_order = as.character(column_order),
     row_order = as.character(row_order),

@@ -6,17 +6,17 @@
 #' \code{group_col}), characteristic features are selected and tested
 #' against environmental variables via \pkg{linkET}.
 #'
-#' @param data.spec Feature abundance table. First column is feature ID
+#' @param data_spec Feature abundance table. First column is feature ID
 #'   (e.g., "asv"), remaining columns are samples (features × samples).
 #'   Auto-transposed internally.
-#' @param data.env Environmental data table. Must contain a \code{sample}
+#' @param data_env Environmental data table. Must contain a \code{sample}
 #'   column and environmental variable columns (either in long format with
 #'   \code{sample}, \code{indicator}, \code{value}, or in wide format).
 #'   Auto-detected.
-#' @param data.sample Sample metadata table. Must contain a \code{sample}
-#'   column matching samples in \code{data.spec} and \code{data.env},
+#' @param data_sample Sample metadata table. Must contain a \code{sample}
+#'   column matching samples in \code{data_spec} and \code{data_env},
 #'   and a group column.
-#' @param group_col Column name in \code{data.sample} defining sample groups.
+#' @param group_col Column name in \code{data_sample} defining sample groups.
 #'   Default is \code{"group"}. Falls back to auto-detection if not found.
 #' @param spec_select_method How to select characteristic features per group:
 #'   \code{"prevalence"} (features present above threshold, default) or
@@ -61,12 +61,12 @@
 #' @details
 #' The function accepts flexible input formats:
 #' \itemize{
-#'   \item \code{data.env}: either long format (\code{sample}, \code{indicator},
+#'   \item \code{data_env}: either long format (\code{sample}, \code{indicator},
 #'         \code{value}) or wide format (\code{sample} + indicators as columns).
 #'         Auto-detected.
-#'   \item \code{data.spec}: features × samples, first column is feature ID.
+#'   \item \code{data_spec}: features × samples, first column is feature ID.
 #'         Auto-transposed to samples × features.
-#'   \item \code{data.sample}: must have \code{sample} and group columns.
+#'   \item \code{data_sample}: must have \code{sample} and group columns.
 #'         \code{group_col} is auto-detected if \code{NULL}.
 #' }
 #'
@@ -104,9 +104,9 @@
 #' result$plot
 #' }
 #'
-plot_mantel <- function(data.spec,
-                        data.env,
-                        data.sample,
+plot_mantel <- function(data_spec,
+                        data_env,
+                        data_sample,
                         group_col = "group",
                         spec_select_method = c("prevalence", "abundance"),
                         prevalence_threshold = 0.3,
@@ -135,66 +135,66 @@ plot_mantel <- function(data.spec,
   spec_select_method <- match.arg(spec_select_method)
 
   # ── Input validation ──────────────────────────────────────────────────────
-  if (!is.data.frame(data.spec))   stop("'data.spec' must be a data frame")
-  if (!is.data.frame(data.env))    stop("'data.env' must be a data frame")
-  if (!is.data.frame(data.sample)) stop("'data.sample' must be a data frame")
+  if (!is.data.frame(data_spec))   stop("'data_spec' must be a data frame")
+  if (!is.data.frame(data_env))    stop("'data_env' must be a data frame")
+  if (!is.data.frame(data_sample)) stop("'data_sample' must be a data frame")
 
-  if (!"sample" %in% colnames(data.sample)) {
-    stop("'data.sample' must contain a 'sample' column")
+  if (!"sample" %in% colnames(data_sample)) {
+    stop("'data_sample' must contain a 'sample' column")
   }
 
   # ── Auto-detect group column ──────────────────────────────────────────────
-  if (!group_col %in% colnames(data.sample)) {
+  if (!group_col %in% colnames(data_sample)) {
     if (verbose) message("'", group_col, "' not found, auto-detecting group column...")
-    cand <- setdiff(colnames(data.sample), "sample")
-    if (length(cand) == 0) stop("No group column found in 'data.sample'")
-    n_uniq <- vapply(data.sample[cand], function(x) length(unique(x)), integer(1))
+    cand <- setdiff(colnames(data_sample), "sample")
+    if (length(cand) == 0) stop("No group column found in 'data_sample'")
+    n_uniq <- vapply(data_sample[cand], function(x) length(unique(x)), integer(1))
     cand <- cand[n_uniq > 1]
-    if (length(cand) == 0) stop("No group column with >1 unique values found in 'data.sample'")
-    n_uniq <- vapply(data.sample[cand], function(x) length(unique(x)), integer(1))
+    if (length(cand) == 0) stop("No group column with >1 unique values found in 'data_sample'")
+    n_uniq <- vapply(data_sample[cand], function(x) length(unique(x)), integer(1))
     group_col <- cand[which.min(n_uniq)]
     if (verbose) message("Auto-detected group column: '", group_col, "'")
   }
 
-  if (!group_col %in% colnames(data.sample)) {
-    stop("'", group_col, "' column not found in 'data.sample'")
+  if (!group_col %in% colnames(data_sample)) {
+    stop("'", group_col, "' column not found in 'data_sample'")
   }
 
-  # ── Parse data.env: auto-detect long vs wide format ────────────────────────
-  data.env <- as.data.frame(data.env)
-  has_indicator_value <- all(c("indicator", "value") %in% colnames(data.env)) &&
-    "sample" %in% colnames(data.env)
+  # ── Parse data_env: auto-detect long vs wide format ────────────────────────
+  data_env <- as.data.frame(data_env)
+  has_indicator_value <- all(c("indicator", "value") %in% colnames(data_env)) &&
+    "sample" %in% colnames(data_env)
 
   if (has_indicator_value) {
-    if (verbose) message("Detected data.env in long format, pivoting...")
-    data.env <- data.env %>%
+    if (verbose) message("Detected data_env in long format, pivoting...")
+    data_env <- data_env %>%
       dplyr::select(sample, indicator, value) %>%
       tidyr::pivot_wider(names_from = indicator, values_from = value)
   }
 
-  if (!"sample" %in% colnames(data.env)) {
-    stop("'data.env' must contain a 'sample' column")
+  if (!"sample" %in% colnames(data_env)) {
+    stop("'data_env' must contain a 'sample' column")
   }
 
-  # ── Parse data.spec: features × samples → samples × features ──────────────
-  data.spec <- as.data.frame(data.spec)
-  feature_col <- colnames(data.spec)[1]
-  feature_names <- as.character(data.spec[[feature_col]])
+  # ── Parse data_spec: features × samples → samples × features ──────────────
+  data_spec <- as.data.frame(data_spec)
+  feature_col <- colnames(data_spec)[1]
+  feature_names <- as.character(data_spec[[feature_col]])
 
-  if (verbose) message("Transposing data.spec: features × samples → samples × features")
+  if (verbose) message("Transposing data_spec: features × samples → samples × features")
 
-  data.spec <- data.spec %>%
+  data_spec <- data_spec %>%
     dplyr::select(-dplyr::all_of(feature_col)) %>%
     t() %>%
     as.data.frame()
-  colnames(data.spec) <- feature_names
-  data.spec$sample <- rownames(data.spec)
+  colnames(data_spec) <- feature_names
+  data_spec$sample <- rownames(data_spec)
 
   # ── Harmonize samples ─────────────────────────────────────────────────────
   common_samples <- Reduce(intersect, list(
-    data.spec$sample,
-    data.env$sample,
-    as.character(data.sample$sample)
+    data_spec$sample,
+    data_env$sample,
+    as.character(data_sample$sample)
   ))
 
   if (length(common_samples) == 0) {
@@ -203,25 +203,25 @@ plot_mantel <- function(data.spec,
 
   if (verbose) message("Common samples: ", length(common_samples))
 
-  data.spec <- data.spec[match(common_samples, data.spec$sample), , drop = FALSE]
-  data.env  <- data.env[match(common_samples, data.env$sample), , drop = FALSE]
-  data.sample <- data.sample[match(common_samples, data.sample$sample), , drop = FALSE]
+  data_spec <- data_spec[match(common_samples, data_spec$sample), , drop = FALSE]
+  data_env  <- data_env[match(common_samples, data_env$sample), , drop = FALSE]
+  data_sample <- data_sample[match(common_samples, data_sample$sample), , drop = FALSE]
 
   # Set sample as rowname for downstream use
-  rownames(data.spec) <- data.spec$sample
-  data.spec$sample <- NULL
-  rownames(data.env) <- data.env$sample
-  data.env$sample <- NULL
+  rownames(data_spec) <- data_spec$sample
+  data_spec$sample <- NULL
+  rownames(data_env) <- data_env$sample
+  data_env$sample <- NULL
 
   # Keep only numeric columns in env
-  env_numeric <- vapply(data.env, is.numeric, logical(1))
+  env_numeric <- vapply(data_env, is.numeric, logical(1))
   if (!all(env_numeric)) {
-    data.env <- data.env[, env_numeric, drop = FALSE]
-    if (verbose) message("Dropped non-numeric columns from 'data.env'")
+    data_env <- data_env[, env_numeric, drop = FALSE]
+    if (verbose) message("Dropped non-numeric columns from 'data_env'")
   }
 
   # ── Build spec_select from sample groups ───────────────────────────────────
-  groups_vec <- as.character(data.sample[[group_col]])
+  groups_vec <- as.character(data_sample[[group_col]])
   unique_groups <- unique(groups_vec)
 
   if (verbose) {
@@ -232,7 +232,7 @@ plot_mantel <- function(data.spec,
 
   for (grp in unique_groups) {
     idx <- which(groups_vec == grp)
-    grp_spec <- data.spec[idx, , drop = FALSE]
+    grp_spec <- data_spec[idx, , drop = FALSE]
 
     if (spec_select_method == "prevalence") {
       prevalence <- colSums(grp_spec > 0) / nrow(grp_spec)
@@ -262,8 +262,8 @@ plot_mantel <- function(data.spec,
   if (verbose) message("Running Mantel test...")
 
   mantel <- linkET::mantel_test(
-    data.spec,
-    data.env,
+    data_spec,
+    data_env,
     spec_select = spec_select,
     spec_dist = spec_dist,
     env_dist = env_dist
@@ -282,7 +282,7 @@ plot_mantel <- function(data.spec,
   # ── Correlate environmental variables ──────────────────────────────────────
   if (verbose) message("Computing environmental correlations...")
 
-  cor_env <- linkET::correlate(data.env, method = cor_method)
+  cor_env <- linkET::correlate(data_env, method = cor_method)
 
   # ── Build plot ────────────────────────────────────────────────────────────
   if (is.null(fill_colors)) {

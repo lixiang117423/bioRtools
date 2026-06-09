@@ -527,5 +527,5 @@ manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
     cat("\n")
   }
 
-  return(manhattan_plot)
+  manhattan_plot
 }

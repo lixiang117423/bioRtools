@@ -197,7 +197,7 @@ extract_r_squared <- function(model, type, digits) {
     r_squared <- round(r_squared, digits)
   }
 
-  return(r_squared)
+  r_squared
 }
 
 
@@ -248,7 +248,7 @@ extract_model_p_value <- function(model) {
     return(NA_real_)
   }
 
-  return(p_value)
+  p_value
 }
 
 
@@ -278,7 +278,7 @@ get_p_value_column <- function(anova_result) {
     }
   }
 
-  return(NULL)
+  NULL
 }
 
 

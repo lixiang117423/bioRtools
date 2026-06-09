@@ -69,7 +69,7 @@ calc_expression_delta_ct <- function(cq_table,
     plot_result <- create_expression_plot(summary_table)
   }
 
-  return(list(
+  list(
     expression_data = expression_data,
     summary_table = summary_table,
     plot = plot_result
@@ -91,7 +91,7 @@ prepare_delta_ct_data <- function(cq_table, design_table) {
     ) %>%
     dplyr::filter(!is.na(.data$group), !is.na(.data$bio_rep))
 
-  return(merged_data)
+  merged_data
 }
 
 #' Calculate reference gene mean Cq values
@@ -108,7 +108,7 @@ calculate_reference_means <- function(merged_data, reference_gene) {
     dplyr::mutate(group_biorep = paste0(.data$group, .data$bio_rep)) %>%
     dplyr::select(.data$group_biorep, .data$mean_ref_cq)
 
-  return(reference_means)
+  reference_means
 }
 
 #' Calculate target gene expression levels
@@ -133,7 +133,7 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
     ) %>%
     dplyr::ungroup()
 
-  return(expression_data)
+  expression_data
 }
 
 #' Calculate summary statistics for expression data
@@ -157,7 +157,7 @@ calculate_expression_summary <- function(expression_data) {
       sd_delta_ct = ifelse(is.na(.data$sd_delta_ct), 0, .data$sd_delta_ct)
     )
 
-  return(summary_stats)
+  summary_stats
 }
 
 #' Create expression level plot
@@ -210,7 +210,7 @@ create_expression_plot <- function(summary_table) {
       legend.position = "bottom"
     )
 
-  return(plot_result)
+  plot_result
 }
 
 # For backward compatibility

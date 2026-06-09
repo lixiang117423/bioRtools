@@ -232,5 +232,5 @@ extract_tree_hierarchy <- function(tree_file,
     message("Processing completed. Returning ", nrow(df_final), " rows.")
   }
 
-  return(df_final)
+  df_final
 }

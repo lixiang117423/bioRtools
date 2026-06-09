@@ -384,5 +384,5 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
   attr(result, "confidence_level") <- conf_level
   attr(result, "regression_method") <- method
 
-  return(result)
+  result
 }

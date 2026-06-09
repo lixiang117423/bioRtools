@@ -658,5 +658,5 @@ opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1
     cat("\n")
   }
 
-  return(results)
+  results
 }

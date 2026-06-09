@@ -109,7 +109,7 @@ parse_meme_txt <- function(file_path) {
     }
   )
 
-  return(motif_data)
+  motif_data
 }
 
 

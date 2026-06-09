@@ -251,5 +251,5 @@ plot_gene_structure <- function(gff,
       )
   }
 
-  return(p)
+  p
 }

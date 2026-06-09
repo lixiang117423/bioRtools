@@ -100,7 +100,7 @@ calc_expression_delta_delta_ct <- function(cq_table,
   # Create plot
   plot_result <- create_ddct_plot(summary_with_stats, expression_data, plot_type, plot_ncol)
 
-  return(list(
+  list(
     expression_data = expression_data,
     summary_table = summary_with_stats,
     statistical_results = statistical_results,
@@ -123,7 +123,7 @@ prepare_ddct_data <- function(cq_table, design_table) {
     ) %>%
     dplyr::filter(!is.na(.data$group), !is.na(.data$bio_rep), !is.na(.data$cq))
 
-  return(merged_data)
+  merged_data
 }
 
 #' Validate input parameters for delta-delta Ct calculation (after merging)
@@ -218,7 +218,7 @@ calculate_ddct_expression <- function(merged_data, reference_gene, reference_gro
   # Combine all results
   all_expression_data <- do.call(rbind, expression_results)
 
-  return(all_expression_data)
+  all_expression_data
 }
 
 #' Remove outliers using IQR method
@@ -240,7 +240,7 @@ remove_expression_outliers <- function(expression_data) {
     dplyr::filter(!find_outliers(.data$relative_expression)) %>%
     dplyr::ungroup()
 
-  return(cleaned_data)
+  cleaned_data
 }
 
 #' Calculate summary statistics
@@ -263,7 +263,7 @@ calculate_ddct_summary <- function(expression_data) {
       se_expression = ifelse(is.na(.data$se_expression), 0, .data$se_expression)
     )
 
-  return(summary_stats)
+  summary_stats
 }
 
 #' Perform statistical analysis
@@ -373,7 +373,7 @@ add_statistical_annotations <- function(summary_table, statistical_results) {
 
   annotated_summary$significance[is.na(annotated_summary$significance)] <- "NS"
 
-  return(annotated_summary)
+  annotated_summary
 }
 
 #' Create delta-delta Ct plot
@@ -462,7 +462,7 @@ create_ddct_plot <- function(summary_data, expression_data, plot_type, plot_ncol
       )
   }
 
-  return(p)
+  p
 }
 
 # For backward compatibility - simplified version that works with original data structure

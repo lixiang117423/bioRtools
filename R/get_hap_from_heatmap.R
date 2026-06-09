@@ -110,5 +110,5 @@ get_hap_from_heatmap <- function(pheatmap_result, cluster_n) {
                     max(cl_data$position)))
   }
 
-  return(result)
+  result
 }

@@ -114,7 +114,7 @@ calc_expression_qpcr_efficiency <- function(cq_table,
       across(matches("p_value|statistic"), ~ round(.x, 6))
     )
 
-  return(list(table = final_results, figure = plot_result))
+  list(table = final_results, figure = plot_result)
 }
 
 #' Merge data exactly as in original
@@ -133,7 +133,7 @@ merge_qpcr_data <- function(cq_table, design_table) {
       efficiency = Eff
     )
 
-  return(df)
+  df
 }
 
 #' Validate merged data (after merging, not separate tables)
@@ -198,7 +198,7 @@ calculate_qpcr_expression <- function(df) {
     ) %>%
     dplyr::ungroup()
 
-  return(df_expression)
+  df_expression
 }
 
 #' Find reference genes using original GeNorm implementation
@@ -378,7 +378,7 @@ calculate_normalization_factors_original <- function(df_expression, reference_ge
     dplyr::group_by(.data$bio_rep, .data$group) %>%
     dplyr::mutate(sd_factor = sqrt(sum(.data$sd_factor, na.rm = TRUE)) * .data$factor)
 
-  return(df_factor)
+  df_factor
 }
 
 #' Calculate corrected expression using original algorithm
@@ -424,7 +424,7 @@ calculate_corrected_expression_original <- function(df_expression, reference_gen
     dplyr::select(-.data$temp) %>%
     dplyr::mutate(temp = paste0(.data$gene, .data$group))
 
-  return(res_all)
+  res_all
 }
 
 #' Perform statistical analysis using original method
@@ -659,7 +659,7 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
       )
   }
 
-  return(p)
+  p
 }
 
 # For backward compatibility - preserving exact original interface

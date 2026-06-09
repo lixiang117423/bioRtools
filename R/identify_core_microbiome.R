@@ -345,7 +345,7 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
     }
   )
 
-  return(bc_summary)
+  bc_summary
 }
 
 
@@ -365,7 +365,7 @@ calculate_pairwise_bc <- function(matrix) {
     }
   }
 
-  return(bc_values)
+  bc_values
 }
 
 
@@ -780,7 +780,7 @@ fit_neutral_model <- function(otu_df) {
     ))
   }
 
-  return(result)
+  result
 }
 
 
