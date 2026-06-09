@@ -259,5 +259,5 @@ rarefy_table <- function(data,
     } else {
       rarefaction_depth
     }
-  ))
+  )
 }

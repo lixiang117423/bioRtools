@@ -139,5 +139,5 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     result.permanova = result.permanova,
     raw.result = permanova.result,
     summary.stats = summary.stats
-  ))
+  )
 }

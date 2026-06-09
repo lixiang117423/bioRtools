@@ -325,7 +325,7 @@ plot_synteny <- function(gene_data,
   list(
     plot.synteny = plot_synteny,
     data.summary = data_summary
-  ))
+  )
 }
 
 

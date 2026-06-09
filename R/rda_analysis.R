@@ -340,5 +340,5 @@ rda_analysis <- function(data,
     sample.scores = sample_coords,
     environmental.scores = environmental_coords,
     environmental.fit = environmental_significance
-  ))
+  )
 }

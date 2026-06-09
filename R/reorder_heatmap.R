@@ -241,7 +241,7 @@ reorder_heatmap <- function(data,
     column.order = result$column_order,
     row.order = result$row_order,
     peak.summary = result$summary
-  ))
+  )
 }
 
 # Helper function for peak-based reordering
@@ -299,7 +299,7 @@ reorder_by_peak <- function(data, ties_method, verbose) {
     column_order = as.character(column_order),
     row_order = levels(reordered_data$row_var),
     summary = peak_summary %>% dplyr::select(-row_order)
-  ))
+  )
 }
 
 # Helper function for hierarchical clustering
@@ -351,7 +351,7 @@ reorder_by_clustering <- function(data, verbose) {
     column_order = column_order,
     row_order = row_order,
     summary = summary_data
-  ))
+  )
 }
 
 # Helper function for mean-based reordering
@@ -391,5 +391,5 @@ reorder_by_mean <- function(data, verbose) {
     column_order = as.character(column_order),
     row_order = as.character(row_order),
     summary = summary_data
-  ))
+  )
 }

@@ -87,7 +87,7 @@ calc_standard_curve <- function(cq_table,
   # Create plot
   plot_result <- create_standard_curve_plot(processed_data, use_mean_cq)
 
-  list(table = regression_results, plot = plot_result))
+  list(table = regression_results, plot = plot_result)
 }
 
 #' Merge data and handle gene information flexibly

@@ -300,5 +300,5 @@ plot_manhattan <- function(data = NULL,
     plot.combined      = p_combined,
     data.processed     = data_cum,
     chromosome.centers = chromosome_centers
-  ))
+  )
 }
