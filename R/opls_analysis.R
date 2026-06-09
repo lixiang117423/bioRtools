@@ -619,6 +619,30 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
   }
 
+  # Annotate score columns with variance info
+  tryCatch(
+    {
+      r2x_cum <- opls_model@summaryDF$`R2X(cum)`
+      r2y_cum <- opls_model@summaryDF$`R2Y(cum)`
+      q2_cum <- opls_model@summaryDF$`Q2(cum)`
+
+      score_cols <- grep("^(t|to|p|o)\\d+$", names(scores_data), value = TRUE)
+      if (length(score_cols) > 0) {
+        pct_str <- paste0("R2X=", round(r2x_cum * 100, 1), "% R2Y=", round(r2y_cum * 100, 1), "% Q2=", round(q2_cum * 100, 1), "%")
+        for (col in score_cols) {
+          label <- if (grepl("^(t|p)", col)) {
+            paste0(col, " (", pct_str, ")")
+          } else {
+            paste0(col, " (orthogonal)")
+          }
+          names(scores_data)[names(scores_data) == col] <- label
+        }
+      }
+    },
+    error = function(e) {
+      # Keep original column names if annotation fails
+    })
+
   # Extract VIP scores
   vip_data <- tryCatch(
     {

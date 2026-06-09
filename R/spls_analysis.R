@@ -323,6 +323,13 @@ spls_analysis <- function(data,
     ) %>%
     dplyr::select(component, proportion, percentage, percentage_label, label)
 
+  # Rename score columns with variance percentage
+  pct_labels <- paste0("comp", seq_len(ncomp), " (", variance_explained$percentage_label, ")")
+  comp_cols <- paste0("comp", seq_len(ncomp))
+  for (i in seq_along(comp_cols)) {
+    names(sample_scores)[names(sample_scores) == comp_cols[i]] <- pct_labels[i]
+  }
+
   # Extract variable loadings if available
   variable_loadings <- NULL
   if (!is.null(splsda_result$loadings$X)) {
