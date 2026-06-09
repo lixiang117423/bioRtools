@@ -67,6 +67,7 @@
 #'   \item For large datasets, consider reducing ncomp to improve computational efficiency
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

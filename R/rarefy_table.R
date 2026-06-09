@@ -52,6 +52,7 @@
 #'   \item Some studies prefer alternative normalization methods to rarefaction
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

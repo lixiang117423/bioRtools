@@ -23,6 +23,7 @@
 #'   Default is FALSE.
 #'
 #' @return A ggplot2 theme object.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

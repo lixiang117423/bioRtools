@@ -36,6 +36,7 @@
 #' the old \code{adonis()} function for compatibility reasons, please specify this
 #' in your analysis requirements.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

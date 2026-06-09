@@ -171,6 +171,7 @@
 #'   \item Continuous phenotypes: plant height, weight, expression levels, etc.
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @examples
 #' library(bioRtools)

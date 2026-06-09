@@ -70,6 +70,7 @@
 #'     \item{mat_ord}{The ordered matrix}
 #'   }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

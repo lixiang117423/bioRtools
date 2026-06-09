@@ -51,6 +51,7 @@
 #' @importFrom stringr str_split
 #' @importFrom tidyr unnest pivot_wider
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

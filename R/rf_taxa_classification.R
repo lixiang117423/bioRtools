@@ -60,6 +60,7 @@
 #'   \item Extract variable importance
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

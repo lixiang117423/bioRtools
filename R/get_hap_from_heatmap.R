@@ -12,7 +12,8 @@
 #'     \item \code{hap}: The haplotype ID (e.g., "Hap1", "Hap2")
 #'   }
 #'   The data frame is sorted by position in the heatmap order.
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

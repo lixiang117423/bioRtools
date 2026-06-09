@@ -17,6 +17,7 @@
 #'   \item{eigenvalue.pcoa}{The explained variance of the principal coordinates, starting from PCo1 by default.}
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

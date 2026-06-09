@@ -47,6 +47,7 @@
 #'
 #' @seealso \code{\link{find_dams_deseq2}}
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 find_dams_lefse <- function(data, sample, groupCol = "group",
                             wilcox.threshold = 0.05,

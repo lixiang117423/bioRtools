@@ -17,7 +17,7 @@
 #' @return A ggplot2 object showing motif locations. If a tree is provided,
 #'   returns a combined plot with the tree and motif locations side-by-side.
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate rename filter arrange left_join

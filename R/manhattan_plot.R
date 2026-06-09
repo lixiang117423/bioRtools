@@ -84,6 +84,7 @@
 #'   \item \code{\link[ggrepel]{geom_label_repel}} for label positioning
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

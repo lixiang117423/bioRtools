@@ -27,7 +27,7 @@
 #' # Calculate SD for specific columns
 #' df %>% mutate(sd = row_sd(., cols = c("sample1", "sample2")))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 row_sd <- function(data, cols = NULL, na.rm = TRUE) {
@@ -109,7 +109,7 @@ row_sd <- function(data, cols = NULL, na.rm = TRUE) {
 #' # Add CV column using mutate
 #' df %>% mutate(cv = row_cv(.))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 row_cv <- function(data, cols = NULL, na.rm = TRUE) {
@@ -195,7 +195,7 @@ row_cv <- function(data, cols = NULL, na.rm = TRUE) {
 #' # Add mean column using mutate
 #' df %>% mutate(mean_expr = row_mean(.))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 row_mean <- function(data, cols = NULL, na.rm = TRUE) {
@@ -262,7 +262,7 @@ row_mean <- function(data, cols = NULL, na.rm = TRUE) {
 #' # Add maximum column using mutate
 #' df %>% mutate(max_expr = row_max(.))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 row_max <- function(data, cols = NULL, na.rm = TRUE) {
@@ -329,7 +329,7 @@ row_max <- function(data, cols = NULL, na.rm = TRUE) {
 #' # Add minimum column using mutate
 #' df %>% mutate(min_expr = row_min(.))
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @export
 row_min <- function(data, cols = NULL, na.rm = TRUE) {

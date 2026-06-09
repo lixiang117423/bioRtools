@@ -32,6 +32,7 @@
 #'
 #' @seealso \code{\link{find_dams_lefse}}
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

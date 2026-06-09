@@ -31,6 +31,7 @@
 #' @importFrom stats qnorm
 #' @importFrom tidyselect where
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

@@ -14,6 +14,7 @@
 #'
 #' @return A data frame in long format with columns: \code{from}, \code{to},
 #'   \code{beta_mntd}, \code{beta_nti}.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link[picante]{comdistnt}}, \code{\link[picante]{match.phylo.data}}
 #'

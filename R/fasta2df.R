@@ -53,7 +53,7 @@
 # #' \code{\link{readLines}} for reading text files,
 # #' \code{\link{Biostrings}} package for advanced sequence manipulation
 # #'
-# #' @author Optimized by Assistant
+# #' @author Xiang LI <lixiang117423@gmail.com>
 # #' @references
 # #' FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 # #'
@@ -382,7 +382,7 @@
 #' \code{\link{readLines}} for reading text files,
 #' \code{\link{Biostrings}} package for advanced sequence manipulation
 #'
-#' @author Optimized by Assistant
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @references
 #' FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 #'

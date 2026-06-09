@@ -21,7 +21,8 @@
 #'   - Color-coded feature types (exon, CDS, UTR)
 #'   - Optional phylogenetic tree layout
 #'
-#' @export
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export?
 #'
 #' @examples
 #' \dontrun{

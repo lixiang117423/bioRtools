@@ -46,6 +46,7 @@
 #'   \item For large datasets, consider adjusting p-value thresholds for multiple testing
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

@@ -26,7 +26,7 @@
 #' @return A character vector of the same length as \code{p_values} containing
 #'   significance labels. NA values in input are preserved as NA in output.
 #'
-#' @author Xiang LI \email{lixiang117423@@foxmail.com}
+#' @author Xiang LI <lixiang117423@gmail.com>
 #'
 #' @examples
 #' library(bioRtools)

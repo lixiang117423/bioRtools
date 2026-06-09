@@ -83,6 +83,7 @@
 #'   \item \code{\link{find_degs_deseq2}} for differential expression analysis
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

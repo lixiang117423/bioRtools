@@ -68,6 +68,7 @@
 #'   \item Missing values are handled according to the na_handling parameter
 #' }
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

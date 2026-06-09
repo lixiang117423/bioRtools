@@ -77,6 +77,7 @@
 #' Reference: Tettelin et al. (2008) Comparative genomics: the bacterial
 #' pan-genome. Current Opinion in Microbiology, 11(5), 472-477.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples

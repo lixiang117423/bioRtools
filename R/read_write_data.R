@@ -9,6 +9,7 @@
 #' @param ... Additional arguments passed to the underlying read function.
 #'
 #' @return A data frame.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{write_data}}
 #'
@@ -53,6 +54,7 @@ read_data <- function(file, ...) {
 #' @param ... Additional arguments passed to the underlying write function.
 #'
 #' @return The input \code{data}, invisibly.
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{read_data}}
 #'

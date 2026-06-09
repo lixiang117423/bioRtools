@@ -58,6 +58,7 @@
 #' results but can be adapted for other types of data with appropriate
 #' column names.
 #'
+#' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #'
 #' @examples
