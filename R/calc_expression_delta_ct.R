@@ -73,7 +73,7 @@ calc_expression_delta_ct <- function(cq_table,
     expression_data = expression_data,
     summary_table = summary_table,
     plot = plot_result
-  ))
+  )
 }
 
 #' Prepare and merge data for delta-Ct calculation

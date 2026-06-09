@@ -105,7 +105,7 @@ calc_expression_delta_delta_ct <- function(cq_table,
     summary_table = summary_with_stats,
     statistical_results = statistical_results,
     plot = plot_result
-  ))
+  )
 }
 
 #' Prepare and merge data for delta-delta Ct calculation

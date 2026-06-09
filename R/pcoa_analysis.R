@@ -94,5 +94,5 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
     plot.pcoa = plot.pcoa,
     point.data = point.data,
     eigenvalue.pcoa = eigenvalue.pcoa
-  ))
+  )
 }

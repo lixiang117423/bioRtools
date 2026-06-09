@@ -427,5 +427,5 @@ plot_LDheatmap <- function(vcf_file,
     genetic.distances = genetic_distances,
     snp.info = snp_info,
     plot.params = plot_params
-  ))
+  )
 }

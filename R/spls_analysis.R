@@ -333,5 +333,5 @@ spls_analysis <- function(data,
     variable.loadings = variable_loadings,
     classification.performance = classification_performance,
     model.parameters = model_parameters
-  ))
+  )
 }
