@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.1] - 2026-06-09
+
+### Fixed
+- `opls_analysis()`: remove duplicate `group` column before joining sample_info to avoid `.x`/`.y` suffixes in scores output
+- Fix stray `?` in `@export` tags in 8 R files causing roxygen2 lint errors
+
 ## [1.29.0] - 2026-06-09
 
 ### Added
