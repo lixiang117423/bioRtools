@@ -902,11 +902,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       })
   } # end of else (standard single-model mode)
 
-  # Count important variables
-  n_important_vars <- sum(vip_data$important, na.rm = TRUE)
-
   # Differential analysis against ref_group (single-model mode only)
-  diff_analysis <- NULL
+  if (is.null(pairwise_models)) {
+    diff_analysis <- NULL
+  }
   if (!is.null(ref_group) && is.null(pairwise_models)) {
     other_groups <- setdiff(group_levels, ref_group)
     ref_idx <- which(group == ref_group)
