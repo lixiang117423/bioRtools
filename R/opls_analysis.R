@@ -640,6 +640,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
     # Merge sample metadata into scores if available
     if (!is.null(sample_info)) {
+      scores_data$group <- NULL
       scores_data <- scores_data %>%
         dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
     }
@@ -793,6 +794,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
     # Merge sample metadata into scores if available
     if (!is.null(sample_info)) {
+      scores_data$group <- NULL
       scores_data <- scores_data %>%
         dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
     }

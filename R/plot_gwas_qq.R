@@ -48,7 +48,7 @@
 #' }
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
-#' @export?
+#' @export
 #'
 #' @examples
 #' \dontrun{

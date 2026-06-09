@@ -13,7 +13,7 @@
 #'   }
 #'   The data frame is sorted by position in the heatmap order.
 #' @author Xiang LI <lixiang117423@gmail.com>
-#' @export?
+#' @export
 #'
 #' @examples
 #' \dontrun{

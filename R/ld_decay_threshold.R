@@ -103,7 +103,7 @@
 #' }
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
-#' @export?
+#' @export
 ld_decay_threshold <- function(
         data,
         n,
