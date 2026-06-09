@@ -43,6 +43,12 @@
 #'   }
 #' @param cv_folds Number of cross-validation folds (default: 7). Only used when
 #'   validation = "CV". Should be <= number of samples in smallest group
+#' @param ref_group Character string specifying the reference group for differential
+#'   analysis. When specified, each non-reference group is compared against this group
+#'   using t-tests with log2FC calculation. If NULL (default), no differential analysis
+#'   is performed. Similar to \code{rstatix::t_test(ref.group = )}.
+#' @param p_threshold Numeric p-value threshold for significance labeling (default: 0.05).
+#'   Used in conjunction with log2FC direction to label features as Up/Down.
 #'
 #' @return A named list containing:
 #'   \describe{
@@ -67,6 +73,20 @@
 #'       }
 #'       Sorted by VIP score in descending order}
 #'     \item{\code{loadings}}{Data frame with variable loadings on components}
+#'     \item{\code{differential_analysis}}{Data frame with differential analysis results
+#'       (only when \code{ref_group} is specified). Contains:
+#'       \itemize{
+#'         \item \code{feature}: Variable/feature name
+#'         \item \code{group}: Non-reference group name
+#'         \item \code{ref_group}: Reference group name
+#'         \item \code{log2_fc}: log2 fold change (log2(mean_group / mean_ref_group))
+#'         \item \code{p_value}: Raw p-value from t-test
+#'         \item \code{p_adjust}: BH-adjusted p-value
+#'         \item \code{vip}: VIP score from OPLS-DA model
+#'         \item \code{regulation}: "Up", "Down", or "NS" based on log2FC direction
+#'           and adjusted p-value
+#'       }}
+#'     }
 #'     \item{\code{model_summary}}{List with model performance metrics:
 #'       \itemize{
 #'         \item \code{R2Y}: Fraction of Y-variance explained
@@ -338,7 +358,8 @@
 #'
 opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1,
                           pred_components = NULL, scaling = "standard",
-                          validation = "CV", cv_folds = 7) {
+                          validation = "CV", cv_folds = 7,
+                          ref_group = NULL, p_threshold = 0.05) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
     !methods::is(data, "SummarizedExperiment") &&
@@ -419,6 +440,17 @@ opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1
   valid_validation <- c("CV", "none")
   if (!validation %in% valid_validation) {
     stop("'validation' must be 'CV' or 'none'")
+  }
+
+  if (!is.null(ref_group)) {
+    if (!ref_group %in% group_levels) {
+      stop("'ref_group' must be one of the group levels: ", paste(group_levels, collapse = ", "))
+    }
+  }
+
+  if (!is.numeric(p_threshold) || length(p_threshold) != 1 ||
+    p_threshold <= 0 || p_threshold >= 1) {
+    stop("'p_threshold' must be a single number between 0 and 1")
   }
 
   if (validation == "CV") {
@@ -600,12 +632,95 @@ opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1
   # Count important variables
   n_important_vars <- sum(vip_data$important, na.rm = TRUE)
 
+  # Differential analysis against ref_group
+  diff_analysis <- NULL
+  if (!is.null(ref_group)) {
+    other_groups <- setdiff(group_levels, ref_group)
+    ref_idx <- which(group == ref_group)
+
+    diff_list <- list()
+    vip_lookup <- stats::setNames(vip_data$vip, vip_data$feature)
+
+    for (grp in other_groups) {
+      grp_idx <- which(group == grp)
+      ref_data <- data_matrix[ref_idx, , drop = FALSE]
+      grp_data <- data_matrix[grp_idx, , drop = FALSE]
+
+      n_ref <- nrow(ref_data)
+      n_grp <- nrow(grp_data)
+      use_wilcox <- n_ref < 6 || n_grp < 6
+
+      diff_list[[grp]] <- data.frame(
+        feature = variable_names,
+        group = grp,
+        ref_group = ref_group,
+        stringsAsFactors = FALSE
+      )
+
+      # Calculate log2FC and p-value per variable
+      log2fc_vals <- numeric(length(variable_names))
+      p_vals <- numeric(length(variable_names))
+
+      for (j in seq_along(variable_names)) {
+        ref_vals <- ref_data[, j]
+        grp_vals <- grp_data[, j]
+
+        ref_mean <- mean(ref_vals, na.rm = TRUE)
+        grp_mean <- mean(grp_vals, na.rm = TRUE)
+
+        log2fc_vals[j] <- log2((grp_mean + 1e-10) / (ref_mean + 1e-10))
+
+        valid_ref <- ref_vals[!is.na(ref_vals)]
+        valid_grp <- grp_vals[!is.na(grp_vals)]
+
+        if (length(valid_ref) >= 2 && length(valid_grp) >= 2 &&
+          stats::var(valid_ref) > 0 && stats::var(valid_grp) > 0) {
+          if (use_wilcox) {
+            test_result <- stats::wilcox.test(valid_grp, valid_ref)
+          } else {
+            test_result <- stats::t.test(valid_grp, valid_ref)
+          }
+          p_vals[j] <- test_result$p.value
+        } else {
+          p_vals[j] <- NA
+        }
+      }
+
+      diff_list[[grp]]$log2_fc <- round(log2fc_vals, 4)
+      diff_list[[grp]]$p_value <- p_vals
+    }
+
+    diff_analysis <- do.call(rbind, diff_list)
+    rownames(diff_analysis) <- NULL
+
+    # Adjust p-values across all comparisons
+    diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
+
+    # Add VIP scores
+    diff_analysis$vip <- round(as.numeric(vip_lookup[diff_analysis$feature]), 4)
+
+    # Label regulation
+    diff_analysis$regulation <- ifelse(
+      is.na(diff_analysis$p_adjust), "NS",
+      ifelse(diff_analysis$log2_fc > 0 & diff_analysis$p_adjust < p_threshold, "Up",
+        ifelse(diff_analysis$log2_fc < 0 & diff_analysis$p_adjust < p_threshold, "Down", "NS")
+      )
+    )
+
+    # Sort by regulation significance then log2_fc
+    reg_order <- c("Up", "Down", "NS")
+    diff_analysis$regulation <- factor(diff_analysis$regulation, levels = reg_order)
+    diff_analysis <- diff_analysis[order(diff_analysis$regulation, -abs(diff_analysis$log2_fc)), ]
+    diff_analysis$regulation <- as.character(diff_analysis$regulation)
+  }
+
   # Prepare final results
   results <- list(
     model = opls_model,
     scores = scores_data,
     vip_scores = vip_data,
     loadings = loadings_data,
+    differential_analysis = diff_analysis,
     model_summary = model_summary
   )
 
@@ -654,6 +769,19 @@ opls_analysis <- function(data, group, vip_threshold = 1.0, ortho_components = 1
       top_vip <- head(vip_data[vip_data$important, ], 5)
       for (i in 1:nrow(top_vip)) {
         cat(sprintf("  %s: VIP = %.3f\n", top_vip$feature[i], top_vip$vip[i]))
+      }
+    }
+
+    if (!is.null(diff_analysis)) {
+      cat("\nDifferential Analysis (ref_group =", ref_group, "):\n")
+      cat("------------------------------------------\n")
+      other_groups <- unique(diff_analysis$group)
+      for (grp in other_groups) {
+        subset <- diff_analysis[diff_analysis$group == grp, ]
+        n_up <- sum(subset$regulation == "Up", na.rm = TRUE)
+        n_down <- sum(subset$regulation == "Down", na.rm = TRUE)
+        cat(sprintf("  %s vs %s: %d Up, %d Down, %d NS\n",
+          grp, ref_group, n_up, n_down, sum(subset$regulation == "NS", na.rm = TRUE)))
       }
     }
     cat("\n")

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] - 2026-06-09
+
+### Added
+- `opls_analysis()`: new `ref_group` parameter for one-vs-reference differential analysis with log2FC, p-value, BH adjustment, and Up/Down regulation labeling
+- `spls_analysis()`: improved error message when `group` is accidentally passed as data frame
+
 ## [1.27.1] - 2026-06-09
 
 ### Fixed
