@@ -165,3 +165,6 @@ if (interactive()) {
   bioRtools::gg_heatmap(mat)
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

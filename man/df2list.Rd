@@ -65,3 +65,6 @@ df2list(gene_data, group = "condition", value = "gene_id")
 intersect(gene_list$Treatment_A, gene_list$Treatment_B)
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

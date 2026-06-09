@@ -47,3 +47,6 @@ head(res)
 \seealso{
 \code{\link[picante]{comdistnt}}, \code{\link[picante]{match.phylo.data}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

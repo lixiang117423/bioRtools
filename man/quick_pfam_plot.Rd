@@ -19,3 +19,6 @@ ggplot object
 \description{
 Quick function for plotting protein domains
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

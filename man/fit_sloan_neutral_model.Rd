@@ -63,5 +63,5 @@ of gut microbial communities in the zebrafish over host development.
 The ISME Journal, 10(3), 655-664.
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

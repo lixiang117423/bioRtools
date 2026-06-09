@@ -76,3 +76,6 @@ permanova_test(
 ) -> result.jaccard
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

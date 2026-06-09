@@ -155,5 +155,5 @@ head(result1$gene_module_mapping)
 \code{\link[WGCNA]{blockwiseModules}}, \code{\link[WGCNA]{pickSoftThreshold}}
 }
 \author{
-Your Name
+Xiang LI <lixiang117423@gmail.com>
 }

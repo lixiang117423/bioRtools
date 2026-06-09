@@ -160,3 +160,6 @@ time_reordered <- reorder_heatmap(
 )
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

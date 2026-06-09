@@ -30,3 +30,6 @@ ggNetView::ggNetView(tg, layout = "gephi", add_outer = TRUE, label = TRUE)
 \seealso{
 \code{\link{microbiome_net}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

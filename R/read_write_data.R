@@ -33,7 +33,7 @@ read_data <- function(file, delim = "\t", ...) {
   ext <- tolower(tools::file_ext(file))
 
   switch(ext,
-    xlsx = , xls = readxl::read_excel(file, ...),
+    xlsx = , xls = readxl::read_excel(file, .name_repair = "universal", ...),
     csv  = readr::read_csv(file, ...),
     tsv  = readr::read_tsv(file, ...),
     txt  = readr::read_delim(file, delim = delim, ...),

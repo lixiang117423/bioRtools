@@ -284,3 +284,6 @@ significant_fdr <- result$gwas_results[result$gwas_results$p_fdr < 0.05, ]
 }
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

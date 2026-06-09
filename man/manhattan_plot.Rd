@@ -279,3 +279,6 @@ American Journal of Human Genetics, 101(1), 5-22.
   \item \code{\link[ggrepel]{geom_label_repel}} for label positioning
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

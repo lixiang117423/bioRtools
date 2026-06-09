@@ -111,3 +111,6 @@ df.permanova.otu \%>\%
   rarefy_table(value = 3000) -> df.transposed.rarefied
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

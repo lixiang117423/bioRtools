@@ -55,3 +55,6 @@ result <- calc_alpha_diversity(data = mat)
 head(result)
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

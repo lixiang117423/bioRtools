@@ -142,3 +142,6 @@ result$r2_pan
 result$r2_core
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -39,5 +39,5 @@ df \%>\% mutate(sd = row_sd(., cols = c("sample1", "sample2")))
 
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

@@ -68,3 +68,6 @@ and dispersion for RNA-seq data with DESeq2. \emph{Genome Biology}, 15, 550.
 \seealso{
 \code{\link{find_dams_lefse}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

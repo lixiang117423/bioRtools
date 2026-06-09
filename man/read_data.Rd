@@ -4,20 +4,25 @@
 \alias{read_data}
 \title{Read Data File by Extension}
 \usage{
-read_data(file, ...)
+read_data(file, delim = "\\t", ...)
 }
 \arguments{
 \item{file}{File path.}
 
+\item{delim}{Character string used as field separator for \code{.txt} files.
+Default is \code{"\\t"} (tab). Ignored for other file types.}
+
 \item{...}{Additional arguments passed to the underlying read function.}
 }
 \value{
-A data frame.
+A data frame for tabular formats, the deserialized R object for
+  \code{.rds}/\code{.rdata} files, or a FASTA data frame for
+  \code{.fasta}/\code{.fa} files.
 }
 \description{
 Reads a data file using the appropriate function based on file extension.
-Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), tab-delimited text
-(.txt), FASTA (.fasta/.fa), and RDS (.rds) files.
+Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
+(.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
 First row is treated as column headers for tabular formats.
 }
 \examples{
@@ -25,8 +30,12 @@ First row is treated as column headers for tabular formats.
 df <- read_data("data/samples.xlsx")
 df <- read_data("data/counts.csv")
 df <- read_data("data/table.tsv")
+df <- read_data("data/table.txt", delim = ",")
 }
 }
 \seealso{
 \code{\link{write_data}}
+}
+\author{
+Xiang LI <lixiang117423@gmail.com>
 }

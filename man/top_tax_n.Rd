@@ -174,3 +174,6 @@ group_result <- top_tax_n(
 group_result$plot.abundance
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -39,5 +39,5 @@ motif_info <- get_motif_from_meme(data = filepath_xml, format = "xml")
 
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

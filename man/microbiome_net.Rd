@@ -81,3 +81,6 @@ head(res$nodeProps)
 \seealso{
 \code{\link[SpiecEasi]{spiec.easi}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

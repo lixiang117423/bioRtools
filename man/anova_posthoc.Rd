@@ -73,8 +73,8 @@ duncan_result <- anova_posthoc(iris, Sepal.Length ~ Species, method = "Duncan")
 
 # Using grouped data
 iris \%>\%
-  dplyr::mutate(Size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) \%>\%
-  dplyr::group_by(Size) \%>\%
+  dplyr::mutate(size = ifelse(Sepal.Width > median(Sepal.Width), "Large", "Small")) \%>\%
+  dplyr::group_by(size) \%>\%
   anova_posthoc(Sepal.Length ~ Species)
 
 # Multiple grouping variables
@@ -92,4 +92,7 @@ result <- anova_posthoc(
 )
 print(result)
 
+}
+\author{
+Xiang LI <lixiang117423@gmail.com>
 }

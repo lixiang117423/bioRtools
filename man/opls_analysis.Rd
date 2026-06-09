@@ -359,3 +359,6 @@ PLS‐DA and SIMCA classification. Journal of Chemometrics, 20(8‐10), 341-351.
   \item \code{\link[ropls]{opls}} for underlying OPLS implementation
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -93,3 +93,6 @@ tree_custom <- extract_tree_hierarchy(
 }
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

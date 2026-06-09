@@ -253,3 +253,6 @@ ASQC Quality Press.
   \item \code{\link[graphics]{boxplot}} for visual outlier identification
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

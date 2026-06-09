@@ -62,3 +62,6 @@ ggsave2("plot.pdf", p)
 \seealso{
 \code{\link[ggplot2]{ggsave}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -185,3 +185,6 @@ ld_multi <- plot_LDheatmap(
 }
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

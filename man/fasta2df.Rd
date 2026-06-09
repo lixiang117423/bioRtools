@@ -180,7 +180,7 @@ FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 \code{\link{Biostrings}} package for advanced sequence manipulation
 }
 \author{
-Optimized by Assistant
+Xiang LI <lixiang117423@gmail.com>
 }
 \keyword{bioinformatics}
 \keyword{file}

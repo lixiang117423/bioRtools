@@ -386,3 +386,6 @@ Data Analysis and Data Mining. Journal of Statistical Software, 25(1), 1-18.
   \item \code{\link[factoextra]{fviz_pca_ind}} for advanced PCA visualization
 }
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -177,7 +177,7 @@ comparison. PNAS 85:2444-2448.
 \code{\link{Biostrings}} package for advanced sequence manipulation
 }
 \author{
-Optimized by Assistant
+Xiang LI <lixiang117423@gmail.com>
 }
 \keyword{bioinformatics}
 \keyword{file}

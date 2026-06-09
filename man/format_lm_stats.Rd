@@ -49,5 +49,5 @@ format_lm_stats(model, format = "markdown")
 
 }
 \author{
-Xiang LI \email{lixiang117423@foxmail.com}
+Xiang LI <lixiang117423@gmail.com>
 }

@@ -32,3 +32,6 @@ net2gephi(res, group = "T1", prefix = "result/network_T1")
 \seealso{
 \code{\link{microbiome_net}}
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}

@@ -152,3 +152,6 @@ summary(rda_result$result.rda)
 rda_result$result.rda$CCA$eig / rda_result$result.rda$tot.chi
 
 }
+\author{
+Xiang LI <lixiang117423@gmail.com>
+}
