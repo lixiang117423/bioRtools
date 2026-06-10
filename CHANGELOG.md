@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.0] - 2026-06-10
+
+### Added
+- `opls_analysis()`: return `plot` element — ggplot2 score plot with R2Y/Q2Y variance on axes, faceted by comparison in pairwise mode
+- `opls_analysis()`: differential analysis now includes `group_mean`, `group_sd`, `group_n`, `ref_mean`, `ref_sd`, `ref_n` columns
+
 ## [1.29.4] - 2026-06-09
 
 ### Added
