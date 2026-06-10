@@ -19,6 +19,7 @@ opls_analysis(
   ref_group = NULL,
   p_threshold = 0.05,
   test_method = "auto",
+  p_adjust_method = "BH",
   verbose = FALSE
 )
 }
