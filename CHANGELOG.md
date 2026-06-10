@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.40.0] - 2026-06-10
+
+### Changed
+- `find_degs_deseq2()`: add `ref_group` parameter; output now includes `group`, `ref_group`, `group_mean`, `group_sd`, `group_n`, `ref_mean`, `ref_sd`, `ref_n`, `test_method` columns aligned with `opls_analysis()` format
+
 ## [1.39.0] - 2026-06-10
 
 ### Added

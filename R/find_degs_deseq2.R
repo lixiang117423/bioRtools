@@ -299,7 +299,8 @@
 #'
 find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1, padj = 0.05,
                              shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1,
-                             remove_problematic_genes = TRUE, pairwise = TRUE) {
+                             remove_problematic_genes = TRUE, pairwise = TRUE,
+                             ref_group = NULL) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop(err_invalid_input("data", "a matrix or data frame"))
@@ -489,7 +490,14 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   if (pairwise) {
     groups <- unique(as.character(sample_aligned[[main_factor]]))
     if (length(groups) < 2) stop("Need at least 2 groups for pairwise analysis")
-    pairs <- utils::combn(groups, 2, simplify = FALSE)
+
+    if (!is.null(ref_group)) {
+      if (!ref_group %in% groups) stop("'ref_group' must be one of: ", paste(groups, collapse = ", "))
+      others <- setdiff(groups, ref_group)
+      pairs <- lapply(others, function(g) c(ref_group, g))
+    } else {
+      pairs <- utils::combn(groups, 2, simplify = FALSE)
+    }
 
     # Remove zero-count genes globally (once)
     data_matrix <- data_matrix[!zero_count_genes, , drop = FALSE]
@@ -532,11 +540,35 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
       res <- tibble::rownames_to_column(res, "gene")
       res$padj <- ifelse(is.na(res$padj), 1, res$padj)
-      res$regulation <- ifelse(res$log2FoldChange > log2FoldChange & res$padj < padj, "Up-regulated",
-                        ifelse(res$log2FoldChange < -log2FoldChange & res$padj < padj, "Down-regulated", "Not significant"))
+      res$regulation <- ifelse(res$log2FoldChange > log2FoldChange & res$padj < padj, "Up",
+                        ifelse(res$log2FoldChange < -log2FoldChange & res$padj < padj, "Down", "NS"))
       res$fold_change <- 2^res$log2FoldChange
       res$abs_log2fc <- abs(res$log2FoldChange)
       res$comparison <- comp_label
+      res$group <- pair[2]
+      res$ref_group <- pair[1]
+
+      # Add group descriptive statistics
+      genes <- rownames(d_sub)
+      idx_grp <- s_sub[[main_factor]] == pair[2]
+      idx_ref <- s_sub[[main_factor]] == pair[1]
+      n_grp <- sum(idx_grp)
+      n_ref <- sum(idx_ref)
+
+      # Normalized counts for mean/sd
+      norm_counts <- DESeq2::counts(dds, normalized = TRUE)
+      grp_means <- rowMeans(norm_counts[, idx_grp, drop = FALSE], na.rm = TRUE)
+      grp_sds <- apply(norm_counts[, idx_grp, drop = FALSE], 1, sd, na.rm = TRUE)
+      ref_means <- rowMeans(norm_counts[, idx_ref, drop = FALSE], na.rm = TRUE)
+      ref_sds <- apply(norm_counts[, idx_ref, drop = FALSE], 1, sd, na.rm = TRUE)
+
+      res$group_mean <- round(grp_means[genes], 2)
+      res$group_sd <- round(grp_sds[genes], 2)
+      res$group_n <- n_grp
+      res$ref_mean <- round(ref_means[genes], 2)
+      res$ref_sd <- round(ref_sds[genes], 2)
+      res$ref_n <- n_ref
+      res$test_method <- "DESeq2-Wald"
       res
     }
 
