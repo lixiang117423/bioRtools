@@ -164,7 +164,21 @@ spls_analysis <- function(data,
       stop("'sample' must be a data frame")
     }
     if (!sample_col %in% colnames(sample)) {
-      stop("'sample_col' (", sample_col, ") not found in 'sample'")
+      # Auto-detect: find column matching data rownames
+      data_rn <- rownames(data)
+      detected <- FALSE
+      if (!is.null(data_rn)) {
+        for (col in names(sample)) {
+          if (is.character(sample[[col]]) && all(data_rn %in% sample[[col]])) {
+            sample_col <- col
+            detected <- TRUE
+            break
+          }
+        }
+      }
+      if (!detected) {
+        stop("'sample_col' (", sample_col, ") not found in 'sample'")
+      }
     }
     if (!group_col %in% colnames(sample)) {
       stop("'group_col' (", group_col, ") not found in 'sample'")
