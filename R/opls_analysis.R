@@ -341,6 +341,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           pred_components = NULL, scaling = "standard",
                           validation = "CV", cv_folds = 7,
                           ref_group = NULL, p_threshold = 0.05,
+                          test_method = "auto",
                           verbose = FALSE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
@@ -515,6 +516,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       "Consider removing these before analysis."))
   }
 
+  # Validate test_method
+  if (!test_method %in% c("auto", "t-test", "wilcoxon")) {
+    stop("'test_method' must be 'auto', 't-test', or 'wilcoxon'")
+  }
+
   # Prepare sample names for output
   sample_names <- rownames(data_matrix)
   if (is.null(sample_names)) {
@@ -676,10 +682,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
         n_ref <- nrow(ref_data)
         n_grp <- nrow(grp_data)
-        use_wilcox <- n_ref < 6 || n_grp < 6
 
         log2fc_vals <- numeric(length(variable_names))
         p_vals <- numeric(length(variable_names))
+        test_methods <- character(length(variable_names))
         ref_mean_vals <- numeric(length(variable_names))
         grp_mean_vals <- numeric(length(variable_names))
         ref_sd_vals <- numeric(length(variable_names))
@@ -700,14 +706,28 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           valid_grp <- grp_vals[!is.na(grp_vals)]
           if (length(valid_ref) >= 2 && length(valid_grp) >= 2 &&
             stats::var(valid_ref) > 0 && stats::var(valid_grp) > 0) {
-            if (use_wilcox) {
-              test_result <- stats::wilcox.test(valid_grp, valid_ref)
+            # Determine test method per variable
+            use_t <- if (test_method == "auto") {
+              ref_normal <- length(valid_ref) >= 3 &&
+                tryCatch(stats::shapiro.test(valid_ref)$p.value > 0.05, error = function(e) FALSE)
+              grp_normal <- length(valid_grp) >= 3 &&
+                tryCatch(stats::shapiro.test(valid_grp)$p.value > 0.05, error = function(e) FALSE)
+              ref_normal && grp_normal
             } else {
+              test_method == "t-test"
+            }
+
+            if (use_t) {
               test_result <- stats::t.test(valid_grp, valid_ref)
+              test_methods[j] <- "t-test"
+            } else {
+              test_result <- stats::wilcox.test(valid_grp, valid_ref)
+              test_methods[j] <- "wilcoxon"
             }
             p_vals[j] <- test_result$p.value
           } else {
             p_vals[j] <- NA
+            test_methods[j] <- NA_character_
           }
         }
 
@@ -723,7 +743,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           ref_n = n_ref,
           log2_fc = round(log2fc_vals, 4),
           p_value = p_vals,
-          test_method = if (use_wilcox) "wilcoxon" else "t-test",
+          test_method = test_methods,
           stringsAsFactors = FALSE
         )
       }
@@ -939,7 +959,6 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
       n_ref <- nrow(ref_data)
       n_grp <- nrow(grp_data)
-      use_wilcox <- n_ref < 6 || n_grp < 6
 
       diff_list[[grp]] <- data.frame(
         feature = variable_names,
@@ -951,6 +970,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       # Calculate log2FC and p-value per variable
       log2fc_vals <- numeric(length(variable_names))
       p_vals <- numeric(length(variable_names))
+      test_methods <- character(length(variable_names))
       ref_mean_vals <- numeric(length(variable_names))
       grp_mean_vals <- numeric(length(variable_names))
       ref_sd_vals <- numeric(length(variable_names))
@@ -974,14 +994,27 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
         if (length(valid_ref) >= 2 && length(valid_grp) >= 2 &&
           stats::var(valid_ref) > 0 && stats::var(valid_grp) > 0) {
-          if (use_wilcox) {
-            test_result <- stats::wilcox.test(valid_grp, valid_ref)
+          use_t <- if (test_method == "auto") {
+            ref_normal <- length(valid_ref) >= 3 &&
+              tryCatch(stats::shapiro.test(valid_ref)$p.value > 0.05, error = function(e) FALSE)
+            grp_normal <- length(valid_grp) >= 3 &&
+              tryCatch(stats::shapiro.test(valid_grp)$p.value > 0.05, error = function(e) FALSE)
+            ref_normal && grp_normal
           } else {
+            test_method == "t-test"
+          }
+
+          if (use_t) {
             test_result <- stats::t.test(valid_grp, valid_ref)
+            test_methods[j] <- "t-test"
+          } else {
+            test_result <- stats::wilcox.test(valid_grp, valid_ref)
+            test_methods[j] <- "wilcoxon"
           }
           p_vals[j] <- test_result$p.value
         } else {
           p_vals[j] <- NA
+          test_methods[j] <- NA_character_
         }
       }
 
@@ -993,7 +1026,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       diff_list[[grp]]$ref_n <- n_ref
       diff_list[[grp]]$log2_fc <- round(log2fc_vals, 4)
       diff_list[[grp]]$p_value <- p_vals
-      diff_list[[grp]]$test_method <- if (use_wilcox) "wilcoxon" else "t-test"
+      diff_list[[grp]]$test_method <- test_methods
     }
 
     diff_analysis <- do.call(rbind, diff_list)
