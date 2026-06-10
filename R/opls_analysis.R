@@ -723,6 +723,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           ref_n = n_ref,
           log2_fc = round(log2fc_vals, 4),
           p_value = p_vals,
+          test_method = if (use_wilcox) "wilcoxon" else "t-test",
           stringsAsFactors = FALSE
         )
       }
@@ -992,6 +993,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       diff_list[[grp]]$ref_n <- n_ref
       diff_list[[grp]]$log2_fc <- round(log2fc_vals, 4)
       diff_list[[grp]]$p_value <- p_vals
+      diff_list[[grp]]$test_method <- if (use_wilcox) "wilcoxon" else "t-test"
     }
 
     diff_analysis <- do.call(rbind, diff_list)
