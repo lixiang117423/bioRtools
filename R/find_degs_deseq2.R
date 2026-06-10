@@ -343,6 +343,11 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   data_matrix <- as.matrix(data)
   n_genes_original <- nrow(data_matrix)
 
+  # Save original expression values for output (before rounding/filtering)
+  expr_df <- as.data.frame(data_matrix)
+  expr_df$gene <- rownames(expr_df)
+  rownames(expr_df) <- NULL
+
   # Round non-integer values first (FPKM/TPM → integer for DESeq2)
   if (!is.integer(data_matrix)) {
     if (any(data_matrix != round(data_matrix), na.rm = TRUE)) {
@@ -489,11 +494,6 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
         ". Consider 6+ replicates for robust differential expression."))
     }
   }
-
-  # Save original expression values for output (before rounding/filtering)
-  expr_df <- as.data.frame(data_matrix)
-  expr_df$gene <- rownames(expr_df)
-  rownames(expr_df) <- NULL
 
   # Check for genes with zero counts across all samples
   zero_count_genes <- rowSums(data_matrix) == 0
