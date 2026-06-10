@@ -204,8 +204,8 @@ warn_data_processing <- function(message) {
 warn_genes_removed <- function(n_genes, reason) {
   warn_data_processing(
     sprintf(
-      "%d genes were removed (%s). Results based on %d remaining features.",
-      n_genes, reason, "unknown"
+      "%d genes were removed (%s).",
+      n_genes, reason
     )
   )
 }
