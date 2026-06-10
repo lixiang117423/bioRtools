@@ -578,7 +578,6 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
       res$ref_group <- pair[1]
 
       # Add group descriptive statistics
-      genes <- rownames(d_sub)
       idx_grp <- s_sub[[main_factor]] == pair[2]
       idx_ref <- s_sub[[main_factor]] == pair[1]
       n_grp <- sum(idx_grp)
@@ -591,11 +590,11 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
       ref_means <- rowMeans(norm_counts[, idx_ref, drop = FALSE], na.rm = TRUE)
       ref_sds <- apply(norm_counts[, idx_ref, drop = FALSE], 1, sd, na.rm = TRUE)
 
-      res$group_mean <- round(grp_means[genes], 2)
-      res$group_sd <- round(grp_sds[genes], 2)
+      res$group_mean <- round(grp_means[res$gene], 2)
+      res$group_sd <- round(grp_sds[res$gene], 2)
       res$group_n <- n_grp
-      res$ref_mean <- round(ref_means[genes], 2)
-      res$ref_sd <- round(ref_sds[genes], 2)
+      res$ref_mean <- round(ref_means[res$gene], 2)
+      res$ref_sd <- round(ref_sds[res$gene], 2)
       res$ref_n <- n_ref
       res$test_method <- "DESeq2-Wald"
       res
