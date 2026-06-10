@@ -554,16 +554,17 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           " (n=", nrow(sub_data), ", cv_folds=", grp_cv_folds, ")")
       }
 
+      cat("\n========== OPLS-DA:", grp, "vs", ref_group, "==========\n")
       model <- tryCatch(
         {
           if (validation == "CV") {
             ropls::opls(sub_data, sub_group,
               predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = grp_cv_folds, fig.pdfC = "none", info.txtC = "none")
+              crossvalI = grp_cv_folds, fig.pdfC = "interactive", info.txtC = "none")
           } else {
             ropls::opls(sub_data, sub_group,
               predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = 0, fig.pdfC = "none", info.txtC = "none")
+              crossvalI = 0, fig.pdfC = "interactive", info.txtC = "none")
           }
         },
         error = function(e) {
@@ -763,7 +764,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
             orthoI = ortho_components,
             scaleC = scaling,
             crossvalI = cv_folds,
-            fig.pdfC = "none",
+            fig.pdfC = "interactive",
             info.txtC = "none"
           )
         } else {
@@ -774,7 +775,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
             orthoI = ortho_components,
             scaleC = scaling,
             crossvalI = 0,
-            fig.pdfC = "none",
+            fig.pdfC = "interactive",
             info.txtC = "none"
           )
         }
