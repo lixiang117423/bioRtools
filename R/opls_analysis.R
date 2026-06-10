@@ -342,6 +342,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           validation = "CV", cv_folds = 7,
                           ref_group = NULL, p_threshold = 0.05,
                           test_method = "auto",
+                          p_adjust_method = "BH",
                           verbose = FALSE) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
@@ -519,6 +520,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
   # Validate test_method
   if (!test_method %in% c("auto", "t-test", "wilcoxon")) {
     stop("'test_method' must be 'auto', 't-test', or 'wilcoxon'")
+  }
+
+  if (!p_adjust_method %in% stats::p.adjust.methods) {
+    stop("'p_adjust_method' must be one of: ", paste(stats::p.adjust.methods, collapse = ", "))
   }
 
   # Prepare sample names for output
@@ -751,7 +756,12 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       diff_analysis <- do.call(rbind, diff_list)
       rownames(diff_analysis) <- NULL
       diff_analysis$comparison <- paste0(diff_analysis$group, " vs ", diff_analysis$ref_group)
-      diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
+
+      # Adjust p-values per comparison
+      diff_analysis <- diff_analysis %>%
+        dplyr::group_by(comparison) %>%
+        dplyr::mutate(p_adjust = stats::p.adjust(p_value, method = p_adjust_method)) %>%
+        dplyr::ungroup()
 
       # Add VIP from pairwise results
       vip_lookup <- vip_data %>%
@@ -1033,8 +1043,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     rownames(diff_analysis) <- NULL
     diff_analysis$comparison <- paste0(diff_analysis$group, " vs ", diff_analysis$ref_group)
 
-    # Adjust p-values across all comparisons
-    diff_analysis$p_adjust <- stats::p.adjust(diff_analysis$p_value, method = "BH")
+    # Adjust p-values per comparison
+    diff_analysis <- diff_analysis %>%
+      dplyr::group_by(comparison) %>%
+      dplyr::mutate(p_adjust = stats::p.adjust(p_value, method = p_adjust_method)) %>%
+      dplyr::ungroup()
 
     # Add VIP scores
     diff_analysis$vip <- round(as.numeric(vip_lookup[diff_analysis$feature]), 4)
