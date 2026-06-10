@@ -544,7 +544,7 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
       if (any(table(s_sub[[main_factor]]) < 2)) return(NULL)
 
       pair_formula <- as.formula(paste0("~", main_factor))
-      comp_label <- paste(pair[1], "vs", pair[2])
+      comp_label <- paste(pair[2], "vs", pair[1])
 
       dds <- tryCatch(
         DESeq2::DESeqDataSetFromMatrix(countData = d_sub, colData = s_sub, design = pair_formula),
