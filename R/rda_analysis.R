@@ -242,6 +242,10 @@ rda_analysis <- function(data,
   x_label <- paste0("RDA1 (", round(variance_explained[1], 1), "%)")
   y_label <- paste0("RDA2 (", round(variance_explained[2], 1), "%)")
 
+  # Add variance explained to sample scores
+  sample_coords$variance_RDA1 <- round(variance_explained[1], 2)
+  sample_coords$variance_RDA2 <- round(variance_explained[2], 2)
+
   # Step 6: Create the RDA biplot
   rda_plot <- sample_coords %>%
     ggplot2::ggplot(ggplot2::aes(x = RDA1, y = RDA2)) +
