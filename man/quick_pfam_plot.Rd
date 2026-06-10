@@ -19,6 +19,12 @@ ggplot object
 \description{
 Quick function for plotting protein domains
 }
+\examples{
+\dontrun{
+quick_pfam_plot("path/to/pfam.tsv")
+quick_pfam_plot("path/to/pfam.tsv", tree_file = "path/to/tree.nwk")
+}
+}
 \author{
 Xiang LI <lixiang117423@gmail.com>
 }
