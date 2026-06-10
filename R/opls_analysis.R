@@ -1031,11 +1031,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           mdf <- as.data.frame(m@modelDF)
           data.frame(
             comparison = paste0(grp_name, " vs ", ref_group),
-            R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_,
-            R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_,
-            R2X_cum = round(m@summaryDF$`R2X(cum)` * 100, 2),
-            R2Y_cum = round(m@summaryDF$`R2Y(cum)` * 100, 2),
-            Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2),
+            variance_t1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_,
+            variance_to1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_,
+            variance_R2X = round(m@summaryDF$`R2X(cum)` * 100, 2),
+            variance_R2Y = round(m@summaryDF$`R2Y(cum)` * 100, 2),
+            variance_Q2 = round(m@summaryDF$`Q2(cum)` * 100, 2),
             stringsAsFactors = FALSE
           )
         }))
@@ -1045,11 +1045,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
         # Standard mode: single model metrics
         m <- opls_model
         mdf <- as.data.frame(m@modelDF)
-        scores_data$R2X_p1 <- if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_
-        scores_data$R2X_o1 <- if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_
-        scores_data$R2X_cum <- round(m@summaryDF$`R2X(cum)` * 100, 2)
-        scores_data$R2Y_cum <- round(m@summaryDF$`R2Y(cum)` * 100, 2)
-        scores_data$Q2_cum <- round(m@summaryDF$`Q2(cum)` * 100, 2)
+        scores_data$variance_t1 <- if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_
+        scores_data$variance_to1 <- if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_
+        scores_data$variance_R2X <- round(m@summaryDF$`R2X(cum)` * 100, 2)
+        scores_data$variance_R2Y <- round(m@summaryDF$`R2Y(cum)` * 100, 2)
+        scores_data$variance_Q2 <- round(m@summaryDF$`Q2(cum)` * 100, 2)
       }
     },
     error = function(e) {
