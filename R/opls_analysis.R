@@ -554,17 +554,16 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           " (n=", nrow(sub_data), ", cv_folds=", grp_cv_folds, ")")
       }
 
-      cat("\n========== OPLS-DA:", grp, "vs", ref_group, "==========\n")
       model <- tryCatch(
         {
           if (validation == "CV") {
             ropls::opls(sub_data, sub_group,
               predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = grp_cv_folds, fig.pdfC = "interactive", info.txtC = "none")
+              crossvalI = grp_cv_folds, fig.pdfC = "none", info.txtC = "none")
           } else {
             ropls::opls(sub_data, sub_group,
               predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = 0, fig.pdfC = "interactive", info.txtC = "none")
+              crossvalI = 0, fig.pdfC = "none", info.txtC = "none")
           }
         },
         error = function(e) {
@@ -1020,54 +1019,40 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     diff_analysis$regulation <- as.character(diff_analysis$regulation)
   }
 
-  # Create score plot
-  score_plot <- tryCatch(
+  # Attach ropls plot metrics to scores as attributes
+  tryCatch(
     {
-      # Find predictive and orthogonal score columns
-      pred_col <- grep("^(t|p)1", names(scores_data), value = TRUE)[1]
-      ortho_col <- grep("^(to|o)1", names(scores_data), value = TRUE)[1]
-
-      if (is.null(pred_col)) pred_col <- names(scores_data)[1]
-
-      x_sym <- rlang::sym(pred_col)
-      y_sym <- if (!is.na(ortho_col)) rlang::sym(ortho_col) else NULL
-
-      r2y_val <- round(model_summary$R2Y * 100, 1)
-      q2y_val <- round(model_summary$Q2Y * 100, 1)
-
-      if (!is.null(pairwise_models) && "comparison" %in% names(scores_data)) {
-        # Pairwise mode: facet by comparison
-        p <- ggplot2::ggplot(scores_data, ggplot2::aes(x = !!x_sym,
-          y = if (!is.null(y_sym)) !!y_sym else 0, color = group)) +
-          ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60") +
-          ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
-          ggplot2::geom_point(size = 3, alpha = 0.8) +
-          ggplot2::stat_ellipse(level = 0.95, linewidth = 0.8) +
-          ggplot2::facet_wrap(~ comparison) +
-          ggplot2::labs(
-            x = paste0("t1 (R2Y=", r2y_val, "%, Q2=", q2y_val, "%)"),
-            y = if (!is.null(y_sym)) "to1 (orthogonal)" else ""
-          ) +
-          ggplot2::theme_bw()
+      if (!is.null(pairwise_models)) {
+        # Pairwise mode: attach per-comparison metrics
+        comp_metrics <- list()
+        for (grp_name in names(pairwise_models)) {
+          m <- pairwise_models[[grp_name]]
+          mdf <- as.data.frame(m@modelDF)
+          comp_metrics[[grp_name]] <- list(
+            comparison = paste0(grp_name, " vs ", ref_group),
+            R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA,
+            R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA,
+            R2X_cum = round(m@summaryDF$`R2X(cum)` * 100, 2),
+            R2Y_cum = round(m@summaryDF$`R2Y(cum)` * 100, 2),
+            Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2)
+          )
+        }
+        attr(scores_data, "plot_metrics") <- comp_metrics
       } else {
-        # Standard mode
-        p <- ggplot2::ggplot(scores_data, ggplot2::aes(x = !!x_sym,
-          y = if (!is.null(y_sym)) !!y_sym else 0, color = group)) +
-          ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60") +
-          ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
-          ggplot2::geom_point(size = 3, alpha = 0.8) +
-          ggplot2::stat_ellipse(level = 0.95, linewidth = 0.8) +
-          ggplot2::labs(
-            x = paste0("t1 (R2Y=", r2y_val, "%, Q2=", q2y_val, "%)"),
-            y = if (!is.null(y_sym)) "to1 (orthogonal)" else ""
-          ) +
-          ggplot2::theme_bw()
+        # Standard mode: single model metrics
+        m <- opls_model
+        mdf <- as.data.frame(m@modelDF)
+        attr(scores_data, "plot_metrics") <- list(
+          R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA,
+          R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA,
+          R2X_cum = round(m@summaryDF$`R2X(cum)` * 100, 2),
+          R2Y_cum = round(m@summaryDF$`R2Y(cum)` * 100, 2),
+          Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2)
+        )
       }
-      p
     },
     error = function(e) {
-      warning("Could not create score plot: ", e$message)
-      NULL
+      warning("Could not extract plot metrics: ", e$message)
     })
 
   # Prepare final results
@@ -1077,8 +1062,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     vip_scores = vip_data,
     loadings = loadings_data,
     differential_analysis = diff_analysis,
-    model_summary = model_summary,
-    plot = score_plot
+    model_summary = model_summary
   )
 
   # Add metadata as attributes
