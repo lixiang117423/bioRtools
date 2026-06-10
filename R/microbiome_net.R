@@ -13,7 +13,9 @@
 #'   column should match feature IDs in \code{data}.
 #' @param method Network construction method: "mb" (default), "glasso", or "cor".
 #'   "mb" and "glasso" use sparse inverse covariance via huge+pulsar (memory-intensive).
-#'   "cor" uses Spearman correlation with threshold filtering (fast, low memory).
+#'   "cor" uses correlation with threshold filtering (fast, low memory).
+#' @param cor_method Character string, correlation method for \code{method = "cor"}:
+#'   "spearman" (default), "pearson", or "kendall".
 #' @param minSamples Minimum sample prevalence to keep a feature. If < 1,
 #'   treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).
 #' @param minReads Minimum total reads to keep a feature (default: 10).
@@ -49,7 +51,8 @@
 #' head(res$nodeProps)
 #' }
 microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
-                           method = "mb", minSamples = 0.1, minReads = 10,
+                           method = "mb", cor_method = "spearman",
+                           minSamples = 0.1, minReads = 10,
                            cor.threshold = 0.5, cor.pvalue = 0.05,
                            hubQuant = 0.95, clustMethod = "cluster_fast_greedy",
                            pulsar.params = list(rep.num = 20),
@@ -84,6 +87,10 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
   if (!groupCol %in% names(sample)) {
     stop(sprintf("Column '%s' not found in sample data", groupCol))
+  }
+
+  if (!cor_method %in% c("pearson", "spearman", "kendall")) {
+    stop("'cor_method' must be 'pearson', 'spearman', or 'kendall'")
   }
 
   # Align samples
@@ -154,9 +161,9 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
     # --- Build adjacency matrix ---
     if (method == "cor") {
-      # Spearman correlation + threshold (fast, low memory)
-      if (verbose) message("  Method: Spearman correlation")
-      cor_mat <- stats::cor(t(d_sub), method = "spearman", use = "pairwise.complete.obs")
+      # Correlation + threshold (fast, low memory)
+      if (verbose) message("  Method: ", cor_method, " correlation")
+      cor_mat <- stats::cor(t(d_sub), method = cor_method, use = "pairwise.complete.obs")
 
       # P-value matrix
       n_feat <- nrow(cor_mat)
@@ -166,7 +173,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
         for (j in (i + 1):n_feat) {
           k <- k + 1
           p_upper[k] <- stats::cor.test(d_sub[i, ], d_sub[j, ],
-            method = "spearman", exact = FALSE)$p.value
+            method = cor_method, exact = FALSE)$p.value
         }
       }
       p_adj_upper <- stats::p.adjust(p_upper, method = "BH")
