@@ -680,12 +680,20 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
         log2fc_vals <- numeric(length(variable_names))
         p_vals <- numeric(length(variable_names))
+        ref_mean_vals <- numeric(length(variable_names))
+        grp_mean_vals <- numeric(length(variable_names))
+        ref_sd_vals <- numeric(length(variable_names))
+        grp_sd_vals <- numeric(length(variable_names))
 
         for (j in seq_along(variable_names)) {
           ref_vals <- ref_data[, j]
           grp_vals <- grp_data[, j]
           ref_mean <- mean(ref_vals, na.rm = TRUE)
           grp_mean <- mean(grp_vals, na.rm = TRUE)
+          ref_mean_vals[j] <- ref_mean
+          grp_mean_vals[j] <- grp_mean
+          ref_sd_vals[j] <- sd(ref_vals, na.rm = TRUE)
+          grp_sd_vals[j] <- sd(grp_vals, na.rm = TRUE)
           log2fc_vals[j] <- log2((grp_mean + 1e-10) / (ref_mean + 1e-10))
 
           valid_ref <- ref_vals[!is.na(ref_vals)]
@@ -707,6 +715,12 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           feature = variable_names,
           group = grp,
           ref_group = ref_group,
+          group_mean = round(grp_mean_vals, 4),
+          group_sd = round(grp_sd_vals, 4),
+          group_n = n_grp,
+          ref_mean = round(ref_mean_vals, 4),
+          ref_sd = round(ref_sd_vals, 4),
+          ref_n = n_ref,
           log2_fc = round(log2fc_vals, 4),
           p_value = p_vals,
           stringsAsFactors = FALSE
@@ -936,6 +950,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
       # Calculate log2FC and p-value per variable
       log2fc_vals <- numeric(length(variable_names))
       p_vals <- numeric(length(variable_names))
+      ref_mean_vals <- numeric(length(variable_names))
+      grp_mean_vals <- numeric(length(variable_names))
+      ref_sd_vals <- numeric(length(variable_names))
+      grp_sd_vals <- numeric(length(variable_names))
 
       for (j in seq_along(variable_names)) {
         ref_vals <- ref_data[, j]
@@ -943,6 +961,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
         ref_mean <- mean(ref_vals, na.rm = TRUE)
         grp_mean <- mean(grp_vals, na.rm = TRUE)
+        ref_mean_vals[j] <- ref_mean
+        grp_mean_vals[j] <- grp_mean
+        ref_sd_vals[j] <- sd(ref_vals, na.rm = TRUE)
+        grp_sd_vals[j] <- sd(grp_vals, na.rm = TRUE)
 
         log2fc_vals[j] <- log2((grp_mean + 1e-10) / (ref_mean + 1e-10))
 
@@ -962,6 +984,12 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
         }
       }
 
+      diff_list[[grp]]$group_mean <- round(grp_mean_vals, 4)
+      diff_list[[grp]]$group_sd <- round(grp_sd_vals, 4)
+      diff_list[[grp]]$group_n <- n_grp
+      diff_list[[grp]]$ref_mean <- round(ref_mean_vals, 4)
+      diff_list[[grp]]$ref_sd <- round(ref_sd_vals, 4)
+      diff_list[[grp]]$ref_n <- n_ref
       diff_list[[grp]]$log2_fc <- round(log2fc_vals, 4)
       diff_list[[grp]]$p_value <- p_vals
     }
@@ -991,6 +1019,56 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     diff_analysis$regulation <- as.character(diff_analysis$regulation)
   }
 
+  # Create score plot
+  score_plot <- tryCatch(
+    {
+      # Find predictive and orthogonal score columns
+      pred_col <- grep("^(t|p)1", names(scores_data), value = TRUE)[1]
+      ortho_col <- grep("^(to|o)1", names(scores_data), value = TRUE)[1]
+
+      if (is.null(pred_col)) pred_col <- names(scores_data)[1]
+
+      x_sym <- rlang::sym(pred_col)
+      y_sym <- if (!is.na(ortho_col)) rlang::sym(ortho_col) else NULL
+
+      r2y_val <- round(model_summary$R2Y * 100, 1)
+      q2y_val <- round(model_summary$Q2Y * 100, 1)
+
+      if (!is.null(pairwise_models) && "comparison" %in% names(scores_data)) {
+        # Pairwise mode: facet by comparison
+        p <- ggplot2::ggplot(scores_data, ggplot2::aes(x = !!x_sym,
+          y = if (!is.null(y_sym)) !!y_sym else 0, color = group)) +
+          ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60") +
+          ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
+          ggplot2::geom_point(size = 3, alpha = 0.8) +
+          ggplot2::stat_ellipse(level = 0.95, linewidth = 0.8) +
+          ggplot2::facet_wrap(~ comparison) +
+          ggplot2::labs(
+            x = paste0("t1 (R2Y=", r2y_val, "%, Q2=", q2y_val, "%)"),
+            y = if (!is.null(y_sym)) "to1 (orthogonal)" else ""
+          ) +
+          ggplot2::theme_bw()
+      } else {
+        # Standard mode
+        p <- ggplot2::ggplot(scores_data, ggplot2::aes(x = !!x_sym,
+          y = if (!is.null(y_sym)) !!y_sym else 0, color = group)) +
+          ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "grey60") +
+          ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "grey60") +
+          ggplot2::geom_point(size = 3, alpha = 0.8) +
+          ggplot2::stat_ellipse(level = 0.95, linewidth = 0.8) +
+          ggplot2::labs(
+            x = paste0("t1 (R2Y=", r2y_val, "%, Q2=", q2y_val, "%)"),
+            y = if (!is.null(y_sym)) "to1 (orthogonal)" else ""
+          ) +
+          ggplot2::theme_bw()
+      }
+      p
+    },
+    error = function(e) {
+      warning("Could not create score plot: ", e$message)
+      NULL
+    })
+
   # Prepare final results
   results <- list(
     model = opls_model,
@@ -998,7 +1076,8 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     vip_scores = vip_data,
     loadings = loadings_data,
     differential_analysis = diff_analysis,
-    model_summary = model_summary
+    model_summary = model_summary,
+    plot = score_plot
   )
 
   # Add metadata as attributes
