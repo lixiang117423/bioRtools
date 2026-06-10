@@ -161,24 +161,28 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
     # --- Build adjacency matrix ---
     if (method == "cor") {
+      if (ncol(d_sub) < 5) {
+        warning("Group '", grp, "': only ", ncol(d_sub),
+          " samples, need >= 5 for correlation. Skipping.")
+        next
+      }
       # Correlation + threshold (fast, low memory)
       if (verbose) message("  Method: ", cor_method, " correlation")
-      cor_mat <- stats::cor(t(d_sub), method = cor_method, use = "pairwise.complete.obs")
 
-      # P-value matrix
+      rcorr_method <- switch(cor_method,
+        pearson = "pearson",
+        spearman = "spearman",
+        kendall = "kendall")
+
+      rcorr_result <- Hmisc::rcorr(t(d_sub), type = rcorr_method)
+      cor_mat <- rcorr_result$r
+      p_mat <- rcorr_result$P
+
+      # Adjust p-values (upper triangle only, then mirror)
       n_feat <- nrow(cor_mat)
-      p_upper <- numeric(n_feat * (n_feat - 1) / 2)
-      k <- 0
-      for (i in seq_len(n_feat - 1)) {
-        for (j in (i + 1):n_feat) {
-          k <- k + 1
-          p_upper[k] <- stats::cor.test(d_sub[i, ], d_sub[j, ],
-            method = cor_method, exact = FALSE)$p.value
-        }
-      }
+      p_upper <- p_mat[upper.tri(p_mat)]
       p_adj_upper <- stats::p.adjust(p_upper, method = "BH")
 
-      # Reconstruct symmetric adjusted p-value matrix
       p_adj <- matrix(1, n_feat, n_feat)
       p_adj[upper.tri(p_adj)] <- p_adj_upper
       p_adj[lower.tri(p_adj)] <- t(p_adj)[lower.tri(p_adj)]
