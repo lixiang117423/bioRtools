@@ -18,6 +18,7 @@ opls_analysis(
   cv_folds = 7,
   ref_group = NULL,
   p_threshold = 0.05,
+  test_method = "auto",
   verbose = FALSE
 )
 }
