@@ -345,7 +345,6 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
   # Round non-integer values first (FPKM/TPM → integer for DESeq2)
   if (!is.integer(data_matrix)) {
-    data_matrix <- apply(data_matrix, 2, as.numeric)
     if (any(data_matrix != round(data_matrix), na.rm = TRUE)) {
       warning("Non-integer values detected. Rounding to integers. DESeq2 requires raw counts; results from rounded normalized values may be less reliable.")
     }
@@ -491,6 +490,11 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
     }
   }
 
+  # Save original expression values for output (before rounding/filtering)
+  expr_df <- as.data.frame(data_matrix)
+  expr_df$gene <- rownames(expr_df)
+  rownames(expr_df) <- NULL
+
   # Check for genes with zero counts across all samples
   zero_count_genes <- rowSums(data_matrix) == 0
   n_zero_genes <- sum(zero_count_genes)
@@ -610,6 +614,9 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
     combined <- do.call(rbind, pair_results)
     rownames(combined) <- NULL
+
+    # Join original expression values
+    combined <- dplyr::left_join(combined, expr_df, by = "gene")
     combined <- combined[order(combined$comparison, combined$padj, -combined$abs_log2fc), ]
 
     if (interactive()) {
@@ -749,6 +756,8 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
         TRUE ~ "**** (p<0.0001)"
       )
     ) %>%
+    # Join original expression values
+    dplyr::left_join(expr_df, by = "gene") %>%
     # Sort by significance and effect size
     dplyr::arrange(padj, desc(abs_log2fc))
 
