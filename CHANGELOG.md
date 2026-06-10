@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.42.0] - 2026-06-10
+
+### Fixed
+- `find_degs_deseq2()`: fix gene rownames lost by `apply()` causing numeric gene column and NA in `group_mean`; fix pairwise stats index after DESeq2 zero-count gene filtering
+- `pcoa_analysis()`, `spls_analysis()`, `opls_analysis()`: auto-detect sample ID column when specified column not found
+
+### Changed
+- `find_degs_deseq2()`: output now includes original expression values via left_join for downstream analysis
+
 ## [1.41.0] - 2026-06-10
 
 ### Fixed
