@@ -148,6 +148,12 @@ plot_pfam <- function(data,
 #' @return ggplot object
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' quick_pfam_plot("path/to/pfam.tsv")
+#' quick_pfam_plot("path/to/pfam.tsv", tree_file = "path/to/tree.nwk")
+#' }
 
 quick_pfam_plot <- function(data, tree_file = NULL, ...) {
   plot_pfam(data = data,
