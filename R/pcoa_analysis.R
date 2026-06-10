@@ -30,6 +30,19 @@
 #' pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa.res
 #'
 pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2", size = 2, color = "group", alpha = 1) {
+  # Auto-detect sample ID column: if no "sample" column, find one matching data rownames
+  if (!"sample" %in% colnames(sample)) {
+    data_rn <- rownames(data)
+    if (!is.null(data_rn)) {
+      for (col in names(sample)) {
+        if (is.character(sample[[col]]) && all(data_rn %in% sample[[col]])) {
+          names(sample)[names(sample) == col] <- "sample"
+          break
+        }
+      }
+    }
+  }
+
   # Step 1: Calculate distance matrix and perform PCoA
   data %>%
     vegan::vegdist(method = method) %>%
