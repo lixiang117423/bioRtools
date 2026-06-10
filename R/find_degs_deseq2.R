@@ -625,8 +625,8 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
       cat("Comparisons:", length(pair_results), "\n")
       for (comp in unique(combined$comparison)) {
         sub <- combined[combined$comparison == comp, ]
-        n_up <- sum(sub$regulation == "Up-regulated")
-        n_down <- sum(sub$regulation == "Down-regulated")
+        n_up <- sum(sub$regulation == "Up")
+        n_down <- sum(sub$regulation == "Down")
         cat(sprintf("  %s: %d up, %d down, %d total DE\n", comp, n_up, n_down, n_up + n_down))
       }
       cat("\n")
