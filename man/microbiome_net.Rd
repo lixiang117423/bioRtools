@@ -10,6 +10,7 @@ microbiome_net(
   groupCol = "group",
   taxonomy = NULL,
   method = "mb",
+  cor_method = "spearman",
   minSamples = 0.1,
   minReads = 10,
   cor.threshold = 0.5,
@@ -34,7 +35,10 @@ column should match feature IDs in \code{data}.}
 
 \item{method}{Network construction method: "mb" (default), "glasso", or "cor".
 "mb" and "glasso" use sparse inverse covariance via huge+pulsar (memory-intensive).
-"cor" uses Spearman correlation with threshold filtering (fast, low memory).}
+"cor" uses correlation with threshold filtering (fast, low memory).}
+
+\item{cor_method}{Character string, correlation method for \code{method = "cor"}:
+"spearman" (default), "pearson", or "kendall".}
 
 \item{minSamples}{Minimum sample prevalence to keep a feature. If < 1,
 treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).}

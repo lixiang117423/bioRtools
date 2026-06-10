@@ -14,7 +14,8 @@ find_degs_deseq2(
   independent.filtering = TRUE,
   alpha = 0.1,
   remove_problematic_genes = TRUE,
-  pairwise = TRUE
+  pairwise = TRUE,
+  ref_group = NULL
 )
 }
 \arguments{

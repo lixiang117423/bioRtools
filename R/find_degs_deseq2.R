@@ -329,9 +329,30 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
     stop(err_negative_values("data", min_val))
   }
 
-  # Check for non-finite values
+  # Prepare data matrix: detect and remove non-numeric columns (e.g., gene_id)
+  data <- as.data.frame(data)
+  numeric_cols <- sapply(data, is.numeric)
+  if (!all(numeric_cols)) {
+    if (sum(!numeric_cols) == 1) {
+      rownames(data) <- data[[which(!numeric_cols)]]
+      data <- data[, numeric_cols, drop = FALSE]
+    } else {
+      data <- data[, numeric_cols, drop = FALSE]
+    }
+  }
   data_matrix <- as.matrix(data)
   n_genes_original <- nrow(data_matrix)
+
+  # Round non-integer values first (FPKM/TPM → integer for DESeq2)
+  if (!is.integer(data_matrix)) {
+    data_matrix <- apply(data_matrix, 2, as.numeric)
+    if (any(data_matrix != round(data_matrix), na.rm = TRUE)) {
+      warning("Non-integer values detected. Rounding to integers. DESeq2 requires raw counts; results from rounded normalized values may be less reliable.")
+    }
+    data_matrix[!is.finite(data_matrix)] <- 0
+    data_matrix <- round(data_matrix)
+  }
+
   has_nonfinite <- any(!is.finite(data_matrix), na.rm = TRUE)
 
   if (has_nonfinite) {
@@ -351,6 +372,9 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
 
       # Remove problematic genes
       data_matrix <- data_matrix[-problem_genes_idx, , drop = FALSE]
+      if (nrow(data_matrix) == 0) {
+        stop("All genes removed after filtering. Check your data - DESeq2 requires raw integer counts, not normalized values (FPKM/TPM/RPKM).")
+      }
     } else {
       # Stop with detailed error message
       genes_str <- paste(head(problematic_gene_names, 5), collapse = ", ")
@@ -360,12 +384,6 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   } else {
     # No issues found, use original data
     data_matrix <- data_matrix
-  }
-
-  # Check for and handle non-integer counts
-  if (!is.integer(data_matrix[1, 1]) && any(data_matrix != round(data_matrix), na.rm = TRUE)) {
-    warning("Non-integer values detected. Converting to integers. Ensure input represents raw counts, not normalized data.")
-    data_matrix <- round(data_matrix)
   }
 
   # Convert to integer storage
@@ -379,6 +397,17 @@ find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1,
   # Check sample names matching
   data_samples <- colnames(data_matrix)
   sample_names <- rownames(sample)
+
+  # Auto-detect sample ID column in sample (if no rownames or default rownames)
+  if (is.null(sample_names) || identical(sample_names, as.character(seq_len(nrow(sample))))) {
+    for (col in names(sample)) {
+      if (is.character(sample[[col]]) && all(data_samples %in% sample[[col]])) {
+        rownames(sample) <- sample[[col]]
+        sample_names <- sample[[col]]
+        break
+      }
+    }
+  }
 
   if (is.null(data_samples) || is.null(sample_names)) {
     stop(err_row_col_mismatch("data", "sample"))
