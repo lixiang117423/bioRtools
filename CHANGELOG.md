@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0] - 2026-06-10
+
+### Changed
+- `opls_analysis()`: attach ropls plot metrics (R2X_p1, R2X_o1, R2X_cum, R2Y_cum, Q2_cum) to scores as `plot_metrics` attribute, for recreating ropls-style score plots; suppress auto-plot output
+
 ## [1.31.0] - 2026-06-10
 
 ### Changed
