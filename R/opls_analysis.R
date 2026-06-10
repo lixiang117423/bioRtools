@@ -1019,36 +1019,35 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     diff_analysis$regulation <- as.character(diff_analysis$regulation)
   }
 
-  # Attach ropls plot metrics to scores as attributes
+  # Add variance metrics to scores as columns
   tryCatch(
     {
       if (!is.null(pairwise_models)) {
-        # Pairwise mode: attach per-comparison metrics
-        comp_metrics <- list()
-        for (grp_name in names(pairwise_models)) {
+        # Pairwise mode: merge per-comparison metrics
+        metrics_df <- do.call(rbind, lapply(names(pairwise_models), function(grp_name) {
           m <- pairwise_models[[grp_name]]
           mdf <- as.data.frame(m@modelDF)
-          comp_metrics[[grp_name]] <- list(
+          data.frame(
             comparison = paste0(grp_name, " vs ", ref_group),
-            R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA,
-            R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA,
+            R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_,
+            R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_,
             R2X_cum = round(m@summaryDF$`R2X(cum)` * 100, 2),
             R2Y_cum = round(m@summaryDF$`R2Y(cum)` * 100, 2),
-            Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2)
+            Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2),
+            stringsAsFactors = FALSE
           )
-        }
-        attr(scores_data, "plot_metrics") <- comp_metrics
+        }))
+        scores_data <- scores_data %>%
+          dplyr::left_join(metrics_df, by = "comparison")
       } else {
         # Standard mode: single model metrics
         m <- opls_model
         mdf <- as.data.frame(m@modelDF)
-        attr(scores_data, "plot_metrics") <- list(
-          R2X_p1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA,
-          R2X_o1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA,
-          R2X_cum = round(m@summaryDF$`R2X(cum)` * 100, 2),
-          R2Y_cum = round(m@summaryDF$`R2Y(cum)` * 100, 2),
-          Q2_cum = round(m@summaryDF$`Q2(cum)` * 100, 2)
-        )
+        scores_data$R2X_p1 <- if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_
+        scores_data$R2X_o1 <- if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_
+        scores_data$R2X_cum <- round(m@summaryDF$`R2X(cum)` * 100, 2)
+        scores_data$R2Y_cum <- round(m@summaryDF$`R2Y(cum)` * 100, 2)
+        scores_data$Q2_cum <- round(m@summaryDF$`Q2(cum)` * 100, 2)
       }
     },
     error = function(e) {
