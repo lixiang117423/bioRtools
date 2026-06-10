@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.41.0] - 2026-06-10
+
+### Fixed
+- `find_degs_deseq2()`: auto-detect and remove non-numeric columns (e.g., gene_id) in data; auto-detect sample ID column in sample metadata when rownames are missing
+
 ## [1.40.0] - 2026-06-10
 
 ### Changed
