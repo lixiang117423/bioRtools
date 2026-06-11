@@ -90,7 +90,9 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
-    pdf = , png = , svg = , tiff = , jpg = , jpeg = , eps =
+    pdf = ggplot2::ggsave(filename = file, plot = data, width = width, height = height,
+              dpi = dpi, device = cairo_pdf, ...),
+    png = , svg = , tiff = , jpg = , jpeg = , eps =
       ggplot2::ggsave(filename = file, plot = data, width = width, height = height, dpi = dpi, ...),
     stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .bed, .txt, .sh, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
   )
