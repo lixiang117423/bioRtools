@@ -11,7 +11,9 @@ find_dams_deseq2(
   log2FoldChange = 1,
   padj = 0.05,
   min.count = 1,
-  min.samples = 2
+  min.samples = 2,
+  shrink.lfc = TRUE,
+  ref_group = NULL
 )
 }
 \arguments{
@@ -37,17 +39,37 @@ row names.}
 
 \item{min.samples}{Minimum number of samples that must have counts
 above \code{min.count} for a feature to be retained (default: 2).}
+
+\item{shrink.lfc}{Logical indicating whether to apply log2 fold change
+shrinkage for more accurate estimates (default: TRUE).}
+
+\item{ref_group}{Optional character string specifying a reference group.
+When provided, all comparisons are treatment vs reference instead of
+all pairwise combinations.}
 }
 \value{
-A data frame with DESeq2 results and a \code{comparison} column,
-  sorted by comparison then adjusted p-value. Only features classified as
-  "Enriched" or "Depleted" are returned.
+A data frame with DESeq2 results for significant features (Enriched
+  or Depleted), sorted by comparison then adjusted p-value. Columns include:
+  \itemize{
+    \item \code{feature_id}: Feature identifiers
+    \item \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
+      \code{pvalue}, \code{padj}: Standard DESeq2 output
+    \item \code{significance}: "Enriched" or "Depleted"
+    \item \code{comparison}: Label in "treatment vs reference" format
+    \item \code{group}: Treatment group name
+    \item \code{ref_group}: Reference group name
+    \item \code{fold_change}: 2^log2FoldChange
+    \item \code{abs_log2fc}: Absolute log2 fold change
+    \item \code{group_mean}, \code{group_sd}, \code{group_n}: Treatment group statistics
+    \item \code{ref_mean}, \code{ref_sd}, \code{ref_n}: Reference group statistics
+    \item \code{test_method}: "DESeq2-Wald"
+  }
 }
 \description{
 Performs DESeq2 differential abundance analysis on all pairwise group
-combinations. For each pair, subsets the count data and runs DESeq2's
-negative binomial model, then combines results into a single data frame
-with a \code{comparison} column.
+combinations (or against a reference group). For each pair, subsets the
+count data and runs DESeq2's negative binomial model, then combines results
+into a single data frame with a \code{comparison} column.
 }
 \examples{
 set.seed(123)
@@ -57,8 +79,11 @@ meta <- data.frame(row.names = colnames(mat),
   treatment = rep(c("A", "B", "C"), times = c(7, 7, 6)))
 
 \dontrun{
+# All pairwise comparisons
 res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
-head(res)
+
+# Against reference group only
+res_ref <- find_dams_deseq2(mat, meta, groupCol = "treatment", ref_group = "A")
 }
 }
 \references{
@@ -66,7 +91,7 @@ Love, M.I., Huber, W., Anders, S. (2014) Moderated estimation of fold change
 and dispersion for RNA-seq data with DESeq2. \emph{Genome Biology}, 15, 550.
 }
 \seealso{
-\code{\link{find_dams_lefse}}
+\code{\link{find_dams_lefse}}, \code{\link{find_degs_deseq2}}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

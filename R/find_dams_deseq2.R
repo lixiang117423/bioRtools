@@ -1,9 +1,9 @@
 #' Identify Differentially Abundant Microorganisms Using DESeq2 (Pairwise)
 #'
 #' Performs DESeq2 differential abundance analysis on all pairwise group
-#' combinations. For each pair, subsets the count data and runs DESeq2's
-#' negative binomial model, then combines results into a single data frame
-#' with a \code{comparison} column.
+#' combinations (or against a reference group). For each pair, subsets the
+#' count data and runs DESeq2's negative binomial model, then combines results
+#' into a single data frame with a \code{comparison} column.
 #'
 #' @param data Integer count matrix (rows = features, cols = samples).
 #'   If a data.frame with a non-numeric first column, that column is used as
@@ -21,16 +21,34 @@
 #'   (default: 1).
 #' @param min.samples Minimum number of samples that must have counts
 #'   above \code{min.count} for a feature to be retained (default: 2).
+#' @param shrink.lfc Logical indicating whether to apply log2 fold change
+#'   shrinkage for more accurate estimates (default: TRUE).
+#' @param ref_group Optional character string specifying a reference group.
+#'   When provided, all comparisons are treatment vs reference instead of
+#'   all pairwise combinations.
 #'
-#' @return A data frame with DESeq2 results and a \code{comparison} column,
-#'   sorted by comparison then adjusted p-value. Only features classified as
-#'   "Enriched" or "Depleted" are returned.
+#' @return A data frame with DESeq2 results for significant features (Enriched
+#'   or Depleted), sorted by comparison then adjusted p-value. Columns include:
+#'   \itemize{
+#'     \item \code{feature_id}: Feature identifiers
+#'     \item \code{baseMean}, \code{log2FoldChange}, \code{lfcSE}, \code{stat},
+#'       \code{pvalue}, \code{padj}: Standard DESeq2 output
+#'     \item \code{significance}: "Enriched" or "Depleted"
+#'     \item \code{comparison}: Label in "treatment vs reference" format
+#'     \item \code{group}: Treatment group name
+#'     \item \code{ref_group}: Reference group name
+#'     \item \code{fold_change}: 2^log2FoldChange
+#'     \item \code{abs_log2fc}: Absolute log2 fold change
+#'     \item \code{group_mean}, \code{group_sd}, \code{group_n}: Treatment group statistics
+#'     \item \code{ref_mean}, \code{ref_sd}, \code{ref_n}: Reference group statistics
+#'     \item \code{test_method}: "DESeq2-Wald"
+#'   }
 #'
 #' @references
 #' Love, M.I., Huber, W., Anders, S. (2014) Moderated estimation of fold change
 #' and dispersion for RNA-seq data with DESeq2. \emph{Genome Biology}, 15, 550.
 #'
-#' @seealso \code{\link{find_dams_lefse}}
+#' @seealso \code{\link{find_dams_lefse}}, \code{\link{find_degs_deseq2}}
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -43,12 +61,17 @@
 #'   treatment = rep(c("A", "B", "C"), times = c(7, 7, 6)))
 #'
 #' \dontrun{
+#' # All pairwise comparisons
 #' res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
-#' head(res)
+#'
+#' # Against reference group only
+#' res_ref <- find_dams_deseq2(mat, meta, groupCol = "treatment", ref_group = "A")
 #' }
 find_dams_deseq2 <- function(data, sample, groupCol = "group",
                              log2FoldChange = 1, padj = 0.05,
-                             min.count = 1, min.samples = 2) {
+                             min.count = 1, min.samples = 2,
+                             shrink.lfc = TRUE,
+                             ref_group = NULL) {
   # --- Prepare data ----------------------------------------------------------
   data <- as.data.frame(data)
   if (ncol(data) > 1 && !is.numeric(data[[1]])) {
@@ -94,9 +117,18 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     storage.mode(data) <- "integer"
   }
 
-  # --- Pairwise DESeq2 ------------------------------------------------------
-  pairs <- utils::combn(groups, 2, simplify = FALSE)
+  # --- Build pairwise pairs --------------------------------------------------
+  if (!is.null(ref_group)) {
+    if (!ref_group %in% groups) {
+      stop("'ref_group' must be one of: ", paste(groups, collapse = ", "))
+    }
+    others <- setdiff(groups, ref_group)
+    pairs <- lapply(others, function(g) c(ref_group, g))
+  } else {
+    pairs <- utils::combn(groups, 2, simplify = FALSE)
+  }
 
+  # --- Pairwise DESeq2 ------------------------------------------------------
   results <- lapply(pairs, function(pair) {
     idx <- sample[[groupCol]] %in% pair
     data_sub   <- data[, idx, drop = FALSE]
@@ -112,32 +144,36 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     if (nrow(data_sub) == 0) return(NULL)
 
     # Build formula
-    formula_str <- paste0("~", groupCol)
-    fmla <- as.formula(formula_str)
+    fmla <- as.formula(paste0("~", groupCol))
 
-    dds <- suppressMessages(tryCatch(
+    dds <- tryCatch(
       DESeq2::DESeqDataSetFromMatrix(
         countData = data_sub,
         colData   = sample_sub,
         design    = fmla
       ),
       error = function(e) NULL
-    ))
-    if (is.null(dds)) return(NULL)
-
-    dds <- suppressMessages(tryCatch(
-      DESeq2::DESeq(dds, quiet = TRUE),
-      error = function(e) NULL
-    ))
-    if (is.null(dds)) return(NULL)
-
-    res <- tryCatch(
-      as.data.frame(DESeq2::results(dds)),
-      error = function(e) NULL
     )
+    if (is.null(dds)) return(NULL)
+
+    dds <- tryCatch(DESeq2::DESeq(dds, quiet = TRUE), error = function(e) NULL)
+    if (is.null(dds)) return(NULL)
+
+    res <- tryCatch({
+      if (shrink.lfc) {
+        res_raw <- tryCatch(
+          DESeq2::lfcShrink(dds,
+            coef = DESeq2::resultsNames(dds)[length(DESeq2::resultsNames(dds))],
+            type = "apeglm", quiet = TRUE),
+          error = function(e) DESeq2::results(dds))
+      } else {
+        res_raw <- DESeq2::results(dds)
+      }
+      as.data.frame(res_raw)
+    }, error = function(e) NULL)
     if (is.null(res)) return(NULL)
 
-    # Process
+    # Process results
     res <- tibble::rownames_to_column(res, "feature_id")
     res$padj <- ifelse(is.na(res$padj), 1, res$padj)
 
@@ -150,9 +186,34 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     if (!any(sig)) return(NULL)
 
     res_sig <- res[sig, , drop = FALSE]
-    res_sig$comparison <- paste(pair[1], "vs", pair[2])
+
+    # Comparison label: treatment vs reference
+    res_sig$comparison <- paste(pair[2], "vs", pair[1])
     res_sig$fold_change <- 2^res_sig$log2FoldChange
     res_sig$abs_log2fc  <- abs(res_sig$log2FoldChange)
+    res_sig$group <- pair[2]
+    res_sig$ref_group <- pair[1]
+
+    # Group descriptive statistics
+    idx_grp <- sample_sub[[groupCol]] == pair[2]
+    idx_ref <- sample_sub[[groupCol]] == pair[1]
+    n_grp <- sum(idx_grp)
+    n_ref <- sum(idx_ref)
+
+    norm_counts <- DESeq2::counts(dds, normalized = TRUE)
+    grp_means <- rowMeans(norm_counts[, idx_grp, drop = FALSE], na.rm = TRUE)
+    grp_sds <- apply(norm_counts[, idx_grp, drop = FALSE], 1, sd, na.rm = TRUE)
+    ref_means <- rowMeans(norm_counts[, idx_ref, drop = FALSE], na.rm = TRUE)
+    ref_sds <- apply(norm_counts[, idx_ref, drop = FALSE], 1, sd, na.rm = TRUE)
+
+    res_sig$group_mean <- round(grp_means[res_sig$feature_id], 2)
+    res_sig$group_sd <- round(grp_sds[res_sig$feature_id], 2)
+    res_sig$group_n <- n_grp
+    res_sig$ref_mean <- round(ref_means[res_sig$feature_id], 2)
+    res_sig$ref_sd <- round(ref_sds[res_sig$feature_id], 2)
+    res_sig$ref_n <- n_ref
+    res_sig$test_method <- "DESeq2-Wald"
+
     res_sig
   })
 
@@ -173,6 +234,15 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
       comparison    = character(0),
       fold_change   = numeric(0),
       abs_log2fc    = numeric(0),
+      group         = character(0),
+      ref_group     = character(0),
+      group_mean    = numeric(0),
+      group_sd      = numeric(0),
+      group_n       = integer(0),
+      ref_mean      = numeric(0),
+      ref_sd        = numeric(0),
+      ref_n         = integer(0),
+      test_method   = character(0),
       stringsAsFactors = FALSE
     )
     return(empty)
