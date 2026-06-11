@@ -90,7 +90,11 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
-    fa = , fasta = df2fasta(data, output_file = file, ...),
+    fa = , fasta = if ("fasta_line" %in% names(data)) {
+              writeLines(data$fasta_line, file)
+            } else {
+              df2fasta(data, output_file = file, ...)
+            },
     pdf = ggplot2::ggsave(filename = file, plot = data, width = width, height = height,
               dpi = dpi, device = cairo_pdf, ...),
     png = , svg = , tiff = , jpg = , jpeg = , eps =
