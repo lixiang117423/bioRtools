@@ -7,9 +7,8 @@
 #' Values > +2 indicate deterministic (variable selection) processes;
 #' values < -2 indicate deterministic (homogeneous selection) processes.
 #'
-#' When \code{sample} and \code{group_col} are provided, each sample pair is
-#' annotated with group labels and a \code{comparison} column, enabling
-#' downstream summary by group pair.
+#' When \code{sample} and \code{group_col} are provided, samples are split
+#' by group and βNTI is calculated independently within each group.
 #'
 #' @param data Community data matrix (rows = taxa, cols = samples) or a
 #'   data.frame where the first column contains taxon IDs.
@@ -21,15 +20,13 @@
 #'   \code{colnames(data)}. If row names are missing, the function will try to
 #'   find a column whose values match \code{colnames(data)}.
 #' @param group_col Column name in \code{sample} containing group labels
-#'   (default: "group"). Only used when \code{sample} is provided.
-#' @param ref_group Optional character string specifying a reference group.
-#'   When provided, only pairs involving this group are retained. Default is
-#'   NULL (retain all pairs).
+#'   (default: "group"). When provided with \code{sample}, βNTI is calculated
+#'   independently within each group.
 #'
 #' @return A data frame with columns: \code{from}, \code{to},
 #'   \code{beta_mntd}, \code{beta_nti}, \code{process}.
-#'   When \code{sample} is provided, additional columns: \code{group_from},
-#'   \code{group_to}, \code{comparison}.
+#'   When \code{sample} is provided, an additional \code{group} column
+#'   indicates which group each result belongs to.
 #'
 #' @references
 #' Stegen, J. C., Lin, X., Fredrickson, J. K., et al. (2013). Quantifying
@@ -46,17 +43,16 @@
 #' otu <- read.delim("asv_table.txt", row.names = 1)
 #' meta <- read.delim("sample_metadata.txt", row.names = 1)
 #'
-#' # Without group annotation
+#' # Calculate for all samples
 #' res <- calc_beta_nti(otu, tree, beta_reps = 999)
 #'
-#' # With group annotation and reference group
+#' # Calculate within each group separately
 #' res <- calc_beta_nti(otu, tree, beta_reps = 999,
-#'   sample = meta, group_col = "treatment", ref_group = "Control")
+#'   sample = meta, group_col = "treatment")
 #' }
 calc_beta_nti <- function(data, tree, beta_reps = 999,
                           abundance_weighted = TRUE, verbose = TRUE,
-                          sample = NULL, group_col = "group",
-                          ref_group = NULL) {
+                          sample = NULL, group_col = "group") {
 
   # --- Prepare data ---
   data <- as.data.frame(data)
@@ -70,7 +66,62 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
   data_mat <- as.matrix(data)
   rownames(data_mat) <- feat_names
 
-  # Match tree tips and data taxa manually
+  # --- Determine groups ---
+  if (!is.null(sample)) {
+    sample <- as.data.frame(sample)
+
+    # Auto-detect sample ID column
+    rn <- rownames(sample)
+    if (is.null(rn) || identical(rn, as.character(seq_len(nrow(sample))))) {
+      for (col in names(sample)) {
+        if (is.character(sample[[col]]) && all(colnames(data_mat) %in% sample[[col]])) {
+          rownames(sample) <- sample[[col]]
+          break
+        }
+      }
+    }
+
+    if (!group_col %in% names(sample)) {
+      stop(sprintf("Column '%s' not found in sample data", group_col))
+    }
+
+    groups <- unique(as.character(sample[[group_col]]))
+    sample_groups <- stats::setNames(as.character(sample[[group_col]]), rownames(sample))
+
+    # Run within each group
+    results <- list()
+    for (grp in groups) {
+      grp_samples <- names(sample_groups[sample_groups == grp])
+      grp_samples <- intersect(grp_samples, colnames(data_mat))
+
+      if (length(grp_samples) < 2) {
+        if (verbose) message(sprintf("Group '%s': skipped (< 2 samples)", grp))
+        next
+      }
+
+      if (verbose) {
+        message(sprintf("\n=== Group: %s (%d samples) ===", grp, length(grp_samples)))
+      }
+
+      grp_data <- data_mat[, grp_samples, drop = FALSE]
+      res <- calc_beta_nti_core(grp_data, tree, beta_reps, abundance_weighted, verbose)
+      res$group <- grp
+      results[[grp]] <- res
+    }
+
+    out <- do.call(rbind, results)
+    rownames(out) <- NULL
+    return(out)
+  }
+
+  # No grouping: run on all samples
+  calc_beta_nti_core(data_mat, tree, beta_reps, abundance_weighted, verbose)
+}
+
+#' @keywords internal
+calc_beta_nti_core <- function(data_mat, tree, beta_reps, abundance_weighted, verbose) {
+
+  # Match tree tips and data taxa
   common_taxa <- intersect(tree$tip.label, rownames(data_mat))
   if (length(common_taxa) == 0) {
     stop("No matching taxa between tree tips and data row names")
@@ -79,25 +130,25 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
   otu_matched <- data_mat[phylo_matched$tip.label, , drop = FALSE]
   cophenetic_mat <- ape::cophenetic.phylo(phylo_matched)
 
+  n_samp <- ncol(otu_matched)
+
   if (verbose) {
-    message(sprintf("Matched: %d taxa, %d samples", nrow(otu_matched), ncol(otu_matched)))
+    message(sprintf("Matched: %d taxa, %d samples", nrow(otu_matched), n_samp))
     message("Computing betaMNTD (observed)...")
   }
 
-  # --- Observed betaMNTD ---
-  # comdistnt expects samples as columns (community data transposed)
+  # Observed betaMNTD
   beta_mntd <- as.matrix(picante::comdistnt(
     t(otu_matched), cophenetic_mat,
     abundance.weighted = abundance_weighted
   ))
 
-  n_samp <- ncol(otu_matched)
   if (verbose) {
     message(sprintf("Randomizing (%d reps, %d sample pairs)...",
       beta_reps, n_samp * (n_samp - 1) / 2))
   }
 
-  # --- Null distribution via taxa shuffle ---
+  # Null distribution via taxa shuffle
   rand_bmntd <- array(NA_real_, dim = c(n_samp, n_samp, beta_reps))
 
   for (rep in seq_len(beta_reps)) {
@@ -112,7 +163,7 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
     }
   }
 
-  # --- Calculate betaNTI ---
+  # Calculate betaNTI
   if (verbose) message("Computing betaNTI...")
   beta_nti <- matrix(NA_real_, nrow = n_samp, ncol = n_samp)
   rownames(beta_nti) <- colnames(otu_matched)
@@ -129,7 +180,7 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
     }
   }
 
-  # --- Format output ---
+  # Format output
   mntd_long <- data.frame(
     from = rownames(beta_nti),
     beta_mntd,
@@ -145,10 +196,7 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
     tidyr::pivot_longer(cols = -from, names_to = "to", values_to = "beta_nti")
 
   result <- dplyr::left_join(mntd_long, nti_long, by = c("from", "to")) %>%
-    dplyr::filter(!is.na(.data$beta_nti))
-
-  # Classify processes
-  result <- result %>%
+    dplyr::filter(!is.na(.data$beta_nti)) %>%
     dplyr::mutate(
       process = dplyr::case_when(
         .data$beta_nti > 2 ~ "Deterministic (variable selection)",
@@ -157,85 +205,12 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
       )
     )
 
-  # --- Annotate with group information ---
-  if (!is.null(sample)) {
-    sample <- as.data.frame(sample)
-
-    # Auto-detect sample ID column
-    rn <- rownames(sample)
-    if (is.null(rn) || identical(rn, as.character(seq_len(nrow(sample))))) {
-      for (col in names(sample)) {
-        if (is.character(sample[[col]]) && all(colnames(otu_matched) %in% sample[[col]])) {
-          rownames(sample) <- sample[[col]]
-          break
-        }
-      }
-    }
-
-    if (!group_col %in% names(sample)) {
-      stop(sprintf("Column '%s' not found in sample data", group_col))
-    }
-
-    sample_groups <- stats::setNames(
-      as.character(sample[[group_col]]),
-      rownames(sample)
-    )
-
-    result$group_from <- sample_groups[result$from]
-    result$group_to <- sample_groups[result$to]
-
-    # Comparison label: consistent ordering (alphabetical)
-    result <- result %>%
-      dplyr::mutate(
-        comparison = ifelse(group_from <= group_to,
-          paste(group_from, "vs", group_to),
-          paste(group_to, "vs", group_from))
-      )
-
-    # Filter by ref_group
-    if (!is.null(ref_group)) {
-      groups <- unique(c(result$group_from, result$group_to))
-      if (!ref_group %in% groups) {
-        stop("'ref_group' must be one of: ", paste(sort(groups), collapse = ", "))
-      }
-      result <- result %>%
-        dplyr::filter(.data$group_from == ref_group | .data$group_to == ref_group)
-    }
-
-    # Group-level summary
-    if (verbose) {
-      summary_df <- result %>%
-        dplyr::group_by(.data$comparison) %>%
-        dplyr::summarise(
-          n_pairs = dplyr::n(),
-          mean_beta_nti = round(mean(.data$beta_nti, na.rm = TRUE), 3),
-          median_beta_nti = round(stats::median(.data$beta_nti, na.rm = TRUE), 3),
-          n_deterministic = sum(abs(.data$beta_nti) > 2, na.rm = TRUE),
-          pct_deterministic = round(100 * sum(abs(.data$beta_nti) > 2, na.rm = TRUE) / dplyr::n(), 1),
-          .groups = "drop"
-        )
-
-      message("\nbetaNTI summary by comparison:")
-      for (i in seq_len(nrow(summary_df))) {
-        message(sprintf("  %s: %d pairs, mean=%.3f, median=%.3f, deterministic=%d (%.1f%%)",
-          summary_df$comparison[i],
-          summary_df$n_pairs[i],
-          summary_df$mean_beta_nti[i],
-          summary_df$median_beta_nti[i],
-          summary_df$n_deterministic[i],
-          summary_df$pct_deterministic[i]))
-      }
-    }
-  } else {
-    if (verbose) {
-      n_det <- sum(abs(result$beta_nti) > 2, na.rm = TRUE)
-      n_sto <- sum(abs(result$beta_nti) <= 2, na.rm = TRUE)
-      message(sprintf("\nbetaNTI summary: %d pairs total", nrow(result)))
-      message(sprintf("  |betaNTI| > 2 (deterministic): %d (%.1f%%)",
-                      n_det, 100 * n_det / nrow(result)))
-      message(sprintf("  |betaNTI| <= 2 (stochastic):    %d (%.1f%%)",
-                      n_sto, 100 * n_sto / nrow(result)))
-    }
+  if (verbose) {
+    n_det <- sum(abs(result$beta_nti) > 2, na.rm = TRUE)
+    n_sto <- sum(abs(result$beta_nti) <= 2, na.rm = TRUE)
+    message(sprintf("betaNTI: %d pairs, deterministic=%d (%.1f%%), stochastic=%d (%.1f%%)",
+      nrow(result), n_det, 100 * n_det / nrow(result),
+      n_sto, 100 * n_sto / nrow(result)))
   }
 
   result
