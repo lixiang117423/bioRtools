@@ -52,6 +52,9 @@ read_data <- function(file, delim = "\t", ...) {
 #' text (.txt), RDS (.rds), shell script (.sh), and image formats
 #' (.pdf/.png/.svg/.tiff/.jpg/.eps) for saving ggplot objects.
 #'
+#' For .bed files, writes tab-delimited output with no header, following the
+#' BED (Browser Extensible Data) format convention.
+#'
 #' For .sh files, writes the first column (or the \code{col} column) of the
 #' data frame as plain text with no header and no quoting, suitable for
 #' shell scripts or sample lists.
@@ -82,13 +85,14 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
     xlsx = writexl::write_xlsx(data, path = file, ...),
     csv  = readr::write_csv(data, file = file, col_names = col_names, ...),
     tsv  = readr::write_tsv(data, file = file, col_names = col_names, ...),
+    bed  = readr::write_tsv(data, file = file, col_names = FALSE, ...),
     txt  = readr::write_delim(data, file = file, delim = "\t", col_names = col_names, ...),
     rds  = saveRDS(data, file = file, ...),
     sh   = readr::write_delim(data[, col, drop = FALSE], file = file,
               col_names = FALSE, quote = "none", delim = "\t", ...),
     pdf = , png = , svg = , tiff = , jpg = , jpeg = , eps =
       ggplot2::ggsave(filename = file, plot = data, width = width, height = height, dpi = dpi, ...),
-    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .txt, .sh, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
+    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .bed, .txt, .sh, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
   )
   invisible(data)
 }
