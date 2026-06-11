@@ -9,6 +9,10 @@ plot_upset(
   group = NULL,
   feature = NULL,
   n_intersections = 30,
+  order_by = "freq",
+  fill = "#2874A6",
+  show_counts = TRUE,
+  engine = "ggupset",
   relative_height = 2,
   relative_width = 0.3
 )
@@ -25,9 +29,22 @@ and one for feature identifiers.}
 
 \item{n_intersections}{Maximum number of intersections to show (default: 30).}
 
-\item{relative_height}{Height ratio between upper and lower panels (default: 2).}
+\item{order_by}{How to order intersections: "freq" (default) or "degree".
+Only used when \code{engine = "ggupset"}.}
 
-\item{relative_width}{Width ratio for the upset layout (default: 0.3).}
+\item{fill}{Bar fill color (default: "#2874A6").
+Only used when \code{engine = "ggupset"}.}
+
+\item{show_counts}{Show count labels on bars (default: TRUE).
+Only used when \code{engine = "ggupset"}.}
+
+\item{engine}{Plotting engine: "ggupset" (default) or "ggVennDiagram".}
+
+\item{relative_height}{Height ratio between upper and lower panels (default: 2).
+Only used when \code{engine = "ggVennDiagram"}.}
+
+\item{relative_width}{Width ratio for the upset layout (default: 0.3).
+Only used when \code{engine = "ggVennDiagram"}.}
 }
 \value{
 A list:
@@ -52,9 +69,13 @@ plot_upset(res, group = "comparison", feature = "feature_id")
 # With find_dams_deseq2 output
 \dontrun{
 res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+
+# Default: ggupset engine
 result <- plot_upset(res, group = "comparison", feature = "feature_id")
-result$plot
-head(result$data.pav)
+
+# Alternative: ggVennDiagram engine
+result <- plot_upset(res, group = "comparison", feature = "feature_id",
+  engine = "ggVennDiagram", relative_height = 2)
 }
 
 }
