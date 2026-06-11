@@ -1,7 +1,7 @@
 Type: Package
 Package: bioRtools
 Title: Convenience Functions for Biological Data Processing
-Version: 1.43.2
+Version: 1.44.0
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
 Description: This package provides a comprehensive suite of convenience
@@ -31,6 +31,7 @@ Imports:
     clusterProfiler,
     DESeq2,
     dplyr,
+    edgeR,
     factoextra,
     FactoMineR,
     forcats,
@@ -67,6 +68,7 @@ Suggests:
     chemhelper,
     eulerr,
     ggpmisc,
+    ggtern,
     ggvenn,
     knitr,
     normentR,

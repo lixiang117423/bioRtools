@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.44.0] - 2026-06-11
+
+### Added
+- `plot_ternary()`: ternary plot for three-part compositional data, supports discrete and continuous fill with auto-detection
+- `plot_dual_axis()`: dual Y-axis plot combining area chart (right axis) and scatter points (left axis), supports phase annotations
+- `find_degs_edger()`: differential expression analysis using edgeR
+
+### Changed
+- DESCRIPTION: added `edgeR` to Imports, `ggtern` to Suggests
+
 ## [1.43.2] - 2026-06-10
 
 ### Fixed
