@@ -17,6 +17,7 @@
 #'   referenced in the design formula
 #' @param formula Design formula specifying the experimental design for DESeq2.
 #'   Default is \code{~group}, assuming a "group" column exists in sample metadata.
+#'   Ignored when \code{groupCol} is provided.
 #'   Common examples:
 #'   \itemize{
 #'     \item \code{~condition}: Simple two-group comparison
@@ -24,6 +25,10 @@
 #'     \item \code{~condition + sex + age}: Multiple covariates
 #'     \item \code{~condition * time}: Interaction terms for time series
 #'   }
+#' @param groupCol Column name in \code{sample} for the grouping variable.
+#'   When provided, overrides \code{formula} and constructs \code{~groupCol}.
+#'   This is a convenience shortcut for simple comparisons without batch effects.
+#'   Default is NULL (use \code{formula} instead).
 #' @param log2FoldChange Minimum absolute log2 fold change threshold for
 #'   significance classification (default: 1, equivalent to 2-fold change).
 #'   Genes with |log2FC| >= this value AND padj < padj threshold are considered
@@ -297,10 +302,19 @@
 #' print(table(filtered_de$regulation))
 #' }
 #'
-find_degs_deseq2 <- function(data, sample, formula = ~group, log2FoldChange = 1, padj = 0.05,
+find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
+                             log2FoldChange = 1, padj = 0.05,
                              shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1,
                              remove_problematic_genes = TRUE, pairwise = TRUE,
                              ref_group = NULL) {
+  # Resolve formula from groupCol if provided
+  if (!is.null(groupCol)) {
+    formula <- as.formula(paste0("~", groupCol))
+  }
+  if (is.null(formula)) {
+    formula <- ~group
+  }
+
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop(err_invalid_input("data", "a matrix or data frame"))

@@ -7,7 +7,8 @@
 find_degs_deseq2(
   data,
   sample,
-  formula = ~group,
+  formula = NULL,
+  groupCol = NULL,
   log2FoldChange = 1,
   padj = 0.05,
   shrink.lfc = TRUE,
@@ -32,6 +33,7 @@ referenced in the design formula}
 
 \item{formula}{Design formula specifying the experimental design for DESeq2.
 Default is \code{~group}, assuming a "group" column exists in sample metadata.
+Ignored when \code{groupCol} is provided.
 Common examples:
 \itemize{
   \item \code{~condition}: Simple two-group comparison
@@ -39,6 +41,11 @@ Common examples:
   \item \code{~condition + sex + age}: Multiple covariates
   \item \code{~condition * time}: Interaction terms for time series
 }}
+
+\item{groupCol}{Column name in \code{sample} for the grouping variable.
+When provided, overrides \code{formula} and constructs \code{~groupCol}.
+This is a convenience shortcut for simple comparisons without batch effects.
+Default is NULL (use \code{formula} instead).}
 
 \item{log2FoldChange}{Minimum absolute log2 fold change threshold for
 significance classification (default: 1, equivalent to 2-fold change).

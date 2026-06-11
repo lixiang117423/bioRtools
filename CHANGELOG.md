@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.44.2] - 2026-06-11
+
+### Changed
+- `find_dams_deseq2()`: add `ref_group` parameter for reference-group comparisons; add `shrink.lfc` parameter; fix comparison label to "treatment vs reference" format; add group statistics columns (group_mean, group_sd, ref_mean, ref_sd, etc.)
+- `find_degs_deseq2()`: add `groupCol` parameter as convenience shortcut to specify grouping column without writing a formula
+
 ## [1.44.1] - 2026-06-11
 
 ### Changed
