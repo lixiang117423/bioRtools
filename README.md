@@ -1,7 +1,7 @@
 # bioRtools
 
 [![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.20.1-green)](https://github.com/lixiang117423/bioRtools)
+[![Version](https://img.shields.io/badge/version-1.44.1-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
 `bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
@@ -10,7 +10,7 @@
 
 - Multi-omics analysis helpers for transcriptomics, microbiomics, metabolomics, and population genetics
 - Multivariate workflows: PCA, PCoA, RDA, sPLS-DA, OPLS-DA, PERMANOVA
-- Differential analysis: DESeq2-based DEG/DAM detection and LEfSe biomarker analysis
+- Differential analysis: DESeq2/edgeR-based DEG/DAM detection and LEfSe biomarker analysis
 - qPCR workflows: standard curves, delta Ct, delta-delta Ct, and efficiency correction
 - Genomics visualization: Manhattan plots, QQ plots, LD heatmaps, synteny, motifs, gene structures, PFAM domains, and pangenome rarefaction
 - Publication-ready ggplot themes, academic palettes, and color/fill/colour scales
@@ -40,7 +40,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 
 BiocManager::install(c(
-  "clusterProfiler", "DESeq2", "ggtree", "lefser",
+  "clusterProfiler", "DESeq2", "edgeR", "ggtree", "lefser",
   "SummarizedExperiment", "WGCNA"
 ))
 
@@ -53,7 +53,7 @@ install.packages(c(
 ))
 ```
 
-Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
+Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
 
 ## Function Modules
 
@@ -84,9 +84,12 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 ### Transcriptomics and Enrichment
 
 - `find_degs_deseq2()` - DESeq2 differential expression analysis (supports pairwise mode)
+- `find_degs_edger()` - edgeR differential expression analysis
 - `enrich_go()` - GO enrichment
 - `enrich_kegg()` - KEGG enrichment
 - `plot_volcano()`, `plot_multi_volcano()` - Volcano plots
+- `plot_ternary()` - Ternary plot for compositional data
+- `plot_dual_axis()` - Dual Y-axis plot with area and scatter layers
 - `run_wgcna_analysis()` - WGCNA workflow
 
 ### qPCR Analysis
@@ -124,7 +127,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 ### Data Conversion and Row Utilities
 
 - `df2fasta()`, `fasta2df()` - FASTA/data-frame conversion
-- `read_data()`, `write_data()` - Auto-detect file format read/write (xlsx, csv, tsv, txt, fasta, rds, sh, pdf, png)
+- `read_data()`, `write_data()` - Auto-detect file format read/write (xlsx, csv, tsv, bed, txt, fasta, rds, sh, pdf, png)
 - `col2file()` - Export a data frame column to plain text
 - `replace_na_as()` - Replace all NA values in a data frame (default: 0)
 - `ggsave2()` - ggsave wrapper with width=8, height=6, dpi=600 defaults
@@ -288,7 +291,7 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.20.1`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.44.1`.
 
 ## Citation
 
@@ -296,7 +299,7 @@ If you use `bioRtools` in your research, please cite:
 
 ```text
 Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.20.1. https://github.com/lixiang117423/bioRtools
+R package version 1.44.1. https://github.com/lixiang117423/bioRtools
 ```
 
 ## Contributing
