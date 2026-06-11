@@ -9,7 +9,10 @@ calc_beta_nti(
   tree,
   beta_reps = 999,
   abundance_weighted = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  sample = NULL,
+  group_col = "group",
+  ref_group = NULL
 )
 }
 \arguments{
@@ -18,34 +21,61 @@ data.frame where the first column contains taxon IDs.}
 
 \item{tree}{A phylogenetic tree object (\code{ape::phylo}).}
 
-\item{beta_reps}{Number of randomizations (default: 999).}
+\item{beta_reps}{Number of null model randomizations (default: 999).}
 
 \item{abundance_weighted}{Logical; weight by species abundance (default: TRUE).}
 
 \item{verbose}{Print progress messages (default: TRUE).}
+
+\item{sample}{Optional data frame of sample metadata. Row names should match
+\code{colnames(data)}. If row names are missing, the function will try to
+find a column whose values match \code{colnames(data)}.}
+
+\item{group_col}{Column name in \code{sample} containing group labels
+(default: "group"). Only used when \code{sample} is provided.}
+
+\item{ref_group}{Optional character string specifying a reference group.
+When provided, only pairs involving this group are retained. Default is
+NULL (retain all pairs).}
 }
 \value{
-A data frame in long format with columns: \code{from}, \code{to},
-  \code{beta_mntd}, \code{beta_nti}.
+A data frame with columns: \code{from}, \code{to},
+  \code{beta_mntd}, \code{beta_nti}, \code{process}.
+  When \code{sample} is provided, additional columns: \code{group_from},
+  \code{group_to}, \code{comparison}.
 }
 \description{
-Computes betaNTI for phylogenetic beta diversity analysis. betaNTI measures
-whether observed phylogenetic turnover between sample pairs is significantly
-different from random expectation. Values > +2 indicate deterministic
-(environmental) processes; values < -2 indicate homogeneous selection.
+Computes betaNTI for phylogenetic beta diversity analysis following the
+method described in Stegen et al. (2013). betaNTI measures whether
+observed phylogenetic turnover between sample pairs is significantly
+different from random expectation via taxa-label null model randomization.
+Values > +2 indicate deterministic (variable selection) processes;
+values < -2 indicate deterministic (homogeneous selection) processes.
+}
+\details{
+When \code{sample} and \code{group_col} are provided, each sample pair is
+annotated with group labels and a \code{comparison} column, enabling
+downstream summary by group pair.
 }
 \examples{
 \dontrun{
 library(ape)
 tree <- read.tree("tree.nwk")
 otu <- read.delim("asv_table.txt", row.names = 1)
+meta <- read.delim("sample_metadata.txt", row.names = 1)
 
+# Without group annotation
 res <- calc_beta_nti(otu, tree, beta_reps = 999)
-head(res)
+
+# With group annotation and reference group
+res <- calc_beta_nti(otu, tree, beta_reps = 999,
+  sample = meta, group_col = "treatment", ref_group = "Control")
 }
 }
-\seealso{
-\code{\link[picante]{comdistnt}}, \code{\link[picante]{match.phylo.data}}
+\references{
+Stegen, J. C., Lin, X., Fredrickson, J. K., et al. (2013). Quantifying
+community assembly processes and identifying features that impose them.
+\emph{ISME J}, 7(11), 2069-2079.
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

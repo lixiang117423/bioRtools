@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.44.4] - 2026-06-11
+
+### Changed
+- `calc_beta_nti()`: add `sample`, `group_col`, `ref_group` parameters for group-annotated βNTI analysis; fix picante compatibility issue by manual tree-data matching instead of `match.phylo.data`
+
 ## [1.44.3] - 2026-06-11
 
 ### Changed
