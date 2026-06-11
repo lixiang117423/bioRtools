@@ -11,8 +11,7 @@ calc_beta_nti(
   abundance_weighted = TRUE,
   verbose = TRUE,
   sample = NULL,
-  group_col = "group",
-  ref_group = NULL
+  group_col = "group"
 )
 }
 \arguments{
@@ -32,17 +31,14 @@ data.frame where the first column contains taxon IDs.}
 find a column whose values match \code{colnames(data)}.}
 
 \item{group_col}{Column name in \code{sample} containing group labels
-(default: "group"). Only used when \code{sample} is provided.}
-
-\item{ref_group}{Optional character string specifying a reference group.
-When provided, only pairs involving this group are retained. Default is
-NULL (retain all pairs).}
+(default: "group"). When provided with \code{sample}, βNTI is calculated
+independently within each group.}
 }
 \value{
 A data frame with columns: \code{from}, \code{to},
   \code{beta_mntd}, \code{beta_nti}, \code{process}.
-  When \code{sample} is provided, additional columns: \code{group_from},
-  \code{group_to}, \code{comparison}.
+  When \code{sample} is provided, an additional \code{group} column
+  indicates which group each result belongs to.
 }
 \description{
 Computes betaNTI for phylogenetic beta diversity analysis following the
@@ -53,9 +49,8 @@ Values > +2 indicate deterministic (variable selection) processes;
 values < -2 indicate deterministic (homogeneous selection) processes.
 }
 \details{
-When \code{sample} and \code{group_col} are provided, each sample pair is
-annotated with group labels and a \code{comparison} column, enabling
-downstream summary by group pair.
+When \code{sample} and \code{group_col} are provided, samples are split
+by group and βNTI is calculated independently within each group.
 }
 \examples{
 \dontrun{
@@ -64,12 +59,12 @@ tree <- read.tree("tree.nwk")
 otu <- read.delim("asv_table.txt", row.names = 1)
 meta <- read.delim("sample_metadata.txt", row.names = 1)
 
-# Without group annotation
+# Calculate for all samples
 res <- calc_beta_nti(otu, tree, beta_reps = 999)
 
-# With group annotation and reference group
+# Calculate within each group separately
 res <- calc_beta_nti(otu, tree, beta_reps = 999,
-  sample = meta, group_col = "treatment", ref_group = "Control")
+  sample = meta, group_col = "treatment")
 }
 }
 \references{
