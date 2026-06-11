@@ -32,6 +32,9 @@ text (.txt), RDS (.rds), shell script (.sh), and image formats
 (.pdf/.png/.svg/.tiff/.jpg/.eps) for saving ggplot objects.
 }
 \details{
+For .bed files, writes tab-delimited output with no header, following the
+BED (Browser Extensible Data) format convention.
+
 For .sh files, writes the first column (or the \code{col} column) of the
 data frame as plain text with no header and no quoting, suitable for
 shell scripts or sample lists.
