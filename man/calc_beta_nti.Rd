@@ -11,6 +11,7 @@ calc_beta_nti(
   abundance_weighted = TRUE,
   verbose = TRUE,
   sample = NULL,
+  sample_id = "sample",
   group_col = "group"
 )
 }
@@ -26,9 +27,11 @@ data.frame where the first column contains taxon IDs.}
 
 \item{verbose}{Print progress messages (default: TRUE).}
 
-\item{sample}{Optional data frame of sample metadata. Row names should match
-\code{colnames(data)}. If row names are missing, the function will try to
-find a column whose values match \code{colnames(data)}.}
+\item{sample}{Optional data frame of sample metadata. Must contain a column
+with sample IDs matching \code{colnames(data)}.}
+
+\item{sample_id}{Column name in \code{sample} containing sample IDs that match
+\code{colnames(data)}. Default is "sample".}
 
 \item{group_col}{Column name in \code{sample} containing group labels
 (default: "group"). When provided with \code{sample}, βNTI is calculated
@@ -50,7 +53,9 @@ values < -2 indicate deterministic (homogeneous selection) processes.
 }
 \details{
 When \code{sample} and \code{group_col} are provided, samples are split
-by group and βNTI is calculated independently within each group.
+by group and βNTI is calculated independently within each group. The
+phylogenetic distance matrix (cophenetic) is computed once and reused
+across groups to save memory.
 }
 \examples{
 \dontrun{
