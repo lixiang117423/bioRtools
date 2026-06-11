@@ -8,7 +8,9 @@
 #' values < -2 indicate deterministic (homogeneous selection) processes.
 #'
 #' When \code{sample} and \code{group_col} are provided, samples are split
-#' by group and βNTI is calculated independently within each group.
+#' by group and βNTI is calculated independently within each group. The
+#' phylogenetic distance matrix (cophenetic) is computed once and reused
+#' across groups to save memory.
 #'
 #' @param data Community data matrix (rows = taxa, cols = samples) or a
 #'   data.frame where the first column contains taxon IDs.
@@ -16,9 +18,10 @@
 #' @param beta_reps Number of null model randomizations (default: 999).
 #' @param abundance_weighted Logical; weight by species abundance (default: TRUE).
 #' @param verbose Print progress messages (default: TRUE).
-#' @param sample Optional data frame of sample metadata. Row names should match
-#'   \code{colnames(data)}. If row names are missing, the function will try to
-#'   find a column whose values match \code{colnames(data)}.
+#' @param sample Optional data frame of sample metadata. Must contain a column
+#'   with sample IDs matching \code{colnames(data)}.
+#' @param sample_id Column name in \code{sample} containing sample IDs that match
+#'   \code{colnames(data)}. Default is "sample".
 #' @param group_col Column name in \code{sample} containing group labels
 #'   (default: "group"). When provided with \code{sample}, βNTI is calculated
 #'   independently within each group.
@@ -52,7 +55,8 @@
 #' }
 calc_beta_nti <- function(data, tree, beta_reps = 999,
                           abundance_weighted = TRUE, verbose = TRUE,
-                          sample = NULL, group_col = "group") {
+                          sample = NULL, sample_id = "sample",
+                          group_col = "group") {
 
   # --- Prepare data ---
   data <- as.data.frame(data)
@@ -66,17 +70,36 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
   data_mat <- as.matrix(data)
   rownames(data_mat) <- feat_names
 
+  # Match tree tips and data taxa (once)
+  common_taxa <- intersect(tree$tip.label, rownames(data_mat))
+  if (length(common_taxa) == 0) {
+    stop("No matching taxa between tree tips and data row names")
+  }
+  phylo_matched <- ape::drop.tip(tree, setdiff(tree$tip.label, common_taxa))
+  otu_matched <- data_mat[phylo_matched$tip.label, , drop = FALSE]
+
+  # Compute cophenetic matrix once (most memory-intensive step)
+  if (verbose) message(sprintf("Matched: %d taxa, %d samples", nrow(otu_matched), ncol(otu_matched)))
+  if (verbose) message("Computing cophenetic distance matrix...")
+  cophenetic_full <- ape::cophenetic.phylo(phylo_matched)
+  rm(phylo_matched)
+  gc(verbose = FALSE)
+
   # --- Determine groups ---
   if (!is.null(sample)) {
     sample <- as.data.frame(sample)
 
-    # Auto-detect sample ID column
-    rn <- rownames(sample)
-    if (is.null(rn) || identical(rn, as.character(seq_len(nrow(sample))))) {
-      for (col in names(sample)) {
-        if (is.character(sample[[col]]) && all(colnames(data_mat) %in% sample[[col]])) {
-          rownames(sample) <- sample[[col]]
-          break
+    # Use specified or auto-detect sample ID column
+    if (!is.null(sample_id) && sample_id %in% names(sample)) {
+      rownames(sample) <- as.character(sample[[sample_id]])
+    } else {
+      rn <- rownames(sample)
+      if (is.null(rn) || identical(rn, as.character(seq_len(nrow(sample))))) {
+        for (col in names(sample)) {
+          if (is.character(sample[[col]]) && all(colnames(otu_matched) %in% sample[[col]])) {
+            rownames(sample) <- sample[[col]]
+            break
+          }
         }
       }
     }
@@ -88,25 +111,30 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
     groups <- unique(as.character(sample[[group_col]]))
     sample_groups <- stats::setNames(as.character(sample[[group_col]]), rownames(sample))
 
-    # Run within each group
     results <- list()
     for (grp in groups) {
       grp_samples <- names(sample_groups[sample_groups == grp])
-      grp_samples <- intersect(grp_samples, colnames(data_mat))
+      grp_samples <- intersect(grp_samples, colnames(otu_matched))
 
       if (length(grp_samples) < 2) {
         if (verbose) message(sprintf("Group '%s': skipped (< 2 samples)", grp))
         next
       }
 
-      if (verbose) {
-        message(sprintf("\n=== Group: %s (%d samples) ===", grp, length(grp_samples)))
-      }
+      if (verbose) message(sprintf("\n=== Group: %s (%d samples) ===", grp, length(grp_samples)))
 
-      grp_data <- data_mat[, grp_samples, drop = FALSE]
-      res <- calc_beta_nti_core(grp_data, tree, beta_reps, abundance_weighted, verbose)
+      # Subset samples and filter zero-count taxa
+      grp_data <- otu_matched[, grp_samples, drop = FALSE]
+      keep <- rowSums(grp_data) > 0
+      grp_data <- grp_data[keep, , drop = FALSE]
+      grp_coph <- cophenetic_full[rownames(grp_data), rownames(grp_data)]
+
+      res <- calc_beta_nti_core(grp_data, grp_coph, beta_reps, abundance_weighted, verbose)
       res$group <- grp
       results[[grp]] <- res
+
+      rm(grp_data, grp_coph)
+      gc(verbose = FALSE)
     }
 
     out <- do.call(rbind, results)
@@ -115,27 +143,16 @@ calc_beta_nti <- function(data, tree, beta_reps = 999,
   }
 
   # No grouping: run on all samples
-  calc_beta_nti_core(data_mat, tree, beta_reps, abundance_weighted, verbose)
+  calc_beta_nti_core(otu_matched, cophenetic_full, beta_reps, abundance_weighted, verbose)
 }
 
 #' @keywords internal
-calc_beta_nti_core <- function(data_mat, tree, beta_reps, abundance_weighted, verbose) {
-
-  # Match tree tips and data taxa
-  common_taxa <- intersect(tree$tip.label, rownames(data_mat))
-  if (length(common_taxa) == 0) {
-    stop("No matching taxa between tree tips and data row names")
-  }
-  phylo_matched <- ape::drop.tip(tree, setdiff(tree$tip.label, common_taxa))
-  otu_matched <- data_mat[phylo_matched$tip.label, , drop = FALSE]
-  cophenetic_mat <- ape::cophenetic.phylo(phylo_matched)
+calc_beta_nti_core <- function(otu_matched, cophenetic_mat, beta_reps,
+                               abundance_weighted, verbose) {
 
   n_samp <- ncol(otu_matched)
 
-  if (verbose) {
-    message(sprintf("Matched: %d taxa, %d samples", nrow(otu_matched), n_samp))
-    message("Computing betaMNTD (observed)...")
-  }
+  if (verbose) message("Computing betaMNTD (observed)...")
 
   # Observed betaMNTD
   beta_mntd <- as.matrix(picante::comdistnt(
