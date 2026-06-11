@@ -11,9 +11,8 @@ plot_tax_upset(
   group_col = "treatment",
   which = NULL,
   n_intersections = 20,
-  order_by = "freq",
-  fill = "#2874A6",
-  show_counts = TRUE,
+  relative_height = 2,
+  relative_width = 0.3,
   verbose = TRUE
 )
 }
@@ -38,13 +37,9 @@ Must be a column name in \code{taxo}. Default is NULL (OTU level).}
 \item{n_intersections}{Integer, maximum number of intersections to show.
 Default is 20.}
 
-\item{order_by}{How to order intersections: "freq" (by count, default)
-or "degree" (by number of groups).}
+\item{relative_height}{Height ratio between upper and lower panels (default: 2).}
 
-\item{fill}{Bar fill color. Default is "#2874A6".}
-
-\item{show_counts}{Logical. Show count labels on top of bars.
-Default is TRUE.}
+\item{relative_width}{Width ratio for the upset layout (default: 0.3).}
 
 \item{verbose}{Logical. Print progress messages. Default is TRUE.}
 }
@@ -59,8 +54,8 @@ A list containing:
 }
 \description{
 Create an UpSet plot showing how many features (OTUs/ASVs/taxa) are
-shared or unique across groups from an abundance table. Uses \pkg{ggupset}
-to produce publication-quality combination matrix plots.
+shared or unique across groups from an abundance table. Uses
+\pkg{ggVennDiagram} to produce publication-quality upset plots.
 }
 \details{
 The workflow:
@@ -68,10 +63,10 @@ The workflow:
   \item Merge abundance, sample metadata, and (optionally) taxonomy
   \item Convert to presence/absence
   \item For each feature, record which groups it appears in
-  \item Create UpSet plot via \code{ggupset::scale_x_upset()}
+  \item Create UpSet plot via \code{ggVennDiagram::plot_upset()}
 }
 
-Requires \pkg{ggupset}.
+Requires \pkg{ggVennDiagram}.
 }
 \examples{
 \dontrun{

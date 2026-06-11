@@ -17,9 +17,8 @@
 #' @param feature Column name for feature identifiers (default: auto-detect
 #'   "feature_id" or "gene").
 #' @param n_intersections Maximum number of intersections to show (default: 30).
-#' @param order_by How to order intersections: "freq" (default) or "degree".
-#' @param fill Bar fill color (default: "#2874A6").
-#' @param show_counts Show count labels on bars (default: TRUE).
+#' @param relative_height Height ratio between upper and lower panels (default: 2).
+#' @param relative_width Width ratio for the upset layout (default: 0.3).
 #'
 #' @return A list:
 #'   \describe{
@@ -44,12 +43,11 @@ plot_upset <- function(data,
                        group = NULL,
                        feature = NULL,
                        n_intersections = 30,
-                       order_by = "freq",
-                       fill = "#2874A6",
-                       show_counts = TRUE) {
+                       relative_height = 2,
+                       relative_width = 0.3) {
 
-  if (!requireNamespace("ggupset", quietly = TRUE)) {
-    stop("Package 'ggupset' is required. Install with: install.packages('ggupset')")
+  if (!requireNamespace("ggVennDiagram", quietly = TRUE)) {
+    stop("Package 'ggVennDiagram' is required. Install with: install.packages('ggVennDiagram')")
   }
 
   data <- as.data.frame(data)
@@ -78,13 +76,6 @@ plot_upset <- function(data,
   )
   df_pa <- unique(df_pa)
 
-  # -- UpSet summary ----------------------------------------------------------
-  df_upset <- dplyr::summarize(
-    dplyr::group_by(df_pa, feature),
-    groups = list(sort(unique(group))),
-    .groups = "drop"
-  )
-
   # -- PAV matrix -------------------------------------------------------------
   all_groups <- sort(unique(df_pa$group))
   df_pa$present <- 1L
@@ -95,30 +86,19 @@ plot_upset <- function(data,
   )
   df_pav <- df_pav[, c("feature", all_groups), drop = FALSE]
 
+  # -- Convert to named list for ggVennDiagram --------------------------------
+  groups_list <- split(df_pa$feature[df_pa$present == 1L],
+                       df_pa$group[df_pa$present == 1L])
+  groups_list <- groups_list[all_groups]
+
   # -- Plot -------------------------------------------------------------------
-  p <- ggplot2::ggplot(df_upset, ggplot2::aes(x = groups)) +
-    ggplot2::geom_bar(fill = fill, width = 0.6) +
-    ggupset::scale_x_upset(
-      n_intersections = n_intersections,
-      order_by = order_by
-    ) +
-    ggplot2::labs(y = "Number of features")
-
-  if (show_counts) {
-    p <- p +
-      ggplot2::geom_text(
-        stat = "count",
-        ggplot2::aes(label = ggplot2::after_stat(count)),
-        vjust = -0.3, size = 3.5
-      )
-  }
-
-  p <- p +
-    ggupset::theme_combmatrix() +
-    ggplot2::theme(
-      axis.title.x = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line(color = "grey92", linewidth = 0.3)
-    )
+  venn <- ggVennDiagram::Venn(groups_list)
+  p <- ggVennDiagram::plot_upset(
+    venn,
+    nintersects = n_intersections,
+    relative_height = relative_height,
+    relative_width = relative_width
+  )
 
   list(plot = p, data.pav = df_pav)
 }

@@ -9,9 +9,8 @@ plot_upset(
   group = NULL,
   feature = NULL,
   n_intersections = 30,
-  order_by = "freq",
-  fill = "#2874A6",
-  show_counts = TRUE
+  relative_height = 2,
+  relative_width = 0.3
 )
 }
 \arguments{
@@ -26,11 +25,9 @@ and one for feature identifiers.}
 
 \item{n_intersections}{Maximum number of intersections to show (default: 30).}
 
-\item{order_by}{How to order intersections: "freq" (default) or "degree".}
+\item{relative_height}{Height ratio between upper and lower panels (default: 2).}
 
-\item{fill}{Bar fill color (default: "#2874A6").}
-
-\item{show_counts}{Show count labels on bars (default: TRUE).}
+\item{relative_width}{Width ratio for the upset layout (default: 0.3).}
 }
 \value{
 A list:

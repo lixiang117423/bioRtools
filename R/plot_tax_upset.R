@@ -2,8 +2,8 @@
 #'
 #' @description
 #' Create an UpSet plot showing how many features (OTUs/ASVs/taxa) are
-#' shared or unique across groups from an abundance table. Uses \pkg{ggupset}
-#' to produce publication-quality combination matrix plots.
+#' shared or unique across groups from an abundance table. Uses
+#' \pkg{ggVennDiagram} to produce publication-quality upset plots.
 #'
 #' @param data ASV/OTU abundance table. Can be in either orientation:
 #'   features × samples (first column is feature ID) or
@@ -19,11 +19,8 @@
 #'   Must be a column name in \code{taxo}. Default is NULL (OTU level).
 #' @param n_intersections Integer, maximum number of intersections to show.
 #'   Default is 20.
-#' @param order_by How to order intersections: "freq" (by count, default)
-#'   or "degree" (by number of groups).
-#' @param fill Bar fill color. Default is "#2874A6".
-#' @param show_counts Logical. Show count labels on top of bars.
-#'   Default is TRUE.
+#' @param relative_height Height ratio between upper and lower panels (default: 2).
+#' @param relative_width Width ratio for the upset layout (default: 0.3).
 #' @param verbose Logical. Print progress messages. Default is TRUE.
 #'
 #' @return A list containing:
@@ -40,10 +37,10 @@
 #'   \item Merge abundance, sample metadata, and (optionally) taxonomy
 #'   \item Convert to presence/absence
 #'   \item For each feature, record which groups it appears in
-#'   \item Create UpSet plot via \code{ggupset::scale_x_upset()}
+#'   \item Create UpSet plot via \code{ggVennDiagram::plot_upset()}
 #' }
 #'
-#' Requires \pkg{ggupset}.
+#' Requires \pkg{ggVennDiagram}.
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -61,13 +58,12 @@ plot_tax_upset <- function(data,
                             group_col = "treatment",
                             which = NULL,
                             n_intersections = 20,
-                            order_by = "freq",
-                            fill = "#2874A6",
-                            show_counts = TRUE,
+                            relative_height = 2,
+                            relative_width = 0.3,
                             verbose = TRUE) {
 
-  if (!requireNamespace("ggupset", quietly = TRUE)) {
-    stop("Package 'ggupset' is required. Install with: install.packages('ggupset')")
+  if (!requireNamespace("ggVennDiagram", quietly = TRUE)) {
+    stop("Package 'ggVennDiagram' is required. Install with: install.packages('ggVennDiagram')")
   }
 
   # -- Input validation -------------------------------------------------------
@@ -155,34 +151,21 @@ plot_tax_upset <- function(data,
             " | Groups: ", length(unique(df_pa$group)))
   }
 
-  # -- Build UpSet plot -------------------------------------------------------
-  p <- df_upset %>%
-    ggplot2::ggplot(ggplot2::aes(x = groups)) +
-    ggplot2::geom_bar(fill = fill, width = 0.6) +
-    ggupset::scale_x_upset(
-      n_intersections = n_intersections,
-      order_by = order_by
-    ) +
-    ggplot2::labs(y = "Number of features")
+  # -- Convert to named list for ggVennDiagram --------------------------------
+  all_groups <- sort(unique(df_pa$group))
+  groups_list <- split(df_pa$feature, df_pa$group)
+  groups_list <- groups_list[all_groups]
 
-  if (show_counts) {
-    p <- p +
-      ggplot2::geom_text(
-        stat = "count",
-        ggplot2::aes(label = ggplot2::after_stat(count)),
-        vjust = -0.3, size = 3.5
-      )
-  }
-
-  p <- p +
-    ggupset::theme_combmatrix() +
-    ggplot2::theme(
-      axis.title.x = ggplot2::element_blank(),
-      panel.grid.major.y = ggplot2::element_line(color = "grey92", linewidth = 0.3)
-    )
+  # -- Build UpSet plot via ggVennDiagram -------------------------------------
+  venn <- ggVennDiagram::Venn(groups_list)
+  p <- ggVennDiagram::plot_upset(
+    venn,
+    nintersects = n_intersections,
+    relative_height = relative_height,
+    relative_width = relative_width
+  )
 
   # -- PAV table --------------------------------------------------------------
-  all_groups <- sort(unique(df_pa$group))
   df_pav <- df_pa %>%
     dplyr::mutate(present = 1L) %>%
     tidyr::pivot_wider(
