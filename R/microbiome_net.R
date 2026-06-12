@@ -141,6 +141,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
   spiecResults <- list()
   nodeProps_list <- list()
   globalStats_list <- list()
+  edgeList_list <- list()
 
   for (grp in groups) {
     if (verbose) message(sprintf("\n--- Group: %s ---", grp))
@@ -187,6 +188,29 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
       adja[abs(cor_mat) < cor.threshold | p_adj >= cor.pvalue] <- 0
       diag(adja) <- 0
       colnames(adja) <- rownames(adja) <- rownames(d_sub)
+
+      # Build edge list (upper triangle only)
+      edge_idx <- which(adja != 0, arr.ind = TRUE)
+      edge_idx <- edge_idx[edge_idx[, 1] < edge_idx[, 2], , drop = FALSE]
+      if (nrow(edge_idx) > 0) {
+        edge_df <- data.frame(
+          group = grp,
+          feature1 = rownames(adja)[edge_idx[, 1]],
+          feature2 = rownames(adja)[edge_idx[, 2]],
+          correlation = round(adja[edge_idx], 4),
+          padj = round(p_adj[edge_idx], 6),
+          direction = ifelse(adja[edge_idx] > 0, "positive", "negative"),
+          stringsAsFactors = FALSE
+        )
+        if (!is.null(taxonomy)) {
+          tax1 <- taxonomy[edge_df$feature1, , drop = FALSE]
+          tax2 <- taxonomy[edge_df$feature2, , drop = FALSE]
+          colnames(tax1) <- paste0("tax1_", colnames(tax1))
+          colnames(tax2) <- paste0("tax2_", colnames(tax2))
+          edge_df <- cbind(edge_df, tax1, tax2, stringsAsFactors = FALSE)
+        }
+        edgeList_list[[grp]] <- edge_df
+      }
 
       # Store dummy objects for consistent output
       est <- NULL
@@ -347,6 +371,11 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
   rownames(nodeProps) <- NULL
   globalStats <- do.call(rbind, globalStats_list)
   rownames(globalStats) <- NULL
+  edgeList <- if (length(edgeList_list) > 0) {
+    edl <- do.call(rbind, edgeList_list)
+    rownames(edl) <- NULL
+    edl
+  } else NULL
 
   # --- Pairwise comparison --------------------------------------------------
   compare <- NULL
@@ -387,7 +416,8 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
   if (verbose) {
     message("\n=== Microbiome Network Analysis Complete ===")
-    message(sprintf("Groups analyzed: %d (%s)", length(groups), paste(groups, collapse = ", ")))
+    message(sprintf("Groups analyzed: %d (%s)", length(analyzed_groups), paste(analyzed_groups, collapse = ", ")))
+    if (!is.null(edgeList)) message(sprintf("Total edges: %d", nrow(edgeList)))
     message("\nGlobal statistics:")
     print(globalStats[, c("group", "n_nodes", "n_edges", "density", "modularity", "n_hubs")])
     if (!is.null(compare)) {
@@ -401,6 +431,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
     adjaMats = adjaMats,
     nodeProps = nodeProps,
     globalStats = globalStats,
+    edgeList = edgeList,
     compare = compare,
     spiecResults = spiecResults
   )
