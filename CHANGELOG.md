@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.45.5] - 2026-06-12
+
+### Added
+- `microbiome_net()`: add `edgeList` to output with correlation, padj, direction, and taxonomy for each edge pair
+
 ## [1.45.4] - 2026-06-12
 
 ### Changed
