@@ -117,6 +117,10 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
                     nrow(data_mat), length(keep), minSampCount, minReads))
   }
 
+  if (is.null(groupCol)) {
+    sample$.all <- "All"
+    groupCol <- ".all"
+  }
   groups <- unique(as.character(sample[[groupCol]]))
 
   # Prepare taxonomy
@@ -161,9 +165,9 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
     # --- Build adjacency matrix ---
     if (method == "cor") {
-      if (ncol(d_sub) < 5) {
+      if (ncol(d_sub) < 3) {
         warning("Group '", grp, "': only ", ncol(d_sub),
-          " samples, need >= 5 for correlation. Skipping.")
+          " samples, need >= 3 for correlation. Skipping.")
         next
       }
       # Correlation + threshold (fast, low memory)
@@ -343,6 +347,11 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
     globalStats_list[[grp]] <- global_df
   }
 
+  if (length(nodeProps_list) == 0) {
+    warning("No groups were successfully analyzed. Returning NULL.")
+    return(NULL)
+  }
+
   nodeProps <- do.call(rbind, nodeProps_list)
   rownames(nodeProps) <- NULL
   globalStats <- do.call(rbind, globalStats_list)
@@ -350,8 +359,9 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
   # --- Pairwise comparison --------------------------------------------------
   compare <- NULL
-  if (length(groups) > 1) {
-    pairs <- utils::combn(groups, 2, simplify = FALSE)
+  analyzed_groups <- names(nodeProps_list)
+  if (length(analyzed_groups) > 1) {
+    pairs <- utils::combn(analyzed_groups, 2, simplify = FALSE)
     compare_rows <- lapply(pairs, function(pair) {
       g1 <- pair[1]; g2 <- pair[2]
       hubs1 <- nodeProps_list[[g1]]$feature[nodeProps_list[[g1]]$is_hub]
