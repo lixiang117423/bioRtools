@@ -165,22 +165,13 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
     # --- Build adjacency matrix ---
     if (method == "cor") {
-      if (ncol(d_sub) < 3) {
-        warning("Group '", grp, "': only ", ncol(d_sub),
-          " samples, need >= 3 for correlation. Skipping.")
-        next
-      }
       # Correlation + threshold (fast, low memory)
       if (verbose) message("  Method: ", cor_method, " correlation")
 
-      rcorr_method <- switch(cor_method,
-        pearson = "pearson",
-        spearman = "spearman",
-        kendall = "kendall")
-
-      rcorr_result <- Hmisc::rcorr(t(d_sub), type = rcorr_method)
-      cor_mat <- rcorr_result$r
-      p_mat <- rcorr_result$P
+      # samples in rows, features in columns for corAndPvalue
+      cp_result <- WGCNA::corAndPvalue(t(d_sub), method = cor_method)
+      cor_mat <- cp_result$cor
+      p_mat <- cp_result$p
 
       # Adjust p-values (upper triangle only, then mirror)
       n_feat <- nrow(cor_mat)
