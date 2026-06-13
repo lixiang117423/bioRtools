@@ -27,6 +27,8 @@
 #'   \code{hclust} (default: "complete").
 #' @param show_gene_axis Logical; show gene labels on PAV x-axis
 #'   (default: FALSE).
+#' @param show_sample_name Logical; show sample names on y-axis
+#'   (default: FALSE).
 #'
 #' @return A named list containing:
 #'   \describe{
@@ -81,7 +83,8 @@ plot_pav_phenotype <- function(data_pav, data_phenotype,
                                title = NULL,
                                pav_colors = c("0" = "#4A90D9", "1" = "#D9544A"),
                                cluster_method = "complete",
-                               show_gene_axis = FALSE) {
+                               show_gene_axis = FALSE,
+                               show_sample_name = FALSE) {
 
   # --- Input validation ---
   if (!is.data.frame(data_pav)) stop("'data_pav' must be a data frame")
@@ -149,6 +152,13 @@ plot_pav_phenotype <- function(data_pav, data_phenotype,
     p_pav <- p_pav + ggplot2::theme(
       axis.text.x = ggplot2::element_blank(),
       axis.ticks.x = ggplot2::element_blank()
+    )
+  }
+
+  if (!show_sample_name) {
+    p_pav <- p_pav + ggplot2::theme(
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
     )
   }
 
