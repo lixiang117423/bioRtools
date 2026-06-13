@@ -82,7 +82,7 @@
 plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
                           value_col = "Mean_r2", bin_size = 1000,
                           max_dist = NULL, model = "exponential",
-                          n_ind = NULL, show_half_decay = TRUE,
+                          n_ind = NULL, show_half_decay = FALSE,
                           palette = "turbo", verbose = TRUE) {
 
   # --- Input validation ---
@@ -254,19 +254,15 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     p <- p + ggplot2::scale_color_manual(values = palette)
   }
 
-  # Half-decay reference lines
+  # Half-decay reference lines (colored by population)
   if (show_half_decay && nrow(half_decay_df) > 0) {
     hd_lines <- half_decay_df[!is.na(half_decay_df$half_decay_kb), ]
     if (nrow(hd_lines) > 0) {
-      pop_colors <- ggplot2::ggplot_build(p)$data[[1]]
-      # Use dashed lines with matching colors
-      for (i in seq_len(nrow(hd_lines))) {
-        p <- p + ggplot2::geom_vline(
-          xintercept = hd_lines$half_decay_kb[i],
-          linetype = "dashed", alpha = 0.4, linewidth = 0.5,
-          color = "grey40"
-        )
-      }
+      p <- p + ggplot2::geom_vline(
+        data = hd_lines,
+        ggplot2::aes(xintercept = half_decay_kb, color = Population),
+        linetype = "dashed", alpha = 0.6, linewidth = 0.5
+      )
     }
   }
 
