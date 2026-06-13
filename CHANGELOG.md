@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.46.4] - 2026-06-13
+
+### Added
+- `plot_pav_phenotype()`: add `show_sample_name` parameter (default FALSE)
+
 ## [1.46.3] - 2026-06-13
 
 ### Added
