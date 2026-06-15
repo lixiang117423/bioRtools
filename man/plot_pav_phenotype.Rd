@@ -16,7 +16,8 @@ plot_pav_phenotype(
   title = NULL,
   pav_colors = c(`0` = "#4A90D9", `1` = "#D9544A"),
   cluster_method = "complete",
-  show_gene_axis = FALSE
+  show_gene_axis = FALSE,
+  show_sample_name = FALSE
 )
 }
 \arguments{
@@ -52,6 +53,9 @@ level (fill color; default: "level").}
 \code{hclust} (default: "complete").}
 
 \item{show_gene_axis}{Logical; show gene labels on PAV x-axis
+(default: FALSE).}
+
+\item{show_sample_name}{Logical; show sample names on y-axis
 (default: FALSE).}
 }
 \value{
