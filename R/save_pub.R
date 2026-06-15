@@ -42,7 +42,7 @@
 #'   \code{\link{write_data}} for single-format export
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' \dontrun{

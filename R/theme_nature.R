@@ -33,7 +33,7 @@
 #'   \code{\link{theme_prism}} for preview-style theme
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' library(ggplot2)
