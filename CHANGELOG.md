@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.48.2] - 2026-06-15
+
+### Fixed
+- `find_degs_deseq2()`: reorder input cleanup so non-numeric columns (e.g., gene_id, description) are stripped to row names *before* the negative-value check. Previously the check ran first and errored with `仅在具有所有类似数值变量的数据框上定义` whenever the input carried a single character column, even though the cleanup logic existed to handle that case.
+
+## [1.48.1] - 2026-06-15
+
+### Added
+- `plot_qq()`: new `group_column` parameter. When set, QQ stats are computed per group and the group column is preserved in every layer, enabling `+ facet_wrap(~ group)` directly on the returned plot. Per-group stats are attached as attribute `"group_stats"`.
+
+## [1.48.0] - 2026-06-15
+
+### Added
+- `plot_qq()`: generalized QQ plot supporting both p-value mode (`type = "pvalue"`, mirrors `plot_gwas_qq`) and normal mode (`type = "normal"`, works with any numeric data such as transformed phenotypes). Adds `ci_level` parameter for adjustable confidence ribbon.
+
 ## [1.47.1] - 2026-06-15
 
 ### Changed

@@ -337,13 +337,10 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
     stop(err_invalid_input("remove_problematic_genes", "a single logical value (TRUE or FALSE)"))
   }
 
-  # Check if data contains valid count values
-  if (any(data < 0, na.rm = TRUE)) {
-    min_val <- min(data, na.rm = TRUE)
-    stop(err_negative_values("data", min_val))
-  }
-
   # Prepare data matrix: detect and remove non-numeric columns (e.g., gene_id)
+  # Must run before the negative-value check below, since `data < 0` on a
+  # data frame with character columns dispatches to Summary.data.frame and
+  # errors out before this cleanup can happen.
   data <- as.data.frame(data)
   numeric_cols <- sapply(data, is.numeric)
   if (!all(numeric_cols)) {
@@ -354,6 +351,13 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
       data <- data[, numeric_cols, drop = FALSE]
     }
   }
+
+  # Check if data contains valid count values (after stripping non-numeric cols)
+  if (any(data < 0, na.rm = TRUE)) {
+    min_val <- min(data, na.rm = TRUE)
+    stop(err_negative_values("data", min_val))
+  }
+
   data_matrix <- as.matrix(data)
   n_genes_original <- nrow(data_matrix)
 

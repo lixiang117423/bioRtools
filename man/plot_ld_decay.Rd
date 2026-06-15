@@ -13,7 +13,7 @@ plot_ld_decay(
   max_dist = NULL,
   model = "exponential",
   n_ind = NULL,
-  show_half_decay = TRUE,
+  show_half_decay = FALSE,
   palette = "turbo",
   verbose = TRUE
 )
