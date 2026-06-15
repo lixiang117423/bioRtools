@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.47.0] - 2026-06-15
+
+### Added
+- `theme_nature()`: minimalist publication theme tuned for Nature-family figures (6.5pt Arial, 0.35pt lines, no grid)
+- `save_pub()`: export plot as SVG + PDF + TIFF bundle in one call (default 183x120mm, 600 dpi)
+
 ## [1.46.4] - 2026-06-13
 
 ### Added
