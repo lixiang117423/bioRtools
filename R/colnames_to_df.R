@@ -13,7 +13,7 @@
 #' }
 #'
 #' @param df A data frame or matrix.
-#' @param name Character string for the output column name (default: "name").
+#' @param name Character string for the output column name (default: "sample").
 #'
 #' @return A single-column data frame.
 #'
@@ -31,7 +31,7 @@
 #'   dplyr::mutate(group = stringr::str_split(sample, "R") %>% sapply("[", 1))
 #' }
 #'
-colnames_to_df <- function(df, name = "name") {
+colnames_to_df <- function(df, name = "sample") {
 
   if (!is.data.frame(df) && !is.matrix(df)) {
     stop("'df' must be a data frame or matrix")
