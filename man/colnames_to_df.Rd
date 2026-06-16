@@ -4,12 +4,12 @@
 \alias{colnames_to_df}
 \title{Convert Column Names to a Single-Column Data Frame}
 \usage{
-colnames_to_df(df, name = "name")
+colnames_to_df(df, name = "sample")
 }
 \arguments{
 \item{df}{A data frame or matrix.}
 
-\item{name}{Character string for the output column name (default: "name").}
+\item{name}{Character string for the output column name (default: "sample").}
 }
 \value{
 A single-column data frame.
