@@ -32,7 +32,7 @@
 #' @return A list:
 #'   \describe{
 #'     \item{plot}{ggplot object.}
-#'     \item{data.pav}{Presence/absence matrix (feature × group).}
+#'     \item{data_pav}{Presence/absence matrix (feature × group).}
 #'   }
 #'
 #' @examples
@@ -155,5 +155,5 @@ plot_upset <- function(data,
     )
   }
 
-  list(plot = p, data.pav = df_pav)
+  list(plot = p, data_pav = df_pav)
 }

@@ -15,12 +15,12 @@
 #'
 #' @return A list containing three components:
 #' \describe{
-#'   \item{result.permanova}{A data frame containing the PERMANOVA results table
+#'   \item{result_permanova}{A data frame containing the PERMANOVA results table
 #'     with degrees of freedom, sum of squares, mean squares, F values, R-squared,
 #'     and p-values for each factor.}
-#'   \item{raw.result}{The original \code{vegan::adonis2()} output object, which
+#'   \item{raw_result}{The original \code{vegan::adonis2()} output object, which
 #'     can be used for further analysis or custom formatting.}
-#'   \item{summary.stats}{A simplified summary table with key statistics including
+#'   \item{summary_stats}{A simplified summary table with key statistics including
 #'     R-squared and p-values for each factor.}
 #' }
 #'
@@ -50,11 +50,11 @@
 #' permanova_test(
 #'   df.permanova.otu ~ location * variety * group,
 #'   df.permanova.sample
-#' ) -> result.permanova
+#' ) -> result_permanova
 #'
 #' # Access different components
-#' result.permanova$result.permanova  # Main results table
-#' result.permanova$summary.stats     # Summary statistics
+#' result_permanova$result_permanova  # Main results table
+#' result_permanova$summary_stats     # Summary statistics
 #'
 #' # Using different distance method and permutations
 #' permanova_test(
@@ -87,7 +87,7 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
   # Perform PERMANOVA using the updated adonis2 function
   tryCatch(
     {
-      permanova.result <- vegan::adonis2(
+      permanova_result <- vegan::adonis2(
         formula = formula,
         data = sample,
         permutations = permutations,
@@ -100,7 +100,7 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     })
 
   # Extract main results table
-  result.permanova <- permanova.result %>%
+  result_permanova <- permanova_result %>%
     as.data.frame() %>%
     tibble::rownames_to_column(var = "Factor") %>%
     dplyr::mutate(
@@ -109,7 +109,7 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     )
 
   # Create summary statistics table for significant factors only
-  summary.stats <- result.permanova %>%
+  summary_stats <- result_permanova %>%
     dplyr::filter(
       !Factor %in% c("Residuals", "Total"),
       !is.na(`Pr(>F)`)
@@ -136,8 +136,8 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
 
   # Return comprehensive results following project conventions
   list(
-    result.permanova = result.permanova,
-    raw.result = permanova.result,
-    summary.stats = summary.stats
+    result_permanova = result_permanova,
+    raw_result = permanova_result,
+    summary_stats = summary_stats
   )
 }

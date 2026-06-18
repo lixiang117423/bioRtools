@@ -139,24 +139,24 @@ anova_posthoc <- function(data, group, value = NULL, method = "Tukey", level = 0
 #' @noRd
 anova_single_group <- function(data, group, value, method, level) {
   # Prepare data for analysis
-  data.new <- data %>%
+  data_new <- data %>%
     dplyr::select(dplyr::all_of(c(group, value))) %>%
-    magrittr::set_names(c("group.anova", "value")) %>%
+    magrittr::set_names(c("group_anova", "value")) %>%
     # Remove missing values
     tidyr::drop_na()
 
   # Order factor levels by ascending mean so cld(decreasing=TRUE) assigns
   # 'a' to the group with the highest mean
-  mean_order <- data.new %>%
-    dplyr::group_by(group.anova) %>%
+  mean_order <- data_new %>%
+    dplyr::group_by(group_anova) %>%
     dplyr::summarise(mean_val = mean(value, na.rm = TRUE), .groups = "drop") %>%
     dplyr::arrange(mean_val) %>%
-    dplyr::pull(group.anova)
+    dplyr::pull(group_anova)
 
-  data.new$group.anova <- factor(data.new$group.anova, levels = mean_order)
+  data_new$group_anova <- factor(data_new$group_anova, levels = mean_order)
 
   # Check if we have enough data
-  if (nrow(data.new) < 2) {
+  if (nrow(data_new) < 2) {
     warning("Not enough valid observations for analysis in this group")
     return(tibble::tibble(
       group = character(),
@@ -166,11 +166,11 @@ anova_single_group <- function(data, group, value, method, level) {
   }
 
   # Check if we have at least 2 groups
-  n_groups <- length(unique(data.new$group.anova))
+  n_groups <- length(unique(data_new$group_anova))
   if (n_groups < 2) {
     warning("Need at least 2 groups for ANOVA in this group")
     return(tibble::tibble(
-      group = as.character(unique(data.new$group.anova)),
+      group = as.character(unique(data_new$group_anova)),
       anova_pvalue = NA_real_,
       anova_signif = "NS"
     ))
@@ -179,7 +179,7 @@ anova_single_group <- function(data, group, value, method, level) {
   # Perform ANOVA
   fit <- tryCatch(
     {
-      stats::aov(value ~ group.anova, data = data.new)
+      stats::aov(value ~ group_anova, data = data_new)
     },
     error = function(e) {
       warning(paste("ANOVA failed:", e$message))
@@ -200,7 +200,7 @@ anova_single_group <- function(data, group, value, method, level) {
   if (method == "Tukey") {
     posthoc_result <- tryCatch(
       {
-        multcomp::glht(fit, linfct = multcomp::mcp(group.anova = "Tukey")) %>%
+        multcomp::glht(fit, linfct = multcomp::mcp(group_anova = "Tukey")) %>%
           multcomp::cld(level = level, decreasing = TRUE)
       },
       error = function(e) {
@@ -210,7 +210,7 @@ anova_single_group <- function(data, group, value, method, level) {
 
     if (is.null(posthoc_result)) {
       return(tibble::tibble(
-        group = as.character(unique(data.new$group.anova)),
+        group = as.character(unique(data_new$group_anova)),
         anova_pvalue = anova_pvalue,
         anova_signif = get_anova_signif(anova_pvalue),
         tukey_signif = NA_character_
@@ -229,7 +229,7 @@ anova_single_group <- function(data, group, value, method, level) {
       {
         agricolae::duncan.test(
           fit,
-          "group.anova",
+          "group_anova",
           alpha = 1 - level,
           console = FALSE
         )
@@ -241,7 +241,7 @@ anova_single_group <- function(data, group, value, method, level) {
 
     if (is.null(duncan_result)) {
       return(tibble::tibble(
-        group = as.character(unique(data.new$group.anova)),
+        group = as.character(unique(data_new$group_anova)),
         anova_pvalue = anova_pvalue,
         anova_signif = get_anova_signif(anova_pvalue),
         duncan_signif = NA_character_

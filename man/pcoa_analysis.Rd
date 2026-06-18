@@ -35,10 +35,10 @@ pcoa_analysis(
 \value{
 A list containing four components:
 \describe{
-  \item{result.pcoa}{The output from ape::pcoa(), which can be called directly.}
-  \item{plot.pcoa}{The plotting results, defaulting to PCo1 and PCo2. The output is a ggplot object, which can be fine-tuned using ggplot2.}
-  \item{point.data}{The data used for plotting, which users can call for their own plots or export for use in other software.}
-  \item{eigenvalue.pcoa}{The explained variance of the principal coordinates, starting from PCo1 by default.}
+  \item{result_pcoa}{The output from ape::pcoa(), which can be called directly.}
+  \item{plot_pcoa}{The plotting results, defaulting to PCo1 and PCo2. The output is a ggplot object, which can be fine-tuned using ggplot2.}
+  \item{point_data}{The data used for plotting, which users can call for their own plots or export for use in other software.}
+  \item{eigenvalue_pcoa}{The explained variance of the principal coordinates, starting from PCo1 by default.}
 }
 }
 \description{
@@ -51,7 +51,7 @@ library(bioRtools)
 data(df.pcoa.otu)
 data(df.pcoa.sample)
 
-pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa.res
+pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa_res
 
 }
 \author{

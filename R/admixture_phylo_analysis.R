@@ -189,7 +189,7 @@ admixture_phylo_analysis <- function(admixture_path,
 
     tryCatch(
       {
-        df.order.tree <- ape::read.tree(tree_file) %>%
+        df_order_tree <- ape::read.tree(tree_file) %>%
           treeio::as_tibble() %>%
           dplyr::filter(!is.na(label)) %>%
           dplyr::select(node, label) %>%
@@ -198,14 +198,14 @@ admixture_phylo_analysis <- function(admixture_path,
           as.data.frame() %>%
           dplyr::rename(order = node)
 
-        if (verbose) message("Found ", nrow(df.order.tree), " samples in tree")
+        if (verbose) message("Found ", nrow(df_order_tree), " samples in tree")
       },
       error = function(e) {
         stop("Failed to read tree file: ", e$message)
       })
   } else {
     if (verbose) message("No tree file provided - will use default sample order from .fam file")
-    df.order.tree <- NULL  # Will be created after reading .fam file
+    df_order_tree <- NULL  # Will be created after reading .fam file
   }
 
   # Step 2: Read .fam file to get sample information
@@ -213,7 +213,7 @@ admixture_phylo_analysis <- function(admixture_path,
 
   tryCatch(
     {
-      df.sample <- dir(admixture_path, pattern = "fam") %>%
+      df_sample <- dir(admixture_path, pattern = "fam") %>%
         as.data.frame() %>%
         magrittr::set_names("file") %>%
         dplyr::mutate(path = file.path(admixture_path, file)) %>%
@@ -223,13 +223,13 @@ admixture_phylo_analysis <- function(admixture_path,
         dplyr::select(3) %>%
         magrittr::set_names("sample")
 
-      if (verbose) message("Read ", nrow(df.sample), " samples from .fam file")
+      if (verbose) message("Read ", nrow(df_sample), " samples from .fam file")
 
       # If no tree file provided, create default ordering based on .fam file order
-      if (is.null(df.order.tree)) {
-        df.order.tree <- data.frame(
-          sample = df.sample$sample,
-          order = seq_len(nrow(df.sample)),
+      if (is.null(df_order_tree)) {
+        df_order_tree <- data.frame(
+          sample = df_sample$sample,
+          order = seq_len(nrow(df_sample)),
           stringsAsFactors = FALSE
         )
         if (verbose) message("Created default sample ordering based on .fam file order")
@@ -251,7 +251,7 @@ admixture_phylo_analysis <- function(admixture_path,
         stop("No .Q files found in: ", admixture_path)
       }
 
-      df.admixture <- q_files %>%
+      df_admixture <- q_files %>%
         as.data.frame() %>%
         magrittr::set_names("file") %>%
         dplyr::mutate(k_value = stringr::str_split(file, "\\.") %>% sapply("[", 2),
@@ -260,13 +260,13 @@ admixture_phylo_analysis <- function(admixture_path,
           path = file.path(admixture_path, file)) %>%
         dplyr::mutate(q_matrix = purrr::map(path, ~ readr::read_delim(.x, col_names = FALSE, show_col_types = FALSE) %>%
           magrittr::set_names(paste0("Cluster", 1:ncol(.))) %>%
-          dplyr::mutate(sample = df.sample$sample[1:nrow(.)]) %>%
+          dplyr::mutate(sample = df_sample$sample[1:nrow(.)]) %>%
           dplyr::select(sample, 1:(ncol(.) - 1)) %>%
           tidyr::pivot_longer(cols = 2:ncol(.)))) %>%
         dplyr::select(k, k_value, q_matrix) %>%
         tidyr::unnest(q_matrix)
 
-      if (verbose) message("Found K values: ", paste(sort(unique(df.admixture$k_value)), collapse = ", "))
+      if (verbose) message("Found K values: ", paste(sort(unique(df_admixture$k_value)), collapse = ", "))
     },
     error = function(e) {
       stop("Failed to read .Q files: ", e$message)
@@ -276,18 +276,18 @@ admixture_phylo_analysis <- function(admixture_path,
   if (!is.null(k_range)) {
     if (verbose) message("Filtering K values: ", paste(k_range, collapse = ", "))
 
-    df.admixture <- df.admixture %>%
+    df_admixture <- df_admixture %>%
       dplyr::filter(k_value %in% k_range)
 
-    if (nrow(df.admixture) == 0) {
+    if (nrow(df_admixture) == 0) {
       stop("No data found for specified K values: ", paste(k_range, collapse = ", "))
     }
 
-    if (verbose) message("Using K values: ", paste(sort(unique(df.admixture$k_value)), collapse = ", "))
+    if (verbose) message("Using K values: ", paste(sort(unique(df_admixture$k_value)), collapse = ", "))
   }
 
   # Fix K value ordering by converting to factor with proper levels
-  df.admixture <- df.admixture %>%
+  df_admixture <- df_admixture %>%
     dplyr::mutate(
       k = factor(k, levels = paste0("K = ", sort(unique(k_value))))
     )
@@ -295,25 +295,25 @@ admixture_phylo_analysis <- function(admixture_path,
   # Step 5: Check sample matching
   if (!is.null(tree_file)) {
     # Only check matching if tree file was provided
-    matched_samples <- intersect(df.admixture$sample, df.order.tree$sample)
+    matched_samples <- intersect(df_admixture$sample, df_order_tree$sample)
     if (length(matched_samples) == 0) {
       cat("\n=== DEBUGGING INFORMATION ===\n")
       cat("Admixture samples (first 10):\n")
-      print(head(unique(df.admixture$sample), 10))
+      print(head(unique(df_admixture$sample), 10))
       cat("\nTree samples (first 10):\n")
-      print(head(df.order.tree$sample, 10))
+      print(head(df_order_tree$sample, 10))
       cat("=============================\n")
       stop("No samples match between .Q files and phylogenetic tree")
     }
     if (verbose) message("Successfully matched ", length(matched_samples), " samples with tree")
   } else {
-    # When no tree file, all samples should match since we created df.order.tree from .fam file
-    matched_samples <- intersect(df.admixture$sample, df.order.tree$sample)
+    # When no tree file, all samples should match since we created df_order_tree from .fam file
+    matched_samples <- intersect(df_admixture$sample, df_order_tree$sample)
     if (verbose) message("Using ", length(matched_samples), " samples in default order")
   }
 
   # Step 6: Determine colors needed and prepare palette
-  total_clusters <- length(unique(df.admixture$name))
+  total_clusters <- length(unique(df_admixture$name))
 
   if (verbose) message("Total clusters needed: ", total_clusters)
 
@@ -331,10 +331,10 @@ admixture_phylo_analysis <- function(admixture_path,
     # Mode 1: No tree file - Traditional layout (sample on X-axis, vertical facets)
     if (verbose) message("Using traditional layout (no tree): samples on X-axis, K values vertically")
 
-    p.admixture <- df.admixture %>%
+    p_admixture <- df_admixture %>%
       ggplot2::ggplot(ggplot2::aes(sample, value, fill = name)) +
       ggplot2::geom_bar(stat = "identity", width = 1, position = ggplot2::position_fill()) +
-      ggplot2::scale_x_discrete(limits = df.order.tree$sample) +
+      ggplot2::scale_x_discrete(limits = df_order_tree$sample) +
       ggplot2::facet_wrap(. ~ k, ncol = 1, strip.position = "left") +
       ggplot2::theme(
         # Clean appearance - no axes, ticks, or legends
@@ -371,15 +371,15 @@ admixture_phylo_analysis <- function(admixture_path,
     if (!is.null(k_range)) {
       k_ncol <- length(k_range)
     } else {
-      k_ncol <- length(unique(df.admixture$k_value))
+      k_ncol <- length(unique(df_admixture$k_value))
     }
 
     if (verbose) message("Setting facet columns to: ", k_ncol)
 
-    p.admixture <- df.admixture %>%
+    p_admixture <- df_admixture %>%
       ggplot2::ggplot(ggplot2::aes(value, sample, fill = name)) +
       ggplot2::geom_bar(stat = "identity", width = 1, position = ggplot2::position_fill()) +
-      ggplot2::scale_y_discrete(limits = df.order.tree$sample) +
+      ggplot2::scale_y_discrete(limits = df_order_tree$sample) +
       ggplot2::facet_wrap(k ~ ., ncol = k_ncol, strip.position = "top") +
       ggplot2::theme(
         # Clean appearance - no axes, ticks, or legends
@@ -420,7 +420,7 @@ admixture_phylo_analysis <- function(admixture_path,
       selected_colors <- c(base_colors, additional_colors)
       if (verbose) message("Extended color palette with ", length(additional_colors), " additional colors")
     }
-    p.admixture <- p.admixture + ggplot2::scale_fill_manual(values = selected_colors)
+    p_admixture <- p_admixture + ggplot2::scale_fill_manual(values = selected_colors)
 
   } else if (color_scale == "manual") {
     if (is.null(manual_colors)) {
@@ -431,30 +431,30 @@ admixture_phylo_analysis <- function(admixture_path,
         additional_colors <- rainbow(total_clusters - length(base_colors))
         selected_colors <- c(base_colors, additional_colors)
       }
-      p.admixture <- p.admixture + ggplot2::scale_fill_manual(values = selected_colors)
+      p_admixture <- p_admixture + ggplot2::scale_fill_manual(values = selected_colors)
     } else {
       # Check if enough manual colors provided
       if (length(manual_colors) < total_clusters) {
         warning("Not enough manual colors provided (", length(manual_colors),
           ") for clusters needed (", total_clusters, "). Extending with default colors.")
         extended_colors <- c(manual_colors, base_colors[1:(total_clusters - length(manual_colors))])
-        p.admixture <- p.admixture + ggplot2::scale_fill_manual(values = extended_colors)
+        p_admixture <- p_admixture + ggplot2::scale_fill_manual(values = extended_colors)
       } else {
-        p.admixture <- p.admixture + ggplot2::scale_fill_manual(values = manual_colors[1:total_clusters])
+        p_admixture <- p_admixture + ggplot2::scale_fill_manual(values = manual_colors[1:total_clusters])
       }
     }
 
   } else {
     # Use ggsci color scales
-    p.admixture <- switch(color_scale,
-      "aaas" = p.admixture + ggsci::scale_fill_aaas(),
-      "npg" = p.admixture + ggsci::scale_fill_npg(),
-      "lancet" = p.admixture + ggsci::scale_fill_lancet(),
-      "jco" = p.admixture + ggsci::scale_fill_jco(),
-      "ucscgb" = p.admixture + ggsci::scale_fill_ucscgb(),
-      "uchicago" = p.admixture + ggsci::scale_fill_uchicago(),
-      "simpsons" = p.admixture + ggsci::scale_fill_simpsons(),
-      "rickandmorty" = p.admixture + ggsci::scale_fill_rickandmorty(),
+    p_admixture <- switch(color_scale,
+      "aaas" = p_admixture + ggsci::scale_fill_aaas(),
+      "npg" = p_admixture + ggsci::scale_fill_npg(),
+      "lancet" = p_admixture + ggsci::scale_fill_lancet(),
+      "jco" = p_admixture + ggsci::scale_fill_jco(),
+      "ucscgb" = p_admixture + ggsci::scale_fill_ucscgb(),
+      "uchicago" = p_admixture + ggsci::scale_fill_uchicago(),
+      "simpsons" = p_admixture + ggsci::scale_fill_simpsons(),
+      "rickandmorty" = p_admixture + ggsci::scale_fill_rickandmorty(),
       {
         warning("Unknown color scale: ", color_scale, ". Using default colors.")
         if (total_clusters <= length(base_colors)) {
@@ -463,13 +463,13 @@ admixture_phylo_analysis <- function(admixture_path,
           additional_colors <- rainbow(total_clusters - length(base_colors))
           selected_colors <- c(base_colors, additional_colors)
         }
-        p.admixture + ggplot2::scale_fill_manual(values = selected_colors)
+        p_admixture + ggplot2::scale_fill_manual(values = selected_colors)
       }
     )
   }
 
   # Step 9: Create phylogenetic tree plot and combine (if tree file provided)
-  p.tree <- NULL
+  p_tree <- NULL
   combined_plot <- NULL
 
   if (!is.null(tree_file)) {
@@ -498,7 +498,7 @@ admixture_phylo_analysis <- function(admixture_path,
     }
 
     # Create base tree plot
-    p.tree <- ape::read.tree(tree_file) %>%
+    p_tree <- ape::read.tree(tree_file) %>%
       treeio::as_tibble() %>%
       dplyr::mutate(label = stringr::str_remove_all(label, "\\'")) %>%
       treeio::as.phylo() %>%
@@ -521,23 +521,23 @@ admixture_phylo_analysis <- function(admixture_path,
         }
 
         # Add group info to tree
-        p.tree <- p.tree %<+% sample_group_data +
+        p_tree <- p_tree %<+% sample_group_data +
           ggtree::geom_tippoint(ggplot2::aes(color = color), size = tip_point_size)
 
         # Apply color scale to tree
-        p.tree <- switch(tree_color_scale,
-          "d3" = p.tree + ggsci::scale_color_d3(),
-          "aaas" = p.tree + ggsci::scale_color_aaas(),
-          "npg" = p.tree + ggsci::scale_color_npg(),
-          "lancet" = p.tree + ggsci::scale_color_lancet(),
-          "jco" = p.tree + ggsci::scale_color_jco(),
-          "ucscgb" = p.tree + ggsci::scale_color_ucscgb(),
-          "uchicago" = p.tree + ggsci::scale_color_uchicago(),
-          "simpsons" = p.tree + ggsci::scale_color_simpsons(),
-          "rickandmorty" = p.tree + ggsci::scale_color_rickandmorty(),
+        p_tree <- switch(tree_color_scale,
+          "d3" = p_tree + ggsci::scale_color_d3(),
+          "aaas" = p_tree + ggsci::scale_color_aaas(),
+          "npg" = p_tree + ggsci::scale_color_npg(),
+          "lancet" = p_tree + ggsci::scale_color_lancet(),
+          "jco" = p_tree + ggsci::scale_color_jco(),
+          "ucscgb" = p_tree + ggsci::scale_color_ucscgb(),
+          "uchicago" = p_tree + ggsci::scale_color_uchicago(),
+          "simpsons" = p_tree + ggsci::scale_color_simpsons(),
+          "rickandmorty" = p_tree + ggsci::scale_color_rickandmorty(),
           {
             warning("Unknown tree color scale: ", tree_color_scale, ". Using default.")
-            p.tree + ggplot2::scale_color_discrete()
+            p_tree + ggplot2::scale_color_discrete()
           }
         )
       }
@@ -545,8 +545,8 @@ admixture_phylo_analysis <- function(admixture_path,
 
     # Combine plots using aplot
     if (verbose) message("Combining tree and admixture plots...")
-    combined_plot <- p.admixture %>%
-      aplot::insert_left(p.tree, width = tree_width)
+    combined_plot <- p_admixture %>%
+      aplot::insert_left(p_tree, width = tree_width)
   }
 
   # Return list with all three plot objects
@@ -554,7 +554,7 @@ admixture_phylo_analysis <- function(admixture_path,
 
   list(
     combined_plot = combined_plot,    # aplot object (NULL if no tree)
-    admixture_plot = p.admixture,    # ggplot2 object
-    tree_plot = p.tree               # ggtree object (NULL if no tree)
+    admixture_plot = p_admixture,    # ggplot2 object
+    tree_plot = p_tree               # ggtree object (NULL if no tree)
   )
 }
