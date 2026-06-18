@@ -11,7 +11,7 @@
 #' @param id_col Column containing IDs to pair. Same input conventions as
 #'   \code{group_col}.
 #' @param out_names Character vector of length 2 naming the two output pair
-#'   columns (default: \code{c("Gene1", "Gene2")}).
+#'   columns (default: \code{c("id1", "id2")}).
 #'
 #' @return A tibble with columns: \code{group_col}, \code{out_names[1]},
 #'   \code{out_names[2]}. Groups with fewer than 2 IDs are silently dropped.
@@ -27,7 +27,7 @@
 #' )
 #' pairs_by_group(df, type, gene)
 #' # # A tibble: 4 x 3
-#' #   type  Gene1 Gene2
+#' #   type  id1   id2
 #' #   <chr> <chr> <chr>
 #' # 1 A     g1    g2
 #' # 2 A     g1    g3
@@ -39,7 +39,7 @@
 #' }
 #'
 pairs_by_group <- function(df, group_col, id_col,
-                           out_names = c("Gene1", "Gene2")) {
+                           out_names = c("id1", "id2")) {
 
   if (!is.data.frame(df)) {
     stop("'df' must be a data frame")

@@ -4,17 +4,19 @@
 \alias{pairs_by_group}
 \title{Generate All Pairs Within Each Group}
 \usage{
-pairs_by_group(df, group_col, id_col, out_names = c("Gene1", "Gene2"))
+pairs_by_group(df, group_col, id_col, out_names = c("id1", "id2"))
 }
 \arguments{
 \item{df}{A data frame.}
 
-\item{group_col}{Column to group by (bare name or character string).}
+\item{group_col}{Column to group by. Accepts a bare name (e.g. \code{type})
+or a character string (e.g. \code{"NLR类型"}).}
 
-\item{id_col}{Column containing IDs to pair (bare name or character string).}
+\item{id_col}{Column containing IDs to pair. Same input conventions as
+\code{group_col}.}
 
 \item{out_names}{Character vector of length 2 naming the two output pair
-columns (default: \code{c("Gene1", "Gene2")}).}
+columns (default: \code{c("id1", "id2")}).}
 }
 \value{
 A tibble with columns: \code{group_col}, \code{out_names[1]},
@@ -34,7 +36,7 @@ df <- data.frame(
 )
 pairs_by_group(df, type, gene)
 # # A tibble: 4 x 3
-#   type  Gene1 Gene2
+#   type  id1   id2
 #   <chr> <chr> <chr>
 # 1 A     g1    g2
 # 2 A     g1    g3
