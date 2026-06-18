@@ -6,8 +6,10 @@
 #' or within-group network construction.
 #'
 #' @param df A data frame.
-#' @param group_col Column to group by (bare name or character string).
-#' @param id_col Column containing IDs to pair (bare name or character string).
+#' @param group_col Column to group by. Accepts a bare name (e.g. \code{type})
+#'   or a character string (e.g. \code{"NLR类型"}).
+#' @param id_col Column containing IDs to pair. Same input conventions as
+#'   \code{group_col}.
 #' @param out_names Character vector of length 2 naming the two output pair
 #'   columns (default: \code{c("Gene1", "Gene2")}).
 #'
@@ -48,9 +50,17 @@ pairs_by_group <- function(df, group_col, id_col,
   }
 
   id_name <- rlang::as_name(rlang::enquo(id_col))
+  group_name <- rlang::as_name(rlang::enquo(group_col))
+
+  if (!group_name %in% names(df)) {
+    stop(sprintf("Group column '%s' not found in data frame", group_name))
+  }
+  if (!id_name %in% names(df)) {
+    stop(sprintf("ID column '%s' not found in data frame", id_name))
+  }
 
   df %>%
-    dplyr::group_by({{ group_col }}) %>%
+    dplyr::group_by(.data[[group_name]]) %>%
     dplyr::group_modify(~ {
       ids <- .x[[id_name]]
       if (length(ids) < 2) {

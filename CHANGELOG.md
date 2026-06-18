@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.2] - 2026-06-18
+
+### Fixed
+- `pairs_by_group()`: when `group_col` is passed as a character string (e.g., `group_col = "NLR类型"`), the previous `group_by({{ group_col }})` was treating the string as a literal and creating a constant column instead of grouping by the named column. Switched to `.data[[group_name]]` so both bare names and strings work. Also added clear errors when the group or id column is missing.
+
 ## [1.49.1] - 2026-06-18
 
 ### Added
