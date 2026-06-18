@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.3] - 2026-06-18
+
+### Changed
+- `pairs_by_group()`: default `out_names` is now `c("id1", "id2")` (was `c("Gene1", "Gene2")`). The previous default was too biology-specific; `id1`/`id2` is generic.
+
 ## [1.49.2] - 2026-06-18
 
 ### Fixed
