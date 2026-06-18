@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.1] - 2026-06-18
+
+### Added
+- `pairs_by_group()`: for each group in a data frame, generate all C(n, 2) pairwise combinations of an ID column. Useful for KaKs calculation between gene pairs within clades, co-evolution, and within-group network construction. Replaces the verbose `group_by() %>% group_modify(~ combn(...))` pattern.
+
 ## [1.49.0] - 2026-06-18
 
 ### Changed
