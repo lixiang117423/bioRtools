@@ -50,7 +50,7 @@ Only used when \code{engine = "ggVennDiagram"}.}
 A list:
   \describe{
     \item{plot}{ggplot object.}
-    \item{data.pav}{Presence/absence matrix (feature × group).}
+    \item{data_pav}{Presence/absence matrix (feature × group).}
   }
 }
 \description{

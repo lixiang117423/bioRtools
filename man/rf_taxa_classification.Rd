@@ -82,8 +82,8 @@ A list containing:
   \item{accuracy}{Data frame of prediction accuracy at each taxonomic level.}
   \item{predictions}{Named list of mlr3 prediction objects per level.}
   \item{importance}{Data frame of variable importance across all levels.}
-  \item{plot.accuracy}{ggplot bar chart of accuracy by taxonomic level.}
-  \item{plot.top_features}{ggplot boxplot of top N features at OTU level.}
+  \item{plot_accuracy}{ggplot bar chart of accuracy by taxonomic level.}
+  \item{plot_top_features}{ggplot boxplot of top N features at OTU level.}
 }
 }
 \description{
@@ -108,13 +108,13 @@ The workflow for each taxonomic level:
 \examples{
 \dontrun{
 result <- rf_taxa_classification(
-  data = df.asv,
-  taxo = df.tax,
-  sample = df.sample,
+  data = df_asv,
+  taxo = df_tax,
+  sample = df_sample,
   group_col = "treatment"
 )
-result$plot.accuracy
-result$plot.top_features
+result$plot_accuracy
+result$plot_top_features
 result$accuracy
 }
 

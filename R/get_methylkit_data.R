@@ -83,7 +83,7 @@ get_methylkit_data <- function(methyl_obj,
                                destrand = FALSE) {
   # --- 1. 过滤、标准化和合并数据 ---
   message(paste("步骤 1: 正在为", context, "数据按覆盖度过滤、标准化并合并样本..."))
-  myobj.final <- methylKit::filterByCoverage(methyl_obj,
+  myobj_final <- methylKit::filterByCoverage(methyl_obj,
     lo.count = lo.count,
     lo.perc = lo.perc,
     hi.count = hi.count,
@@ -93,8 +93,8 @@ get_methylkit_data <- function(methyl_obj,
 
   # --- 2. 提取数据和样本信息 ---
   message("步骤 2: 正在提取处理后的数据和样本ID...")
-  united_data <- methylKit::getData(myobj.final)
-  sample_names <- methylKit::getSampleID(myobj.final)
+  united_data <- methylKit::getData(myobj_final)
+  sample_names <- methylKit::getSampleID(myobj_final)
   num_samples <- length(sample_names)
 
   # --- 3. 创建基础数据框并循环添加所有信息 ---

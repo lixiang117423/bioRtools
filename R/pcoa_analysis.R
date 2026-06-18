@@ -11,10 +11,10 @@
 #'
 #' @return A list containing four components:
 #' \describe{
-#'   \item{result.pcoa}{The output from ape::pcoa(), which can be called directly.}
-#'   \item{plot.pcoa}{The plotting results, defaulting to PCo1 and PCo2. The output is a ggplot object, which can be fine-tuned using ggplot2.}
-#'   \item{point.data}{The data used for plotting, which users can call for their own plots or export for use in other software.}
-#'   \item{eigenvalue.pcoa}{The explained variance of the principal coordinates, starting from PCo1 by default.}
+#'   \item{result_pcoa}{The output from ape::pcoa(), which can be called directly.}
+#'   \item{plot_pcoa}{The plotting results, defaulting to PCo1 and PCo2. The output is a ggplot object, which can be fine-tuned using ggplot2.}
+#'   \item{point_data}{The data used for plotting, which users can call for their own plots or export for use in other software.}
+#'   \item{eigenvalue_pcoa}{The explained variance of the principal coordinates, starting from PCo1 by default.}
 #' }
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -27,7 +27,7 @@
 #' data(df.pcoa.otu)
 #' data(df.pcoa.sample)
 #'
-#' pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa.res
+#' pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa_res
 #'
 pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2", size = 2, color = "group", alpha = 1) {
   # Auto-detect sample ID column: if no "sample" column, find one matching data rownames
@@ -46,10 +46,10 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
   # Step 1: Calculate distance matrix and perform PCoA
   data %>%
     vegan::vegdist(method = method) %>%
-    ape::pcoa() -> pcoa.res
+    ape::pcoa() -> pcoa_res
 
   # Step 2: Extract eigenvalues and calculate explained variance
-  pcoa.res$values %>%
+  pcoa_res$values %>%
     as.data.frame() %>%
     dplyr::select(2) %>%
     dplyr::mutate(pcoa = paste0("PCo", seq_len(nrow(.)))) %>%
@@ -58,32 +58,32 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
       relative_eig = round(Relative_eig * 100, 2),
       percentage = paste0(relative_eig, "%"),
       label = paste0(pcoa, " (", percentage, ")")
-    ) -> eigenvalue.pcoa
+    ) -> eigenvalue_pcoa
 
   # Step 3: Extract coordinate data and merge with sample information
-  pcoa.res$vectors %>%
+  pcoa_res$vectors %>%
     as.data.frame() %>%
     dplyr::select(1:5) %>%
     {
       df <- .
       pco_labels <- paste0("PCo", seq_len(ncol(df)), " (",
-        eigenvalue.pcoa$percentage[seq_len(ncol(df))], ")")
+        eigenvalue_pcoa$percentage[seq_len(ncol(df))], ")")
       magrittr::set_names(df, pco_labels)
     } %>%
     tibble::rownames_to_column(var = "sample") %>%
-    dplyr::left_join(sample, by = "sample") -> point.data
+    dplyr::left_join(sample, by = "sample") -> point_data
 
   # Step 4: Create axis labels with explained variance
-  x_label <- eigenvalue.pcoa %>%
+  x_label <- eigenvalue_pcoa %>%
     dplyr::filter(pcoa == x) %>%
     dplyr::pull(label)
 
-  y_label <- eigenvalue.pcoa %>%
+  y_label <- eigenvalue_pcoa %>%
     dplyr::filter(pcoa == y) %>%
     dplyr::pull(label)
 
   # Step 5: Create PCoA plot
-  plot.pcoa <- point.data %>%
+  plot_pcoa <- point_data %>%
     ggplot2::ggplot(ggplot2::aes(
       x = !!rlang::sym(x),
       y = !!rlang::sym(y),
@@ -108,9 +108,9 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
 
   # Step 6: Return results as a list following project conventions
   list(
-    result.pcoa = pcoa.res,
-    plot.pcoa = plot.pcoa,
-    point.data = point.data,
-    eigenvalue.pcoa = eigenvalue.pcoa
+    result_pcoa = pcoa_res,
+    plot_pcoa = plot_pcoa,
+    point_data = point_data,
+    eigenvalue_pcoa = eigenvalue_pcoa
   )
 }

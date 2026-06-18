@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.0] - 2026-06-18
+
+### Changed
+- Normalize local variables and output names to snake_case per DEVELOP_GUIDE. **User-facing list element renames (breaking):**
+  - `rf_taxa_classification()`: `plot.accuracy` → `plot_accuracy`, `plot.top_features` → `plot_top_features`
+  - `permanova_test()`: `result.permanova` → `result_permanova`, `summary.stats` → `summary_stats`, `raw.result` → `raw_result`
+  - `pcoa_analysis()`: `result.pcoa` → `result_pcoa`, `plot.pcoa` → `plot_pcoa`, `point.data` → `point_data`, `eigenvalue.pcoa` → `eigenvalue_pcoa`
+  - `plot_upset()`: `data.pav` → `data_pav`
+- `plot_ld_decay()`: computed columns renamed to snake_case (`Dist_kb` → `dist_kb`, `Dist_bin_kb` → `dist_bin_kb`, `Mean_r2_bin` → `mean_r2_bin`, `Mean_r2_fitted` → `mean_r2_fitted`).
+- Many internal local variables renamed across `rf_taxa_classification.R`, `admixture_phylo_analysis.R`, `permanova_test.R`, `plot_pav.R`, `pcoa_analysis.R`, `get_methylkit_data.R`, `anova_posthoc.R` (e.g., `df.admixture` → `df_admixture`, `data.new` → `data_new`). Internal-only, no API impact.
+
+### Preserved (per DEVELOP_GUIDE exceptions)
+- `na.rm`, `row.names`, `check.names`, `stringsAsFactors`, `ties.method` — R base conventions
+- `branch.length`, `ref.group`, `override.aes`, `rep.num` — external package argument names
+- `CalExp*` family (`cq.table`, `design.table`, `ref.gene`) — backward-compat functions
+- `legend.position`, `panel.border`, `axis.line` in `theme_bio()`/`theme_prism()` — mirror ggplot2 argument names
+
 ## [1.48.4] - 2026-06-16
 
 ### Changed

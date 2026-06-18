@@ -26,12 +26,12 @@ or a permutation matrix where each row gives the permuted indices. Default is 99
 \value{
 A list containing three components:
 \describe{
-  \item{result.permanova}{A data frame containing the PERMANOVA results table
+  \item{result_permanova}{A data frame containing the PERMANOVA results table
     with degrees of freedom, sum of squares, mean squares, F values, R-squared,
     and p-values for each factor.}
-  \item{raw.result}{The original \code{vegan::adonis2()} output object, which
+  \item{raw_result}{The original \code{vegan::adonis2()} output object, which
     can be used for further analysis or custom formatting.}
-  \item{summary.stats}{A simplified summary table with key statistics including
+  \item{summary_stats}{A simplified summary table with key statistics including
     R-squared and p-values for each factor.}
 }
 }
@@ -61,11 +61,11 @@ data(df.permanova.sample)
 permanova_test(
   df.permanova.otu ~ location * variety * group,
   df.permanova.sample
-) -> result.permanova
+) -> result_permanova
 
 # Access different components
-result.permanova$result.permanova  # Main results table
-result.permanova$summary.stats     # Summary statistics
+result_permanova$result_permanova  # Main results table
+result_permanova$summary_stats     # Summary statistics
 
 # Using different distance method and permutations
 permanova_test(

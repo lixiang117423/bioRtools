@@ -56,7 +56,7 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
     dplyr::mutate(value = "Present")
 
   # Order features by occurrence (most common first)
-  df.x.order <- df %>%
+  df_x_order <- df %>%
     dplyr::select(!!rlang::sym(feature_col), !!rlang::sym(sample_col)) %>%
     dplyr::distinct() %>%
     dplyr::group_by(!!rlang::sym(feature_col)) %>%
@@ -78,7 +78,7 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
       axis.title = ggplot2::element_blank())
   }
 
-  p.type <- df %>%
+  p_type <- df %>%
     dplyr::select(!!rlang::sym(group_col), !!rlang::sym(feature_col)) %>%
     dplyr::distinct() %>%
     ggplot2::ggplot(ggplot2::aes(
@@ -86,11 +86,11 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
       fill = !!rlang::sym(group_col))) +
     ggplot2::geom_tile() +
     scale_fill_research() +
-    scale_x_discrete(limits = df.x.order[[feature_col]]) +
+    scale_x_discrete(limits = df_x_order[[feature_col]]) +
     axis_theme
 
   # PAV heatmap
-  df.pav <- df %>%
+  df_pav <- df %>%
     dplyr::select(!!rlang::sym(sample_col), !!rlang::sym(feature_col)) %>%
     dplyr::distinct() %>%
     dplyr::mutate(value = "Present") %>%
@@ -104,17 +104,17 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
       values_to = "value") %>%
     dplyr::mutate(value = factor(.data$value, levels = c("Present", "Absent")))
 
-  p.pav <- df.pav %>%
+  p_pav <- df_pav %>%
     ggplot2::ggplot(ggplot2::aes(
       x = !!rlang::sym(feature_col),
       y = !!rlang::sym(sample_col),
       fill = .data$value)) +
     ggplot2::geom_tile() +
-    ggplot2::scale_x_discrete(limits = df.x.order[[feature_col]]) +
+    ggplot2::scale_x_discrete(limits = df_x_order[[feature_col]]) +
     ggplot2::scale_fill_manual(values = c(present_color, absent_color)) +
     axis_theme
 
   # Combine
-  p <- aplot::insert_top(p.pav, p.type, height = category_height)
+  p <- aplot::insert_top(p_pav, p_type, height = category_height)
   p
 }

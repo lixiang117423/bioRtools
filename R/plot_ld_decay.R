@@ -108,10 +108,10 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
       Mean_r2 = !!rlang::sym(value_col)
     ) %>%
     dplyr::filter(!is.na(Dist), !is.na(Mean_r2), Mean_r2 > 0, Dist >= 0) %>%
-    dplyr::mutate(Dist_kb = Dist / 1000)
+    dplyr::mutate(dist_kb = Dist / 1000)
 
   if (!is.null(max_dist)) {
-    df <- df %>% dplyr::filter(Dist_kb <= max_dist)
+    df <- df %>% dplyr::filter(dist_kb <= max_dist)
   }
 
   populations <- unique(df$Population)
@@ -121,9 +121,9 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
 
   # --- Bin data ---
   df_binned <- df %>%
-    dplyr::mutate(Dist_bin_kb = floor(Dist_kb / (bin_size / 1000)) * (bin_size / 1000)) %>%
-    dplyr::group_by(Population, Dist_bin_kb) %>%
-    dplyr::summarise(Mean_r2_bin = mean(Mean_r2, na.rm = TRUE), .groups = "drop")
+    dplyr::mutate(dist_bin_kb = floor(dist_kb / (bin_size / 1000)) * (bin_size / 1000)) %>%
+    dplyr::group_by(Population, dist_bin_kb) %>%
+    dplyr::summarise(mean_r2_bin = mean(Mean_r2, na.rm = TRUE), .groups = "drop")
 
   if (verbose) {
     message("Binned data: ", nrow(df_binned), " bins across ", length(populations), " population(s)")
@@ -143,8 +143,8 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     }
 
     # Initial values for exponential model
-    y_max <- max(d$Mean_r2_bin)
-    y_min <- min(d$Mean_r2_bin)
+    y_max <- max(d$mean_r2_bin)
+    y_min <- min(d$mean_r2_bin)
     start_a <- max(0, y_min * 0.5)
     start_b <- y_max - start_a
     start_c <- 0.01
@@ -152,7 +152,7 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     fit <- tryCatch({
       if (model == "exponential") {
         minpack.lm::nlsLM(
-          Mean_r2_bin ~ a + b * exp(-c * Dist_bin_kb),
+          mean_r2_bin ~ a + b * exp(-c * dist_bin_kb),
           data = d,
           start = list(a = start_a, b = start_b, c = start_c),
           control = list(maxiter = 500)
@@ -160,10 +160,10 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
       } else {
         n <- n_ind
         minpack.lm::nlsLM(
-          Mean_r2_bin ~ ((10 + rho * Dist_bin_kb) /
-            (22 + 13 * rho * Dist_bin_kb + rho^2 * Dist_bin_kb^2)) *
-            (1 + ((3 + rho * Dist_bin_kb) /
-              (n * (22 + 13 * rho * Dist_bin_kb + rho^2 * Dist_bin_kb^2)))),
+          mean_r2_bin ~ ((10 + rho * dist_bin_kb) /
+            (22 + 13 * rho * dist_bin_kb + rho^2 * dist_bin_kb^2)) *
+            (1 + ((3 + rho * dist_bin_kb) /
+              (n * (22 + 13 * rho * dist_bin_kb + rho^2 * dist_bin_kb^2)))),
           data = d,
           start = list(rho = 0.1),
           control = list(maxiter = 500)
@@ -179,12 +179,12 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     models_list[[pop]] <- fit
 
     # Generate prediction curve
-    pred_dist <- seq(0, max(d$Dist_bin_kb), length.out = 500)
-    pred_r2 <- stats::predict(fit, newdata = data.frame(Dist_bin_kb = pred_dist))
+    pred_dist <- seq(0, max(d$dist_bin_kb), length.out = 500)
+    pred_r2 <- stats::predict(fit, newdata = data.frame(dist_bin_kb = pred_dist))
     fitted_dfs[[pop]] <- data.frame(
       Population = pop,
-      Dist_bin_kb = pred_dist,
-      Mean_r2_fitted = pred_r2
+      dist_bin_kb = pred_dist,
+      mean_r2_fitted = pred_r2
     )
 
     # Calculate half-decay distance
@@ -223,12 +223,12 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(
       data = df_binned,
-      ggplot2::aes(x = Dist_bin_kb, y = Mean_r2_bin, color = Population),
+      ggplot2::aes(x = dist_bin_kb, y = mean_r2_bin, color = Population),
       linewidth = 0.8, alpha = 0.5
     ) +
     ggplot2::geom_line(
       data = fitted_df,
-      ggplot2::aes(x = Dist_bin_kb, y = Mean_r2_fitted, color = Population),
+      ggplot2::aes(x = dist_bin_kb, y = mean_r2_fitted, color = Population),
       linewidth = 1
     ) +
     ggplot2::scale_x_continuous(expand = c(0.01, 0)) +

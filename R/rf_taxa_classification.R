@@ -43,8 +43,8 @@
 #'   \item{accuracy}{Data frame of prediction accuracy at each taxonomic level.}
 #'   \item{predictions}{Named list of mlr3 prediction objects per level.}
 #'   \item{importance}{Data frame of variable importance across all levels.}
-#'   \item{plot.accuracy}{ggplot bar chart of accuracy by taxonomic level.}
-#'   \item{plot.top_features}{ggplot boxplot of top N features at OTU level.}
+#'   \item{plot_accuracy}{ggplot bar chart of accuracy by taxonomic level.}
+#'   \item{plot_top_features}{ggplot boxplot of top N features at OTU level.}
 #' }
 #'
 #' @details
@@ -66,13 +66,13 @@
 #' @examples
 #' \dontrun{
 #' result <- rf_taxa_classification(
-#'   data = df.asv,
-#'   taxo = df.tax,
-#'   sample = df.sample,
+#'   data = df_asv,
+#'   taxo = df_tax,
+#'   sample = df_sample,
 #'   group_col = "treatment"
 #' )
-#' result$plot.accuracy
-#' result$plot.top_features
+#' result$plot_accuracy
+#' result$plot_top_features
 #' result$accuracy
 #' }
 #'
@@ -158,9 +158,9 @@ rf_taxa_classification <- function(data,
   if (verbose) message("Data prepared: ", nrow(df_long), " observations")
 
   # ── Iterate over taxonomic levels ────────────────────────────────────────
-  all.acc <- NULL
-  all.predict <- list()
-  all.importance <- NULL
+  all_acc <- NULL
+  all_predict <- list()
+  all_importance <- NULL
 
   for (level in tax_levels) {
     if (verbose) message("\n=== Processing: ", level, " ===")
@@ -189,19 +189,19 @@ rf_taxa_classification <- function(data,
     }
 
     # Aggregate
-    df.tmp <- df_long %>%
+    df_tmp <- df_long %>%
       dplyr::select(run, group, tax, value) %>%
       dplyr::group_by(run, tax, group) %>%
       dplyr::summarise(sum_value = sum(value), .groups = "drop")
 
     # Create code mapping for wide format
-    distinct_tax <- df.tmp %>%
+    distinct_tax <- df_tmp %>%
       dplyr::select(tax) %>%
       dplyr::distinct() %>%
       dplyr::mutate(tmp = paste0("tmp_", seq_len(dplyr::n())))
 
     # Wide format for ML
-    df.ml <- df.tmp %>%
+    df_ml <- df_tmp %>%
       dplyr::left_join(distinct_tax, by = "tax") %>%
       dplyr::select(run, group, tmp, sum_value) %>%
       tidyr::pivot_wider(names_from = "tmp", values_from = "sum_value",
@@ -209,22 +209,22 @@ rf_taxa_classification <- function(data,
       dplyr::select(-run)
 
     # Replace NA with 0
-    df.ml[is.na(df.ml)] <- 0
+    df_ml[is.na(df_ml)] <- 0
 
     # mlr3 task
-    task.rf <- mlr3::as_task_classif(df.ml, target = "group")
+    task_rf <- mlr3::as_task_classif(df_ml, target = "group")
 
     # Train/test split
     set.seed(seed)
-    split <- mlr3::partition(task.rf, ratio = ratio)
+    split <- mlr3::partition(task_rf, ratio = ratio)
 
     # Learner
-    ranger.lrn <- mlr3::lrn("classif.ranger",
+    ranger_lrn <- mlr3::lrn("classif.ranger",
                              importance = "impurity",
                              predict_type = "prob")
 
     # Search space
-    search.space <- paradox::ps(
+    search_space <- paradox::ps(
       num.trees = paradox::p_int(
         lower = num_trees_range[1], upper = num_trees_range[2],
         trafo = function(x) 20 * x),
@@ -235,33 +235,33 @@ rf_taxa_classification <- function(data,
     # Auto tuner
     at <- mlr3tuning::auto_tuner(
       tuner = mlr3tuning::tnr("random_search"),
-      learner = ranger.lrn,
+      learner = ranger_lrn,
       resampling = mlr3::rsmp("cv", folds = cv_folds),
       measure = mlr3::msr("classif.acc"),
-      search_space = search.space,
+      search_space = search_space,
       term_evals = term_evals
     )
 
     # Tune
     set.seed(seed_tune)
-    at$train(task.rf, row_ids = split$train)
+    at$train(task_rf, row_ids = split$train)
 
     # Train with best params
-    ranger.lrn$param_set$values <- at$tuning_result$learner_param_vals[[1]]
-    ranger.lrn$train(task.rf, row_ids = split$train)
+    ranger_lrn$param_set$values <- at$tuning_result$learner_param_vals[[1]]
+    ranger_lrn$train(task_rf, row_ids = split$train)
 
     # Predict
-    predictions <- ranger.lrn$predict(task.rf, row_ids = split$test)
-    all.predict[[level]] <- predictions
+    predictions <- ranger_lrn$predict(task_rf, row_ids = split$test)
+    all_predict[[level]] <- predictions
 
     # Accuracy
     acc <- predictions$score(mlr3::msr("classif.acc"))
-    all.acc <- dplyr::bind_rows(all.acc,
+    all_acc <- dplyr::bind_rows(all_acc,
       data.frame(tax = level, acc = acc, stringsAsFactors = FALSE))
     if (verbose) message("  Accuracy: ", round(acc * 100, 2), "%")
 
     # Variable importance
-    imp <- ranger.lrn$model$variable.importance
+    imp <- ranger_lrn$model$variable.importance
     if (!is.null(imp)) {
       imp_df <- data.frame(
         tmp = names(imp),
@@ -273,12 +273,12 @@ rf_taxa_classification <- function(data,
         dplyr::select(tax, importance) %>%
         dplyr::mutate(tax_group = level)
 
-      all.importance <- dplyr::bind_rows(all.importance, imp_df)
+      all_importance <- dplyr::bind_rows(all_importance, imp_df)
     }
   }
 
   # ── Accuracy plot ────────────────────────────────────────────────────────
-  plot.acc <- all.acc %>%
+  plot_acc <- all_acc %>%
     dplyr::arrange(dplyr::desc(acc)) %>%
     dplyr::mutate(tax = factor(tax, levels = unique(tax))) %>%
     ggplot2::ggplot(ggplot2::aes(x = tax, y = acc * 100)) +
@@ -290,8 +290,8 @@ rf_taxa_classification <- function(data,
     ggprism::theme_prism()
 
   # ── Top features boxplot ─────────────────────────────────────────────────
-  plot.top <- NULL
-  top_features <- all.importance %>%
+  plot_top <- NULL
+  top_features <- all_importance %>%
     dplyr::filter(tax_group == "otu") %>%
     dplyr::arrange(desc(importance)) %>%
     dplyr::slice_head(n = top_n) %>%
@@ -306,7 +306,7 @@ rf_taxa_classification <- function(data,
       dplyr::filter(otu %in% top_features) %>%
       dplyr::select(run, group, otu, value)
 
-    plot.top <- top_df %>%
+    plot_top <- top_df %>%
       ggplot2::ggplot(ggplot2::aes(
         x = group, y = value, fill = group
       )) +
@@ -320,17 +320,17 @@ rf_taxa_classification <- function(data,
       )
 
     if (fill_palette == "research") {
-      plot.top <- plot.top + bioRtools::scale_fill_research()
+      plot_top <- plot_top + bioRtools::scale_fill_research()
     }
-    plot.top <- plot.top + ggprism::theme_prism()
+    plot_top <- plot_top + ggprism::theme_prism()
   }
 
   # ── Return ───────────────────────────────────────────────────────────────
   list(
-    accuracy       = all.acc,
-    predictions    = all.predict,
-    importance     = all.importance,
-    plot.accuracy  = plot.acc,
-    plot.top_features = plot.top
+    accuracy       = all_acc,
+    predictions    = all_predict,
+    importance     = all_importance,
+    plot_accuracy  = plot_acc,
+    plot_top_features = plot_top
   )
 }
