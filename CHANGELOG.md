@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.9] - 2026-06-22
+
+### Changed
+- `name_map()`: renamed output column `sanitized` to `name` so it matches `tidyr::pivot_longer()`'s default key column. Enables direct `left_join()` without an intermediate `dplyr::rename()`.
+
 ## [1.49.8] - 2026-06-22
 
 ### Fixed
