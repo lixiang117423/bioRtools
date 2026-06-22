@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.7] - 2026-06-22
+
+### Added
+- `name_map()`: thin convenience function returning a two-column data frame (sanitized, raw) mapping current column names to originals stored by `read_data()`. Replaces the inline `data.frame(sanitized = names(df), raw = attr(df, "raw_names"))` pattern.
+
 ## [1.49.6] - 2026-06-22
 
 ### Added
