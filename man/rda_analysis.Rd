@@ -61,15 +61,15 @@ environmental fitting significance test. Default is 999.}
 \value{
 A list containing five components:
 \describe{
-  \item{result.rda}{The complete RDA result object from \code{vegan::rda()},
+  \item{result_rda}{The complete RDA result object from \code{vegan::rda()},
     which can be used for further analysis.}
-  \item{plot.rda}{A ggplot object showing the RDA biplot with sample points
+  \item{plot_rda}{A ggplot object showing the RDA biplot with sample points
     and environmental variable arrows.}
-  \item{sample.scores}{A data frame containing sample coordinates on RDA axes
+  \item{sample_scores}{A data frame containing sample coordinates on RDA axes
     merged with sample information.}
-  \item{environmental.scores}{A data frame containing environmental variable
+  \item{environmental_scores}{A data frame containing environmental variable
     coordinates for plotting arrows.}
-  \item{environmental.fit}{A data frame containing R² and p-values for
+  \item{environmental_fit}{A data frame containing R² and p-values for
     environmental variables from permutation tests.}
 }
 }
@@ -129,10 +129,10 @@ rda_result <- rda_analysis(
 )
 
 # View the plot
-rda_result$plot.rda
+rda_result$plot_rda
 
 # Check environmental variable significance
-rda_result$environmental.fit
+rda_result$environmental_fit
 
 # Customized RDA with different parameters
 rda_custom <- rda_analysis(
@@ -146,10 +146,10 @@ rda_custom <- rda_analysis(
 )
 
 # Access RDA summary statistics
-summary(rda_result$result.rda)
+summary(rda_result$result_rda)
 
 # Check variance explained
-rda_result$result.rda$CCA$eig / rda_result$result.rda$tot.chi
+rda_result$result_rda$CCA$eig / rda_result$result_rda$tot.chi
 
 }
 \author{
