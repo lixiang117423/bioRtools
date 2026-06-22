@@ -17,7 +17,8 @@ Default is \code{"\\t"} (tab). Ignored for other file types.}
 \value{
 A data frame for tabular formats, the deserialized R object for
   \code{.rds}/\code{.rdata} files, or a FASTA data frame for
-  \code{.fasta}/\code{.fa} files.
+  \code{.fasta}/\code{.fa} files. For tabular formats, attribute
+  \code{raw_names} holds the original column names from the file.
 }
 \description{
 Reads a data file using the appropriate function based on file extension.
@@ -25,9 +26,19 @@ Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
 (.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
 First row is treated as column headers for tabular formats.
 }
+\details{
+For tabular formats (.xlsx/.xls/.csv/.tsv/.txt), the original column names
+from the file are preserved as attribute \code{raw_names}. Use
+\code{attr(df, "raw_names")} to retrieve them. Useful when \code{readxl} or
+\code{readr} sanitizes names (e.g., \code{"Plant height (PH)"} becomes
+\code{"Plant.height..PH.."}) — \code{raw_names} keeps the human-readable
+originals for plotting, reporting, or pivoting back to original labels.
+}
 \examples{
 \dontrun{
 df <- read_data("data/samples.xlsx")
+attr(df, "raw_names")  # original column names from the file
+
 df <- read_data("data/counts.csv")
 df <- read_data("data/table.tsv")
 df <- read_data("data/table.txt", delim = ",")
