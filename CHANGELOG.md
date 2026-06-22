@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.1] - 2026-06-22
+
+### Fixed
+- `scale_fill_research_c()` / `scale_color_research_c()` (and the `scale_colour_research_c` alias): calling with no arguments failed with `'arg' must be of length 1` because the full default `palette` vector (length 6) was passed to `scale_*_sci_c()`, whose `match.arg()` requires length 1. Added `palette <- match.arg(palette)` in the wrappers so the default selects the first palette (`research_teal_sequential`) and explicit palette names still work.
+
 ## [1.50.0] - 2026-06-22
 
 ### Changed (breaking)
