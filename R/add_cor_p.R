@@ -11,13 +11,14 @@
 #' pattern common in grouped correlation workflows.
 #'
 #' @param df A data frame.
-#' @param x,y Columns to correlate. Accept bare names (e.g. \code{otu.value})
+#' @param x,y Value columns to correlate. Accept bare names (e.g. \code{otu.value})
 #'   or strings (e.g. \code{"otu.value"}).
-#' @param group_cols Optional character vector of grouping column names
-#'   (default: NULL). When provided, the function does
-#'   \code{group_by(across(all_of(group_cols)))} before computing and
-#'   \code{ungroup()} after. When NULL, the function respects any existing
-#'   grouping from a prior \code{dplyr::group_by()} and ungroups at the end.
+#' @param from,to Grouping columns identifying the two entities being
+#'   correlated (e.g., \code{from = "otu"}, \code{to = "phe"}). Must be
+#'   character strings (column names). When both are provided, the function
+#'   groups by these two columns. When both are NULL (default), the function
+#'   respects any existing grouping from a prior \code{dplyr::group_by()}.
+#'   Providing only one of \code{from}/\code{to} is an error.
 #' @param method Correlation method: \code{"pearson"} (default), \code{"kendall"},
 #'   or \code{"spearman"}.
 #' @param add_regression Logical; if TRUE, also add \code{lm_r2} and
@@ -37,11 +38,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Grouping via group_cols parameter
+#' # Explicit from/to grouping
 #' df %>%
-#'   add_cor_p(otu.value, phe.value, group_cols = c("otu", "phe"))
+#'   add_cor_p(otu.value, phe.value, from = "otu", to = "phe")
 #'
-#' # Or respect existing grouping
+#' # Or rely on existing dplyr::group_by
 #' df %>%
 #'   dplyr::group_by(otu, phe) %>%
 #'   add_cor_p(otu.value, phe.value)
@@ -49,12 +50,12 @@
 #' # Also add linear regression R^2 and p-value
 #' df %>%
 #'   add_cor_p(otu.value, phe.value,
-#'             group_cols = c("otu", "phe"),
+#'             from = "otu", to = "phe",
 #'             add_regression = TRUE)
 #' }
 #'
-add_cor_p <- function(df, x, y, group_cols = NULL, method = "pearson",
-                      add_regression = FALSE) {
+add_cor_p <- function(df, x, y, from = NULL, to = NULL,
+                      method = "pearson", add_regression = FALSE) {
 
   if (!is.data.frame(df)) {
     stop("'df' must be a data frame")
@@ -82,16 +83,27 @@ add_cor_p <- function(df, x, y, group_cols = NULL, method = "pearson",
     stop("'add_regression' must be a single TRUE or FALSE")
   }
 
-  if (!is.null(group_cols)) {
-    if (!is.character(group_cols) || length(group_cols) < 1L) {
-      stop("'group_cols' must be a non-empty character vector or NULL")
+  # from/to: both or neither
+  if (xor(is.null(from), is.null(to))) {
+    stop("'from' and 'to' must be provided together (both or neither)")
+  }
+
+  if (!is.null(from)) {
+    if (!is.character(from) || length(from) != 1L || is.na(from)) {
+      stop("'from' must be a single character string")
     }
-    missing_cols <- setdiff(group_cols, names(df))
+    if (!is.character(to) || length(to) != 1L || is.na(to)) {
+      stop("'to' must be a single character string")
+    }
+    if (from == to) {
+      stop("'from' and 'to' must be different columns")
+    }
+    missing_cols <- setdiff(c(from, to), names(df))
     if (length(missing_cols) > 0L) {
       stop(sprintf("Group column(s) not found: %s",
                    paste(missing_cols, collapse = ", ")))
     }
-    df <- df %>% dplyr::group_by(dplyr::across(dplyr::all_of(group_cols)))
+    df <- df %>% dplyr::group_by(dplyr::across(dplyr::all_of(c(from, to))))
   }
 
   result <- df %>%
