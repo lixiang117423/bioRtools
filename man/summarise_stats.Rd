@@ -4,12 +4,15 @@
 \alias{summarise_stats}
 \title{Grouped Summary Statistics}
 \usage{
-summarise_stats(data, value, na.rm = TRUE)
+summarise_stats(data, value = "value", na.rm = TRUE)
 }
 \arguments{
 \item{data}{A grouped or ungrouped data frame.}
 
-\item{value}{Column name (unquoted) of the numeric variable to summarise.}
+\item{value}{Column name of the numeric variable to summarise. Accepts a
+bare name (e.g. \code{value}) or a string (e.g. \code{"value"}).
+Default: \code{"value"} (the conventional output column from
+\code{tidyr::pivot_longer()}).}
 
 \item{na.rm}{Logical; remove NA values before computing (default: TRUE).}
 }
@@ -26,11 +29,17 @@ in a pipe: \code{df \%>\% group_by(group) \%>\% summarise_stats(value)}.
 \examples{
 df <- data.frame(group = rep(c("A", "B"), each = 5), value = c(1:10))
 
-# Ungrouped
-summarise_stats(df, value)
+# Ungrouped (default column name "value")
+summarise_stats(df)
 
 # Grouped
+df \%>\% dplyr::group_by(group) \%>\% summarise_stats()
+
+# Bare name
 df \%>\% dplyr::group_by(group) \%>\% summarise_stats(value)
+
+# String
+df \%>\% dplyr::group_by(group) \%>\% summarise_stats("value")
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

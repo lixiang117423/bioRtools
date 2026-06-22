@@ -5,7 +5,10 @@
 #' in a pipe: \code{df \%>\% group_by(group) \%>\% summarise_stats(value)}.
 #'
 #' @param data A grouped or ungrouped data frame.
-#' @param value Column name (unquoted) of the numeric variable to summarise.
+#' @param value Column name of the numeric variable to summarise. Accepts a
+#'   bare name (e.g. \code{value}) or a string (e.g. \code{"value"}).
+#'   Default: \code{"value"} (the conventional output column from
+#'   \code{tidyr::pivot_longer()}).
 #' @param na.rm Logical; remove NA values before computing (default: TRUE).
 #'
 #' @return A data frame with columns: \code{max}, \code{min}, \code{mean},
@@ -17,30 +20,42 @@
 #' @examples
 #' df <- data.frame(group = rep(c("A", "B"), each = 5), value = c(1:10))
 #'
-#' # Ungrouped
-#' summarise_stats(df, value)
+#' # Ungrouped (default column name "value")
+#' summarise_stats(df)
 #'
 #' # Grouped
+#' df %>% dplyr::group_by(group) %>% summarise_stats()
+#'
+#' # Bare name
 #' df %>% dplyr::group_by(group) %>% summarise_stats(value)
-summarise_stats <- function(data, value, na.rm = TRUE) {
-  value_col <- dplyr::pull(data, {{ value }})
-  n_total <- length(value_col)
-  n_miss  <- sum(is.na(value_col))
+#'
+#' # String
+#' df %>% dplyr::group_by(group) %>% summarise_stats("value")
+summarise_stats <- function(data, value = "value", na.rm = TRUE) {
+  value_col <- rlang::as_name(rlang::enquo(value))
+
+  if (!value_col %in% names(data)) {
+    stop(sprintf("Column '%s' not found in data frame", value_col))
+  }
+
+  vals <- data[[value_col]]
+  n_total <- length(vals)
+  n_miss  <- sum(is.na(vals))
 
   data %>%
     dplyr::summarise(
-      max    = max({{ value }}, na.rm = na.rm),
-      min    = min({{ value }}, na.rm = na.rm),
-      mean   = mean({{ value }}, na.rm = na.rm),
-      median = stats::median({{ value }}, na.rm = na.rm),
-      sd     = stats::sd({{ value }}, na.rm = na.rm),
-      se     = stats::sd({{ value }}, na.rm = na.rm) / sqrt(sum(!is.na({{ value }}))),
-      cv     = stats::sd({{ value }}, na.rm = na.rm) / mean({{ value }}, na.rm = na.rm) * 100,
-      iqr    = stats::IQR({{ value }}, na.rm = na.rm),
-      range  = max({{ value }}, na.rm = na.rm) - min({{ value }}, na.rm = na.rm),
-      sum    = sum({{ value }}, na.rm = na.rm),
-      n      = sum(!is.na({{ value }})),
-      n_na   = sum(is.na({{ value }})),
+      max    = max(.data[[value_col]], na.rm = na.rm),
+      min    = min(.data[[value_col]], na.rm = na.rm),
+      mean   = mean(.data[[value_col]], na.rm = na.rm),
+      median = stats::median(.data[[value_col]], na.rm = na.rm),
+      sd     = stats::sd(.data[[value_col]], na.rm = na.rm),
+      se     = stats::sd(.data[[value_col]], na.rm = na.rm) / sqrt(sum(!is.na(.data[[value_col]]))),
+      cv     = stats::sd(.data[[value_col]], na.rm = na.rm) / mean(.data[[value_col]], na.rm = na.rm) * 100,
+      iqr    = stats::IQR(.data[[value_col]], na.rm = na.rm),
+      range  = max(.data[[value_col]], na.rm = na.rm) - min(.data[[value_col]], na.rm = na.rm),
+      sum    = sum(.data[[value_col]], na.rm = na.rm),
+      n      = sum(!is.na(.data[[value_col]])),
+      n_na   = sum(is.na(.data[[value_col]])),
       .groups = "drop"
     )
 }

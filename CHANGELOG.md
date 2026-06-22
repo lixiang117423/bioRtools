@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.8] - 2026-06-22
+
+### Fixed
+- `summarise_stats()`: passing `value` as a string (e.g., `summarise_stats("value")` or `summarise_stats(value = "value")`) silently failed because `{{ value }}` treated the string as a literal rather than a column reference. Switched to `.data[[value_col]]` so both bare names and strings work.
+
+### Changed
+- `summarise_stats()`: `value` now defaults to `"value"`, matching the conventional output column name from `tidyr::pivot_longer()`. The user's `pivot_longer() %>% group_by(...) %>% summarise_stats()` pipeline no longer needs to specify `value` explicitly.
+
 ## [1.49.7] - 2026-06-22
 
 ### Added
