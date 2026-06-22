@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.4] - 2026-06-22
+
+### Added
+- `cor_analysis()`: new `add_regression` parameter (default FALSE). When TRUE, adds four columns to the result: `lm_slope`, `lm_intercept`, `lm_r2`, `lm_pvalue` from `lm(to ~ from)` on raw values. Computed only after correlation filtering, so cost scales with significant-pair count. For Pearson, `lm_r2 == cor^2` and `lm_pvalue == pvalue` by construction (verified numerically). For Spearman/Kendall, regression is independent of the rank-based correlation.
+
 ## [1.49.3] - 2026-06-18
 
 ### Changed

@@ -20,6 +20,14 @@
 #'   results (default: 0.6). Only correlations with |r| >= cor will be returned.
 #' @param pvalue Maximum p-value threshold for statistical significance
 #'   (default: 0.05). Only correlations with p-value <= pvalue will be returned.
+#' @param add_regression Logical; if TRUE, add simple linear regression
+#'   statistics (\code{lm_slope}, \code{lm_intercept}, \code{lm_r2},
+#'   \code{lm_pvalue}) for each surviving pair. Regression fits
+#'   \code{lm(to ~ from)} on raw values, independent of \code{method}.
+#'   For \code{method = "pearson"}, \code{lm_r2} equals \code{cor^2} and
+#'   \code{lm_pvalue} equals \code{pvalue} by construction. Computed only
+#'   after correlation filtering, so cost scales with number of significant
+#'   pairs, not total pairs. Default FALSE.
 #'
 #' @return A data frame containing significant correlations with columns:
 #'   \itemize{
@@ -27,6 +35,9 @@
 #'     \item \code{to}: Variable name from the second dataset (or same dataset)
 #'     \item \code{cor}: Correlation coefficient
 #'     \item \code{pvalue}: Statistical significance (p-value)
+#'     \item \code{correlation_strength}, \code{correlation_direction}: Always added
+#'     \item \code{lm_slope}, \code{lm_intercept}, \code{lm_r2}, \code{lm_pvalue}:
+#'       Only when \code{add_regression = TRUE}
 #'   }
 #'
 #' @details
@@ -97,7 +108,15 @@
 #' print("Spearman correlations:")
 #' print(spearman_result)
 #'
-cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, pvalue = 0.05) {
+#' # Example 5: Add linear regression stats (R^2 and slope/intercept)
+#' cor_lm <- cor_analysis(
+#'   data_1 = iris_numeric,
+#'   add_regression = TRUE
+#' )
+#' # For Pearson method, lm_r2 == cor^2 and lm_pvalue == pvalue
+#' print(cor_lm)
+#'
+cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, pvalue = 0.05, add_regression = FALSE) {
   # Input validation
   if (!is.data.frame(data_1)) {
     stop("'data_1' must be a data frame")
@@ -117,6 +136,10 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
 
   if (!is.numeric(pvalue) || pvalue <= 0 || pvalue > 1) {
     stop("'pvalue' must be a numeric value between 0 and 1")
+  }
+
+  if (!is.logical(add_regression) || length(add_regression) != 1) {
+    stop("'add_regression' must be a single TRUE or FALSE")
   }
 
   # Check if data_1 has numeric columns
@@ -236,10 +259,47 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
       correlation_direction = ifelse(cor > 0, "Positive", "Negative")
     )
 
+  # Optional: simple linear regression per surviving pair.
+  # from = x (predictor), to = y (response); fit lm(y ~ x) on raw values.
+  # Computed only on filtered pairs, so cost scales with significant-pair count.
+  if (add_regression && nrow(result_cor) > 0) {
+    x_data <- if (is.null(data_2)) data_1 else data_1
+    y_data <- if (is.null(data_2)) data_1 else data_2
+
+    n_pairs <- nrow(result_cor)
+    lm_slope <- numeric(n_pairs)
+    lm_intercept <- numeric(n_pairs)
+    lm_r2 <- numeric(n_pairs)
+    lm_pvalue <- numeric(n_pairs)
+
+    for (i in seq_len(n_pairs)) {
+      x_vec <- x_data[[result_cor$from[i]]]
+      y_vec <- y_data[[result_cor$to[i]]]
+      fit <- stats::lm(y_vec ~ x_vec)
+      coefs <- stats::coef(fit)
+      s <- summary(fit)
+      lm_intercept[i] <- coefs[1]
+      lm_slope[i] <- coefs[2]
+      lm_r2[i] <- s$r.squared
+      f_stat <- s$fstatistic
+      if (is.na(f_stat[1])) {
+        lm_pvalue[i] <- NA_real_
+      } else {
+        lm_pvalue[i] <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+      }
+    }
+
+    result_cor$lm_slope <- lm_slope
+    result_cor$lm_intercept <- lm_intercept
+    result_cor$lm_r2 <- lm_r2
+    result_cor$lm_pvalue <- lm_pvalue
+  }
+
   # Add attributes to result for method and thresholds used
   attr(result_cor, "method") <- method
   attr(result_cor, "cor_threshold") <- cor
   attr(result_cor, "pvalue_threshold") <- pvalue
+  attr(result_cor, "add_regression") <- add_regression
   attr(result_cor, "analysis_type") <- if (is.null(data_2)) "within-dataset" else "between-dataset"
 
   # Print summary if interactive
@@ -248,6 +308,7 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
     cat("Method:", method, "\n")
     cat("Correlation threshold: |r| >=", cor, "\n")
     cat("P-value threshold: p <=", pvalue, "\n")
+    cat("Add regression:", add_regression, "\n")
     cat("Analysis type:", attr(result_cor, "analysis_type"), "\n")
     cat("Significant correlations found:", nrow(result_cor), "\n\n")
   }

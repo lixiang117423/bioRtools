@@ -9,7 +9,8 @@ cor_analysis(
   data_2 = NULL,
   method = "pearson",
   cor = 0.6,
-  pvalue = 0.05
+  pvalue = 0.05,
+  add_regression = FALSE
 )
 }
 \arguments{
@@ -32,6 +33,15 @@ results (default: 0.6). Only correlations with |r| >= cor will be returned.}
 
 \item{pvalue}{Maximum p-value threshold for statistical significance
 (default: 0.05). Only correlations with p-value <= pvalue will be returned.}
+
+\item{add_regression}{Logical; if TRUE, add simple linear regression
+statistics (\code{lm_slope}, \code{lm_intercept}, \code{lm_r2},
+\code{lm_pvalue}) for each surviving pair. Regression fits
+\code{lm(to ~ from)} on raw values, independent of \code{method}.
+For \code{method = "pearson"}, \code{lm_r2} equals \code{cor^2} and
+\code{lm_pvalue} equals \code{pvalue} by construction. Computed only
+after correlation filtering, so cost scales with number of significant
+pairs, not total pairs. Default FALSE.}
 }
 \value{
 A data frame containing significant correlations with columns:
@@ -40,6 +50,9 @@ A data frame containing significant correlations with columns:
     \item \code{to}: Variable name from the second dataset (or same dataset)
     \item \code{cor}: Correlation coefficient
     \item \code{pvalue}: Statistical significance (p-value)
+    \item \code{correlation_strength}, \code{correlation_direction}: Always added
+    \item \code{lm_slope}, \code{lm_intercept}, \code{lm_r2}, \code{lm_pvalue}:
+      Only when \code{add_regression = TRUE}
   }
 }
 \description{
@@ -112,6 +125,14 @@ print("Pearson correlations:")
 print(pearson_result)
 print("Spearman correlations:")
 print(spearman_result)
+
+# Example 5: Add linear regression stats (R^2 and slope/intercept)
+cor_lm <- cor_analysis(
+  data_1 = iris_numeric,
+  add_regression = TRUE
+)
+# For Pearson method, lm_r2 == cor^2 and lm_pvalue == pvalue
+print(cor_lm)
 
 }
 \author{
