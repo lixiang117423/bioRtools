@@ -12,9 +12,11 @@ name_map(df)
 \value{
 A data frame with columns:
   \itemize{
-    \item \code{sanitized}: Current column name (\code{names(df)}).
+    \item \code{name}: Current (sanitized) column name (\code{names(df)}).
+      Named to match \code{tidyr::pivot_longer()}'s default key column
+      so it joins seamlessly.
     \item \code{raw}: Original column name from the file. If no
-      \code{raw_names} attribute exists, falls back to \code{sanitized}.
+      \code{raw_names} attribute exists, falls back to \code{name}.
   }
 }
 \description{
@@ -22,15 +24,17 @@ Returns a two-column data frame mapping sanitized column names
 (\code{names(df)}) to the original column names from the file
 (\code{attr(df, "raw_names")}, attached by \code{\link{read_data}}).
 Useful for inspecting how a tabular file's headers were sanitized
-(e.g., for Excel column headers like \code{"Plant height (PH)"}).
+(e.g., for Excel column headers like \code{"Plant height (PH)"}),
+and for joining back to \code{tidyr::pivot_longer()} output (which
+uses \code{name} as the default key column).
 }
 \examples{
 \dontrun{
 df <- read_data("data.xlsx")
 name_map(df)
-#        sanitized             raw
-# 1              id              id
-# 2       treatment       treatment
+#                name              raw
+# 1                id              id
+# 2         treatment       treatment
 # 3 Plant.height..PH. Plant height (PH)
 # 4  Root.length..RL.  Root length (RL)
 }
