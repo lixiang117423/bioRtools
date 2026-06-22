@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.49.6] - 2026-06-22
+
+### Added
+- `read_data()`: for tabular formats (.xlsx/.xls/.csv/.tsv/.txt), the original column names from the file are now preserved as attribute `raw_names`. Use `attr(df, "raw_names")` to retrieve them. Useful when `readxl`/`readr` sanitizes names (e.g., `"Plant height (PH)"` -> `Plant.height..PH..`) — `raw_names` keeps the human-readable originals for plotting, reporting, or restoring before pivot_longer.
+
+  ```r
+  df <- read_data("phe.xlsx")
+  attr(df, "raw_names")                    # original names
+  names(df) <- attr(df, "raw_names")       # restore originals if needed
+  ```
+
 ## [1.49.5] - 2026-06-22
 
 ### Added
