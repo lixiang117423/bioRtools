@@ -35,15 +35,15 @@
 #'
 #' @return A list containing five components:
 #' \describe{
-#'   \item{result.rda}{The complete RDA result object from \code{vegan::rda()},
+#'   \item{result_rda}{The complete RDA result object from \code{vegan::rda()},
 #'     which can be used for further analysis.}
-#'   \item{plot.rda}{A ggplot object showing the RDA biplot with sample points
+#'   \item{plot_rda}{A ggplot object showing the RDA biplot with sample points
 #'     and environmental variable arrows.}
-#'   \item{sample.scores}{A data frame containing sample coordinates on RDA axes
+#'   \item{sample_scores}{A data frame containing sample coordinates on RDA axes
 #'     merged with sample information.}
-#'   \item{environmental.scores}{A data frame containing environmental variable
+#'   \item{environmental_scores}{A data frame containing environmental variable
 #'     coordinates for plotting arrows.}
-#'   \item{environmental.fit}{A data frame containing R² and p-values for
+#'   \item{environmental_fit}{A data frame containing R² and p-values for
 #'     environmental variables from permutation tests.}
 #' }
 #'
@@ -100,10 +100,10 @@
 #' )
 #'
 #' # View the plot
-#' rda_result$plot.rda
+#' rda_result$plot_rda
 #'
 #' # Check environmental variable significance
-#' rda_result$environmental.fit
+#' rda_result$environmental_fit
 #'
 #' # Customized RDA with different parameters
 #' rda_custom <- rda_analysis(
@@ -117,10 +117,10 @@
 #' )
 #'
 #' # Access RDA summary statistics
-#' summary(rda_result$result.rda)
+#' summary(rda_result$result_rda)
 #'
 #' # Check variance explained
-#' rda_result$result.rda$CCA$eig / rda_result$result.rda$tot.chi
+#' rda_result$result_rda$CCA$eig / rda_result$result_rda$tot.chi
 #'
 rda_analysis <- function(data,
                          physicochemical,
@@ -309,7 +309,19 @@ rda_analysis <- function(data,
       plot.subtitle = ggplot2::element_text(hjust = 0.5, size = 11)
     )
 
-  # Step 7: Perform environmental fitting with permutation tests
+  # Step 7: Perform environmental fitting with permutation tests.
+  # Pre-define environmental_significance so the return list is well-formed
+  # even if envfit fails (the error handler in tryCatch is a closure and
+  # cannot assign to the parent frame).
+  environmental_significance <- data.frame(
+    variable = character(),
+    r_squared = numeric(),
+    p_value = numeric(),
+    significance = character(),
+    r_squared_percent = numeric(),
+    stringsAsFactors = FALSE
+  )
+
   tryCatch(
     {
       env_fit <- vegan::envfit(rda_result, physicochemical, permutations = permutations)
@@ -334,15 +346,13 @@ rda_analysis <- function(data,
     },
     error = function(e) {
       warning("Environmental fitting failed: ", e$message)
-      environmental_significance <- data.frame()
     })
 
-  # Return comprehensive results following project conventions
   list(
-    result.rda = rda_result,
-    plot.rda = rda_plot,
-    sample.scores = sample_coords,
-    environmental.scores = environmental_coords,
-    environmental.fit = environmental_significance
+    result_rda = rda_result,
+    plot_rda = rda_plot,
+    sample_scores = sample_coords,
+    environmental_scores = environmental_coords,
+    environmental_fit = environmental_significance
   )
 }

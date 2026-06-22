@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.51.0] - 2026-06-22
+
+### Changed (breaking)
+- `rda_analysis()`: returned list element names normalized to snake_case per DEVELOP_GUIDE 1.1. Migration:
+  - `result$plot.rda` → `result$plot_rda`
+  - `result$result.rda` → `result$result_rda`
+  - `result$sample.scores` → `result$sample_scores`
+  - `result$environmental.scores` → `result$environmental_scores`
+  - `result$environmental.fit` → `result$environmental_fit`
+
+### Fixed
+- `rda_analysis()`: `environmental_significance` was assigned inside the error handler of `tryCatch` (a closure) and never escaped to the parent frame. If `vegan::envfit()` failed, the final `list()` would error with "object 'environmental_significance' not found". Now pre-defined as an empty data frame before `tryCatch` so the return value is well-formed in all cases.
+- `theme_prism()`: `%+replace%` operator was used but not imported from ggplot2. Calling `theme_prism()` without `library(ggplot2)` failed with "没有 %>%+replace% 这个函数". Now imported via `@importFrom ggplot2 %+replace%`.
+
 ## [1.50.6] - 2026-06-22
 
 ### Changed

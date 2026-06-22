@@ -24,6 +24,7 @@
 #'
 #' @return A ggplot2 theme object.
 #' @author Xiang LI <lixiang117423@gmail.com>
+#' @importFrom ggplot2 %+replace%
 #' @export
 #'
 #' @examples
