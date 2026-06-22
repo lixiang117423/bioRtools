@@ -887,6 +887,7 @@ scale_fill_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @author Xiang LI <lixiang117423@gmail.com>
 scale_color_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                                    alpha = 1, reverse = FALSE, ...) {
+  palette <- match.arg(palette)
   scale_color_sci_c(palette = palette, alpha = alpha, reverse = reverse, ...)
 }
 
@@ -900,5 +901,6 @@ scale_colour_research_c <- scale_color_research_c
 #' @author Xiang LI <lixiang117423@gmail.com>
 scale_fill_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                                   alpha = 1, reverse = FALSE, ...) {
+  palette <- match.arg(palette)
   scale_fill_sci_c(palette = palette, alpha = alpha, reverse = reverse, ...)
 }
