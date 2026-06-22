@@ -138,6 +138,15 @@ anova_posthoc <- function(data, group, value = NULL, method = "Tukey", level = 0
 #' Internal function to perform ANOVA on a single group
 #' @noRd
 anova_single_group <- function(data, group, value, method, level) {
+
+  # Rename the output column "group" to the original input name on the way out.
+  finalize <- function(df) {
+    if ("group" %in% names(df)) {
+      names(df)[names(df) == "group"] <- group
+    }
+    df
+  }
+
   # Prepare data for analysis
   data_new <- data %>%
     dplyr::select(dplyr::all_of(c(group, value))) %>%
@@ -158,22 +167,22 @@ anova_single_group <- function(data, group, value, method, level) {
   # Check if we have enough data
   if (nrow(data_new) < 2) {
     warning("Not enough valid observations for analysis in this group")
-    return(tibble::tibble(
+    return(finalize(tibble::tibble(
       group = character(),
       anova_pvalue = numeric(),
       anova_signif = character()
-    ))
+    )))
   }
 
   # Check if we have at least 2 groups
   n_groups <- length(unique(data_new$group_anova))
   if (n_groups < 2) {
     warning("Need at least 2 groups for ANOVA in this group")
-    return(tibble::tibble(
+    return(finalize(tibble::tibble(
       group = as.character(unique(data_new$group_anova)),
       anova_pvalue = NA_real_,
       anova_signif = "NS"
-    ))
+    )))
   }
 
   # Perform ANOVA
@@ -187,11 +196,11 @@ anova_single_group <- function(data, group, value, method, level) {
     })
 
   if (is.null(fit)) {
-    return(tibble::tibble(
+    return(finalize(tibble::tibble(
       group = character(),
       anova_pvalue = numeric(),
       anova_signif = character()
-    ))
+    )))
   }
 
   anova_pvalue <- broom::tidy(fit)$p.value[1]
@@ -209,12 +218,12 @@ anova_single_group <- function(data, group, value, method, level) {
       })
 
     if (is.null(posthoc_result)) {
-      return(tibble::tibble(
+      return(finalize(tibble::tibble(
         group = as.character(unique(data_new$group_anova)),
         anova_pvalue = anova_pvalue,
         anova_signif = get_anova_signif(anova_pvalue),
         tukey_signif = NA_character_
-      ))
+      )))
     }
 
     res <- posthoc_result[["mcletters"]][["Letters"]] %>%
@@ -240,12 +249,12 @@ anova_single_group <- function(data, group, value, method, level) {
       })
 
     if (is.null(duncan_result)) {
-      return(tibble::tibble(
+      return(finalize(tibble::tibble(
         group = as.character(unique(data_new$group_anova)),
         anova_pvalue = anova_pvalue,
         anova_signif = get_anova_signif(anova_pvalue),
         duncan_signif = NA_character_
-      ))
+      )))
     }
 
     res <- duncan_result[["groups"]] %>%
@@ -264,7 +273,7 @@ anova_single_group <- function(data, group, value, method, level) {
     # Reorder columns: group, anova_pvalue, anova_signif, posthoc results
     dplyr::select(group, anova_pvalue, anova_signif, dplyr::everything())
 
-  anova_result
+  finalize(anova_result)
 }
 
 #' Helper function to get ANOVA significance label
