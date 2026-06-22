@@ -6,11 +6,29 @@
 \alias{scale_colour_heatmap}
 \title{pheatmap-style Heatmap Color Scale}
 \usage{
-scale_fill_heatmap(n = 100L, alpha = 1, reverse = FALSE, ...)
+scale_fill_heatmap(
+  n = 100L,
+  alpha = 1,
+  reverse = FALSE,
+  mid_color = "#F0F0F0",
+  ...
+)
 
-scale_color_heatmap(n = 100L, alpha = 1, reverse = FALSE, ...)
+scale_color_heatmap(
+  n = 100L,
+  alpha = 1,
+  reverse = FALSE,
+  mid_color = "#F0F0F0",
+  ...
+)
 
-scale_colour_heatmap(n = 100L, alpha = 1, reverse = FALSE, ...)
+scale_colour_heatmap(
+  n = 100L,
+  alpha = 1,
+  reverse = FALSE,
+  mid_color = "#F0F0F0",
+  ...
+)
 }
 \arguments{
 \item{n}{Integer; number of colors in the interpolated gradient
@@ -20,6 +38,11 @@ scale_colour_heatmap(n = 100L, alpha = 1, reverse = FALSE, ...)
 
 \item{reverse}{Logical; reverse the palette (default: FALSE).}
 
+\item{mid_color}{Middle color between low (\code{#0C6291}) and high
+(\code{#A63446}). Default: \code{"#F0F0F0"} (light gray, visible on
+white backgrounds). Use \code{"white"} for original pheatmap style,
+or any other color (e.g., \code{"yellow"} for RdYlBu style).}
+
 \item{...}{Additional arguments passed to \code{ggplot2::scale_fill_gradientn()}
 (e.g., \code{values}, \code{limits}, \code{oob}, \code{na.value}).}
 }
@@ -27,12 +50,17 @@ scale_colour_heatmap(n = 100L, alpha = 1, reverse = FALSE, ...)
 A ggplot scale object.
 }
 \description{
-Discrete-tile heatmap fill scale using the classic blue-white-red
-diverging palette inherited from \code{pheatmap::pheatmap}'s default
-(\code{colorRampPalette(c("#0C6291", "white", "#A63446"))}). Best suited
-for diverging data centered around zero (correlations, log fold changes,
-z-scores). For strictly positive sequential data (0-1 scaled values,
-counts), prefer \code{\link{scale_fill_sci_c}} with a sequential palette.
+Discrete-tile heatmap fill scale using a blue-red diverging palette
+inspired by \code{pheatmap::pheatmap}'s default. Middle color defaults
+to light gray (\code{#F0F0F0}) instead of pure white so middle-valued
+cells remain visible on white plot backgrounds. Pass
+\code{mid_color = "white"} to restore the original pheatmap look.
+}
+\details{
+Best suited for diverging data centered around zero (correlations, log
+fold changes, z-scores). For strictly positive sequential data (0-1
+scaled values, counts), prefer \code{\link{scale_fill_sci_c}} with a
+sequential palette.
 }
 \examples{
 \dontrun{
@@ -45,6 +73,11 @@ df$z <- rnorm(nrow(df))
 ggplot(df, aes(x, y, fill = z)) +
   geom_tile() +
   scale_fill_heatmap()
+
+# Original pheatmap style (pure white middle)
+ggplot(df, aes(x, y, fill = z)) +
+  geom_tile() +
+  scale_fill_heatmap(mid_color = "white")
 
 # Reverse direction
 ggplot(df, aes(x, y, fill = z)) +
