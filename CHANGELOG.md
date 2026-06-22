@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.2] - 2026-06-22
+
+### Added
+- `scale_fill_heatmap()` (with `scale_color_heatmap()` and `scale_colour_heatmap()` aliases): pheatmap-style diverging blue-white-red heatmap fill scale, using the classic `colorRampPalette(c("#0C6291", "white", "#A63446"))` gradient. Parameters: `n` (number of interpolated colors, default 100), `alpha`, `reverse`, plus `...` forwarded to `ggplot2::scale_fill_gradientn()`. Best for diverging data centered at zero; for strictly positive sequential data use `scale_fill_sci_c()` with a sequential palette.
+
 ## [1.50.1] - 2026-06-22
 
 ### Fixed
