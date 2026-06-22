@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.51.1] - 2026-06-22
+
+### Changed (breaking)
+- `spls_analysis()`: returned list element names normalized to snake_case per DEVELOP_GUIDE 1.1 (same pattern as the 1.51.0 fix for `rda_analysis`). Migration:
+  - `result$result.splsda` → `result$result_splsda`
+  - `result$sample.scores` → `result$sample_scores`
+  - `result$variance.explained` → `result$variance_explained`
+  - `result$variable.loadings` → `result$variable_loadings`
+  - `result$classification.performance` → `result$classification_performance`
+  - `result$model.parameters` → `result$model_parameters`
+
 ## [1.51.0] - 2026-06-22
 
 ### Changed (breaking)

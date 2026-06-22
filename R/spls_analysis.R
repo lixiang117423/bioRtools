@@ -38,17 +38,17 @@
 #'
 #' @return A list containing six components:
 #' \describe{
-#'   \item{result.splsda}{The complete sPLS-DA result object from
+#'   \item{result_splsda}{The complete sPLS-DA result object from
 #'     \code{mixOmics::splsda()}, which can be used for further analysis.}
-#'   \item{sample.scores}{A data frame containing sample coordinates on
+#'   \item{sample_scores}{A data frame containing sample coordinates on
 #'     sPLS-DA components with sample names.}
-#'   \item{variance.explained}{A data frame containing the variance explained
+#'   \item{variance_explained}{A data frame containing the variance explained
 #'     by each component with formatted percentages and axis labels.}
-#'   \item{variable.loadings}{A data frame containing variable loadings for
+#'   \item{variable_loadings}{A data frame containing variable loadings for
 #'     each component (if available).}
-#'   \item{classification.performance}{Cross-validation performance metrics
+#'   \item{classification_performance}{Cross-validation performance metrics
 #'     (if validation was performed).}
-#'   \item{model.parameters}{A summary of model parameters and settings used.}
+#'   \item{model_parameters}{A summary of model parameters and settings used.}
 #' }
 #'
 #' @details
@@ -95,13 +95,13 @@
 #' )
 #'
 #' # View sample scores
-#' head(splsda_result$sample.scores)
+#' head(splsda_result$sample_scores)
 #'
 #' # Check variance explained
-#' splsda_result$variance.explained
+#' splsda_result$variance_explained
 #'
 #' # View model parameters
-#' splsda_result$model.parameters
+#' splsda_result$model_parameters
 #'
 #' # Customized sPLS-DA with variable selection
 #' splsda_sparse <- spls_analysis(
@@ -122,17 +122,17 @@
 #' )
 #'
 #' # Access cross-validation results
-#' splsda_cv$classification.performance
+#' splsda_cv$classification_performance
 #'
 #' # Create a scatter plot
 #' library(ggplot2)
-#' splsda_result$sample.scores %>%
+#' splsda_result$sample_scores %>%
 #'   dplyr::mutate(group = as.factor(df.splsda.sample$day)) %>%
 #'   ggplot(aes(x = comp1, y = comp2, color = group)) +
 #'   geom_point(size = 3, alpha = 0.8) +
 #'   labs(
-#'     x = splsda_result$variance.explained$label[1],
-#'     y = splsda_result$variance.explained$label[2],
+#'     x = splsda_result$variance_explained$label[1],
+#'     y = splsda_result$variance_explained$label[2],
 #'     title = "sPLS-DA Score Plot"
 #'   ) +
 #'   theme_minimal()
@@ -417,11 +417,11 @@ spls_analysis <- function(data,
 
   # Return comprehensive results following project conventions
   list(
-    result.splsda = splsda_result,
-    sample.scores = sample_scores,
-    variance.explained = variance_explained,
-    variable.loadings = variable_loadings,
-    classification.performance = classification_performance,
-    model.parameters = model_parameters
+    result_splsda = splsda_result,
+    sample_scores = sample_scores,
+    variance_explained = variance_explained,
+    variable_loadings = variable_loadings,
+    classification_performance = classification_performance,
+    model_parameters = model_parameters
   )
 }
