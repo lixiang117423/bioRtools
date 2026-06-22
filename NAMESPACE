@@ -3,6 +3,7 @@
 S3method(print,core_microbiome)
 S3method(print,wgcna_results)
 S3method(summary,wgcna_results)
+export(add_cor_p)
 export(admixture_phylo_analysis)
 export(anova_posthoc)
 export(calc_alpha_diversity)

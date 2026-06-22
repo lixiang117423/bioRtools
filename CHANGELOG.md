@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.4] - 2026-06-22
+
+### Added
+- `add_cor_p()`: per-group correlation and p-value helper. For each combination of `group_cols`, computes `cor` and `p` between two numeric columns and broadcasts to all rows in the group. Replaces the verbose `df %>% group_by(...) %>% mutate(cor = cor(x,y), p = cor.test(x,y)$p.value) %>% ungroup()` pattern. `group_cols` is optional — if NULL, respects existing `dplyr::group_by()`. Returns NA for groups with < 3 non-NA observations. Supports pearson/kendall/spearman. New `add_regression = TRUE` option adds `lm_r2` and `lm_pvalue` from `lm(y ~ x)` on raw values (for Pearson, `lm_r2 == cor^2` and `lm_pvalue == p` by construction).
+
 ## [1.50.3] - 2026-06-22
 
 ### Changed
