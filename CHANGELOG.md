@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.0] - 2026-06-22
+
+### Changed (breaking)
+- `anova_posthoc()`: output column previously hardcoded as `group` is now the original input name. For `anova_posthoc(iris, Sepal.Length ~ Species)`, output has `Species` instead of `group`. Same for string interface (`group = "treatment"` → output column `treatment`). The internal column was already renamed to `group_anova` for ANOVA fitting; only the final output column was renamed to a fixed `group`. This change preserves the input column name in the result so downstream code can refer to it by its actual name. **Migration**: code doing `result$group` should switch to `result[[<original_name>]]` or `result[[1]]` (the group column is always first).
+
 ## [1.49.9] - 2026-06-22
 
 ### Changed
