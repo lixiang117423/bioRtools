@@ -302,7 +302,7 @@ rda_analysis <- function(data,
       subtitle = paste0("Standardization: ", method_decostand,
         " | Environmental variables: ", ncol(physicochemical))
     ) +
-    bioRtools::theme_bio() +
+    bioRtools::theme_prism() +
     ggplot2::theme(
       legend.title = ggplot2::element_blank(),
       plot.title = ggplot2::element_text(hjust = 0.5, size = 14, face = "bold"),
