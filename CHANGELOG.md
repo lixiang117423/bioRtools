@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.5] - 2026-06-22
+
+### Fixed
+- `pca_analysis()`: `score_plot` failed with `找不到对象'PC1'` because `sample_scores` columns were renamed to `"PC1 (XX.X%)"` format (including variance percent), but the plot's `aes()` referenced plain `PC1`/`PC2`. Column names now kept as `PC1, PC2, ...`. The variance percent is still displayed in plot axis labels and stored in `eigenvalue_data`.
+
 ## [1.50.4] - 2026-06-22
 
 ### Added
