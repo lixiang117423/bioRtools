@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.50.3] - 2026-06-22
+
+### Changed
+- `scale_fill_heatmap()` (and color/colour aliases): middle color default is now `#F0F0F0` (light gray) instead of pure `white`. Pure white was invisible on white plot backgrounds — middle-valued cells disappeared. New `mid_color` parameter lets users override (e.g., `mid_color = "white"` for original pheatmap style, or `mid_color = "yellow"` for RdYlBu style).
+
 ## [1.50.2] - 2026-06-22
 
 ### Added
