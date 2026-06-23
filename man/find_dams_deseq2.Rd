@@ -7,12 +7,12 @@
 find_dams_deseq2(
   data,
   sample,
-  groupCol = "group",
-  log2FoldChange = 1,
+  group_col = "group",
+  log2_fold_change = 1,
   padj = 0.05,
-  min.count = 1,
-  min.samples = 2,
-  shrink.lfc = TRUE,
+  min_count = 1,
+  min_samples = 2,
+  shrink_lfc = TRUE,
   ref_group = NULL
 )
 }
@@ -26,21 +26,21 @@ row names (feature IDs). Must contain raw counts (non-negative integers).}
 to find a column whose values match \code{colnames(data)} and use it as
 row names.}
 
-\item{groupCol}{Column name in \code{sample} containing group labels
+\item{group_col}{Column name in \code{sample} containing group labels
 (default: "group").}
 
-\item{log2FoldChange}{Minimum absolute log2 fold change threshold
+\item{log2_fold_change}{Minimum absolute log2 fold change threshold
 (default: 1, i.e. 2-fold).}
 
 \item{padj}{Adjusted p-value (FDR) threshold (default: 0.05).}
 
-\item{min.count}{Minimum count per sample for feature filtering
+\item{min_count}{Minimum count per sample for feature filtering
 (default: 1).}
 
-\item{min.samples}{Minimum number of samples that must have counts
-above \code{min.count} for a feature to be retained (default: 2).}
+\item{min_samples}{Minimum number of samples that must have counts
+above \code{min_count} for a feature to be retained (default: 2).}
 
-\item{shrink.lfc}{Logical indicating whether to apply log2 fold change
+\item{shrink_lfc}{Logical indicating whether to apply log2 fold change
 shrinkage for more accurate estimates (default: TRUE).}
 
 \item{ref_group}{Optional character string specifying a reference group.
@@ -80,10 +80,10 @@ meta <- data.frame(row.names = colnames(mat),
 
 \dontrun{
 # All pairwise comparisons
-res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 
 # Against reference group only
-res_ref <- find_dams_deseq2(mat, meta, groupCol = "treatment", ref_group = "A")
+res_ref <- find_dams_deseq2(mat, meta, group_col = "treatment", ref_group = "A")
 }
 }
 \references{

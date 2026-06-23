@@ -17,7 +17,7 @@
 #'   referenced in the design formula
 #' @param formula Design formula specifying the experimental design for DESeq2.
 #'   Default is \code{~group}, assuming a "group" column exists in sample metadata.
-#'   Ignored when \code{groupCol} is provided.
+#'   Ignored when \code{group_col} is provided.
 #'   Common examples:
 #'   \itemize{
 #'     \item \code{~condition}: Simple two-group comparison
@@ -25,21 +25,21 @@
 #'     \item \code{~condition + sex + age}: Multiple covariates
 #'     \item \code{~condition * time}: Interaction terms for time series
 #'   }
-#' @param groupCol Column name in \code{sample} for the grouping variable.
-#'   When provided, overrides \code{formula} and constructs \code{~groupCol}.
+#' @param group_col Column name in \code{sample} for the grouping variable.
+#'   When provided, overrides \code{formula} and constructs \code{~group_col}.
 #'   This is a convenience shortcut for simple comparisons without batch effects.
 #'   Default is NULL (use \code{formula} instead).
-#' @param log2FoldChange Minimum absolute log2 fold change threshold for
+#' @param log2_fold_change Minimum absolute log2 fold change threshold for
 #'   significance classification (default: 1, equivalent to 2-fold change).
 #'   Genes with |log2FC| >= this value AND padj < padj threshold are considered
 #'   differentially expressed. Use 0.5 for 1.4-fold, 1.5 for 3-fold changes
 #' @param padj Adjusted p-value (FDR) threshold for statistical significance
 #'   (default: 0.05). Genes with Benjamini-Hochberg adjusted p-values below
 #'   this threshold are considered statistically significant
-#' @param shrink.lfc Logical indicating whether to apply log2 fold change
+#' @param shrink_lfc Logical indicating whether to apply log2 fold change
 #'   shrinkage (default: TRUE). Shrinkage reduces noise in log2FC estimates
 #'   for genes with low counts, providing more accurate effect size estimates
-#' @param independent.filtering Logical indicating whether to perform independent
+#' @param independent_filtering Logical indicating whether to perform independent
 #'   filtering (default: TRUE). Filters out genes with very low counts to
 #'   improve multiple testing correction and statistical power
 #' @param alpha Alpha level for outlier detection and Cook's distance filtering
@@ -161,10 +161,10 @@
 #'   data = df.rnaseq.gene,
 #'   sample = df.rnaseq.sample,
 #'   formula = ~ batch + condition,    # Control for batch effects
-#'   log2FoldChange = 1.5,           # 3-fold change threshold
+#'   log2_fold_change = 1.5,           # 3-fold change threshold
 #'   padj = 0.01,                    # 1% FDR
-#'   shrink.lfc = TRUE,              # Apply LFC shrinkage
-#'   independent.filtering = TRUE     # Enable independent filtering
+#'   shrink_lfc = TRUE,              # Apply LFC shrinkage
+#'   independent_filtering = TRUE     # Enable independent filtering
 #' )
 #'
 #' print(paste("Strict analysis found",
@@ -191,7 +191,7 @@
 #'   data = df.rnaseq.gene,
 #'   sample = df.rnaseq.sample,
 #'   formula = ~ subject + timepoint,  # Control for subject effects
-#'   log2FoldChange = 0.5,           # More sensitive for time effects
+#'   log2_fold_change = 0.5,           # More sensitive for time effects
 #'   padj = 0.1                      # Less stringent for discovery
 #' )
 #'
@@ -302,14 +302,14 @@
 #' print(table(filtered_de$regulation))
 #' }
 #'
-find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
-                             log2FoldChange = 1, padj = 0.05,
-                             shrink.lfc = TRUE, independent.filtering = TRUE, alpha = 0.1,
+find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
+                             log2_fold_change = 1, padj = 0.05,
+                             shrink_lfc = TRUE, independent_filtering = TRUE, alpha = 0.1,
                              remove_problematic_genes = TRUE, pairwise = TRUE,
                              ref_group = NULL) {
-  # Resolve formula from groupCol if provided
-  if (!is.null(groupCol)) {
-    formula <- as.formula(paste0("~", groupCol))
+  # Resolve formula from group_col if provided
+  if (!is.null(group_col)) {
+    formula <- as.formula(paste0("~", group_col))
   }
   if (is.null(formula)) {
     formula <- ~group
@@ -468,20 +468,20 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
   }
 
   # Validate threshold parameters
-  if (!is.numeric(log2FoldChange) || length(log2FoldChange) != 1 || log2FoldChange < 0) {
-    stop("'log2FoldChange' must be a single non-negative number")
+  if (!is.numeric(log2_fold_change) || length(log2_fold_change) != 1 || log2_fold_change < 0) {
+    stop("'log2_fold_change' must be a single non-negative number")
   }
 
   if (!is.numeric(padj) || length(padj) != 1 || padj <= 0 || padj > 1) {
     stop("'padj' must be a single number between 0 and 1")
   }
 
-  if (!is.logical(shrink.lfc) || length(shrink.lfc) != 1) {
-    stop("'shrink.lfc' must be a single logical value")
+  if (!is.logical(shrink_lfc) || length(shrink_lfc) != 1) {
+    stop("'shrink_lfc' must be a single logical value")
   }
 
-  if (!is.logical(independent.filtering) || length(independent.filtering) != 1) {
-    stop("'independent.filtering' must be a single logical value")
+  if (!is.logical(independent_filtering) || length(independent_filtering) != 1) {
+    stop("'independent_filtering' must be a single logical value")
   }
 
   if (!is.numeric(alpha) || length(alpha) != 1 || alpha <= 0 || alpha >= 1) {
@@ -574,16 +574,16 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
       if (is.null(dds)) return(NULL)
 
       res <- tryCatch({
-        if (shrink.lfc) {
+        if (shrink_lfc) {
           res_raw <- tryCatch(
             DESeq2::lfcShrink(dds,
               coef = DESeq2::resultsNames(dds)[length(DESeq2::resultsNames(dds))],
               type = "apeglm", quiet = TRUE),
             error = function(e) DESeq2::results(dds, alpha = alpha,
-              independentFiltering = independent.filtering))
+              independentFiltering = independent_filtering))
         } else {
           res_raw <- DESeq2::results(dds, alpha = alpha,
-            independentFiltering = independent.filtering)
+            independentFiltering = independent_filtering)
         }
         as.data.frame(res_raw)
       }, error = function(e) NULL)
@@ -591,8 +591,8 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
 
       res <- tibble::rownames_to_column(res, "gene")
       res$padj <- ifelse(is.na(res$padj), 1, res$padj)
-      res$regulation <- ifelse(res$log2FoldChange > log2FoldChange & res$padj < padj, "Up",
-                        ifelse(res$log2FoldChange < -log2FoldChange & res$padj < padj, "Down", "NS"))
+      res$regulation <- ifelse(res$log2FoldChange > log2_fold_change & res$padj < padj, "Up",
+                        ifelse(res$log2FoldChange < -log2_fold_change & res$padj < padj, "Down", "NS"))
       res$fold_change <- 2^res$log2FoldChange
       res$abs_log2fc <- abs(res$log2FoldChange)
       res$comparison <- comp_label
@@ -680,7 +680,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
 
   # # Extract results with specified parameters
   # tryCatch({
-  #   if (shrink.lfc) {
+  #   if (shrink_lfc) {
   #     # Apply LFC shrinkage for more accurate effect size estimates
   #     results_raw <- DESeq2::lfcShrink(
   #       dds_analyzed,
@@ -693,7 +693,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
   #     results_raw <- DESeq2::results(
   #       dds_analyzed,
   #       alpha = alpha,
-  #       independentFiltering = independent.filtering
+  #       independentFiltering = independent_filtering
   #     )
   #   }
 
@@ -704,7 +704,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
   #   results_raw <- DESeq2::results(
   #     dds_analyzed,
   #     alpha = alpha,
-  #     independentFiltering = independent.filtering
+  #     independentFiltering = independent_filtering
   #   )
   #   results_df <- as.data.frame(results_raw)
   # })
@@ -712,7 +712,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
   results_df <- tryCatch(
     {
       # 'try' 代码块，用于正常流程
-      if (shrink.lfc) {
+      if (shrink_lfc) {
         # 尝试进行 LFC shrinkage
         message("Attempting LFC shrinkage with apeglm...")
         results_raw <- DESeq2::lfcShrink(
@@ -727,7 +727,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
         results_raw <- DESeq2::results(
           dds_analyzed,
           alpha = alpha,
-          independentFiltering = independent.filtering
+          independentFiltering = independent_filtering
         )
       }
       # 如果 try 成功，将结果转换为数据框并返回
@@ -744,7 +744,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
       results_raw <- DESeq2::results(
         dds_analyzed,
         alpha = alpha,
-        independentFiltering = independent.filtering
+        independentFiltering = independent_filtering
       )
       # 将备用方案的结果转换为数据框并返回
       as.data.frame(results_raw)
@@ -756,8 +756,8 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
     dplyr::mutate(
       # Main classification
       regulation = dplyr::case_when(
-        log2FoldChange > !!log2FoldChange & padj < !!padj ~ "Up-regulated",
-        log2FoldChange < -!!log2FoldChange & padj < !!padj ~ "Down-regulated",
+        log2FoldChange > !!log2_fold_change & padj < !!padj ~ "Up-regulated",
+        log2FoldChange < -!!log2_fold_change & padj < !!padj ~ "Down-regulated",
         TRUE ~ "Not significant"
       ),
       # Additional useful columns
@@ -791,10 +791,10 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
   attr(results_processed, "n_genes_tested") <- n_tested
   attr(results_processed, "n_samples") <- ncol(data_matrix)
   attr(results_processed, "design_formula") <- deparse(formula)
-  attr(results_processed, "log2fc_threshold") <- log2FoldChange
+  attr(results_processed, "log2fc_threshold") <- log2_fold_change
   attr(results_processed, "padj_threshold") <- padj
-  attr(results_processed, "shrinkage_applied") <- shrink.lfc
-  attr(results_processed, "independent_filtering") <- independent.filtering
+  attr(results_processed, "shrinkage_applied") <- shrink_lfc
+  attr(results_processed, "independent_filtering") <- independent_filtering
   attr(results_processed, "alpha_level") <- alpha
   attr(results_processed, "library_size_range") <- range(lib_sizes)
   attr(results_processed, "remove_problematic_genes") <- remove_problematic_genes
@@ -819,10 +819,10 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, groupCol = NULL,
     cat("Genes tested:", n_tested, "\n")
     cat("Samples analyzed:", ncol(data_matrix), "\n")
     cat("Design formula:", deparse(formula), "\n")
-    cat("Log2FC threshold:", log2FoldChange, "(", round(2^log2FoldChange, 2), "-fold)\n")
+    cat("Log2FC threshold:", log2_fold_change, "(", round(2^log2_fold_change, 2), "-fold)\n")
     cat("FDR threshold:", padj, "\n")
-    cat("LFC shrinkage:", ifelse(shrink.lfc, "Applied", "Not applied"), "\n")
-    cat("Independent filtering:", ifelse(independent.filtering, "Enabled", "Disabled"), "\n\n")
+    cat("LFC shrinkage:", ifelse(shrink_lfc, "Applied", "Not applied"), "\n")
+    cat("Independent filtering:", ifelse(independent_filtering, "Enabled", "Disabled"), "\n\n")
 
     # Library size summary
     cat("Library size summary:\n")

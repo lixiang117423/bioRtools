@@ -7,12 +7,12 @@
 pairwise_oplsda(
   data,
   sample,
-  groupCol = "group",
-  vip.threshold = 1,
-  ortho.components = 1,
+  group_col = "group",
+  vip_threshold = 1,
+  ortho_components = 1,
   scaling = "standard",
   validation = "CV",
-  cv.folds = 7
+  cv_folds = 7
 )
 }
 \arguments{
@@ -23,20 +23,20 @@ Rows should match the samples in \code{sample}.}
 \code{rownames(data)}. If row names are missing, the function will try to
 find a column whose values match \code{rownames(data)} and use it as row names.}
 
-\item{groupCol}{Column name in \code{sample} containing group labels
+\item{group_col}{Column name in \code{sample} containing group labels
 (default: "group").}
 
-\item{vip.threshold}{VIP score threshold for marking important variables
+\item{vip_threshold}{VIP score threshold for marking important variables
 (default: 1.0).}
 
-\item{ortho.components}{Number of orthogonal components (default: 1).}
+\item{ortho_components}{Number of orthogonal components (default: 1).}
 
 \item{scaling}{Scaling method passed to \code{ropls::opls}. One of
 "standard" (default), "pareto", "center", or "none".}
 
 \item{validation}{Cross-validation method: "CV" (default) or "none".}
 
-\item{cv.folds}{Number of cross-validation folds (default: 7).}
+\item{cv_folds}{Number of cross-validation folds (default: 7).}
 }
 \value{
 A named list with:
@@ -66,7 +66,7 @@ meta <- data.frame(row.names = rownames(mat),
   treatment = rep(c("A", "B", "C"), each = 6))
 
 \dontrun{
-res <- pairwise_oplsda(mat, meta, groupCol = "treatment")
+res <- pairwise_oplsda(mat, meta, group_col = "treatment")
 res$model_summary
 head(res$vip_scores)
 }

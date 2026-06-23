@@ -16,7 +16,7 @@
 #'     \item \code{go.term}: GO term descriptions (e.g., "biological_process")
 #'     \item \code{go.ontology}: Optional. GO ontology category (BP, MF, CC)
 #'   }
-#' @param pAdjustMethod Method for multiple testing correction. Options include:
+#' @param p_adjust_method Method for multiple testing correction. Options include:
 #'   \itemize{
 #'     \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
 #'     \item \code{"bonferroni"}: Bonferroni correction
@@ -95,7 +95,7 @@
 #' go_results_strict <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
 #'   go_db = df.rnaseq.go,
-#'   pAdjustMethod = "bonferroni",
+#'   p_adjust_method = "bonferroni",
 #'   p_adjust = 0.01,
 #'   min_gene_set = 5
 #' )
@@ -135,14 +135,14 @@
 #' bp_results <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
 #'   go_db = bp_go_db,
-#'   pAdjustMethod = "BH",
+#'   p_adjust_method = "BH",
 #'   p_adjust = 0.05
 #' )
 #'
 #' print(paste("Biological process terms found:", nrow(bp_results)))
 #' }
 #'
-enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
+enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
                       min_gene_set = 3, max_gene_set = NULL) {
   # Input validation
   if (!is.character(gene) || length(gene) == 0) {
@@ -162,8 +162,8 @@ enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
 
   # Validate adjustment method
   valid_methods <- c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
-  if (!pAdjustMethod %in% valid_methods) {
-    stop(paste("Invalid pAdjustMethod. Choose from:", paste(valid_methods, collapse = ", ")))
+  if (!p_adjust_method %in% valid_methods) {
+    stop(paste("Invalid p_adjust_method. Choose from:", paste(valid_methods, collapse = ", ")))
   }
 
   # Validate p_adjust threshold
@@ -251,7 +251,7 @@ enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
         TERM2GENE = term2gene_filtered,
         TERM2NAME = term2name,
         qvalueCutoff = p_adjust,
-        pAdjustMethod = pAdjustMethod,
+        pAdjustMethod = p_adjust_method,
         minGSSize = min_gene_set,
         maxGSSize = max_gene_set
       )
@@ -306,7 +306,7 @@ enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
   attr(go_results, "input_genes") <- length(gene)
   attr(go_results, "genes_in_database") <- length(overlapping_genes)
   attr(go_results, "total_go_terms_tested") <- nrow(term_sizes)
-  attr(go_results, "adjustment_method") <- pAdjustMethod
+  attr(go_results, "adjustment_method") <- p_adjust_method
   attr(go_results, "significance_threshold") <- p_adjust
 
   # Print summary if interactive
@@ -316,7 +316,7 @@ enrich_go <- function(gene, go_db, pAdjustMethod = "BH", p_adjust = 0.05,
     cat("Genes found in database:", length(overlapping_genes), "\n")
     cat("GO terms tested:", nrow(term_sizes), "\n")
     cat("Significantly enriched terms:", nrow(go_results), "\n")
-    cat("Adjustment method:", pAdjustMethod, "\n")
+    cat("Adjustment method:", p_adjust_method, "\n")
     cat("Significance threshold:", p_adjust, "\n\n")
 
     if (nrow(go_results) > 0) {

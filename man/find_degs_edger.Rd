@@ -8,7 +8,7 @@ find_degs_edger(
   data,
   sample,
   formula = ~group,
-  log2FoldChange = 1,
+  log2_fold_change = 1,
   fdr = 0.05,
   normalize_method = "TMM",
   filter_min_cpm = 1,
@@ -41,7 +41,7 @@ Common examples:
   \item \code{~condition + sex + age}: Multiple covariates
 }}
 
-\item{log2FoldChange}{Minimum absolute log2 fold change threshold for
+\item{log2_fold_change}{Minimum absolute log2 fold change threshold for
 significance classification (default: 1, equivalent to 2-fold change).
 Genes with |log2FC| >= this value AND fdr < fdr threshold are considered
 differentially expressed}
@@ -189,7 +189,7 @@ data(df.rnaseq.sample)
 de_results <- find_degs_edger(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
-  log2FoldChange = 1,
+  log2_fold_change = 1,
   fdr = 0.05
 )
 
@@ -202,7 +202,7 @@ de_ref <- find_degs_edger(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
   ref_group = "Control",
-  log2FoldChange = 1.5,
+  log2_fold_change = 1.5,
   fdr = 0.01
 )
 }

@@ -7,8 +7,8 @@
 #' @param data Count matrix or data frame. Rows = ASV/OTU, cols = samples.
 #'   First column may be feature IDs (auto-detected if non-numeric).
 #' @param sample Data frame of sample metadata. Must contain a column matching
-#'   sample names in \code{data} and a \code{groupCol} column for grouping.
-#' @param groupCol Column name in \code{sample} for grouping (default: "group").
+#'   sample names in \code{data} and a \code{group_col} column for grouping.
+#' @param group_col Column name in \code{sample} for grouping (default: "group").
 #' @param taxonomy Optional data frame of feature taxonomy. Row names or first
 #'   column should match feature IDs in \code{data}.
 #' @param method Network construction method: "mb" (default), "glasso", or "cor".
@@ -16,12 +16,14 @@
 #'   "cor" uses correlation with threshold filtering (fast, low memory).
 #' @param cor_method Character string, correlation method for \code{method = "cor"}:
 #'   "spearman" (default), "pearson", or "kendall".
-#' @param minSamples Minimum sample prevalence to keep a feature. If < 1,
+#' @param min_samples Minimum sample prevalence to keep a feature. If < 1,
 #'   treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).
-#' @param minReads Minimum total reads to keep a feature (default: 10).
-#' @param hubQuant Quantile threshold for hub detection (default: 0.95).
-#' @param clustMethod igraph clustering method (default: "cluster_fast_greedy").
-#' @param pulsar.params List passed to \code{SpiecEasi::spiec.easi} pulsar
+#' @param min_reads Minimum total reads to keep a feature (default: 10).
+#' @param cor_threshold Absolute correlation threshold for method = "cor" (default: 0.5).
+#' @param cor_pvalue P-value threshold for method = "cor" (default: 0.05).
+#' @param hub_quant Quantile threshold for hub detection (default: 0.95).
+#' @param clust_method igraph clustering method (default: "cluster_fast_greedy").
+#' @param pulsar_params List passed to \code{SpiecEasi::spiec.easi} pulsar
 #'   (default: \code{list(rep.num = 20)}).
 #' @param verbose Print progress messages (default: TRUE).
 #'
@@ -46,16 +48,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' res <- microbiome_net(df.asv, df.sample, groupCol = "group", taxonomy = df.tax)
+#' res <- microbiome_net(df.asv, df.sample, group_col = "group", taxonomy = df.tax)
 #' res$globalStats
 #' head(res$nodeProps)
 #' }
-microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
+microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
                            method = "mb", cor_method = "spearman",
-                           minSamples = 0.1, minReads = 10,
-                           cor.threshold = 0.5, cor.pvalue = 0.05,
-                           hubQuant = 0.95, clustMethod = "cluster_fast_greedy",
-                           pulsar.params = list(rep.num = 20),
+                           min_samples = 0.1, min_reads = 10,
+                           cor_threshold = 0.5, cor_pvalue = 0.05,
+                           hub_quant = 0.95, clust_method = "cluster_fast_greedy",
+                           pulsar_params = list(rep.num = 20),
                            verbose = TRUE) {
 
   # --- Prepare data ---------------------------------------------------------
@@ -85,8 +87,8 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
     }
   }
 
-  if (!groupCol %in% names(sample)) {
-    stop(sprintf("Column '%s' not found in sample data", groupCol))
+  if (!group_col %in% names(sample)) {
+    stop(sprintf("Column '%s' not found in sample data", group_col))
   }
 
   if (!cor_method %in% c("pearson", "spearman", "kendall")) {
@@ -101,27 +103,27 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
   # Filter low-frequency features
   n_samp <- ncol(data_mat)
-  if (minSamples < 1) {
-    minSampCount <- ceiling(minSamples * n_samp)
+  if (min_samples < 1) {
+    minSampCount <- ceiling(min_samples * n_samp)
   } else {
-    minSampCount <- minSamples
+    minSampCount <- min_samples
   }
   prev <- rowSums(data_mat > 0)
   total <- rowSums(data_mat)
-  keep <- prev >= minSampCount & total >= minReads
+  keep <- prev >= minSampCount & total >= min_reads
   data_mat <- data_mat[keep, , drop = FALSE]
   feat_ids <- rownames(data_mat)
 
   if (verbose) {
     message(sprintf("Features retained: %d / %d (prevalence >= %d, total reads >= %d)",
-                    nrow(data_mat), length(keep), minSampCount, minReads))
+                    nrow(data_mat), length(keep), minSampCount, min_reads))
   }
 
-  if (is.null(groupCol)) {
+  if (is.null(group_col)) {
     sample$.all <- "All"
-    groupCol <- ".all"
+    group_col <- ".all"
   }
-  groups <- unique(as.character(sample[[groupCol]]))
+  groups <- unique(as.character(sample[[group_col]]))
 
   # Prepare taxonomy
   if (!is.null(taxonomy)) {
@@ -146,7 +148,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
   for (grp in groups) {
     if (verbose) message(sprintf("\n--- Group: %s ---", grp))
 
-    idx <- sample[[groupCol]] == grp
+    idx <- sample[[group_col]] == grp
     d_sub <- data_mat[, idx, drop = FALSE]
 
     # Remove features with zero variance in this group
@@ -158,7 +160,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
     # Warn if features >> samples (memory risk in huge/pulsar)
     if (nrow(d_sub) > ncol(d_sub) * 100) {
       warning(sprintf(
-        "Group '%s': %d features / %d samples (ratio %.0f:1). Sparse estimation may be unstable or crash.\n  Consider increasing minSamples/minReads to reduce features to < %d.",
+        "Group '%s': %d features / %d samples (ratio %.0f:1). Sparse estimation may be unstable or crash.\n  Consider increasing min_samples/min_reads to reduce features to < %d.",
         grp, nrow(d_sub), ncol(d_sub), round(nrow(d_sub) / ncol(d_sub)),
         ncol(d_sub) * 50
       ))
@@ -185,7 +187,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
 
       # Threshold: |r| >= threshold AND padj < pvalue
       adja <- cor_mat
-      adja[abs(cor_mat) < cor.threshold | p_adj >= cor.pvalue] <- 0
+      adja[abs(cor_mat) < cor_threshold | p_adj >= cor_pvalue] <- 0
       diag(adja) <- 0
       colnames(adja) <- rownames(adja) <- rownames(d_sub)
 
@@ -231,7 +233,7 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
       })
 
       # Model selection via pulsar StARS
-      pp <- pulsar.params
+      pp <- pulsar_params
       if (is.null(pp$rep.num)) pp$rep.num <- 20
       if (is.null(pp$thresh)) pp$thresh <- 0.05
       pp$criterion <- "stars"
@@ -309,11 +311,11 @@ microbiome_net <- function(data, sample, groupCol = "group", taxonomy = NULL,
     }
 
     # Hub detection
-    eigen_thresh <- quantile(eigen_vec, probs = hubQuant, na.rm = TRUE)
+    eigen_thresh <- quantile(eigen_vec, probs = hub_quant, na.rm = TRUE)
     is_hub <- !is.na(eigen_vec) & eigen_vec >= eigen_thresh
 
     # Clustering
-    clust_fn <- get(clustMethod, envir = asNamespace("igraph"))
+    clust_fn <- get(clust_method, envir = asNamespace("igraph"))
     clust_res <- tryCatch(clust_fn(g), error = function(e) NULL)
     membership <- if (!is.null(clust_res)) igraph::membership(clust_res) else rep(NA_integer_, igraph::vcount(g))
 
