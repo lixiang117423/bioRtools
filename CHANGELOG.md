@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.53.0] - 2026-06-23
+
+### Changed (breaking)
+Snake_case sweep extended to remaining output column names per DEVELOP_GUIDE 1.4.
+
+- `enrich_go()`, `enrich_kegg()`: clusterProfiler-style column names converted to snake_case on output. Migration: `ID` → `id`, `Description` → `description`, `GeneRatio` → `gene_ratio`, `BgRatio` → `bg_ratio`, `p.adjust` → `p_adjust`, `geneID` → `gene_id`, `Count` → `count`, `gene.count` → `gene_count`, `total.genes` → `total_genes`, `enrichment.score` → `enrichment_score`. **Note**: this diverges from raw clusterProfiler output naming.
+- `plot_ld_decay()`: internal column standardization now uses lowercase: `Population` → `population`, `Dist` → `dist`, `Mean_r2` → `mean_r2`. Default `pop_col`/`dist_col`/`value_col` also snake_cased (e.g., `"population"` instead of `"Population"`).
+- `plot_microbiome_net()`: `Modularity` → `modularity_factor` (intermediate); `modularity2`/`modularity3` kept (already lowercase).
+- `calc_expression_qpcr_efficiency()`: internal plotting column `Treatment` → `treatment`.
+- `pav_gwas()`: internal plot data column `Variance` → `variance`.
+
+### Preserved
+- `net2gephi()`: Gephi requires PascalCase column names (`Id`, `Label`, `Source`, `Target`, `Weight`, `Type`) for CSV import. Renaming would break the function's purpose. Hard exception.
+
 ## [1.52.3] - 2026-06-23
 
 ### Changed (breaking)

@@ -217,7 +217,7 @@ find_reference_genes_original <- function(df_expression) {
       df_ref <- df_expression %>%
         dplyr::select(.data$group, .data$gene, .data$cq, .data$bio_rep, .data$tech_rep) %>%
         dplyr::mutate(
-          Treatment = paste0(.data$group, .data$bio_rep, .data$tech_rep)
+          treatment = paste0(.data$group, .data$bio_rep, .data$tech_rep)
         ) %>%
         tidyr::pivot_wider(names_from = .data$gene, values_from = .data$cq)
 
@@ -604,13 +604,13 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
 
   df_plot <- res_all %>%
     dplyr::rename(
-      Treatment = .data$group,
+      treatment = .data$group,
       expression = .data$expression_value,
       mean_expression = .data$mean_expression,
       sd_expression = .data$sd_expression,
       se_expression = .data$se_expression
     ) %>%
-    dplyr::group_by(.data$gene, .data$Treatment) %>%
+    dplyr::group_by(.data$gene, .data$treatment) %>%
     dplyr::mutate(n = dplyr::n()) %>%
     dplyr::ungroup()
 
@@ -621,10 +621,10 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
 
   if (plot_type == "box") {
     p <- df_plot %>%
-      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$expression, fill = .data$Treatment)) +
+      ggplot2::ggplot(ggplot2::aes(.data$treatment, .data$expression, fill = .data$treatment)) +
       ggplot2::geom_boxplot(width = 0.6) +
       ggplot2::facet_wrap(. ~ .data$gene, scales = "free_y", ncol = plot_ncol) +
-      ggplot2::geom_text(ggplot2::aes(.data$Treatment, min(.data$expression, na.rm = TRUE), label = .data$significance),
+      ggplot2::geom_text(ggplot2::aes(.data$treatment, min(.data$expression, na.rm = TRUE), label = .data$significance),
         check_overlap = TRUE, size = 3, color = "black"
       ) +
       ggthemes::theme_pander() +
@@ -638,9 +638,9 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
       dplyr::group_by(.data$gene) %>%
       dplyr::mutate(max_temp = max(.data$mean_expression, na.rm = TRUE)) %>%
       dplyr::ungroup() %>%
-      ggplot2::ggplot(ggplot2::aes(.data$Treatment, .data$mean_expression / .data$n, fill = .data$Treatment)) +
+      ggplot2::ggplot(ggplot2::aes(.data$treatment, .data$mean_expression / .data$n, fill = .data$treatment)) +
       ggplot2::geom_bar(stat = "identity", width = 0.6) +
-      ggplot2::geom_errorbar(ggplot2::aes(.data$Treatment,
+      ggplot2::geom_errorbar(ggplot2::aes(.data$treatment,
         ymin = pmax(0, .data$mean_expression - .data$sd_expression),
         ymax = .data$mean_expression + .data$sd_expression
       ),
@@ -648,7 +648,7 @@ create_plot_original <- function(res_all, plot_type, plot_ncol) {
       ) +
       ggplot2::geom_hline(ggplot2::aes(yintercept = .data$max_temp * 1.15), color = NA) +
       ggplot2::facet_wrap(. ~ .data$gene, scales = "free_y", ncol = plot_ncol) +
-      ggplot2::geom_text(ggplot2::aes(.data$Treatment, (.data$mean_expression + .data$sd_expression) * 1.08, label = .data$significance),
+      ggplot2::geom_text(ggplot2::aes(.data$treatment, (.data$mean_expression + .data$sd_expression) * 1.08, label = .data$significance),
         check_overlap = TRUE, size = 4, color = "black"
       ) +
       ggthemes::theme_pander() +

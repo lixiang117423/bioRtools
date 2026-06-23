@@ -6,10 +6,10 @@
 #'
 #' @param data Data frame with at least three columns: population identifier,
 #'   pairwise distance, and an LD statistic (e.g., r²).
-#' @param pop_col Column name for population grouping (default: "Population").
+#' @param pop_col Column name for population grouping (default: "population").
 #' @param dist_col Column name for pairwise physical distance in bp
-#'   (default: "Dist").
-#' @param value_col Column name for LD statistic (default: "Mean_r2").
+#'   (default: "dist").
+#' @param value_col Column name for LD statistic (default: "mean_r2").
 #' @param bin_size Numeric. Binning interval in bp (default: 1000).
 #'   Distances are grouped into bins of this size and averaged.
 #' @param max_dist Numeric or NULL. Maximum distance (in kb) to include in
@@ -34,7 +34,7 @@
 #'     \item{\code{binned_data}}{Data frame of binned mean r² per population.}
 #'     \item{\code{fitted_data}}{Data frame of model predictions for smooth
 #'       curve plotting.}
-#'     \item{\code{half_decay}}{Data frame with columns \code{Population} and
+#'     \item{\code{half_decay}}{Data frame with columns \code{population} and
 #'       \code{half_decay_kb} (distance at which r² drops to half its
 #'       initial value).}
 #'     \item{\code{models}}{Named list of fitted model objects per population.}
@@ -51,7 +51,7 @@
 #'
 #' @references
 #' Hill, W. G. & Weir, B. S. (1988). Variances and covariances of squared
-#' linkage disequilibria in finite populations. \emph{Theoretical Population
+#' linkage disequilibria in finite populations. \emph{Theoretical population
 #' Biology}, 33(1), 54-78.
 #'
 #' @seealso \code{\link{ld_decay_threshold}} for threshold-based LD analysis
@@ -64,7 +64,7 @@
 #' library(bioRtools)
 #'
 #' df.ld <- bioRtools::read_data("ld_result.tsv") %>%
-#'   dplyr::filter(Population != "Unknown")
+#'   dplyr::filter(population != "Unknown")
 #'
 #' res <- bioRtools::plot_ld_decay(df.ld, bin_size = 1000)
 #'
@@ -79,8 +79,8 @@
 #'   PopA = "#E64B35", PopB = "#4DBBD5", PopC = "#00A087"
 #' ))
 #' }
-plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
-                          value_col = "Mean_r2", bin_size = 1000,
+plot_ld_decay <- function(data, pop_col = "population", dist_col = "dist",
+                          value_col = "mean_r2", bin_size = 1000,
                           max_dist = NULL, model = "exponential",
                           n_ind = NULL, show_half_decay = FALSE,
                           palette = "turbo", verbose = TRUE) {
@@ -103,18 +103,18 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
   # --- Prepare data ---
   df <- data %>%
     dplyr::select(
-      Population = !!rlang::sym(pop_col),
-      Dist = !!rlang::sym(dist_col),
-      Mean_r2 = !!rlang::sym(value_col)
+      population = !!rlang::sym(pop_col),
+      dist = !!rlang::sym(dist_col),
+      mean_r2 = !!rlang::sym(value_col)
     ) %>%
-    dplyr::filter(!is.na(Dist), !is.na(Mean_r2), Mean_r2 > 0, Dist >= 0) %>%
-    dplyr::mutate(dist_kb = Dist / 1000)
+    dplyr::filter(!is.na(dist), !is.na(mean_r2), mean_r2 > 0, dist >= 0) %>%
+    dplyr::mutate(dist_kb = dist / 1000)
 
   if (!is.null(max_dist)) {
     df <- df %>% dplyr::filter(dist_kb <= max_dist)
   }
 
-  populations <- unique(df$Population)
+  populations <- unique(df$population)
   if (length(populations) == 0) {
     stop("No valid data remaining after filtering")
   }
@@ -122,8 +122,8 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
   # --- Bin data ---
   df_binned <- df %>%
     dplyr::mutate(dist_bin_kb = floor(dist_kb / (bin_size / 1000)) * (bin_size / 1000)) %>%
-    dplyr::group_by(Population, dist_bin_kb) %>%
-    dplyr::summarise(mean_r2_bin = mean(Mean_r2, na.rm = TRUE), .groups = "drop")
+    dplyr::group_by(population, dist_bin_kb) %>%
+    dplyr::summarise(mean_r2_bin = mean(mean_r2, na.rm = TRUE), .groups = "drop")
 
   if (verbose) {
     message("Binned data: ", nrow(df_binned), " bins across ", length(populations), " population(s)")
@@ -135,7 +135,7 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
   half_decay_rows <- list()
 
   for (pop in populations) {
-    d <- df_binned %>% dplyr::filter(Population == pop)
+    d <- df_binned %>% dplyr::filter(population == pop)
 
     if (nrow(d) < 4) {
       if (verbose) message("  Skipping '", pop, "': too few bins (", nrow(d), ")")
@@ -182,7 +182,7 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     pred_dist <- seq(0, max(d$dist_bin_kb), length.out = 500)
     pred_r2 <- stats::predict(fit, newdata = data.frame(dist_bin_kb = pred_dist))
     fitted_dfs[[pop]] <- data.frame(
-      Population = pop,
+      population = pop,
       dist_bin_kb = pred_dist,
       mean_r2_fitted = pred_r2
     )
@@ -193,12 +193,12 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     idx <- which(pred_r2 <= target)[1]
     if (!is.na(idx)) {
       half_decay_rows[[pop]] <- data.frame(
-        Population = pop,
+        population = pop,
         half_decay_kb = round(pred_dist[idx], 2)
       )
     } else {
       half_decay_rows[[pop]] <- data.frame(
-        Population = pop,
+        population = pop,
         half_decay_kb = NA_real_
       )
     }
@@ -223,12 +223,12 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(
       data = df_binned,
-      ggplot2::aes(x = dist_bin_kb, y = mean_r2_bin, color = Population),
+      ggplot2::aes(x = dist_bin_kb, y = mean_r2_bin, color = population),
       linewidth = 0.8, alpha = 0.5
     ) +
     ggplot2::geom_line(
       data = fitted_df,
-      ggplot2::aes(x = dist_bin_kb, y = mean_r2_fitted, color = Population),
+      ggplot2::aes(x = dist_bin_kb, y = mean_r2_fitted, color = population),
       linewidth = 1
     ) +
     ggplot2::scale_x_continuous(expand = c(0.01, 0)) +
@@ -260,7 +260,7 @@ plot_ld_decay <- function(data, pop_col = "Population", dist_col = "Dist",
     if (nrow(hd_lines) > 0) {
       p <- p + ggplot2::geom_vline(
         data = hd_lines,
-        ggplot2::aes(xintercept = half_decay_kb, color = Population),
+        ggplot2::aes(xintercept = half_decay_kb, color = population),
         linetype = "dashed", alpha = 0.6, linewidth = 0.5
       )
     }

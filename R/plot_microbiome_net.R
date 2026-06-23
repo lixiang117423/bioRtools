@@ -47,10 +47,10 @@ net2ggnetview <- function(net_result, group) {
   uniq_mods <- sort(unique(membership[!is.na(membership)]))
   membership_char <- as.character(membership)
   membership_char[!membership_char %in% as.character(uniq_mods[seq_len(min(top_n, length(uniq_mods)))])] <- "Others"
-  nodes$Modularity <- factor(membership_char)
+  nodes$modularity_factor <- factor(membership_char)
   nodes$modularity <- membership
-  nodes$modularity2 <- nodes$Modularity
-  nodes$modularity3 <- as.character(nodes$Modularity)
+  nodes$modularity2 <- nodes$modularity_factor
+  nodes$modularity3 <- as.character(nodes$modularity_factor)
 
   # Edge attributes from igraph directly (weight + sign)
   edges_raw <- igraph::as_data_frame(g, what = "edges")
