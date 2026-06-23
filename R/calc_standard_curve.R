@@ -224,7 +224,7 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
       next
     }
 
-    tryCatch(
+    result_i <- tryCatch(
       {
         # Fit linear model
         if (use_mean_cq) {
@@ -266,20 +266,20 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
         )
 
         # Create result row
-        results_list[[i]] <- data.frame(
-          Gene = genes[i],
-          Formula = sprintf("y = %.2f*log_conc + %.2f", slope, intercept),
-          Slope = slope,
-          Intercept = intercept,
-          R2 = r_squared,
-          P_value = p_value,
-          Max_Cq = round(max_cq, 2),
-          Min_Cq = round(min_cq, 2),
-          Efficiency = efficiency,
-          Efficiency_Percent = paste0(round(efficiency * 100, 1), "%"),
-          Efficiency_Quality = efficiency_quality,
-          Method_Recommendation = method_recommendation,
-          Date = as.character(Sys.Date()),
+        data.frame(
+          gene = genes[i],
+          formula = sprintf("y = %.2f*log_conc + %.2f", slope, intercept),
+          slope = slope,
+          intercept = intercept,
+          r2 = r_squared,
+          p_value = p_value,
+          max_cq = round(max_cq, 2),
+          min_cq = round(min_cq, 2),
+          efficiency = efficiency,
+          efficiency_percent = paste0(round(efficiency * 100, 1), "%"),
+          efficiency_quality = efficiency_quality,
+          method_recommendation = method_recommendation,
+          date = as.character(Sys.Date()),
           stringsAsFactors = FALSE
         )
 
@@ -288,23 +288,25 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
         warning(sprintf("Failed to calculate regression for gene %s: %s", genes[i], e$message))
 
         # Return a row with NA values
-        results_list[[i]] <- data.frame(
-          Gene = genes[i],
-          Formula = "Failed",
-          Slope = NA,
-          Intercept = NA,
-          R2 = NA,
-          P_value = NA,
-          Max_Cq = NA,
-          Min_Cq = NA,
-          Efficiency = NA,
-          Efficiency_Percent = "N/A",
-          Efficiency_Quality = "Failed",
-          Method_Recommendation = "Analysis failed",
-          Date = as.character(Sys.Date()),
+        data.frame(
+          gene = genes[i],
+          formula = "Failed",
+          slope = NA,
+          intercept = NA,
+          r2 = NA,
+          p_value = NA,
+          max_cq = NA,
+          min_cq = NA,
+          efficiency = NA,
+          efficiency_percent = "N/A",
+          efficiency_quality = "Failed",
+          method_recommendation = "Analysis failed",
+          date = as.character(Sys.Date()),
           stringsAsFactors = FALSE
         )
       })
+
+    results_list[[i]] <- result_i
   }
 
   # Remove NULL entries (genes that were skipped)

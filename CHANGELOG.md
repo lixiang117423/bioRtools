@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.2] - 2026-06-23
+
+### Fixed
+- `calc_standard_curve()`: tryCatch scope bug — error handler's `results_list[[i]] <- data.frame(...)` was inside a closure and the assignment never escaped to the parent frame, so failed genes were silently dropped (later filtered as NULL). Restructured: `result_i <- tryCatch({...}, error = function(e) {...}); results_list[[i]] <- result_i` so the assignment happens in the parent. Failed genes now properly recorded as a "Failed" row instead of being silently missing.
+
+### Changed (breaking)
+- `calc_standard_curve()`: output column names normalized to snake_case. Migration:
+  - `Gene` → `gene`
+  - `Formula` → `formula`
+  - `Slope` → `slope`, `Intercept` → `intercept`
+  - `R2` → `r2`, `P_value` → `p_value`
+  - `Max_Cq` → `max_cq`, `Min_Cq` → `min_cq`
+  - `Efficiency` → `efficiency`, `Efficiency_Percent` → `efficiency_percent`, `Efficiency_Quality` → `efficiency_quality`
+  - `Method_Recommendation` → `method_recommendation`
+  - `Date` → `date`
+
 ## [1.52.1] - 2026-06-23
 
 ### Changed (breaking)
