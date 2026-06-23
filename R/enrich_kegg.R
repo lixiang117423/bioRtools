@@ -37,18 +37,18 @@
 #'
 #' @return A data frame containing pathway enrichment results with columns:
 #'   \itemize{
-#'     \item \code{ID}: KEGG pathway identifier
-#'     \item \code{Description}: KEGG pathway description/name
-#'     \item \code{GeneRatio}: Proportion of input genes in this pathway (numeric)
-#'     \item \code{BgRatio}: Proportion of background genes in this pathway
+#'     \item \code{id}: KEGG pathway identifier
+#'     \item \code{description}: KEGG pathway description/name
+#'     \item \code{gene_ratio}: Proportion of input genes in this pathway (numeric)
+#'     \item \code{bg_ratio}: Proportion of background genes in this pathway
 #'     \item \code{pvalue}: Raw p-value from hypergeometric test
-#'     \item \code{p.adjust}: Adjusted p-value using specified method
+#'     \item \code{p_adjust}: Adjusted p-value using specified method
 #'     \item \code{qvalue}: Q-value (if calculated)
-#'     \item \code{geneID}: Gene identifiers contributing to this pathway (separated by "/")
-#'     \item \code{Count}: Number of input genes in this pathway
-#'     \item \code{gene.count}: Number of input genes in this pathway
-#'     \item \code{total.genes}: Total number of input genes tested
-#'     \item \code{enrichment.score}: -log10(p.adjust) for visualization
+#'     \item \code{gene_id}: Gene identifiers contributing to this pathway (separated by "/")
+#'     \item \code{count}: Number of input genes in this pathway
+#'     \item \code{gene_count}: Number of input genes in this pathway
+#'     \item \code{total_genes}: Total number of input genes tested
+#'     \item \code{enrichment_score}: -log10(p.adjust) for visualization
 #'   }
 #'
 #' @details
@@ -324,18 +324,18 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
 
     # Return empty data frame with expected structure
     empty_result <- data.frame(
-      ID = character(0),
-      Description = character(0),
-      GeneRatio = numeric(0),
-      BgRatio = character(0),
+      id = character(0),
+      description = character(0),
+      gene_ratio = numeric(0),
+      bg_ratio = character(0),
       pvalue = numeric(0),
-      p.adjust = numeric(0),
+      p_adjust = numeric(0),
       qvalue = numeric(0),
-      geneID = character(0),
-      Count = integer(0),
-      gene.count = integer(0),
-      total.genes = integer(0),
-      enrichment.score = numeric(0)
+      gene_id = character(0),
+      count = integer(0),
+      gene_count = integer(0),
+      total_genes = integer(0),
+      enrichment_score = numeric(0)
     )
 
     # Add metadata
@@ -361,17 +361,27 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
   })
 
   # Calculate numeric GeneRatio
-  kegg_results$GeneRatio <- kegg_results$gene.count / kegg_results$total.genes
+  kegg_results$gene_ratio <- kegg_results$gene.count / kegg_results$total.genes
 
   # Add enrichment score for visualization (-log10 of adjusted p-value)
-  kegg_results$enrichment.score <- -log10(kegg_results$p.adjust)
+  kegg_results$enrichment_score <- -log10(kegg_results$p.adjust)
 
   # Reorder columns for better readability
   kegg_results <- kegg_results %>%
-    dplyr::select(ID, Description, GeneRatio, BgRatio, pvalue, p.adjust,
-      qvalue, geneID, Count, gene.count, total.genes, enrichment.score,
+    dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
+      qvalue, geneID, Count, gene.count, total.genes, enrichment_score,
       dplyr::everything()) %>%
-    dplyr::arrange(p.adjust, pvalue)
+    dplyr::rename(
+      id = ID,
+      description = Description,
+      bg_ratio = BgRatio,
+      p_adjust = p.adjust,
+      gene_id = geneID,
+      count = Count,
+      gene_count = gene.count,
+      total_genes = total.genes
+    ) %>%
+    dplyr::arrange(p_adjust, pvalue)
 
   # Add comprehensive metadata as attributes
   attr(kegg_results, "input_genes") <- length(gene)

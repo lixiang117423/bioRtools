@@ -1511,9 +1511,9 @@ pav_gwas <- function(pav_data,
   if (use_population_structure && !is.null(pca_results)) {
     pc_var_plot <- data.frame(
       PC = paste0("PC", 1:length(pca_results$var_explained)),
-      Variance = pca_results$var_explained * 100
+      variance = pca_results$var_explained * 100
     ) %>%
-      ggplot(aes(x = PC, y = Variance)) +
+      ggplot(aes(x = PC, y = variance)) +
       geom_col(fill = "steelblue", alpha = 0.7) +
       labs(title = "Principal Component Analysis",
         x = "Principal Component",

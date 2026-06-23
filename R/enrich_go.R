@@ -36,17 +36,17 @@
 #'
 #' @return A data frame containing enrichment results with columns:
 #'   \itemize{
-#'     \item \code{ID}: GO term identifier
-#'     \item \code{Description}: GO term description
-#'     \item \code{GeneRatio}: Proportion of input genes in this GO term (numeric)
-#'     \item \code{BgRatio}: Proportion of background genes in this GO term
+#'     \item \code{id}: GO term identifier
+#'     \item \code{description}: GO term description
+#'     \item \code{gene_ratio}: Proportion of input genes in this GO term (numeric)
+#'     \item \code{bg_ratio}: Proportion of background genes in this GO term
 #'     \item \code{pvalue}: Raw p-value from hypergeometric test
-#'     \item \code{p.adjust}: Adjusted p-value using specified method
+#'     \item \code{p_adjust}: Adjusted p-value using specified method
 #'     \item \code{qvalue}: Q-value (if calculated)
-#'     \item \code{geneID}: Gene identifiers contributing to this term (separated by "/")
-#'     \item \code{Count}: Number of input genes in this GO term
-#'     \item \code{gene.count}: Number of input genes in this GO term
-#'     \item \code{total.genes}: Total number of input genes tested
+#'     \item \code{gene_id}: Gene identifiers contributing to this term (separated by "/")
+#'     \item \code{count}: Number of input genes in this GO term
+#'     \item \code{gene_count}: Number of input genes in this GO term
+#'     \item \code{total_genes}: Total number of input genes tested
 #'   }
 #'
 #' @details
@@ -265,17 +265,17 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
     warning("No significantly enriched GO terms found with current parameters")
     # Return empty data frame with expected column structure
     empty_result <- data.frame(
-      ID = character(0),
-      Description = character(0),
-      GeneRatio = numeric(0),
-      BgRatio = character(0),
+      id = character(0),
+      description = character(0),
+      gene_ratio = numeric(0),
+      bg_ratio = character(0),
       pvalue = numeric(0),
-      p.adjust = numeric(0),
+      p_adjust = numeric(0),
       qvalue = numeric(0),
-      geneID = character(0),
-      Count = integer(0),
-      gene.count = integer(0),
-      total.genes = integer(0)
+      gene_id = character(0),
+      count = integer(0),
+      gene_count = integer(0),
+      total_genes = integer(0)
     )
     return(empty_result)
   }
@@ -293,14 +293,24 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
   })
 
   # Calculate numeric GeneRatio
-  go_results$GeneRatio <- go_results$gene.count / go_results$total.genes
+  go_results$gene_ratio <- go_results$gene.count / go_results$total.genes
 
   # Reorder columns for better readability
   go_results <- go_results %>%
-    dplyr::select(ID, Description, GeneRatio, BgRatio, pvalue, p.adjust,
+    dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
       qvalue, geneID, Count, gene.count, total.genes,
       dplyr::everything()) %>%
-    dplyr::arrange(p.adjust, pvalue)
+    dplyr::rename(
+      id = ID,
+      description = Description,
+      bg_ratio = BgRatio,
+      p_adjust = p.adjust,
+      gene_id = geneID,
+      count = Count,
+      gene_count = gene.count,
+      total_genes = total.genes
+    ) %>%
+    dplyr::arrange(p_adjust, pvalue)
 
   # Add metadata as attributes
   attr(go_results, "input_genes") <- length(gene)
