@@ -36,7 +36,7 @@
 #'     \item Other values (1--9): See \code{\link[stats]{quantile}} for all 9 types.
 #'   }
 #'   Only used when \code{method = "iqr"}.
-#' @param return.logical Logical indicating return format (default: FALSE).
+#' @param return_logical Logical indicating return format (default: FALSE).
 #'   If TRUE, returns logical vector (TRUE/FALSE). If FALSE, returns character
 #'   vector ("yes"/"no") for backward compatibility
 #' @param na.rm Logical indicating whether to remove missing values before
@@ -45,8 +45,8 @@
 #'
 #' @return Vector indicating outlier status for each element in x:
 #'   \itemize{
-#'     \item If \code{return.logical = TRUE}: Logical vector where TRUE indicates outlier
-#'     \item If \code{return.logical = FALSE}: Character vector with "yes" for outliers, "no" for normal values
+#'     \item If \code{return_logical = TRUE}: Logical vector where TRUE indicates outlier
+#'     \item If \code{return_logical = FALSE}: Character vector with "yes" for outliers, "no" for normal values
 #'     \item Missing values in input are preserved as NA in output
 #'   }
 #'
@@ -156,10 +156,10 @@
 #' test_data <- c(rnorm(95, mean = 10, sd = 2), c(1, 25, 30))  # Normal data + outliers
 #'
 #' # Compare different methods
-#' iqr_outliers <- find_outliers(test_data, method = "iqr", return.logical = TRUE)
-#' zscore_outliers <- find_outliers(test_data, method = "zscore", k = 2, return.logical = TRUE)
+#' iqr_outliers <- find_outliers(test_data, method = "iqr", return_logical = TRUE)
+#' zscore_outliers <- find_outliers(test_data, method = "zscore", k = 2, return_logical = TRUE)
 #' modified_zscore_outliers <- find_outliers(test_data, method = "modified_zscore",
-#'   k = 3.5, return.logical = TRUE)
+#'   k = 3.5, return_logical = TRUE)
 #'
 #' # Create comparison data frame
 #' comparison <- data.frame(
@@ -217,7 +217,7 @@
 #'   sample_id = paste0("Sample_", 1:length(gene_expression)),
 #'   expression = gene_expression,
 #'   is_outlier = find_outliers(gene_expression),
-#'   outlier_logical = find_outliers(gene_expression, return.logical = TRUE)
+#'   outlier_logical = find_outliers(gene_expression, return_logical = TRUE)
 #' )
 #'
 #' # Identify samples with outlier expression
@@ -235,7 +235,7 @@
 #'   round(quantile(gene_expression, 0.75) + 1.5 * IQR(gene_expression), 2)))
 #'
 find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
-                           return.logical = FALSE, na.rm = TRUE) {
+                           return_logical = FALSE, na.rm = TRUE) {
   # Input validation
   if (!is.numeric(x)) {
     stop("'x' must be a numeric vector")
@@ -258,8 +258,8 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
     stop("'k' must be a single positive number")
   }
 
-  if (!is.logical(return.logical) || length(return.logical) != 1) {
-    stop("'return.logical' must be a single logical value")
+  if (!is.logical(return_logical) || length(return_logical) != 1) {
+    stop("'return_logical' must be a single logical value")
   }
 
   if (!is.logical(na.rm) || length(na.rm) != 1) {
@@ -282,7 +282,7 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
   # Handle all-NA case
   if (all(is.na(x))) {
     result <- rep(NA, length(x))
-    if (!return.logical) {
+    if (!return_logical) {
       result <- as.character(result)
     }
     return(result)
@@ -314,7 +314,7 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
       if (any(is.na(x))) {
         # If na.rm = FALSE and NAs present, return all NAs
         result <- rep(NA, length(x))
-        if (!return.logical) {
+        if (!return_logical) {
           result <- as.character(result)
         }
         return(result)
@@ -345,7 +345,7 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
     } else {
       if (any(is.na(x))) {
         result <- rep(NA, length(x))
-        if (!return.logical) {
+        if (!return_logical) {
           result <- as.character(result)
         }
         return(result)
@@ -370,7 +370,7 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
     } else {
       if (any(is.na(x))) {
         result <- rep(NA, length(x))
-        if (!return.logical) {
+        if (!return_logical) {
           result <- as.character(result)
         }
         return(result)
@@ -393,7 +393,7 @@ find_outliers <- function(x, method = "iqr", k = 1.5, quantile_type = "auto",
   is_outlier[is.na(x)] <- NA
 
   # Return in requested format
-  if (return.logical) {
+  if (return_logical) {
     return(is_outlier)
   } else {
     # Convert to character for backward compatibility

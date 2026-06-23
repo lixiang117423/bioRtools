@@ -7,9 +7,9 @@
 find_dams_lefse(
   data,
   sample,
-  groupCol = "group",
-  wilcox.threshold = 0.05,
-  lda.threshold = 2
+  group_col = "group",
+  wilcox_threshold = 0.05,
+  lda_threshold = 2
 )
 }
 \arguments{
@@ -23,13 +23,13 @@ relative abundances internally.}
 to find a column whose values match \code{colnames(data)} and use it as
 row names.}
 
-\item{groupCol}{Column name in \code{sample} containing group labels
+\item{group_col}{Column name in \code{sample} containing group labels
 (default: "group").}
 
-\item{wilcox.threshold}{P-value threshold for Wilcoxon rank-sum test
+\item{wilcox_threshold}{P-value threshold for Wilcoxon rank-sum test
 (default: 0.05).}
 
-\item{lda.threshold}{Minimum absolute LDA score (default: 2.0).}
+\item{lda_threshold}{Minimum absolute LDA score (default: 2.0).}
 }
 \value{
 A data frame with columns:
@@ -58,7 +58,7 @@ mat <- matrix(floor(runif(60 * 18, 0, 100)), nrow = 60, ncol = 18,
   dimnames = list(paste0("ASV_", 1:60), paste0("S", 1:18)))
 meta <- data.frame(row.names = colnames(mat),
   treatment = rep(c("A", "B", "C"), each = 6))
-res <- find_dams_lefse(mat, meta, groupCol = "treatment")
+res <- find_dams_lefse(mat, meta, group_col = "treatment")
 
 }
 \references{

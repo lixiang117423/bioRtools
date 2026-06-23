@@ -12,15 +12,15 @@
 #'     \item \code{find_dams_deseq2} output: columns \code{comparison},
 #'       \code{feature_id}, \code{log2FoldChange}, \code{padj}
 #'   }
-#' @param groupCol Column for grouping (default: auto-detect).
-#' @param featureCol Column for feature labels (default: auto-detect).
-#' @param log2FCCol Column for log2 fold change (default: auto-detect).
-#' @param padjCol Column for adjusted p-values (default: auto-detect).
-#' @param log2FC_thr Absolute log2FC threshold for significance coloring
+#' @param group_col Column for grouping (default: auto-detect).
+#' @param feature_col Column for feature labels (default: auto-detect).
+#' @param log2fc_col Column for log2 fold change (default: auto-detect).
+#' @param padj_col Column for adjusted p-values (default: auto-detect).
+#' @param log2fc_thr Absolute log2FC threshold for significance coloring
 #'   (default: 1).
 #' @param padj_thr Adjusted p-value threshold for significance coloring
 #'   (default: 0.05).
-#' @param topN Number of top features to label per group per direction
+#' @param top_n Number of top features to label per group per direction
 #'   (default: 5).
 #' @param label_size Font size for feature labels (default: 2.5).
 #' @param group_colors Fill colors for background bands, or a palette name
@@ -44,7 +44,7 @@
 #'
 #' # With find_dams_deseq2 output
 #' \dontrun{
-#' res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+#' res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 #' plot_multi_volcano(res)
 #' }
 #'
@@ -53,13 +53,13 @@
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 plot_multi_volcano <- function(data,
-                               groupCol = NULL,
-                               featureCol = NULL,
-                               log2FCCol = NULL,
-                               padjCol = NULL,
-                               log2FC_thr = 1,
+                               group_col = NULL,
+                               feature_col = NULL,
+                               log2fc_col = NULL,
+                               padj_col = NULL,
+                               log2fc_thr = 1,
                                padj_thr = 0.05,
-                               topN = 5,
+                               top_n = 5,
                                label_size = 2.5,
                                group_colors = "default",
                                up_color = "#0073C2FF",
@@ -70,14 +70,14 @@ plot_multi_volcano <- function(data,
                                legend_position = c(0.08, 0.9)) {
 
   # --- Auto-detect columns ---------------------------------------------------
-  cols <- detect_volcano_cols(data, groupCol, featureCol, log2FCCol, padjCol)
+  cols <- detect_volcano_cols(data, group_col, feature_col, log2fc_col, padj_col)
 
   # --- Prepare data ----------------------------------------------------------
   df <- data.frame(
-    group   = as.character(data[[cols$groupCol]]),
-    feature = as.character(data[[cols$featureCol]]),
-    log2FC  = as.numeric(data[[cols$log2FCCol]]),
-    padj    = as.numeric(data[[cols$padjCol]]),
+    group   = as.character(data[[cols$group_col]]),
+    feature = as.character(data[[cols$feature_col]]),
+    log2FC  = as.numeric(data[[cols$log2fc_col]]),
+    padj    = as.numeric(data[[cols$padj_col]]),
     stringsAsFactors = FALSE
   )
   df <- df[!is.na(df$log2FC), ]
@@ -88,7 +88,7 @@ plot_multi_volcano <- function(data,
 
   # Classify points
   df$type <- ifelse(
-    abs(df$log2FC) >= log2FC_thr & df$padj < padj_thr,
+    abs(df$log2FC) >= log2fc_thr & df$padj < padj_thr,
     ifelse(df$log2FC > 0, "Up", "Down"),
     "NS"
   )
@@ -129,11 +129,11 @@ plot_multi_volcano <- function(data,
   bg_vert$group <- factor(bg_vert$group, levels = lvls)
 
   # --- Labels ----------------------------------------------------------------
-  sig <- df[df$padj < padj_thr & abs(df$log2FC) >= log2FC_thr, ]
+  sig <- df[df$padj < padj_thr & abs(df$log2FC) >= log2fc_thr, ]
   if (nrow(sig) > 0) {
     label_df <- do.call(rbind, lapply(split(sig, sig$group), function(sub) {
-      ups   <- utils::head(sub[order(-sub$log2FC), ], topN)
-      downs <- utils::head(sub[order(sub$log2FC), ], topN)
+      ups   <- utils::head(sub[order(-sub$log2FC), ], top_n)
+      downs <- utils::head(sub[order(sub$log2FC), ], top_n)
       unique(rbind(ups, downs))
     }))
     rownames(label_df) <- NULL
@@ -220,30 +220,30 @@ plot_multi_volcano <- function(data,
 
 #' @rdname plot_multi_volcano
 #' @keywords internal
-detect_volcano_cols <- function(data, groupCol, featureCol, log2FCCol, padjCol) {
+detect_volcano_cols <- function(data, group_col, feature_col, log2fc_col, padj_col) {
   nms <- names(data)
 
-  if (is.null(groupCol)) {
-    groupCol <- intersect(c("comparison", "cluster"), nms)
-    if (length(groupCol) == 0) stop("Cannot auto-detect group column. Specify 'groupCol'.")
-    groupCol <- groupCol[1]
+  if (is.null(group_col)) {
+    group_col <- intersect(c("comparison", "cluster"), nms)
+    if (length(group_col) == 0) stop("Cannot auto-detect group column. Specify 'group_col'.")
+    group_col <- group_col[1]
   }
-  if (is.null(featureCol)) {
-    featureCol <- intersect(c("feature_id", "gene"), nms)
-    if (length(featureCol) == 0) stop("Cannot auto-detect feature column. Specify 'featureCol'.")
-    featureCol <- featureCol[1]
+  if (is.null(feature_col)) {
+    feature_col <- intersect(c("feature_id", "gene"), nms)
+    if (length(feature_col) == 0) stop("Cannot auto-detect feature column. Specify 'feature_col'.")
+    feature_col <- feature_col[1]
   }
-  if (is.null(log2FCCol)) {
-    log2FCCol <- intersect(c("log2FoldChange", "avg_log2FC"), nms)
-    if (length(log2FCCol) == 0) stop("Cannot auto-detect log2FC column. Specify 'log2FCCol'.")
-    log2FCCol <- log2FCCol[1]
+  if (is.null(log2fc_col)) {
+    log2fc_col <- intersect(c("log2FoldChange", "avg_log2FC"), nms)
+    if (length(log2fc_col) == 0) stop("Cannot auto-detect log2FC column. Specify 'log2fc_col'.")
+    log2fc_col <- log2fc_col[1]
   }
-  if (is.null(padjCol)) {
-    padjCol <- intersect(c("padj", "p_val_adj"), nms)
-    if (length(padjCol) == 0) stop("Cannot auto-detect padj column. Specify 'padjCol'.")
-    padjCol <- padjCol[1]
+  if (is.null(padj_col)) {
+    padj_col <- intersect(c("padj", "p_val_adj"), nms)
+    if (length(padj_col) == 0) stop("Cannot auto-detect padj column. Specify 'padj_col'.")
+    padj_col <- padj_col[1]
   }
 
-  list(groupCol = groupCol, featureCol = featureCol,
-       log2FCCol = log2FCCol, padjCol = padjCol)
+  list(group_col = group_col, feature_col = feature_col,
+       log2fc_col = log2fc_col, padj_col = padj_col)
 }

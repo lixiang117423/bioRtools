@@ -9,7 +9,7 @@ find_outliers(
   method = "iqr",
   k = 1.5,
   quantile_type = "auto",
-  return.logical = FALSE,
+  return_logical = FALSE,
   na.rm = TRUE
 )
 }
@@ -48,7 +48,7 @@ Common values:
 }
 Only used when \code{method = "iqr"}.}
 
-\item{return.logical}{Logical indicating return format (default: FALSE).
+\item{return_logical}{Logical indicating return format (default: FALSE).
 If TRUE, returns logical vector (TRUE/FALSE). If FALSE, returns character
 vector ("yes"/"no") for backward compatibility}
 
@@ -59,8 +59,8 @@ result will be NA}
 \value{
 Vector indicating outlier status for each element in x:
   \itemize{
-    \item If \code{return.logical = TRUE}: Logical vector where TRUE indicates outlier
-    \item If \code{return.logical = FALSE}: Character vector with "yes" for outliers, "no" for normal values
+    \item If \code{return_logical = TRUE}: Logical vector where TRUE indicates outlier
+    \item If \code{return_logical = FALSE}: Character vector with "yes" for outliers, "no" for normal values
     \item Missing values in input are preserved as NA in output
   }
 }
@@ -161,10 +161,10 @@ set.seed(123)
 test_data <- c(rnorm(95, mean = 10, sd = 2), c(1, 25, 30))  # Normal data + outliers
 
 # Compare different methods
-iqr_outliers <- find_outliers(test_data, method = "iqr", return.logical = TRUE)
-zscore_outliers <- find_outliers(test_data, method = "zscore", k = 2, return.logical = TRUE)
+iqr_outliers <- find_outliers(test_data, method = "iqr", return_logical = TRUE)
+zscore_outliers <- find_outliers(test_data, method = "zscore", k = 2, return_logical = TRUE)
 modified_zscore_outliers <- find_outliers(test_data, method = "modified_zscore",
-  k = 3.5, return.logical = TRUE)
+  k = 3.5, return_logical = TRUE)
 
 # Create comparison data frame
 comparison <- data.frame(
@@ -222,7 +222,7 @@ expression_analysis <- data.frame(
   sample_id = paste0("Sample_", 1:length(gene_expression)),
   expression = gene_expression,
   is_outlier = find_outliers(gene_expression),
-  outlier_logical = find_outliers(gene_expression, return.logical = TRUE)
+  outlier_logical = find_outliers(gene_expression, return_logical = TRUE)
 )
 
 # Identify samples with outlier expression

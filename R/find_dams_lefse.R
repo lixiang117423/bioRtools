@@ -15,11 +15,11 @@
 #'   \code{colnames(data)}. If row names are missing, the function will try
 #'   to find a column whose values match \code{colnames(data)} and use it as
 #'   row names.
-#' @param groupCol Column name in \code{sample} containing group labels
+#' @param group_col Column name in \code{sample} containing group labels
 #'   (default: "group").
-#' @param wilcox.threshold P-value threshold for Wilcoxon rank-sum test
+#' @param wilcox_threshold P-value threshold for Wilcoxon rank-sum test
 #'   (default: 0.05).
-#' @param lda.threshold Minimum absolute LDA score (default: 2.0).
+#' @param lda_threshold Minimum absolute LDA score (default: 2.0).
 #'
 #' @return A data frame with columns:
 #'   \itemize{
@@ -39,7 +39,7 @@
 #'   dimnames = list(paste0("ASV_", 1:60), paste0("S", 1:18)))
 #' meta <- data.frame(row.names = colnames(mat),
 #'   treatment = rep(c("A", "B", "C"), each = 6))
-#' res <- find_dams_lefse(mat, meta, groupCol = "treatment")
+#' res <- find_dams_lefse(mat, meta, group_col = "treatment")
 #'
 #' @references
 #' Segata, N. et al. (2011). Metagenomic biomarker discovery and explanation.
@@ -49,9 +49,9 @@
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
-find_dams_lefse <- function(data, sample, groupCol = "group",
-                            wilcox.threshold = 0.05,
-                            lda.threshold = 2.0) {
+find_dams_lefse <- function(data, sample, group_col = "group",
+                            wilcox_threshold = 0.05,
+                            lda_threshold = 2.0) {
   # --- Prepare data ----------------------------------------------------------
   data <- as.data.frame(data)
   if (ncol(data) > 1 && !is.numeric(data[[1]])) {
@@ -84,11 +84,11 @@ find_dams_lefse <- function(data, sample, groupCol = "group",
   data   <- data[, common, drop = FALSE]
   sample <- sample[common, , drop = FALSE]
 
-  if (!groupCol %in% names(sample)) {
-    stop(sprintf("Column '%s' not found in sample data", groupCol))
+  if (!group_col %in% names(sample)) {
+    stop(sprintf("Column '%s' not found in sample data", group_col))
   }
 
-  groups <- unique(as.character(sample[[groupCol]]))
+  groups <- unique(as.character(sample[[group_col]]))
   if (length(groups) < 2) stop("At least 2 groups are required")
 
   # Convert to relative abundances
@@ -100,8 +100,8 @@ find_dams_lefse <- function(data, sample, groupCol = "group",
   pairs <- utils::combn(groups, 2, simplify = FALSE)
 
   results <- lapply(pairs, function(pair) {
-    g1_idx <- sample[[groupCol]] == pair[1]
-    g2_idx <- sample[[groupCol]] == pair[2]
+    g1_idx <- sample[[group_col]] == pair[1]
+    g2_idx <- sample[[group_col]] == pair[2]
     n1 <- sum(g1_idx)
     n2 <- sum(g2_idx)
     if (n1 < 2 || n2 < 2) return(NULL)
@@ -109,11 +109,11 @@ find_dams_lefse <- function(data, sample, groupCol = "group",
     # Subset
     ra_sub   <- ra[, g1_idx | g2_idx, drop = FALSE]
     samp_sub <- sample[g1_idx | g2_idx, , drop = FALSE]
-    samp_sub[[groupCol]] <- factor(as.character(samp_sub[[groupCol]]))
+    samp_sub[[group_col]] <- factor(as.character(samp_sub[[group_col]]))
 
     # Try lefser first
-    res_lefser <- try_lefser(ra_sub, samp_sub, groupCol,
-                             wilcox.threshold, lda.threshold)
+    res_lefser <- try_lefser(ra_sub, samp_sub, group_col,
+                             wilcox_threshold, lda_threshold)
     if (!is.null(res_lefser)) {
       res_lefser$comparison <- paste(pair[1], "vs", pair[2])
       res_lefser$method <- "lefser"
@@ -122,7 +122,7 @@ find_dams_lefse <- function(data, sample, groupCol = "group",
 
     # Fallback: Wilcoxon + Fisher's LDA
     res_fb <- fallback_wilcox_lda(ra, g1_idx, g2_idx, pair,
-                                  wilcox.threshold, lda.threshold)
+                                  wilcox_threshold, lda_threshold)
     if (!is.null(res_fb)) {
       res_fb$method <- "wilcox_lda"
       return(res_fb)
@@ -153,15 +153,15 @@ find_dams_lefse <- function(data, sample, groupCol = "group",
 
 
 # --- Internal: try lefser ----------------------------------------------------
-try_lefser <- function(ra, sample_sub, groupCol,
-                       kruskal.threshold, lda.threshold) {
+try_lefser <- function(ra, sample_sub, group_col,
+                       kruskal.threshold, lda_threshold) {
   if (!requireNamespace("lefser", quietly = TRUE) ||
       !requireNamespace("SummarizedExperiment", quietly = TRUE)) {
     return(NULL)
   }
 
   # Pre-filter: keep features present in >= 2 samples per group
-  grp <- sample_sub[[groupCol]]
+  grp <- sample_sub[[group_col]]
   levels_grp <- levels(grp)
   keep <- rowSums(ra[, grp == levels_grp[1], drop = FALSE] > 0) >= 2 &
           rowSums(ra[, grp == levels_grp[2], drop = FALSE] > 0) >= 2
@@ -192,10 +192,10 @@ try_lefser <- function(ra, sample_sub, groupCol,
   res <- suppressMessages(suppressWarnings(tryCatch(
     lefser::lefser(
       se,
-      classCol = groupCol,
+      classCol = group_col,
       kruskal.threshold = kruskal.threshold,
-      wilcox.threshold  = kruskal.threshold,
-      lda.threshold     = lda.threshold
+      wilcox_threshold  = kruskal.threshold,
+      lda_threshold     = lda_threshold
     ),
     error = function(e) NULL
   )))
@@ -210,7 +210,7 @@ try_lefser <- function(ra, sample_sub, groupCol,
 
 # --- Internal: Wilcoxon + Fisher LDA fallback --------------------------------
 fallback_wilcox_lda <- function(ra, g1_idx, g2_idx, pair,
-                                wilcox.threshold, lda.threshold) {
+                                wilcox_threshold, lda_threshold) {
   n1 <- sum(g1_idx)
   n2 <- sum(g2_idx)
 
@@ -234,8 +234,8 @@ fallback_wilcox_lda <- function(ra, g1_idx, g2_idx, pair,
 
   lda_raw <- (m1 - m2) / pool_sd * sqrt(n1 * n2 / (n1 + n2))
 
-  sig <- !is.na(pvals) & pvals < wilcox.threshold &
-         !is.na(lda_raw) & abs(lda_raw) >= lda.threshold
+  sig <- !is.na(pvals) & pvals < wilcox_threshold &
+         !is.na(lda_raw) & abs(lda_raw) >= lda_threshold
 
   if (!any(sig)) return(NULL)
 

@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.1] - 2026-06-23
+
+### Changed (breaking)
+Continued snake_case normalization sweep across remaining exported functions:
+
+- `plot_LDheatmap` → `plot_ld_heatmap` (file renamed too: `R/plot_LDheatmap.R` → `R/plot_ld_heatmap.R`)
+- `spls_analysis()`: `keepX` → `keep_x` (passed to mixOmics as `keepX = keep_x`)
+- `pca_analysis()`, `tsne_analysis()`: `conf.ellipses` → `conf_ellipses`, `ellipse.level` → `ellipse_level`
+- `find_outliers()`: `return.logical` → `return_logical`
+- `find_dams_lefse()`: `groupCol` → `group_col`, `wilcox.threshold` → `wilcox_threshold`, `lda.threshold` → `lda_threshold`
+- `plot_multi_volcano()`: `groupCol` → `group_col`, `featureCol` → `feature_col`, `log2FCCol` → `log2fc_col`, `padjCol` → `padj_col`, `log2FC_thr` → `log2fc_thr`, `topN` → `top_n`
+
+### Verified clean
+Full audit of all exported functions confirms parameters are snake_case (modulo documented exceptions: `na.rm`/`row.names` R base, `CalExp*` backward-compat, S3 methods like `print.core_microbiome`, internal `apply_bioRtools_theme` which references the package name).
+
 ## [1.52.0] - 2026-06-23
 
 ### Changed (breaking)

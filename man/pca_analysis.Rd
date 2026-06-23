@@ -15,8 +15,8 @@ pca_analysis(
   color_by = "group",
   shape_by = NULL,
   plot_type = "all",
-  conf.ellipses = FALSE,
-  ellipse.level = 0.95
+  conf_ellipses = FALSE,
+  ellipse_level = 0.95
 )
 }
 \arguments{
@@ -65,12 +65,12 @@ Can be the same as color_by or different to show additional sample attributes}
   \item "none": No plots (results only)
 }}
 
-\item{conf.ellipses}{Logical indicating whether to add confidence ellipses
+\item{conf_ellipses}{Logical indicating whether to add confidence ellipses
 around groups in score plots (default: FALSE). Useful for visualizing
 group separation and overlap}
 
-\item{ellipse.level}{Confidence level for ellipses (default: 0.95). Only
-used when conf.ellipses = TRUE}
+\item{ellipse_level}{Confidence level for ellipses (default: 0.95). Only
+used when conf_ellipses = TRUE}
 }
 \value{
 A named list containing comprehensive PCA results:
@@ -198,8 +198,8 @@ pca_custom <- pca_analysis(
   y_axis = "PC3",             # Y-axis component (skip PC2)
   color_by = "species",       # Color by species
   shape_by = "sepal_size",    # Shape by sepal size
-  conf.ellipses = TRUE,       # Add confidence ellipses
-  ellipse.level = 0.95        # 95\% confidence ellipses
+  conf_ellipses = TRUE,       # Add confidence ellipses
+  ellipse_level = 0.95        # 95\% confidence ellipses
 )
 
 print("Customized PCA plot (PC1 vs PC3):")

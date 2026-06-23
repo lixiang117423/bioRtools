@@ -22,7 +22,7 @@
 #'   Ignored when \code{sample} is provided.
 #' @param ncomp Positive integer specifying the number of components to include
 #'   in the model. Default is 3.
-#' @param keepX Numeric vector indicating the number of variables to keep in
+#' @param keep_x Numeric vector indicating the number of variables to keep in
 #'   each component. If NULL (default), all variables are kept (non-sparse).
 #' @param scale Logical indicating whether to scale the data. Default is TRUE.
 #' @param center Logical indicating whether to center the data. Default is TRUE.
@@ -108,7 +108,7 @@
 #'   data = df.splsda.meta,
 #'   group = as.factor(df.splsda.sample$day),
 #'   ncomp = 2,
-#'   keepX = c(50, 30),  # Select 50 variables for comp1, 30 for comp2
+#'   keep_x = c(50, 30),  # Select 50 variables for comp1, 30 for comp2
 #'   scale = TRUE
 #' )
 #'
@@ -143,7 +143,7 @@ spls_analysis <- function(data,
                           group_col = "group",
                           group = NULL,
                           ncomp = 3,
-                          keepX = NULL,
+                          keep_x = NULL,
                           scale = TRUE,
                           center = TRUE,
                           max_iter = 500,
@@ -261,13 +261,13 @@ spls_analysis <- function(data,
     ncomp <- min(nrow(data) - 1, ncol(data))
   }
 
-  # Validate keepX if provided
-  if (!is.null(keepX)) {
-    if (length(keepX) != ncomp) {
-      stop("Length of 'keepX' must equal 'ncomp'")
+  # Validate keep_x if provided
+  if (!is.null(keep_x)) {
+    if (length(keep_x) != ncomp) {
+      stop("Length of 'keep_x' must equal 'ncomp'")
     }
-    if (any(keepX > ncol(data))) {
-      stop("Values in 'keepX' cannot exceed the number of variables")
+    if (any(keep_x > ncol(data))) {
+      stop("Values in 'keep_x' cannot exceed the number of variables")
     }
   }
 
@@ -284,8 +284,8 @@ spls_analysis <- function(data,
     message("Data dimensions: ", nrow(data), " samples × ", ncol(data), " variables")
     message("Groups: ", paste(names(group_counts), " (n=", group_counts, ")", collapse = ", "))
     message("Components: ", ncomp)
-    if (!is.null(keepX)) {
-      message("Variable selection: ", paste(keepX, collapse = ", "), " variables per component")
+    if (!is.null(keep_x)) {
+      message("Variable selection: ", paste(keep_x, collapse = ", "), " variables per component")
     }
   }
 
@@ -301,7 +301,7 @@ spls_analysis <- function(data,
         X = data,
         Y = group,
         ncomp = ncomp,
-        keepX = keepX,
+        keepX = keep_x,
         scale = FALSE,
         max.iter = max_iter,
         tol = tol
@@ -396,17 +396,17 @@ spls_analysis <- function(data,
     parameter = c("ncomp", "scale", "center", "max_iter", "tol", "n_samples",
       "n_variables", "n_groups", "sparse"),
     value = c(ncomp, scale, center, max_iter, tol, nrow(data), ncol(data),
-      nlevels(group), !is.null(keepX)),
+      nlevels(group), !is.null(keep_x)),
     stringsAsFactors = FALSE
   )
 
-  if (!is.null(keepX)) {
-    keepX_summary <- data.frame(
-      parameter = paste0("keepX_comp", seq_along(keepX)),
-      value = keepX,
+  if (!is.null(keep_x)) {
+    keep_x_summary <- data.frame(
+      parameter = paste0("keepX_comp", seq_along(keep_x)),
+      value = keep_x,
       stringsAsFactors = FALSE
     )
-    model_parameters <- rbind(model_parameters, keepX_summary)
+    model_parameters <- rbind(model_parameters, keep_x_summary)
   }
 
   if (verbose) {

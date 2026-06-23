@@ -18,8 +18,8 @@ tsne_analysis(
   color_by = "group",
   shape_by = NULL,
   plot_type = "all",
-  conf.ellipses = FALSE,
-  ellipse.level = 0.95
+  conf_ellipses = FALSE,
+  ellipse_level = 0.95
 )
 }
 \arguments{
@@ -66,10 +66,10 @@ stochastic; set a seed for reproducible outputs.}
   \item "none": No plots (results only)
 }}
 
-\item{conf.ellipses}{Logical; whether to add confidence ellipses around groups
+\item{conf_ellipses}{Logical; whether to add confidence ellipses around groups
 (default: FALSE).}
 
-\item{ellipse.level}{Confidence level for ellipses (default: 0.95).}
+\item{ellipse_level}{Confidence level for ellipses (default: 0.95).}
 }
 \value{
 A named list containing:

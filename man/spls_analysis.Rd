@@ -11,7 +11,7 @@ spls_analysis(
   group_col = "group",
   group = NULL,
   ncomp = 3,
-  keepX = NULL,
+  keep_x = NULL,
   scale = TRUE,
   center = TRUE,
   max_iter = 500,
@@ -45,7 +45,7 @@ Ignored when \code{sample} is provided.}
 \item{ncomp}{Positive integer specifying the number of components to include
 in the model. Default is 3.}
 
-\item{keepX}{Numeric vector indicating the number of variables to keep in
+\item{keep_x}{Numeric vector indicating the number of variables to keep in
 each component. If NULL (default), all variables are kept (non-sparse).}
 
 \item{scale}{Logical indicating whether to scale the data. Default is TRUE.}
@@ -143,7 +143,7 @@ splsda_sparse <- spls_analysis(
   data = df.splsda.meta,
   group = as.factor(df.splsda.sample$day),
   ncomp = 2,
-  keepX = c(50, 30),  # Select 50 variables for comp1, 30 for comp2
+  keep_x = c(50, 30),  # Select 50 variables for comp1, 30 for comp2
   scale = TRUE
 )
 
