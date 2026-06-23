@@ -7,7 +7,7 @@
 enrich_kegg(
   gene,
   kegg_db,
-  pAdjustMethod = "BH",
+  p_adjust_method = "BH",
   p_adjust = 0.05,
   min_pathway_size = 3,
   max_pathway_size = 500
@@ -27,7 +27,7 @@ Must include the following columns:
   \item \code{kegg.category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
 }}
 
-\item{pAdjustMethod}{Method for multiple testing correction. Options include:
+\item{p_adjust_method}{Method for multiple testing correction. Options include:
 \itemize{
   \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
   \item \code{"bonferroni"}: Bonferroni correction (most conservative)
@@ -128,7 +128,7 @@ print(top_pathways[, c("ID", "Description", "pvalue", "p.adjust", "Count")])
 kegg_strict <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
   kegg_db = df.rnaseq.kegg,
-  pAdjustMethod = "bonferroni",
+  p_adjust_method = "bonferroni",
   p_adjust = 0.01,
   min_pathway_size = 5,
   max_pathway_size = 200
@@ -170,7 +170,7 @@ metabolism_kegg <- df.rnaseq.kegg \%>\%
 metabolism_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
   kegg_db = metabolism_kegg,
-  pAdjustMethod = "BH"
+  p_adjust_method = "BH"
 )
 
 print(paste("Metabolic pathways enriched:", nrow(metabolism_results)))

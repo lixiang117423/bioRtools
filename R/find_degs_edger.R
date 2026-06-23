@@ -23,7 +23,7 @@
 #'     \item \code{~condition + batch}: Control for batch effects
 #'     \item \code{~condition + sex + age}: Multiple covariates
 #'   }
-#' @param log2FoldChange Minimum absolute log2 fold change threshold for
+#' @param log2_fold_change Minimum absolute log2 fold change threshold for
 #'   significance classification (default: 1, equivalent to 2-fold change).
 #'   Genes with |log2FC| >= this value AND fdr < fdr threshold are considered
 #'   differentially expressed
@@ -177,7 +177,7 @@
 #' de_results <- find_degs_edger(
 #'   data = df.rnaseq.gene,
 #'   sample = df.rnaseq.sample,
-#'   log2FoldChange = 1,
+#'   log2_fold_change = 1,
 #'   fdr = 0.05
 #' )
 #'
@@ -190,11 +190,11 @@
 #'   data = df.rnaseq.gene,
 #'   sample = df.rnaseq.sample,
 #'   ref_group = "Control",
-#'   log2FoldChange = 1.5,
+#'   log2_fold_change = 1.5,
 #'   fdr = 0.01
 #' )
 #' }
-find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, fdr = 0.05,
+find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1, fdr = 0.05,
                             normalize_method = "TMM", filter_min_cpm = 1,
                             filter_min_samples = NULL, trend_method = "loess",
                             robust = TRUE, remove_problematic_genes = TRUE,
@@ -336,8 +336,8 @@ find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, 
 
   # --- Validate parameters ----------------------------------------------------
 
-  if (!is.numeric(log2FoldChange) || length(log2FoldChange) != 1 || log2FoldChange < 0) {
-    stop("'log2FoldChange' must be a single non-negative number")
+  if (!is.numeric(log2_fold_change) || length(log2_fold_change) != 1 || log2_fold_change < 0) {
+    stop("'log2_fold_change' must be a single non-negative number")
   }
 
   if (!is.numeric(fdr) || length(fdr) != 1 || fdr <= 0 || fdr > 1) {
@@ -476,8 +476,8 @@ find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, 
       colnames(res)[colnames(res) == "FDR"] <- "padj"
 
       res$padj <- ifelse(is.na(res$padj), 1, res$padj)
-      res$regulation <- ifelse(res$log2FoldChange > log2FoldChange & res$padj < fdr, "Up",
-                        ifelse(res$log2FoldChange < -log2FoldChange & res$padj < fdr, "Down", "NS"))
+      res$regulation <- ifelse(res$log2FoldChange > log2_fold_change & res$padj < fdr, "Up",
+                        ifelse(res$log2FoldChange < -log2_fold_change & res$padj < fdr, "Down", "NS"))
       res$fold_change <- 2^res$log2FoldChange
       res$abs_log2fc <- abs(res$log2FoldChange)
       res$comparison <- comp_label
@@ -615,8 +615,8 @@ find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, 
     tibble::rownames_to_column(var = "gene") %>%
     dplyr::mutate(
       regulation = dplyr::case_when(
-        log2FoldChange > !!log2FoldChange & padj < !!fdr ~ "Up-regulated",
-        log2FoldChange < -!!log2FoldChange & padj < !!fdr ~ "Down-regulated",
+        log2FoldChange > !!log2_fold_change & padj < !!fdr ~ "Up-regulated",
+        log2FoldChange < -!!log2_fold_change & padj < !!fdr ~ "Down-regulated",
         TRUE ~ "Not significant"
       ),
       fold_change = 2^log2FoldChange,
@@ -645,7 +645,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, 
   attr(results_processed, "n_genes_tested") <- n_tested
   attr(results_processed, "n_samples") <- ncol(data_matrix)
   attr(results_processed, "design_formula") <- deparse(formula)
-  attr(results_processed, "log2fc_threshold") <- log2FoldChange
+  attr(results_processed, "log2fc_threshold") <- log2_fold_change
   attr(results_processed, "fdr_threshold") <- fdr
   attr(results_processed, "normalize_method") <- normalize_method
   attr(results_processed, "robust") <- robust
@@ -674,7 +674,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2FoldChange = 1, 
     cat("Samples analyzed:", ncol(data_matrix), "\n")
     cat("Design formula:", deparse(formula), "\n")
     cat("Normalization:", normalize_method, "\n")
-    cat("Log2FC threshold:", log2FoldChange, "(", round(2^log2FoldChange, 2), "-fold)\n")
+    cat("Log2FC threshold:", log2_fold_change, "(", round(2^log2_fold_change, 2), "-fold)\n")
     cat("FDR threshold:", fdr, "\n")
     cat("Robust estimation:", ifelse(robust, "Yes", "No"), "\n\n")
 

@@ -12,16 +12,16 @@
 #'   \code{colnames(data)}. If row names are missing, the function will try
 #'   to find a column whose values match \code{colnames(data)} and use it as
 #'   row names.
-#' @param groupCol Column name in \code{sample} containing group labels
+#' @param group_col Column name in \code{sample} containing group labels
 #'   (default: "group").
-#' @param log2FoldChange Minimum absolute log2 fold change threshold
+#' @param log2_fold_change Minimum absolute log2 fold change threshold
 #'   (default: 1, i.e. 2-fold).
 #' @param padj Adjusted p-value (FDR) threshold (default: 0.05).
-#' @param min.count Minimum count per sample for feature filtering
+#' @param min_count Minimum count per sample for feature filtering
 #'   (default: 1).
-#' @param min.samples Minimum number of samples that must have counts
-#'   above \code{min.count} for a feature to be retained (default: 2).
-#' @param shrink.lfc Logical indicating whether to apply log2 fold change
+#' @param min_samples Minimum number of samples that must have counts
+#'   above \code{min_count} for a feature to be retained (default: 2).
+#' @param shrink_lfc Logical indicating whether to apply log2 fold change
 #'   shrinkage for more accurate estimates (default: TRUE).
 #' @param ref_group Optional character string specifying a reference group.
 #'   When provided, all comparisons are treatment vs reference instead of
@@ -62,15 +62,15 @@
 #'
 #' \dontrun{
 #' # All pairwise comparisons
-#' res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+#' res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 #'
 #' # Against reference group only
-#' res_ref <- find_dams_deseq2(mat, meta, groupCol = "treatment", ref_group = "A")
+#' res_ref <- find_dams_deseq2(mat, meta, group_col = "treatment", ref_group = "A")
 #' }
-find_dams_deseq2 <- function(data, sample, groupCol = "group",
-                             log2FoldChange = 1, padj = 0.05,
-                             min.count = 1, min.samples = 2,
-                             shrink.lfc = TRUE,
+find_dams_deseq2 <- function(data, sample, group_col = "group",
+                             log2_fold_change = 1, padj = 0.05,
+                             min_count = 1, min_samples = 2,
+                             shrink_lfc = TRUE,
                              ref_group = NULL) {
   # --- Prepare data ----------------------------------------------------------
   data <- as.data.frame(data)
@@ -104,11 +104,11 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
   data   <- data[, common, drop = FALSE]
   sample <- sample[common, , drop = FALSE]
 
-  if (!groupCol %in% names(sample)) {
-    stop(sprintf("Column '%s' not found in sample data", groupCol))
+  if (!group_col %in% names(sample)) {
+    stop(sprintf("Column '%s' not found in sample data", group_col))
   }
 
-  groups <- unique(as.character(sample[[groupCol]]))
+  groups <- unique(as.character(sample[[group_col]]))
   if (length(groups) < 2) stop("At least 2 groups are required")
 
   # Ensure integer counts
@@ -130,21 +130,21 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
 
   # --- Pairwise DESeq2 ------------------------------------------------------
   results <- lapply(pairs, function(pair) {
-    idx <- sample[[groupCol]] %in% pair
+    idx <- sample[[group_col]] %in% pair
     data_sub   <- data[, idx, drop = FALSE]
     sample_sub <- sample[idx, , drop = FALSE]
-    sample_sub[[groupCol]] <- factor(as.character(sample_sub[[groupCol]]),
+    sample_sub[[group_col]] <- factor(as.character(sample_sub[[group_col]]),
                                      levels = pair)
 
-    if (any(table(sample_sub[[groupCol]]) < 2)) return(NULL)
+    if (any(table(sample_sub[[group_col]]) < 2)) return(NULL)
 
     # Filter low-count features within this pair
-    keep <- rowSums(data_sub >= min.count) >= min.samples
+    keep <- rowSums(data_sub >= min_count) >= min_samples
     data_sub <- data_sub[keep, , drop = FALSE]
     if (nrow(data_sub) == 0) return(NULL)
 
     # Build formula
-    fmla <- as.formula(paste0("~", groupCol))
+    fmla <- as.formula(paste0("~", group_col))
 
     dds <- tryCatch(
       DESeq2::DESeqDataSetFromMatrix(
@@ -160,7 +160,7 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     if (is.null(dds)) return(NULL)
 
     res <- tryCatch({
-      if (shrink.lfc) {
+      if (shrink_lfc) {
         res_raw <- tryCatch(
           DESeq2::lfcShrink(dds,
             coef = DESeq2::resultsNames(dds)[length(DESeq2::resultsNames(dds))],
@@ -178,8 +178,8 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     res$padj <- ifelse(is.na(res$padj), 1, res$padj)
 
     res$significance <- ifelse(
-      res$log2FoldChange > log2FoldChange & res$padj < padj, "Enriched",
-      ifelse(res$log2FoldChange < -log2FoldChange & res$padj < padj, "Depleted", "NS")
+      res$log2FoldChange > log2_fold_change & res$padj < padj, "Enriched",
+      ifelse(res$log2FoldChange < -log2_fold_change & res$padj < padj, "Depleted", "NS")
     )
 
     sig <- res$significance != "NS"
@@ -195,8 +195,8 @@ find_dams_deseq2 <- function(data, sample, groupCol = "group",
     res_sig$ref_group <- pair[1]
 
     # Group descriptive statistics
-    idx_grp <- sample_sub[[groupCol]] == pair[2]
-    idx_ref <- sample_sub[[groupCol]] == pair[1]
+    idx_grp <- sample_sub[[group_col]] == pair[2]
+    idx_ref <- sample_sub[[group_col]] == pair[1]
     n_grp <- sum(idx_grp)
     n_ref <- sum(idx_ref)
 

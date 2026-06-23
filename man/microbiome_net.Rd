@@ -7,17 +7,17 @@
 microbiome_net(
   data,
   sample,
-  groupCol = "group",
+  group_col = "group",
   taxonomy = NULL,
   method = "mb",
   cor_method = "spearman",
-  minSamples = 0.1,
-  minReads = 10,
-  cor.threshold = 0.5,
-  cor.pvalue = 0.05,
-  hubQuant = 0.95,
-  clustMethod = "cluster_fast_greedy",
-  pulsar.params = list(rep.num = 20),
+  min_samples = 0.1,
+  min_reads = 10,
+  cor_threshold = 0.5,
+  cor_pvalue = 0.05,
+  hub_quant = 0.95,
+  clust_method = "cluster_fast_greedy",
+  pulsar_params = list(rep.num = 20),
   verbose = TRUE
 )
 }
@@ -26,9 +26,9 @@ microbiome_net(
 First column may be feature IDs (auto-detected if non-numeric).}
 
 \item{sample}{Data frame of sample metadata. Must contain a column matching
-sample names in \code{data} and a \code{groupCol} column for grouping.}
+sample names in \code{data} and a \code{group_col} column for grouping.}
 
-\item{groupCol}{Column name in \code{sample} for grouping (default: "group").}
+\item{group_col}{Column name in \code{sample} for grouping (default: "group").}
 
 \item{taxonomy}{Optional data frame of feature taxonomy. Row names or first
 column should match feature IDs in \code{data}.}
@@ -40,16 +40,20 @@ column should match feature IDs in \code{data}.}
 \item{cor_method}{Character string, correlation method for \code{method = "cor"}:
 "spearman" (default), "pearson", or "kendall".}
 
-\item{minSamples}{Minimum sample prevalence to keep a feature. If < 1,
+\item{min_samples}{Minimum sample prevalence to keep a feature. If < 1,
 treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).}
 
-\item{minReads}{Minimum total reads to keep a feature (default: 10).}
+\item{min_reads}{Minimum total reads to keep a feature (default: 10).}
 
-\item{hubQuant}{Quantile threshold for hub detection (default: 0.95).}
+\item{cor_threshold}{Absolute correlation threshold for method = "cor" (default: 0.5).}
 
-\item{clustMethod}{igraph clustering method (default: "cluster_fast_greedy").}
+\item{cor_pvalue}{P-value threshold for method = "cor" (default: 0.05).}
 
-\item{pulsar.params}{List passed to \code{SpiecEasi::spiec.easi} pulsar
+\item{hub_quant}{Quantile threshold for hub detection (default: 0.95).}
+
+\item{clust_method}{igraph clustering method (default: "cluster_fast_greedy").}
+
+\item{pulsar_params}{List passed to \code{SpiecEasi::spiec.easi} pulsar
 (default: \code{list(rep.num = 20)}).}
 
 \item{verbose}{Print progress messages (default: TRUE).}
@@ -77,7 +81,7 @@ networks across groups.
 }
 \examples{
 \dontrun{
-res <- microbiome_net(df.asv, df.sample, groupCol = "group", taxonomy = df.tax)
+res <- microbiome_net(df.asv, df.sample, group_col = "group", taxonomy = df.tax)
 res$globalStats
 head(res$nodeProps)
 }

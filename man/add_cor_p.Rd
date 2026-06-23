@@ -8,7 +8,8 @@ add_cor_p(
   df,
   x,
   y,
-  group_cols = NULL,
+  from = NULL,
+  to = NULL,
   method = "pearson",
   add_regression = FALSE
 )
@@ -16,14 +17,15 @@ add_cor_p(
 \arguments{
 \item{df}{A data frame.}
 
-\item{x, y}{Columns to correlate. Accept bare names (e.g. \code{otu.value})
+\item{x, y}{Value columns to correlate. Accept bare names (e.g. \code{otu.value})
 or strings (e.g. \code{"otu.value"}).}
 
-\item{group_cols}{Optional character vector of grouping column names
-(default: NULL). When provided, the function does
-\code{group_by(across(all_of(group_cols)))} before computing and
-\code{ungroup()} after. When NULL, the function respects any existing
-grouping from a prior \code{dplyr::group_by()} and ungroups at the end.}
+\item{from, to}{Grouping columns identifying the two entities being
+correlated (e.g., \code{from = "otu"}, \code{to = "phe"}). Must be
+character strings (column names). When both are provided, the function
+groups by these two columns. When both are NULL (default), the function
+respects any existing grouping from a prior \code{dplyr::group_by()}.
+Providing only one of \code{from}/\code{to} is an error.}
 
 \item{method}{Correlation method: \code{"pearson"} (default), \code{"kendall"},
 or \code{"spearman"}.}
@@ -55,11 +57,11 @@ pattern common in grouped correlation workflows.
 }
 \examples{
 \dontrun{
-# Grouping via group_cols parameter
+# Explicit from/to grouping
 df \%>\%
-  add_cor_p(otu.value, phe.value, group_cols = c("otu", "phe"))
+  add_cor_p(otu.value, phe.value, from = "otu", to = "phe")
 
-# Or respect existing grouping
+# Or rely on existing dplyr::group_by
 df \%>\%
   dplyr::group_by(otu, phe) \%>\%
   add_cor_p(otu.value, phe.value)
@@ -67,7 +69,7 @@ df \%>\%
 # Also add linear regression R^2 and p-value
 df \%>\%
   add_cor_p(otu.value, phe.value,
-            group_cols = c("otu", "phe"),
+            from = "otu", to = "phe",
             add_regression = TRUE)
 }
 

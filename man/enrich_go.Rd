@@ -7,7 +7,7 @@
 enrich_go(
   gene,
   go_db,
-  pAdjustMethod = "BH",
+  p_adjust_method = "BH",
   p_adjust = 0.05,
   min_gene_set = 3,
   max_gene_set = NULL
@@ -27,7 +27,7 @@ the following columns:
   \item \code{go.ontology}: Optional. GO ontology category (BP, MF, CC)
 }}
 
-\item{pAdjustMethod}{Method for multiple testing correction. Options include:
+\item{p_adjust_method}{Method for multiple testing correction. Options include:
 \itemize{
   \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
   \item \code{"bonferroni"}: Bonferroni correction
@@ -113,7 +113,7 @@ print(paste("Found", nrow(go_results), "enriched GO terms"))
 go_results_strict <- enrich_go(
   gene = df.rnaseq.degs$gene,
   go_db = df.rnaseq.go,
-  pAdjustMethod = "bonferroni",
+  p_adjust_method = "bonferroni",
   p_adjust = 0.01,
   min_gene_set = 5
 )
@@ -153,7 +153,7 @@ bp_go_db <- df.rnaseq.go \%>\%
 bp_results <- enrich_go(
   gene = df.rnaseq.degs$gene,
   go_db = bp_go_db,
-  pAdjustMethod = "BH",
+  p_adjust_method = "BH",
   p_adjust = 0.05
 )
 

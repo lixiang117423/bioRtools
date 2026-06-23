@@ -8,11 +8,11 @@ find_degs_deseq2(
   data,
   sample,
   formula = NULL,
-  groupCol = NULL,
-  log2FoldChange = 1,
+  group_col = NULL,
+  log2_fold_change = 1,
   padj = 0.05,
-  shrink.lfc = TRUE,
-  independent.filtering = TRUE,
+  shrink_lfc = TRUE,
+  independent_filtering = TRUE,
   alpha = 0.1,
   remove_problematic_genes = TRUE,
   pairwise = TRUE,
@@ -33,7 +33,7 @@ referenced in the design formula}
 
 \item{formula}{Design formula specifying the experimental design for DESeq2.
 Default is \code{~group}, assuming a "group" column exists in sample metadata.
-Ignored when \code{groupCol} is provided.
+Ignored when \code{group_col} is provided.
 Common examples:
 \itemize{
   \item \code{~condition}: Simple two-group comparison
@@ -42,12 +42,12 @@ Common examples:
   \item \code{~condition * time}: Interaction terms for time series
 }}
 
-\item{groupCol}{Column name in \code{sample} for the grouping variable.
-When provided, overrides \code{formula} and constructs \code{~groupCol}.
+\item{group_col}{Column name in \code{sample} for the grouping variable.
+When provided, overrides \code{formula} and constructs \code{~group_col}.
 This is a convenience shortcut for simple comparisons without batch effects.
 Default is NULL (use \code{formula} instead).}
 
-\item{log2FoldChange}{Minimum absolute log2 fold change threshold for
+\item{log2_fold_change}{Minimum absolute log2 fold change threshold for
 significance classification (default: 1, equivalent to 2-fold change).
 Genes with |log2FC| >= this value AND padj < padj threshold are considered
 differentially expressed. Use 0.5 for 1.4-fold, 1.5 for 3-fold changes}
@@ -56,11 +56,11 @@ differentially expressed. Use 0.5 for 1.4-fold, 1.5 for 3-fold changes}
 (default: 0.05). Genes with Benjamini-Hochberg adjusted p-values below
 this threshold are considered statistically significant}
 
-\item{shrink.lfc}{Logical indicating whether to apply log2 fold change
+\item{shrink_lfc}{Logical indicating whether to apply log2 fold change
 shrinkage (default: TRUE). Shrinkage reduces noise in log2FC estimates
 for genes with low counts, providing more accurate effect size estimates}
 
-\item{independent.filtering}{Logical indicating whether to perform independent
+\item{independent_filtering}{Logical indicating whether to perform independent
 filtering (default: TRUE). Filters out genes with very low counts to
 improve multiple testing correction and statistical power}
 
@@ -175,10 +175,10 @@ de_strict <- find_degs_deseq2(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
   formula = ~ batch + condition,    # Control for batch effects
-  log2FoldChange = 1.5,           # 3-fold change threshold
+  log2_fold_change = 1.5,           # 3-fold change threshold
   padj = 0.01,                    # 1\% FDR
-  shrink.lfc = TRUE,              # Apply LFC shrinkage
-  independent.filtering = TRUE     # Enable independent filtering
+  shrink_lfc = TRUE,              # Apply LFC shrinkage
+  independent_filtering = TRUE     # Enable independent filtering
 )
 
 print(paste("Strict analysis found",
@@ -205,7 +205,7 @@ timeseries_de <- find_degs_deseq2(
   data = df.rnaseq.gene,
   sample = df.rnaseq.sample,
   formula = ~ subject + timepoint,  # Control for subject effects
-  log2FoldChange = 0.5,           # More sensitive for time effects
+  log2_fold_change = 0.5,           # More sensitive for time effects
   padj = 0.1                      # Less stringent for discovery
 )
 

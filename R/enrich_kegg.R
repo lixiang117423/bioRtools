@@ -17,7 +17,7 @@
 #'     \item \code{kegg.term}: KEGG pathway descriptions (e.g., "Cell cycle", "Glycolysis")
 #'     \item \code{kegg.category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
 #'   }
-#' @param pAdjustMethod Method for multiple testing correction. Options include:
+#' @param p_adjust_method Method for multiple testing correction. Options include:
 #'   \itemize{
 #'     \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
 #'     \item \code{"bonferroni"}: Bonferroni correction (most conservative)
@@ -116,7 +116,7 @@
 #' kegg_strict <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
 #'   kegg_db = df.rnaseq.kegg,
-#'   pAdjustMethod = "bonferroni",
+#'   p_adjust_method = "bonferroni",
 #'   p_adjust = 0.01,
 #'   min_pathway_size = 5,
 #'   max_pathway_size = 200
@@ -158,7 +158,7 @@
 #' metabolism_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
 #'   kegg_db = metabolism_kegg,
-#'   pAdjustMethod = "BH"
+#'   p_adjust_method = "BH"
 #' )
 #'
 #' print(paste("Metabolic pathways enriched:", nrow(metabolism_results)))
@@ -192,7 +192,7 @@
 #' print(kegg_for_plot[, c("ID", "pathway_short", "enrichment.score", "Count")])
 #' }
 #'
-enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
+enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
                         min_pathway_size = 3, max_pathway_size = 500) {
   # Input validation
   if (!is.character(gene) || length(gene) == 0) {
@@ -212,8 +212,8 @@ enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
 
   # Validate adjustment method
   valid_methods <- c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
-  if (!pAdjustMethod %in% valid_methods) {
-    stop(paste("Invalid pAdjustMethod. Choose from:", paste(valid_methods, collapse = ", ")))
+  if (!p_adjust_method %in% valid_methods) {
+    stop(paste("Invalid p_adjust_method. Choose from:", paste(valid_methods, collapse = ", ")))
   }
 
   # Validate parameters
@@ -309,7 +309,7 @@ enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
         TERM2GENE = term2gene_filtered,
         TERM2NAME = term2name,
         qvalueCutoff = p_adjust,
-        pAdjustMethod = pAdjustMethod,
+        pAdjustMethod = p_adjust_method,
         minGSSize = min_pathway_size,
         maxGSSize = max_pathway_size
       )
@@ -377,7 +377,7 @@ enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
   attr(kegg_results, "input_genes") <- length(gene)
   attr(kegg_results, "genes_in_database") <- length(overlapping_genes)
   attr(kegg_results, "pathways_tested") <- n_pathways_to_test
-  attr(kegg_results, "adjustment_method") <- pAdjustMethod
+  attr(kegg_results, "adjustment_method") <- p_adjust_method
   attr(kegg_results, "significance_threshold") <- p_adjust
   attr(kegg_results, "min_pathway_size") <- min_pathway_size
   attr(kegg_results, "max_pathway_size") <- max_pathway_size
@@ -392,7 +392,7 @@ enrich_kegg <- function(gene, kegg_db, pAdjustMethod = "BH", p_adjust = 0.05,
     cat("Pathways tested:", n_pathways_to_test, "\n")
     cat("Pathway size range:", min_pathway_size, "-", max_pathway_size, "genes\n")
     cat("Significantly enriched pathways:", nrow(kegg_results), "\n")
-    cat("Adjustment method:", pAdjustMethod, "\n")
+    cat("Adjustment method:", p_adjust_method, "\n")
     cat("Significance threshold:", p_adjust, "\n\n")
 
     # Show top pathways

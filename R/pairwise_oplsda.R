@@ -9,15 +9,15 @@
 #' @param sample Data frame of sample metadata. Row names should match
 #'   \code{rownames(data)}. If row names are missing, the function will try to
 #'   find a column whose values match \code{rownames(data)} and use it as row names.
-#' @param groupCol Column name in \code{sample} containing group labels
+#' @param group_col Column name in \code{sample} containing group labels
 #'   (default: "group").
-#' @param vip.threshold VIP score threshold for marking important variables
+#' @param vip_threshold VIP score threshold for marking important variables
 #'   (default: 1.0).
-#' @param ortho.components Number of orthogonal components (default: 1).
+#' @param ortho_components Number of orthogonal components (default: 1).
 #' @param scaling Scaling method passed to \code{ropls::opls}. One of
 #'   "standard" (default), "pareto", "center", or "none".
 #' @param validation Cross-validation method: "CV" (default) or "none".
-#' @param cv.folds Number of cross-validation folds (default: 7).
+#' @param cv_folds Number of cross-validation folds (default: 7).
 #'
 #' @return A named list with:
 #'   \describe{
@@ -47,14 +47,14 @@
 #'   treatment = rep(c("A", "B", "C"), each = 6))
 #'
 #' \dontrun{
-#' res <- pairwise_oplsda(mat, meta, groupCol = "treatment")
+#' res <- pairwise_oplsda(mat, meta, group_col = "treatment")
 #' res$model_summary
 #' head(res$vip_scores)
 #' }
-pairwise_oplsda <- function(data, sample, groupCol = "group",
-                            vip.threshold = 1.0, ortho.components = 1,
+pairwise_oplsda <- function(data, sample, group_col = "group",
+                            vip_threshold = 1.0, ortho_components = 1,
                             scaling = "standard", validation = "CV",
-                            cv.folds = 7) {
+                            cv_folds = 7) {
 
   # --- Prepare data ---------------------------------------------------------
   data <- as.data.frame(data)
@@ -80,11 +80,11 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
   data_matrix <- data_matrix[common, , drop = FALSE]
   sample      <- sample[common, , drop = FALSE]
 
-  if (!groupCol %in% names(sample)) {
-    stop(sprintf("Column '%s' not found in sample data", groupCol))
+  if (!group_col %in% names(sample)) {
+    stop(sprintf("Column '%s' not found in sample data", group_col))
   }
 
-  groups <- unique(as.character(sample[[groupCol]]))
+  groups <- unique(as.character(sample[[group_col]]))
   if (length(groups) < 2) stop("At least 2 groups are required")
 
   variable_names <- colnames(data_matrix)
@@ -96,10 +96,10 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
   pairs <- utils::combn(groups, 2, simplify = FALSE)
 
   results <- lapply(pairs, function(pair) {
-    idx <- sample[[groupCol]] %in% pair
+    idx <- sample[[group_col]] %in% pair
     data_sub  <- data_matrix[idx, , drop = FALSE]
     samp_sub  <- sample[idx, , drop = FALSE]
-    group_sub <- factor(as.character(samp_sub[[groupCol]]), levels = pair)
+    group_sub <- factor(as.character(samp_sub[[group_col]]), levels = pair)
     comp_label <- paste(pair[1], "vs", pair[2])
 
     min_size <- min(table(group_sub))
@@ -119,14 +119,14 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
     var_names_sub <- variable_names[keep]
 
     # Fit OPLS-DA
-    cv_val <- if (validation == "CV") min(cv.folds, min_size) else 0
+    cv_val <- if (validation == "CV") min(cv_folds, min_size) else 0
 
     opls_model <- tryCatch(
       ropls::opls(
         x        = data_sub,
         y        = group_sub,
         predI    = 1,
-        orthoI   = ortho.components,
+        orthoI   = ortho_components,
         scaleC   = scaling,
         crossvalI = cv_val,
         fig.pdfC = "none",
@@ -144,7 +144,7 @@ pairwise_oplsda <- function(data, sample, groupCol = "group",
     vip_df <- data.frame(
       feature   = var_names_sub,
       vip       = vip_values,
-      important = !is.na(vip_values) & vip_values >= vip.threshold,
+      important = !is.na(vip_values) & vip_values >= vip_threshold,
       stringsAsFactors = FALSE
     )
     vip_df <- vip_df[order(vip_df$vip, decreasing = TRUE), ]

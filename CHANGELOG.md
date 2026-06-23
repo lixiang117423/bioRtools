@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.0] - 2026-06-23
+
+### Changed (breaking)
+Normalize function parameter names to snake_case per DEVELOP_GUIDE 1.1, 1.3. For parameters passed to external packages, the call site preserves the external name (e.g. `pAdjustMethod = p_adjust_method`).
+
+- `microbiome_net()`: `groupCol` → `group_col`, `minSamples` → `min_samples`, `minReads` → `min_reads`, `cor.threshold` → `cor_threshold`, `cor.pvalue` → `cor_pvalue`, `hubQuant` → `hub_quant`, `clustMethod` → `clust_method`, `pulsar.params` → `pulsar_params`
+- `pairwise_oplsda()`: `groupCol` → `group_col`, `vip.threshold` → `vip_threshold`, `ortho.components` → `ortho_components`, `cv.folds` → `cv_folds`
+- `enrich_go()`, `enrich_kegg()`: `pAdjustMethod` → `p_adjust_method`
+- `find_degs_deseq2()`: `log2FoldChange` → `log2_fold_change`, `groupCol` → `group_col`, `shrink.lfc` → `shrink_lfc`, `independent.filtering` → `independent_filtering`
+- `find_degs_edger()`: `log2FoldChange` → `log2_fold_change`
+- `find_dams_deseq2()`: `log2FoldChange` → `log2_fold_change`, `groupCol` → `group_col`, `shrink.lfc` → `shrink_lfc`, `min.count` → `min_count`, `min.samples` → `min_samples`
+
+### Preserved
+- Column-name references to DESeq2 output (e.g. `res$log2FoldChange`, `df$padj`) kept as-is — these are external package output column names per DEVELOP_GUIDE 1.6.
+- `CalExp*` family parameters (`cq.table`, `ref.gene`, etc.) — backward-compat functions.
+- `na.rm`, `row.names`, `stringsAsFactors` — R base conventions.
+
 ## [1.51.1] - 2026-06-22
 
 ### Changed (breaking)
