@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.52.3] - 2026-06-23
+
+### Changed (breaking)
+More user-facing output column names snake_cased per DEVELOP_GUIDE 1.4:
+
+- `permanova_test()`: `result_permanova` and `summary_stats` data frames: `Factor` → `factor`, `P_value` → `p_value`, `R_squared` → `r_squared`, `Significance` → `significance`
+- `plot_microbiome_net()`: node data frame: `Degree` → `degree`, `Strength` → `strength`
+
 ## [1.52.2] - 2026-06-23
 
 ### Fixed

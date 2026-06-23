@@ -7,7 +7,7 @@
 #' @param group Character string specifying which group to convert.
 #'
 #' @return A \code{tidygraph::tbl_graph} object with node attributes
-#'   (name, Modularity, Degree, Strength) and edge attributes
+#'   (name, modularity, degree, strength) and edge attributes
 #'   (correlation, weight, corr_direction).
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -36,8 +36,8 @@ net2ggnetview <- function(net_result, group) {
   # Node attributes
   nodes <- data.frame(
     name = igraph::V(g)$name,
-    Degree = igraph::degree(g),
-    Strength = igraph::strength(g),
+    degree = igraph::degree(g),
+    strength = igraph::strength(g),
     stringsAsFactors = FALSE
   )
 
