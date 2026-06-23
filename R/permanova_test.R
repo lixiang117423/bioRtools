@@ -102,37 +102,37 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
   # Extract main results table
   result_permanova <- permanova_result %>%
     as.data.frame() %>%
-    tibble::rownames_to_column(var = "Factor") %>%
+    tibble::rownames_to_column(var = "factor") %>%
     dplyr::mutate(
-      Factor = ifelse(Factor == "Residual", "Residuals", Factor),
-      Factor = ifelse(Factor == "Total", "Total", Factor)
+      factor = ifelse(factor == "Residual", "Residuals", factor),
+      factor = ifelse(factor == "Total", "Total", factor)
     )
 
   # Create summary statistics table for significant factors only
   summary_stats <- result_permanova %>%
     dplyr::filter(
-      !Factor %in% c("Residuals", "Total"),
+      !factor %in% c("Residuals", "Total"),
       !is.na(`Pr(>F)`)
     ) %>%
     dplyr::select(
-      Factor,
+      factor,
       R2,
       `Pr(>F)`
     ) %>%
     dplyr::rename(
-      P_value = `Pr(>F)`,
-      R_squared = R2
+      p_value = `Pr(>F)`,
+      r_squared = R2
     ) %>%
     dplyr::mutate(
-      Significance = dplyr::case_when(
-        P_value < 0.001 ~ "***",
-        P_value < 0.01 ~ "**",
-        P_value < 0.05 ~ "*",
-        P_value < 0.1 ~ ".",
+      significance = dplyr::case_when(
+        p_value < 0.001 ~ "***",
+        p_value < 0.01 ~ "**",
+        p_value < 0.05 ~ "*",
+        p_value < 0.1 ~ ".",
         TRUE ~ ""
       )
     ) %>%
-    dplyr::arrange(P_value)
+    dplyr::arrange(p_value)
 
   # Return comprehensive results following project conventions
   list(
