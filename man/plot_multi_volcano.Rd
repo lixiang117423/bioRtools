@@ -7,13 +7,13 @@
 \usage{
 plot_multi_volcano(
   data,
-  groupCol = NULL,
-  featureCol = NULL,
-  log2FCCol = NULL,
-  padjCol = NULL,
-  log2FC_thr = 1,
+  group_col = NULL,
+  feature_col = NULL,
+  log2fc_col = NULL,
+  padj_col = NULL,
+  log2fc_thr = 1,
   padj_thr = 0.05,
-  topN = 5,
+  top_n = 5,
   label_size = 2.5,
   group_colors = "default",
   up_color = "#0073C2FF",
@@ -24,7 +24,7 @@ plot_multi_volcano(
   legend_position = c(0.08, 0.9)
 )
 
-detect_volcano_cols(data, groupCol, featureCol, log2FCCol, padjCol)
+detect_volcano_cols(data, group_col, feature_col, log2fc_col, padj_col)
 }
 \arguments{
 \item{data}{A data frame. Two formats are auto-detected:
@@ -35,21 +35,21 @@ detect_volcano_cols(data, groupCol, featureCol, log2FCCol, padjCol)
     \code{feature_id}, \code{log2FoldChange}, \code{padj}
 }}
 
-\item{groupCol}{Column for grouping (default: auto-detect).}
+\item{group_col}{Column for grouping (default: auto-detect).}
 
-\item{featureCol}{Column for feature labels (default: auto-detect).}
+\item{feature_col}{Column for feature labels (default: auto-detect).}
 
-\item{log2FCCol}{Column for log2 fold change (default: auto-detect).}
+\item{log2fc_col}{Column for log2 fold change (default: auto-detect).}
 
-\item{padjCol}{Column for adjusted p-values (default: auto-detect).}
+\item{padj_col}{Column for adjusted p-values (default: auto-detect).}
 
-\item{log2FC_thr}{Absolute log2FC threshold for significance coloring
+\item{log2fc_thr}{Absolute log2FC threshold for significance coloring
 (default: 1).}
 
 \item{padj_thr}{Adjusted p-value threshold for significance coloring
 (default: 0.05).}
 
-\item{topN}{Number of top features to label per group per direction
+\item{top_n}{Number of top features to label per group per direction
 (default: 5).}
 
 \item{label_size}{Font size for feature labels (default: 2.5).}
@@ -88,7 +88,7 @@ plot_multi_volcano(df)
 
 # With find_dams_deseq2 output
 \dontrun{
-res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 plot_multi_volcano(res)
 }
 

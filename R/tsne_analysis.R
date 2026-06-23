@@ -35,9 +35,9 @@
 #'     \item "scores": Only the t-SNE scatter plot
 #'     \item "none": No plots (results only)
 #'   }
-#' @param conf.ellipses Logical; whether to add confidence ellipses around groups
+#' @param conf_ellipses Logical; whether to add confidence ellipses around groups
 #'   (default: FALSE).
-#' @param ellipse.level Confidence level for ellipses (default: 0.95).
+#' @param ellipse_level Confidence level for ellipses (default: 0.95).
 #'
 #' @return A named list containing:
 #'   \describe{
@@ -139,7 +139,7 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
                           seed = 42,
                           color_by = "group", shape_by = NULL,
                           plot_type = "all",
-                          conf.ellipses = FALSE, ellipse.level = 0.95) {
+                          conf_ellipses = FALSE, ellipse_level = 0.95) {
 
   # --- Input validation ---
   if (!is.data.frame(data) && !is.matrix(data)) {
@@ -299,11 +299,11 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
         legend.title = ggplot2::element_text(size = 11)
       )
 
-    if (conf.ellipses) {
+    if (conf_ellipses) {
       score_plot <- score_plot +
         ggplot2::stat_ellipse(
           ggplot2::aes(color = !!rlang::sym(color_by)),
-          level = ellipse.level, type = "norm", alpha = 0.3
+          level = ellipse_level, type = "norm", alpha = 0.3
         )
     }
 

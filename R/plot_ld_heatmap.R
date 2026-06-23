@@ -81,7 +81,7 @@
 #' library(bioRtools)
 #' \dontrun{
 #' # Basic LD heatmap with default settings
-#' ld_result <- plot_LDheatmap(
+#' ld_result <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   title = "LD Heatmap for Chr1:1000000-2000000"
 #' )
@@ -90,28 +90,28 @@
 #' ld_result$plot.ld_heatmap
 #'
 #' # Custom color palette matching your image style
-#' ld_soft <- plot_LDheatmap(
+#' ld_soft <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "green_yellow",
 #'   title = "LD Analysis with Soft Green-Yellow Colors"
 #' )
 #'
 #' # Nature journal style
-#' ld_nature <- plot_LDheatmap(
+#' ld_nature <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "nature",
 #'   title = "Publication-Ready LD Heatmap"
 #' )
 #'
 #' # Custom hex colors for precise control
-#' ld_custom_hex <- plot_LDheatmap(
+#' ld_custom_hex <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = c("#f7fcf5", "#c7e9c0", "#74c476", "#238b45", "#00441b"),
 #'   title = "Custom Green Gradient LD Analysis"
 #' )
 #'
 #' # Save ggplot2 version with ggsave
-#' ld_ggplot <- plot_LDheatmap(
+#' ld_ggplot <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "green_yellow",
 #'   ggplot_version = TRUE,
@@ -132,14 +132,14 @@
 #'     plot.title = ggplot2::element_text(size = 16, face = "bold")
 #'   ) +
 #'   ggplot2::labs(
-#'     caption = "Generated with bioRtools::plot_LDheatmap()"
+#'     caption = "Generated with bioRtools::plot_ld_heatmap()"
 #'   )
 #'
 #' ggplot2::ggsave("ld_heatmap_custom.png", custom_plot,
 #'   width = 12, height = 10, dpi = 300)
 #'
 #' # Multiple format output with soft colors
-#' ld_multi <- plot_LDheatmap(
+#' ld_multi <- plot_ld_heatmap(
 #'   vcf_file = "path/to/your/file.vcf",
 #'   color_palette = "scientific",
 #'   color_steps = 150,
@@ -150,7 +150,7 @@
 #' )
 #' }
 #'
-plot_LDheatmap <- function(vcf_file,
+plot_ld_heatmap <- function(vcf_file,
                            color_palette = "default",
                            color_steps = 100,
                            flip_diagonal = TRUE,

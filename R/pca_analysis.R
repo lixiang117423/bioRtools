@@ -42,11 +42,11 @@
 #'     \item "variance": Only variance explanation plots
 #'     \item "none": No plots (results only)
 #'   }
-#' @param conf.ellipses Logical indicating whether to add confidence ellipses
+#' @param conf_ellipses Logical indicating whether to add confidence ellipses
 #'   around groups in score plots (default: FALSE). Useful for visualizing
 #'   group separation and overlap
-#' @param ellipse.level Confidence level for ellipses (default: 0.95). Only
-#'   used when conf.ellipses = TRUE
+#' @param ellipse_level Confidence level for ellipses (default: 0.95). Only
+#'   used when conf_ellipses = TRUE
 #'
 #' @return A named list containing comprehensive PCA results:
 #'   \describe{
@@ -183,8 +183,8 @@
 #'   y_axis = "PC3",             # Y-axis component (skip PC2)
 #'   color_by = "species",       # Color by species
 #'   shape_by = "sepal_size",    # Shape by sepal size
-#'   conf.ellipses = TRUE,       # Add confidence ellipses
-#'   ellipse.level = 0.95        # 95% confidence ellipses
+#'   conf_ellipses = TRUE,       # Add confidence ellipses
+#'   ellipse_level = 0.95        # 95% confidence ellipses
 #' )
 #'
 #' print("Customized PCA plot (PC1 vs PC3):")
@@ -358,7 +358,7 @@
 pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
                          center_data = TRUE, x_axis = "PC1", y_axis = "PC2",
                          color_by = "group", shape_by = NULL, plot_type = "all",
-                         conf.ellipses = FALSE, ellipse.level = 0.95) {
+                         conf_ellipses = FALSE, ellipse_level = 0.95) {
   # Input validation
   if (!is.data.frame(data) && !is.matrix(data)) {
     stop("'data' must be a data frame or matrix")
@@ -592,10 +592,10 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
       )
 
     # Add confidence ellipses if requested
-    if (conf.ellipses) {
+    if (conf_ellipses) {
       score_plot <- score_plot +
         ggplot2::stat_ellipse(ggplot2::aes(color = !!rlang::sym(color_by)),
-          level = ellipse.level, type = "norm", alpha = 0.3)
+          level = ellipse_level, type = "norm", alpha = 0.3)
     }
 
     plots$score_plot <- score_plot
