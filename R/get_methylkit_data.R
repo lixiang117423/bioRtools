@@ -7,10 +7,10 @@
 #' @param methyl_obj 一个 `methylRawList` 对象。
 #' @param context 字符型。甲基化的序列上下文（如 "CpG", "CHG", 或 "CHH"）。
 #'                此信息将被添加为输出数据框的一列。默认为 "CpG"。
-#' @param lo.count 数值。最低覆盖度阈值，默认为 10。
-#' @param lo.perc 数值。要过滤掉的覆盖度值的较低百分位数。默认为 NULL。
-#' @param hi.count 数值。用于过滤的最高覆盖度阈值。默认为 NULL。
-#' @param hi.perc 数值。最高覆盖度百分位数，用于去除异常值，默认为 99.9。
+#' @param lo_count 数值。最低覆盖度阈值，默认为 10。
+#' @param lo_perc 数值。要过滤掉的覆盖度值的较低百分位数。默认为 NULL。
+#' @param hi_count 数值。用于过滤的最高覆盖度阈值。默认为 NULL。
+#' @param hi_perc 数值。最高覆盖度百分位数，用于去除异常值，默认为 99.9。
 #' @param destrand 逻辑值。是否合并正负链数据，默认为 FALSE。
 #'
 #' @return 一个综合性的数据框，包含：
@@ -67,7 +67,7 @@
 #' comprehensive_cpg_table <- get_methylkit_data(
 #'   methyl_obj = my_cpg_obj,
 #'   context = "CpG",
-#'   lo.count = 10
+#'   lo_count = 10
 #' )
 #' # 3. 查看最终结果
 #' #    注意新增了 context 列
@@ -76,18 +76,18 @@
 #'
 get_methylkit_data <- function(methyl_obj,
                                context = "CpG",
-                               lo.count = 5,
-                               lo.perc = NULL,
-                               hi.count = NULL,
-                               hi.perc = 100,
+                               lo_count = 5,
+                               lo_perc = NULL,
+                               hi_count = NULL,
+                               hi_perc = 100,
                                destrand = FALSE) {
   # --- 1. 过滤、标准化和合并数据 ---
   message(paste("步骤 1: 正在为", context, "数据按覆盖度过滤、标准化并合并样本..."))
   myobj_final <- methylKit::filterByCoverage(methyl_obj,
-    lo.count = lo.count,
-    lo.perc = lo.perc,
-    hi.count = hi.count,
-    hi.perc = hi.perc) %>%
+    lo.count = lo_count,
+    lo.perc = lo_perc,
+    hi.count = hi_count,
+    hi.perc = hi_perc) %>%
     methylKit::normalizeCoverage() %>%
     methylKit::unite(destrand = destrand)
 

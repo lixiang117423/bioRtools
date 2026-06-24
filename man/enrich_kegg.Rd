@@ -51,18 +51,18 @@ Only KEGG pathways with adjusted p-values below this threshold will be returned}
 \value{
 A data frame containing pathway enrichment results with columns:
   \itemize{
-    \item \code{ID}: KEGG pathway identifier
-    \item \code{Description}: KEGG pathway description/name
-    \item \code{GeneRatio}: Proportion of input genes in this pathway (numeric)
-    \item \code{BgRatio}: Proportion of background genes in this pathway
+    \item \code{id}: KEGG pathway identifier
+    \item \code{description}: KEGG pathway description/name
+    \item \code{gene_ratio}: Proportion of input genes in this pathway (numeric)
+    \item \code{bg_ratio}: Proportion of background genes in this pathway
     \item \code{pvalue}: Raw p-value from hypergeometric test
-    \item \code{p.adjust}: Adjusted p-value using specified method
+    \item \code{p_adjust}: Adjusted p-value using specified method
     \item \code{qvalue}: Q-value (if calculated)
-    \item \code{geneID}: Gene identifiers contributing to this pathway (separated by "/")
-    \item \code{Count}: Number of input genes in this pathway
-    \item \code{gene.count}: Number of input genes in this pathway
-    \item \code{total.genes}: Total number of input genes tested
-    \item \code{enrichment.score}: -log10(p.adjust) for visualization
+    \item \code{gene_id}: Gene identifiers contributing to this pathway (separated by "/")
+    \item \code{count}: Number of input genes in this pathway
+    \item \code{gene_count}: Number of input genes in this pathway
+    \item \code{total_genes}: Total number of input genes tested
+    \item \code{enrichment_score}: -log10(p.adjust) for visualization
   }
 }
 \description{

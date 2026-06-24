@@ -13,7 +13,7 @@ net2ggnetview(net_result, group)
 }
 \value{
 A \code{tidygraph::tbl_graph} object with node attributes
-  (name, Modularity, Degree, Strength) and edge attributes
+  (name, modularity, degree, strength) and edge attributes
   (correlation, weight, corr_direction).
 }
 \description{
@@ -22,7 +22,7 @@ into a \code{tbl_graph} object compatible with \code{ggNetView::ggNetView()}.
 }
 \examples{
 \dontrun{
-res <- microbiome_net(df.asv, df.sample, groupCol = "group")
+res <- microbiome_net(df.asv, df.sample, group_col = "group")
 tg <- net2ggnetview(res, group = "T1")
 ggNetView::ggNetView(tg, layout = "gephi", add_outer = TRUE, label = TRUE)
 }

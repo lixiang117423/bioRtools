@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.53.1] - 2026-06-24
+
+### Fixed
+Doc/example sweep to catch stragglers from the snake_case renames:
+
+- `get_methylkit_data()`: params `lo.count`/`lo.perc`/`hi.count`/`hi.perc` → snake_case; passed to `methylKit::filterByCoverage` with original external names (`lo.count = lo_count`, etc.).
+- `find_dams_lefse()` internal helper `try_lefser`: param `kruskal.threshold` → `kruskal_threshold`; passed to `lefser::lefser` as `krusal.threshold = kruskal_threshold`.
+- @examples in `net2gephi.R`, `plot_upset.R`, `plot_microbiome_net.R`: updated calls to `microbiome_net(... group_col = ...)` and `find_dams_deseq2(... group_col = ...)` to use new param names.
+- `bioRtools-troubleshooting.R`: updated `log2FoldChange = ` mentions in examples to `log2_fold_change = `; added clarifying comment for the `hist(all_results$log2FoldChange, ...)` line (kept as-is — that's a DESeq2 output column reference).
+
 ## [1.53.0] - 2026-06-23
 
 ### Changed (breaking)

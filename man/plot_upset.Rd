@@ -61,14 +61,14 @@ visualizing overlap of differential features across pairwise comparisons.
 \details{
 Works directly with \code{\link{find_dams_deseq2}} output:
 \preformatted{
-res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 plot_upset(res, group = "comparison", feature = "feature_id")
 }
 }
 \examples{
 # With find_dams_deseq2 output
 \dontrun{
-res <- find_dams_deseq2(mat, meta, groupCol = "treatment")
+res <- find_dams_deseq2(mat, meta, group_col = "treatment")
 
 # Default: ggupset engine
 result <- plot_upset(res, group = "comparison", feature = "feature_id")
