@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.54.0] - 2026-06-24
+
+### Added
+- `write_data_by_group()`: writes a grouped data frame to one file per group. Sits after `dplyr::group_by()` in a pipe; the file path is a `glue` template where each `{column}` is filled with that group's value (e.g. `"~/Downloads/result_{CHROM}.xlsx"`). Multi-column groups supported (`"{CHROM}_{TYPE}.csv"`). Delegates each group to `write_data()` unchanged, so all its formats (xlsx/csv/tsv/bed/txt/rds/images) are inherited; extra `...` args forward to `write_data()`. Added `glue` to Imports.
+
 ## [1.53.1] - 2026-06-24
 
 ### Fixed
