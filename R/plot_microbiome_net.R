@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' res <- microbiome_net(df.asv, df.sample, groupCol = "group")
+#' res <- microbiome_net(df.asv, df.sample, group_col = "group")
 #' tg <- net2ggnetview(res, group = "T1")
 #' ggNetView::ggNetView(tg, layout = "gephi", add_outer = TRUE, label = TRUE)
 #' }

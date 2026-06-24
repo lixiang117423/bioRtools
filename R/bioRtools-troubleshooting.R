@@ -205,7 +205,7 @@
 #' \strong{Solutions:}
 #' \itemize{
 #'   \item Relax thresholds: try \code{padj = 0.1} instead of \code{0.05}
-#'   \item Lower fold-change threshold: try \code{log2FoldChange = 0.5} instead of \code{1.0}
+#'   \item Lower fold-change threshold: try \code{log2_fold_change = 0.5} instead of \code{1.0}
 #'   \item Verify your experimental design is correct
 #'   \item Check data quality: sufficient replicates, low technical noise
 #'   \item Consider whether true biological effect exists in your data
@@ -217,12 +217,12 @@
 #'   all_results <- find_degs_deseq2(
 #'     data = data,
 #'     sample = sample_meta,
-#'     log2FoldChange = 0,  # No FC threshold
+#'     log2_fold_change = 0,  # No FC threshold
 #'     padj = 1.0           # No p-value threshold
 #'   )
 #'
 #'   # Visualize what you have
-#'   hist(all_results$log2FoldChange, breaks = 50)
+#'   hist(all_results$log2FoldChange, breaks = 50)  # column name (DESeq2 output, kept)
 #'   plot(all_results$log2FoldChange, -log10(all_results$padj))
 #' }
 #'

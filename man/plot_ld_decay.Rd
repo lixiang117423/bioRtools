@@ -6,9 +6,9 @@
 \usage{
 plot_ld_decay(
   data,
-  pop_col = "Population",
-  dist_col = "Dist",
-  value_col = "Mean_r2",
+  pop_col = "population",
+  dist_col = "dist",
+  value_col = "mean_r2",
   bin_size = 1000,
   max_dist = NULL,
   model = "exponential",
@@ -22,12 +22,12 @@ plot_ld_decay(
 \item{data}{Data frame with at least three columns: population identifier,
 pairwise distance, and an LD statistic (e.g., r²).}
 
-\item{pop_col}{Column name for population grouping (default: "Population").}
+\item{pop_col}{Column name for population grouping (default: "population").}
 
 \item{dist_col}{Column name for pairwise physical distance in bp
-(default: "Dist").}
+(default: "dist").}
 
-\item{value_col}{Column name for LD statistic (default: "Mean_r2").}
+\item{value_col}{Column name for LD statistic (default: "mean_r2").}
 
 \item{bin_size}{Numeric. Binning interval in bp (default: 1000).
 Distances are grouped into bins of this size and averaged.}
@@ -60,7 +60,7 @@ A named list containing:
     \item{\code{binned_data}}{Data frame of binned mean r² per population.}
     \item{\code{fitted_data}}{Data frame of model predictions for smooth
       curve plotting.}
-    \item{\code{half_decay}}{Data frame with columns \code{Population} and
+    \item{\code{half_decay}}{Data frame with columns \code{population} and
       \code{half_decay_kb} (distance at which r² drops to half its
       initial value).}
     \item{\code{models}}{Named list of fitted model objects per population.}
@@ -85,7 +85,7 @@ the fitted r² drops to half of its initial value (at distance = 0).
 library(bioRtools)
 
 df.ld <- bioRtools::read_data("ld_result.tsv") \%>\%
-  dplyr::filter(Population != "Unknown")
+  dplyr::filter(population != "Unknown")
 
 res <- bioRtools::plot_ld_decay(df.ld, bin_size = 1000)
 
@@ -103,7 +103,7 @@ res <- bioRtools::plot_ld_decay(df.ld, palette = c(
 }
 \references{
 Hill, W. G. & Weir, B. S. (1988). Variances and covariances of squared
-linkage disequilibria in finite populations. \emph{Theoretical Population
+linkage disequilibria in finite populations. \emph{Theoretical population
 Biology}, 33(1), 54-78.
 }
 \seealso{

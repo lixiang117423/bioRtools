@@ -154,7 +154,7 @@ find_dams_lefse <- function(data, sample, group_col = "group",
 
 # --- Internal: try lefser ----------------------------------------------------
 try_lefser <- function(ra, sample_sub, group_col,
-                       kruskal.threshold, lda_threshold) {
+                       kruskal_threshold, lda_threshold) {
   if (!requireNamespace("lefser", quietly = TRUE) ||
       !requireNamespace("SummarizedExperiment", quietly = TRUE)) {
     return(NULL)
@@ -193,8 +193,8 @@ try_lefser <- function(ra, sample_sub, group_col,
     lefser::lefser(
       se,
       classCol = group_col,
-      kruskal.threshold = kruskal.threshold,
-      wilcox_threshold  = kruskal.threshold,
+      kruskal.threshold = kruskal_threshold,
+      wilcox_threshold  = kruskal_threshold,
       lda_threshold     = lda_threshold
     ),
     error = function(e) NULL

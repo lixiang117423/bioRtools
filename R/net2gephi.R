@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' res <- microbiome_net(df.asv, df.sample, groupCol = "group")
+#' res <- microbiome_net(df.asv, df.sample, group_col = "group")
 #' net2gephi(res, group = "T1", prefix = "result/network_T1")
 #' }
 net2gephi <- function(net_result, group, prefix = "network") {

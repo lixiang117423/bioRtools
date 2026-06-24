@@ -51,17 +51,17 @@ Only GO terms with adjusted p-values below this threshold will be returned}
 \value{
 A data frame containing enrichment results with columns:
   \itemize{
-    \item \code{ID}: GO term identifier
-    \item \code{Description}: GO term description
-    \item \code{GeneRatio}: Proportion of input genes in this GO term (numeric)
-    \item \code{BgRatio}: Proportion of background genes in this GO term
+    \item \code{id}: GO term identifier
+    \item \code{description}: GO term description
+    \item \code{gene_ratio}: Proportion of input genes in this GO term (numeric)
+    \item \code{bg_ratio}: Proportion of background genes in this GO term
     \item \code{pvalue}: Raw p-value from hypergeometric test
-    \item \code{p.adjust}: Adjusted p-value using specified method
+    \item \code{p_adjust}: Adjusted p-value using specified method
     \item \code{qvalue}: Q-value (if calculated)
-    \item \code{geneID}: Gene identifiers contributing to this term (separated by "/")
-    \item \code{Count}: Number of input genes in this GO term
-    \item \code{gene.count}: Number of input genes in this GO term
-    \item \code{total.genes}: Total number of input genes tested
+    \item \code{gene_id}: Gene identifiers contributing to this term (separated by "/")
+    \item \code{count}: Number of input genes in this GO term
+    \item \code{gene_count}: Number of input genes in this GO term
+    \item \code{total_genes}: Total number of input genes tested
   }
 }
 \description{

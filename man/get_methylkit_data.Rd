@@ -7,10 +7,10 @@
 get_methylkit_data(
   methyl_obj,
   context = "CpG",
-  lo.count = 5,
-  lo.perc = NULL,
-  hi.count = NULL,
-  hi.perc = 100,
+  lo_count = 5,
+  lo_perc = NULL,
+  hi_count = NULL,
+  hi_perc = 100,
   destrand = FALSE
 )
 }
@@ -20,13 +20,13 @@ get_methylkit_data(
 \item{context}{字符型。甲基化的序列上下文（如 "CpG", "CHG", 或 "CHH"）。
 此信息将被添加为输出数据框的一列。默认为 "CpG"。}
 
-\item{lo.count}{数值。最低覆盖度阈值，默认为 10。}
+\item{lo_count}{数值。最低覆盖度阈值，默认为 10。}
 
-\item{lo.perc}{数值。要过滤掉的覆盖度值的较低百分位数。默认为 NULL。}
+\item{lo_perc}{数值。要过滤掉的覆盖度值的较低百分位数。默认为 NULL。}
 
-\item{hi.count}{数值。用于过滤的最高覆盖度阈值。默认为 NULL。}
+\item{hi_count}{数值。用于过滤的最高覆盖度阈值。默认为 NULL。}
 
-\item{hi.perc}{数值。最高覆盖度百分位数，用于去除异常值，默认为 99.9。}
+\item{hi_perc}{数值。最高覆盖度百分位数，用于去除异常值，默认为 99.9。}
 
 \item{destrand}{逻辑值。是否合并正负链数据，默认为 FALSE。}
 }
@@ -91,7 +91,7 @@ print(my_cpg_obj)
 comprehensive_cpg_table <- get_methylkit_data(
   methyl_obj = my_cpg_obj,
   context = "CpG",
-  lo.count = 10
+  lo_count = 10
 )
 # 3. 查看最终结果
 #    注意新增了 context 列
