@@ -141,3 +141,53 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
   )
   invisible(data)
 }
+
+
+#' Write Data by Group
+#'
+#' Writes a grouped data frame to multiple files — one per group. Designed to
+#' sit after \code{dplyr::group_by()} in a pipe: \code{file} is a path template
+#' interpolated per group with \pkg{glue} syntax, where each \code{{column}}
+#' placeholder is replaced by that group's value of the column.
+#'
+#' Each group is handed to \code{\link{write_data}} unchanged, so every format
+#' \code{write_data} supports (.xlsx, .csv, .tsv, .bed, .txt, .rds, images, ...)
+#' works here too. Multi-column groups are supported — use one placeholder per
+#' grouping column, e.g. \code{"{CHROM}_{TYPE}.csv"}.
+#'
+#' @param data A grouped data frame (from \code{dplyr::group_by()}).
+#' @param file File path template. Use \code{{column}} to insert a group's value
+#'   of a grouping column, e.g. \code{"~/Downloads/result_{CHROM}.xlsx"}.
+#' @param ... Additional arguments forwarded to \code{\link{write_data}} for
+#'   every group (e.g. \code{col_names = FALSE}, or image \code{width}/\code{height}).
+#'
+#' @return The input \code{data}, invisibly, so the pipe can continue.
+#' @author Xiang LI <lixiang117423@gmail.com>
+#' @export
+#' @seealso \code{\link{write_data}}
+#'
+#' @examples
+#' \dontrun{
+#' df %>%
+#'   dplyr::group_by(CHROM) %>%
+#'   write_data_by_group("~/Downloads/GWAS_result_new_{CHROM}.xlsx")
+#'
+#' # Multi-column group, csv output
+#' df %>%
+#'   dplyr::group_by(CHROM, TYPE) %>%
+#'   write_data_by_group("~/Downloads/{CHROM}_{TYPE}.csv")
+#' }
+write_data_by_group <- function(data, file, ...) {
+  if (!dplyr::is_grouped_df(data)) {
+    stop("'data' must be a grouped data frame; call dplyr::group_by() first")
+  }
+
+  dots <- list(...)
+
+  dplyr::group_walk(data, function(.x, .y) {
+    out_file <- glue::glue_data(.y, file)
+    do.call(write_data, c(list(data = .x, file = out_file), dots))
+  })
+
+  invisible(data)
+}
