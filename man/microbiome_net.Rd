@@ -62,17 +62,25 @@ treated as proportion; if >= 1, treated as count (default: 0.1 = 10\%).}
 A named list with:
   \describe{
     \item{\code{networks}}{Named list of igraph objects, one per group.}
-    \item{\code{adjaMats}}{Named list of adjacency matrices.}
-    \item{\code{nodeProps}}{Data frame of node properties for all groups,
+    \item{\code{adja_mats}}{Named list of adjacency matrices.}
+    \item{\code{node_props}}{Data frame of node properties for all groups,
       with columns: feature, group, degree, betweenness, closeness,
       eigenvector, is_hub, cluster, and taxonomy columns if provided.}
-    \item{\code{globalStats}}{Data frame with one row per group: n_nodes,
+    \item{\code{global_stats}}{Data frame with one row per group: n_nodes,
       n_edges, density, avg_path_length, clustering_coef, modularity,
       pos_edge_pct, n_hubs.}
+    \item{\code{edge_list}}{Data frame of edges (feature pairs with
+      correlation, padj, direction; taxonomy columns if provided).
+      Only populated for \code{method = "cor"}.}
     \item{\code{compare}}{Data frame of pairwise comparisons (when > 1
       group): Jaccard index of hub nodes and differences in global metrics.}
-    \item{\code{spiecResults}}{Named list of raw spiec.easi output objects.}
+    \item{\code{spiec_results}}{Named list of raw spiec.easi output objects.}
   }
+
+  The previous camelCase names (\code{adjaMats}, \code{nodeProps},
+  \code{globalStats}, \code{edgeList}, \code{spiecResults}) are retained as
+  deprecated aliases for backward compatibility and will be removed in a
+  future major version.
 }
 \description{
 Constructs microbial association networks for each group using SpiecEasi,
@@ -82,8 +90,8 @@ networks across groups.
 \examples{
 \dontrun{
 res <- microbiome_net(df.asv, df.sample, group_col = "group", taxonomy = df.tax)
-res$globalStats
-head(res$nodeProps)
+res$global_stats
+head(res$node_props)
 }
 }
 \seealso{

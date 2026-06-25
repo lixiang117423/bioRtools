@@ -30,17 +30,25 @@
 #' @return A named list with:
 #'   \describe{
 #'     \item{\code{networks}}{Named list of igraph objects, one per group.}
-#'     \item{\code{adjaMats}}{Named list of adjacency matrices.}
-#'     \item{\code{nodeProps}}{Data frame of node properties for all groups,
+#'     \item{\code{adja_mats}}{Named list of adjacency matrices.}
+#'     \item{\code{node_props}}{Data frame of node properties for all groups,
 #'       with columns: feature, group, degree, betweenness, closeness,
 #'       eigenvector, is_hub, cluster, and taxonomy columns if provided.}
-#'     \item{\code{globalStats}}{Data frame with one row per group: n_nodes,
+#'     \item{\code{global_stats}}{Data frame with one row per group: n_nodes,
 #'       n_edges, density, avg_path_length, clustering_coef, modularity,
 #'       pos_edge_pct, n_hubs.}
+#'     \item{\code{edge_list}}{Data frame of edges (feature pairs with
+#'       correlation, padj, direction; taxonomy columns if provided).
+#'       Only populated for \code{method = "cor"}.}
 #'     \item{\code{compare}}{Data frame of pairwise comparisons (when > 1
 #'       group): Jaccard index of hub nodes and differences in global metrics.}
-#'     \item{\code{spiecResults}}{Named list of raw spiec.easi output objects.}
+#'     \item{\code{spiec_results}}{Named list of raw spiec.easi output objects.}
 #'   }
+#'
+#'   The previous camelCase names (\code{adjaMats}, \code{nodeProps},
+#'   \code{globalStats}, \code{edgeList}, \code{spiecResults}) are retained as
+#'   deprecated aliases for backward compatibility and will be removed in a
+#'   future major version.
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -49,8 +57,8 @@
 #' @examples
 #' \dontrun{
 #' res <- microbiome_net(df.asv, df.sample, group_col = "group", taxonomy = df.tax)
-#' res$globalStats
-#' head(res$nodeProps)
+#' res$global_stats
+#' head(res$node_props)
 #' }
 microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
                            method = "mb", cor_method = "spearman",
@@ -104,19 +112,19 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
   # Filter low-frequency features
   n_samp <- ncol(data_mat)
   if (min_samples < 1) {
-    minSampCount <- ceiling(min_samples * n_samp)
+    min_samp_count <- ceiling(min_samples * n_samp)
   } else {
-    minSampCount <- min_samples
+    min_samp_count <- min_samples
   }
   prev <- rowSums(data_mat > 0)
   total <- rowSums(data_mat)
-  keep <- prev >= minSampCount & total >= min_reads
+  keep <- prev >= min_samp_count & total >= min_reads
   data_mat <- data_mat[keep, , drop = FALSE]
   feat_ids <- rownames(data_mat)
 
   if (verbose) {
     message(sprintf("Features retained: %d / %d (prevalence >= %d, total reads >= %d)",
-                    nrow(data_mat), length(keep), minSampCount, min_reads))
+                    nrow(data_mat), length(keep), min_samp_count, min_reads))
   }
 
   if (is.null(group_col)) {
@@ -139,11 +147,11 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
 
   # --- Build networks per group ---------------------------------------------
   networks <- list()
-  adjaMats <- list()
-  spiecResults <- list()
-  nodeProps_list <- list()
-  globalStats_list <- list()
-  edgeList_list <- list()
+  adja_mats <- list()
+  spiec_results <- list()
+  node_props_list <- list()
+  global_stats_list <- list()
+  edge_list_list <- list()
 
   for (grp in groups) {
     if (verbose) message(sprintf("\n--- Group: %s ---", grp))
@@ -211,7 +219,7 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
           colnames(tax2) <- paste0("tax2_", colnames(tax2))
           edge_df <- cbind(edge_df, tax1, tax2, stringsAsFactors = FALSE)
         }
-        edgeList_list[[grp]] <- edge_df
+        edge_list_list[[grp]] <- edge_df
       }
 
       # Store dummy objects for consistent output
@@ -221,13 +229,13 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
     } else {
       # CLR transformation (samples x features)
       X <- t(d_sub) + 1  # pseudocount
-      X_clr <- scale(log(X), center = TRUE, scale = FALSE)
-      X_clr <- X_clr / sqrt(apply(X_clr^2, 1, sum))
+      x_clr <- scale(log(X), center = TRUE, scale = FALSE)
+      x_clr <- x_clr / sqrt(apply(x_clr^2, 1, sum))
 
       # Sparse inverse covariance via huge + pulsar
       if (verbose) message(sprintf("  Method: %s (huge + pulsar)", method))
       est <- tryCatch({
-        huge::huge(X_clr, method = method, verbose = FALSE, cov.output = TRUE)
+        huge::huge(x_clr, method = method, verbose = FALSE, cov.output = TRUE)
       }, error = function(e) {
         stop(sprintf("huge estimation failed for group '%s': %s", grp, e$message))
       })
@@ -239,7 +247,7 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
       pp$criterion <- "stars"
 
       pulsar_out <- tryCatch({
-        pulsar::pulsar(X_clr,
+        pulsar::pulsar(x_clr,
           fun = function(data, ...) huge::huge(data, method = method, cov.output = TRUE, ...),
           fargs = list(lambda = est$lambda),
           criterion = pp$criterion,
@@ -358,48 +366,48 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
     )
 
     networks[[grp]] <- g
-    adjaMats[[grp]] <- adja
-    spiecResults[[grp]] <- list(est = est, pulsar = pulsar_out, opt_idx = opt_idx)
-    nodeProps_list[[grp]] <- node_df
-    globalStats_list[[grp]] <- global_df
+    adja_mats[[grp]] <- adja
+    spiec_results[[grp]] <- list(est = est, pulsar = pulsar_out, opt_idx = opt_idx)
+    node_props_list[[grp]] <- node_df
+    global_stats_list[[grp]] <- global_df
   }
 
-  if (length(nodeProps_list) == 0) {
+  if (length(node_props_list) == 0) {
     warning("No groups were successfully analyzed. Returning NULL.")
     return(NULL)
   }
 
-  nodeProps <- do.call(rbind, nodeProps_list)
-  rownames(nodeProps) <- NULL
-  globalStats <- do.call(rbind, globalStats_list)
-  rownames(globalStats) <- NULL
-  edgeList <- if (length(edgeList_list) > 0) {
-    edl <- do.call(rbind, edgeList_list)
+  node_props <- do.call(rbind, node_props_list)
+  rownames(node_props) <- NULL
+  global_stats <- do.call(rbind, global_stats_list)
+  rownames(global_stats) <- NULL
+  edge_list <- if (length(edge_list_list) > 0) {
+    edl <- do.call(rbind, edge_list_list)
     rownames(edl) <- NULL
     edl
   } else NULL
 
   # --- Pairwise comparison --------------------------------------------------
   compare <- NULL
-  analyzed_groups <- names(nodeProps_list)
+  analyzed_groups <- names(node_props_list)
   if (length(analyzed_groups) > 1) {
     pairs <- utils::combn(analyzed_groups, 2, simplify = FALSE)
     compare_rows <- lapply(pairs, function(pair) {
       g1 <- pair[1]; g2 <- pair[2]
-      hubs1 <- nodeProps_list[[g1]]$feature[nodeProps_list[[g1]]$is_hub]
-      hubs2 <- nodeProps_list[[g2]]$feature[nodeProps_list[[g2]]$is_hub]
+      hubs1 <- node_props_list[[g1]]$feature[node_props_list[[g1]]$is_hub]
+      hubs2 <- node_props_list[[g2]]$feature[node_props_list[[g2]]$is_hub]
 
       # Jaccard index of hubs
       jacc_hub <- length(intersect(hubs1, hubs2)) / length(union(hubs1, hubs2))
       if (length(union(hubs1, hubs2)) == 0) jacc_hub <- NA_real_
 
       # Jaccard index of all nodes
-      nodes1 <- nodeProps_list[[g1]]$feature
-      nodes2 <- nodeProps_list[[g2]]$feature
+      nodes1 <- node_props_list[[g1]]$feature
+      nodes2 <- node_props_list[[g2]]$feature
       jacc_all <- length(intersect(nodes1, nodes2)) / length(union(nodes1, nodes2))
 
-      s1 <- globalStats_list[[g1]]
-      s2 <- globalStats_list[[g2]]
+      s1 <- global_stats_list[[g1]]
+      s2 <- global_stats_list[[g2]]
 
       data.frame(
         comparison = paste(g1, "vs", g2),
@@ -419,9 +427,9 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
   if (verbose) {
     message("\n=== Microbiome Network Analysis Complete ===")
     message(sprintf("Groups analyzed: %d (%s)", length(analyzed_groups), paste(analyzed_groups, collapse = ", ")))
-    if (!is.null(edgeList)) message(sprintf("Total edges: %d", nrow(edgeList)))
+    if (!is.null(edge_list)) message(sprintf("Total edges: %d", nrow(edge_list)))
     message("\nGlobal statistics:")
-    print(globalStats[, c("group", "n_nodes", "n_edges", "density", "modularity", "n_hubs")])
+    print(global_stats[, c("group", "n_nodes", "n_edges", "density", "modularity", "n_hubs")])
     if (!is.null(compare)) {
       message("\nPairwise comparison:")
       print(compare[, c("comparison", "jaccard_hubs", "diff_n_edges", "diff_density")])
@@ -430,11 +438,17 @@ microbiome_net <- function(data, sample, group_col = "group", taxonomy = NULL,
 
   list(
     networks = networks,
-    adjaMats = adjaMats,
-    nodeProps = nodeProps,
-    globalStats = globalStats,
-    edgeList = edgeList,
+    adja_mats = adja_mats,
+    node_props = node_props,
+    global_stats = global_stats,
+    edge_list = edge_list,
     compare = compare,
-    spiecResults = spiecResults
+    spiec_results = spiec_results,
+    # backward-compatible aliases (deprecated; removed in a future major version)
+    adjaMats = adja_mats,
+    nodeProps = node_props,
+    globalStats = global_stats,
+    edgeList = edge_list,
+    spiecResults = spiec_results
   )
 }

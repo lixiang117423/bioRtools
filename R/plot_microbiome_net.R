@@ -30,8 +30,8 @@ net2ggnetview <- function(net_result, group) {
   }
 
   g <- net_result$networks[[group]]
-  adja <- net_result$adjaMats[[group]]
-  props <- net_result$nodeProps[net_result$nodeProps$group == group, ]
+  adja <- net_result$adja_mats[[group]]
+  props <- net_result$node_props[net_result$node_props$group == group, ]
 
   # Node attributes
   nodes <- data.frame(
