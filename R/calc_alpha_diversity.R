@@ -145,8 +145,8 @@ calc_alpha_diversity <- function(data,
   }
 
   # Chao1 and ACE (from estimateR)
-  needs_estimateR <- c("chao1", "ace")
-  if (any(needs_estimateR %in% index)) {
+  needs_estimate_r <- c("chao1", "ace")
+  if (any(needs_estimate_r %in% index)) {
     est <- vegan::estimateR(data_matrix)
     est_df <- as.data.frame(est)
     # Row names like "S.obs.ASV1", "S.chao1.ASV1" etc.

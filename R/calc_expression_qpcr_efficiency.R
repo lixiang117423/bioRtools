@@ -257,8 +257,8 @@ find_reference_genes_original <- function(df_expression) {
         names(V) <- paste(((n - 1):num_ref), "/", (n:(num_ref + 1)), sep = "")
       }
 
-      mean_M <- numeric(n - num_ref + 1)
-      names(mean_M) <- as.character(n:num_ref)
+      mean_m <- numeric(n - num_ref + 1)
+      names(mean_m) <- as.character(n:num_ref)
       R <- character(n)
       names(R) <- as.character(c(rep(1, num_ref), (num_ref + 1):length(R)))
 
@@ -302,16 +302,16 @@ find_reference_genes_original <- function(df_expression) {
         if (all(is.na(M))) break
 
         ind <- which.max(M)
-        mean_M[n - i + 1] <- mean(M, na.rm = TRUE)
+        mean_m[n - i + 1] <- mean(M, na.rm = TRUE)
         if (i == num_ref) {
           R[1:num_ref] <- gene_symbol
         } else {
           R[i] <- gene_symbol[ind]
         }
         if (i > 2 && ncol(df_temp) > 1) {
-          NF_old <- apply(df_temp, 1, geometric_mean)
-          NF_new <- apply(df_temp[, -ind, drop = FALSE], 1, geometric_mean)
-          V[n - i + 1] <- stats::sd(log2(NF_new / NF_old), na.rm = TRUE)
+          nf_old <- apply(df_temp, 1, geometric_mean)
+          nf_new <- apply(df_temp[, -ind, drop = FALSE], 1, geometric_mean)
+          V[n - i + 1] <- stats::sd(log2(nf_new / nf_old), na.rm = TRUE)
         }
         df_temp <- df_temp[, -ind, drop = FALSE]
         gene_symbol <- gene_symbol[-ind]

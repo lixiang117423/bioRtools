@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.55.0] - 2026-06-25
+
+### Changed (breaking)
+Dev-standards naming sweep (per CLAUDE.md §1) — camelCase to snake_case:
+
+- `microbiome_net()`: return list elements renamed. Migration: `adjaMats` → `adja_mats`, `nodeProps` → `node_props`, `globalStats` → `global_stats`, `edgeList` → `edge_list`, `spiecResults` → `spiec_results`. A previously undocumented `edge_list` element is now also described in `@return`.
+- `microbiome_net.R` internal variables: `minSampCount` → `min_samp_count`, `X_clr` → `x_clr`, plus the per-group accumulators `nodeProps_list`/`globalStats_list`/`edgeList_list` → snake_case.
+- `calc_expression_qpcr_efficiency.R`: `NF_new`/`NF_old`/`mean_M` → `nf_new`/`nf_old`/`mean_m`.
+- `calc_alpha_diversity.R`: `needs_estimateR` → `needs_estimate_r`.
+- Consumers `plot_microbiome_net.R` / `net2gephi.R` updated to read `net_result$node_props` / `net_result$adja_mats`.
+
+### Preserved (backward compatibility)
+- `microbiome_net()`: the previous camelCase element names (`adjaMats`, `nodeProps`, `globalStats`, `edgeList`, `spiecResults`) are retained as **deprecated aliases** pointing to the same objects, so existing scripts (`res$nodeProps`) keep working. Slated for removal in a future major version.
+- Single-letter uppercase math variables (`X`, `M`, `N`, `V`, `R`) kept — R statistical convention.
+- `pav_gwas()`: `library(stats)` inside `parallel::clusterEvalQ()` kept — standard pattern for loading deps on parallel worker processes, not a side-effect `library()` in ordinary code.
+- `Cal*`/`CalExp*` legacy wrapper functions kept unchanged (CLAUDE.md §1.6 backward-compat exception).
+- Gephi PascalCase columns in `net2gephi()` kept (format requirement).
+
 ## [1.54.0] - 2026-06-24
 
 ### Added

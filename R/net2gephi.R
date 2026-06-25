@@ -27,7 +27,7 @@ net2gephi <- function(net_result, group, prefix = "network") {
   }
 
   g <- net_result$networks[[group]]
-  props <- net_result$nodeProps[net_result$nodeProps$group == group, ]
+  props <- net_result$node_props[net_result$node_props$group == group, ]
 
   # --- Nodes table ---
   nodes <- data.frame(
@@ -38,7 +38,7 @@ net2gephi <- function(net_result, group, prefix = "network") {
     stringsAsFactors = FALSE
   )
 
-  # Add cluster from nodeProps
+  # Add cluster from node_props
   cluster <- props$cluster[match(nodes$Label, props$feature)]
   nodes$Modularity <- cluster
 
