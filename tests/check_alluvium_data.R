@@ -5,7 +5,7 @@ library(readxl)
 library(tidyverse)
 
 # Read the data
-file_path <- "/Users/lixiang/Downloads/PlotCase/物种组成冲积图/NCOMMS-24-29043C_Source Data to Main Figures.xlsx"
+file_path <- file.path("PlotCase", "物种组成冲积图", "NCOMMS-24-29043C_Source Data to Main Figures.xlsx")
 
 cat("Reading data from:\n", file_path, "\n\n")
 
