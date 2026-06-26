@@ -192,7 +192,7 @@ anova_single_group <- function(data, group, value, method, level) {
     },
     error = function(e) {
       warning(paste("ANOVA failed:", e$message))
-      return(NULL)
+      NULL
     })
 
   if (is.null(fit)) {
@@ -214,7 +214,7 @@ anova_single_group <- function(data, group, value, method, level) {
       },
       error = function(e) {
         warning(paste("Tukey post-hoc test failed:", e$message))
-        return(NULL)
+        NULL
       })
 
     if (is.null(posthoc_result)) {
@@ -245,7 +245,7 @@ anova_single_group <- function(data, group, value, method, level) {
       },
       error = function(e) {
         warning(paste("Duncan post-hoc test failed:", e$message))
-        return(NULL)
+        NULL
       })
 
     if (is.null(duncan_result)) {

@@ -271,7 +271,7 @@ df2fasta <- function(df,
       seq_length <- nchar(seq)
       positions <- seq(1, seq_length, by = width)
       chunks <- substring(seq, positions, c(positions[-1] - 1, seq_length))
-      return(paste(chunks, collapse = "\n"))
+      paste(chunks, collapse = "\n")
     }
 
     # Apply wrapping to all sequences

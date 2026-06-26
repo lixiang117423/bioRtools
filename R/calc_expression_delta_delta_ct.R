@@ -232,7 +232,7 @@ remove_expression_outliers <- function(expression_data) {
     lower_bound <- q1 - 1.5 * iqr
     upper_bound <- q3 + 1.5 * iqr
 
-    return(x < lower_bound | x > upper_bound)
+    x < lower_bound | x > upper_bound
   }
 
   cleaned_data <- expression_data %>%
@@ -319,7 +319,7 @@ perform_statistical_analysis <- function(expression_data, reference_group, stati
     },
     error = function(e) {
       warning("Statistical analysis failed: ", e$message)
-      return(data.frame(gene = character(0), group = character(0), p = numeric(0)))
+      data.frame(gene = character(0), group = character(0), p = numeric(0))
     })
 }
 
@@ -493,10 +493,10 @@ CalExp2ddCt <- function(cq.table, design.table, ref.gene = "OsUBQ",
     },
     error = function(e) {
       warning("Analysis failed: ", e$message)
-      return(list(
+      list(
         table = data.frame(),
         figure = NULL
-      ))
+      )
     })
 }
 
