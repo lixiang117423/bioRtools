@@ -40,6 +40,5 @@ deve.R.backup
 .rdevrc
 backup_original_files/
 CODE_REVIEW_REPORT.md
-DEVELOP_GUIDE.md
 SETUP.md
 INSTALL_SYNTENY.md
