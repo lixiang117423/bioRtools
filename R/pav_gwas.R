@@ -871,7 +871,7 @@ pav_gwas <- function(pav_data,
     attr(gwas_df, "chr_midpoints") <- chr_midpoints
 
     # Restore original order
-    return(gwas_df)
+    gwas_df
   }
 
   # ENHANCED: Association testing function with new continuous methods
@@ -1069,7 +1069,7 @@ pav_gwas <- function(pav_data,
     )
 
     result$n_samples <- length(feature_clean)
-    return(result)
+    result
   }
 
   # Step 10: Run association analysis - Enhanced reporting
@@ -1098,7 +1098,7 @@ pav_gwas <- function(pav_data,
     result <- test_feature_association(feature_presence, transformed_phenotype, test_type, covariates)
     result$feature_id <- rownames(filtered_matrix)[i]
     result$feature_index <- i
-    return(result)
+    result
   })
 
   parallel::stopCluster(cl)
@@ -1161,7 +1161,7 @@ pav_gwas <- function(pav_data,
         return(x[[field_name]])
       }
     })
-    return(result)
+    result
   }
 
   # Extract all fields

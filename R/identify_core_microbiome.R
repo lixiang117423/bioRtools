@@ -341,7 +341,7 @@ calculate_bray_curtis_contribution <- function(otu_df, otu_ranking, n_ranked) {
       left <- (bc_summary$mean_bc[pos] - bc_summary$mean_bc[1]) / pos
       right <- (bc_summary$mean_bc[nrow(bc_summary)] - bc_summary$mean_bc[pos]) /
         (nrow(bc_summary) - pos)
-      return(left - right)
+      left - right
     }
   )
 
@@ -752,7 +752,7 @@ fit_sloan_neutral_model <- function(otu_table,
         "\nReturning NULL",
         call. = FALSE
       )
-      return(NULL)
+      NULL
     }
   )
 }

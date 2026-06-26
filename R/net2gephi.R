@@ -69,8 +69,8 @@ net2gephi <- function(net_result, group, prefix = "network") {
 
   # Add correlation sign if available
   if ("sign" %in% names(edges_raw)) {
-    edges$Correlation = round(edges_raw$weight * edges_raw$sign, 6)
-    edges$Direction = ifelse(edges_raw$sign > 0, "Positive", "Negative")
+    edges$Correlation <- round(edges_raw$weight * edges_raw$sign, 6)
+    edges$Direction <- ifelse(edges_raw$sign > 0, "Positive", "Negative")
   }
 
   # --- Write files ---

@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.55.1] - 2026-06-26
+
+### Changed
+Internal style cleanup per CLAUDE.md §3.3 — no behaviour or API change.
+
+- `net2gephi.R`: two `=` assignments → `<-` (column names `Correlation`/`Direction` kept PascalCase; Gephi import requirement).
+- Removed 23 trailing `return(x)` statements (a function body's last expression) across 9 files, replaced with the bare expression. An AST pass distinguished these from legitimate early-exit `return()` inside `if`/`else`/`tryCatch` success blocks, which were kept.
+
+Files touched: `anova_posthoc.R`, `calc_expression_delta_delta_ct.R`, `calc_expression_qpcr_efficiency.R`, `calc_expression_standard_curve.R`, `df2fasta.R`, `extract_tree_hierarchy.R`, `get_lm_stats.R`, `identify_core_microbiome.R`, `net2gephi.R`, `pav_gwas.R`.
+
 ## [1.55.0] - 2026-06-25
 
 ### Changed (breaking)

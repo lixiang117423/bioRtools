@@ -217,7 +217,7 @@ extract_model_p_value <- function(model) {
         e$message,
         call. = FALSE
       )
-      return(NULL)
+      NULL
     }
   )
 

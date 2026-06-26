@@ -355,7 +355,7 @@ perform_curve_statistical_analysis <- function(expression_data, reference_group,
     },
     error = function(e) {
       warning("Statistical analysis failed: ", e$message)
-      return(data.frame(gene = character(0), treatment = character(0), p_value = numeric(0)))
+      data.frame(gene = character(0), treatment = character(0), p_value = numeric(0))
     })
 }
 
@@ -531,10 +531,10 @@ CalExpCurve <- function(cq.table, curve.table, design.table,
     },
     error = function(e) {
       warning("Standard curve analysis failed: ", e$message)
-      return(list(
+      list(
         table = data.frame(),
         figure = NULL
-      ))
+      )
     })
 }
 

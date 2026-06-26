@@ -168,7 +168,7 @@ extract_tree_hierarchy <- function(tree_file,
       }
     }
 
-    return(path)
+    path
   }
 
   # Create node-to-parent mapping

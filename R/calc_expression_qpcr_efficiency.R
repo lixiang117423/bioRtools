@@ -269,7 +269,7 @@ find_reference_genes_original <- function(df_expression) {
         if (any(x <= 0)) {
           x[x <= 0] <- min(x[x > 0], na.rm = TRUE) / 100  # Replace with small positive
         }
-        return(prod(x)^(1 / length(x)))
+        prod(x)^(1 / length(x))
       }
 
       # Original gene stability function
@@ -293,7 +293,7 @@ find_reference_genes_original <- function(df_expression) {
         } else {
           names(M) <- colnames(data)
         }
-        return(M)
+        M
       }
 
       # Original selection algorithm
@@ -324,7 +324,7 @@ find_reference_genes_original <- function(df_expression) {
     },
     error = function(e) {
       warning("GeNorm analysis failed: ", e$message, ". Using first available genes.")
-      return(all_genes[1:min(2, length(all_genes))])
+      all_genes[1:min(2, length(all_genes))]
     })
 }
 
@@ -338,7 +338,7 @@ calculate_normalization_factors_original <- function(df_expression, reference_ge
     if (any(x <= 0)) {
       x[x <= 0] <- min(x[x > 0], na.rm = TRUE) / 100  # Replace with small positive
     }
-    return(prod(x)^(1 / length(x)))
+    prod(x)^(1 / length(x))
   }
 
   df_factor <- df_expression %>%
@@ -589,7 +589,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
       warning("Statistical analysis failed: ", e$message)
       res_all$significance <- ""
       res_all$p_value <- NA_real_
-      return(res_all)
+      res_all
     })
 }
 
@@ -688,10 +688,10 @@ CalExpRqPCR <- function(cq.table,
     },
     error = function(e) {
       warning("qPCR efficiency analysis failed: ", e$message)
-      return(list(
+      list(
         table = data.frame(),
         figure = NULL
-      ))
+      )
     })
 }
 
