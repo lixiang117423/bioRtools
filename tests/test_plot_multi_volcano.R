@@ -11,7 +11,7 @@ library(ggrepel)
 library(ggprism)
 
 # Read test data
-test_data <- read_tsv("/Users/lixiang/Downloads/PlotCase/多组火山图/data.tsv")
+test_data <- read_tsv(file.path("PlotCase", "多组火山图", "data.tsv"))
 
 cat("Data loaded successfully!\n")
 cat("Dimensions:", nrow(test_data), "rows,", ncol(test_data), "columns\n")
@@ -88,7 +88,7 @@ tryCatch({
 # Test 7: Save plot
 cat("Test 7: Save plot\n")
 ggplot2::ggsave(
-  "/Users/lixiang/NutstoreFiles/03.编程相关/bioRtools/test_multi_volcano.png",
+  tempfile(fileext = ".png"),
   p1,
   width = 10,
   height = 6,

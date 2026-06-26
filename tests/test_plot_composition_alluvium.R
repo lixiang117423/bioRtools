@@ -9,7 +9,7 @@ library(readxl)
 
 # Read test data
 test_data <- read_excel(
-  "~/NutstoreFiles/03.编程相关/bioRtools/PlotCase/物种组成冲积图/NCOMMS-24-29043C_Source Data to Main Figures.xlsx",
+  file.path("PlotCase", "物种组成冲积图", "NCOMMS-24-29043C_Source Data to Main Figures.xlsx"),
   sheet = "Fig.1a",
   skip = 1
 )
@@ -80,7 +80,7 @@ cat("✓ Test 6 passed\n\n")
 # Test 7: Save plot
 cat("Test 7: Save plot\n")
 ggplot2::ggsave(
-  "/Users/lixiang/NutstoreFiles/03.编程相关/bioRtools/test_composition_alluvium.png",
+  tempfile(fileext = ".png"),
   p1,
   width = 8,
   height = 6,
