@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.56.0] - 2026-06-29
+
+### Added
+`spls_analysis()` now accepts a feature × sample abundance matrix directly — no more manual `t() %>% as.data.frame()` before the call.
+
+- New `feature_as_row` argument (default `NA` = auto-detect). With `sample` metadata supplied, the function matches sample IDs against both the row and column names of `data`: if they line up with the columns, the matrix is transposed internally. `feature_as_row = TRUE` / `FALSE` force a specific orientation; `NA` is the zero-argument default and resolves to samples-as-rows when `sample` is absent or the signal is ambiguous.
+- Added internal helper `detect_feature_as_row()` (`@keywords internal`); `NAMESPACE` unchanged.
+- Regression test added: `tests/test_spls_analysis.R` — feature-row input (auto-detected and forced) reproduces the sample-row scores exactly, and sample-row input is not spuriously transposed.
+
 ## [1.55.2] - 2026-06-29
 
 ### Fixed
