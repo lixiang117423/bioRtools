@@ -19,12 +19,15 @@ spls_analysis(
   validation = NULL,
   folds = 10,
   nrepeat = 5,
-  verbose = TRUE
+  verbose = TRUE,
+  feature_as_row = NA
 )
 }
 \arguments{
-\item{data}{Numeric matrix or data frame with observations as rows and
-variables (features) as columns. Missing values (NAs) are allowed.}
+\item{data}{Numeric matrix or data frame of abundance values. Observations
+(samples) are rows and variables (features) are columns by default; the
+transpose (features as rows, samples as columns) is also accepted — see
+\code{feature_as_row}. Missing values (NAs) are allowed.}
 
 \item{sample}{Optional data frame containing sample metadata. When provided
 together with \code{sample_col} and \code{group_col}, the function filters
@@ -66,6 +69,13 @@ Default is 10.}
 
 \item{verbose}{Logical indicating whether to print progress information.
 Default is TRUE.}
+
+\item{feature_as_row}{Logical or \code{NA}. \code{NA} (default) auto-detects
+the orientation by matching sample IDs from \code{sample} against the row
+and column names of \code{data}; \code{TRUE} forces features-as-rows;
+\code{FALSE} forces samples-as-rows (the historical layout). When detected
+or forced, the matrix is transposed internally so a manual \code{t()} is
+not needed.}
 }
 \value{
 A list containing six components:
@@ -145,6 +155,15 @@ splsda_sparse <- spls_analysis(
   ncomp = 2,
   keep_x = c(50, 30),  # Select 50 variables for comp1, 30 for comp2
   scale = TRUE
+)
+
+# Pass features-as-rows directly (skip a manual t() \%>\% as.data.frame());
+# feature_as_row = NA would also auto-detect this when 'sample' is supplied.
+meta_feature_row <- t(as.matrix(df.splsda.meta))  # features as rows
+spls_feature <- spls_analysis(
+  data = meta_feature_row,
+  group = as.factor(df.splsda.sample$day),
+  feature_as_row = TRUE
 )
 
 # sPLS-DA with cross-validation
