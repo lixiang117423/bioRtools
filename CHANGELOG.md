@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.55.2] - 2026-06-29
+
+### Fixed
+`read_data()` no longer crashes on a `.xls`/`.xlsx` file whose content is actually delimited text.
+
+- Symptom: `readxl::read_excel()` → `libxls error: Unable to open file`. Bioinformatics exporters (e.g. RNA-seq FPKM output) routinely emit tab/comma-delimited text with a `.xls` label — `readxl` (which expects a real Excel binary) rejects it.
+- Fix: `read_data()` now sniffs the file's magic bytes before routing. Real Excel is detected via ZIP (`PK`, .xlsx) or OLE2 (`D0 CF 11 E0`, .xls) magic and still read by `readxl`; anything else is read as delimited text with the delimiter guessed from the first line. The `raw_names` attribute (original column names) is preserved on the text path too.
+- Added internal helpers `is_excel_file()` / `guess_delim()` (`@keywords internal`); no change to the public API or `NAMESPACE`.
+- Regression test added: `tests/test_read_data.R`.
+
 ## [1.55.1] - 2026-06-26
 
 ### Changed

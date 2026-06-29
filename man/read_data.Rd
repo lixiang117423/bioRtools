@@ -27,6 +27,11 @@ Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
 First row is treated as column headers for tabular formats.
 }
 \details{
+A .xls/.xlsx file whose content is actually delimited text (common with
+bioinformatics exporters — no ZIP/OLE2 magic bytes) is detected and read as
+delimited text with the delimiter guessed from the first line, instead of
+being handed to readxl where it would fail.
+
 For tabular formats (.xlsx/.xls/.csv/.tsv/.txt), the original column names
 from the file are preserved as attribute \code{raw_names}. Use
 \code{attr(df, "raw_names")} to retrieve them. Useful when \code{readxl} or

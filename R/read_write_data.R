@@ -5,6 +5,11 @@
 #' (.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
 #' First row is treated as column headers for tabular formats.
 #'
+#' A .xls/.xlsx file whose content is actually delimited text (common with
+#' bioinformatics exporters — no ZIP/OLE2 magic bytes) is detected and read as
+#' delimited text with the delimiter guessed from the first line, instead of
+#' being handed to readxl where it would fail.
+#'
 #' For tabular formats (.xlsx/.xls/.csv/.tsv/.txt), the original column names
 #' from the file are preserved as attribute \code{raw_names}. Use
 #' \code{attr(df, "raw_names")} to retrieve them. Useful when \code{readxl} or
@@ -44,10 +49,22 @@ read_data <- function(file, delim = "\t", ...) {
 
   switch(ext,
     xlsx = , xls = {
-      df <- readxl::read_excel(file, .name_repair = "universal", ...)
-      raw_names <- names(suppressMessages(
-        readxl::read_excel(file, n_max = 0, .name_repair = "minimal")
-      ))
+      if (is_excel_file(file)) {
+        df <- readxl::read_excel(file, .name_repair = "universal", ...)
+        raw_names <- names(suppressMessages(
+          readxl::read_excel(file, n_max = 0, .name_repair = "minimal")
+        ))
+      } else {
+        # Bioinformatics tools routinely emit tab/comma-delimited text with a
+        # .xls extension; readxl rejects those (libxls "Unable to open file"),
+        # so detect the real delimiter and read as plain text instead.
+        dlm <- guess_delim(file)
+        df <- readr::read_delim(file, delim = dlm,
+                                name_repair = "universal", ...)
+        raw_names <- names(readr::read_delim(file, delim = dlm, n_max = 0,
+                                             show_col_types = FALSE,
+                                             name_repair = "minimal"))
+      }
       attr(df, "raw_names") <- raw_names
       df
     },
@@ -80,6 +97,39 @@ read_data <- function(file, delim = "\t", ...) {
     fasta = , fa = fasta2df(file, ...),
     stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .xls, .csv, .tsv, .txt, .fasta, .fa, .rds, .rdata")
   )
+}
+
+
+#' Detect a genuine Excel workbook by magic bytes
+#'
+#' Real .xlsx files are ZIP containers (magic bytes \code{PK}); real .xls files
+#' are OLE2 compound documents (magic bytes \code{D0 CF 11 E0}). Delimited text
+#' exported with a .xls extension matches neither and must be read as text.
+#'
+#' @param file File path.
+#' @return \code{TRUE} if the file is a genuine Excel binary, else \code{FALSE}.
+#' @keywords internal
+is_excel_file <- function(file) {
+  magic <- readBin(file, "raw", n = 4)
+  if (length(magic) < 4) {
+    return(FALSE)
+  }
+  zip_magic <- as.raw(c(0x50, 0x4B))
+  ole2_magic <- as.raw(c(0xD0, 0xCF, 0x11, 0xE0))
+  identical(magic[1:2], zip_magic) || identical(magic, ole2_magic)
+}
+
+#' Guess a text table's field delimiter from its first line
+#'
+#' @param file File path.
+#' @return \code{"\\t"} if the first line holds at least as many tabs as commas,
+#'   otherwise \code{","}.
+#' @keywords internal
+guess_delim <- function(file) {
+  first <- readLines(file, n = 1, warn = FALSE)
+  n_tab <- length(regmatches(first, gregexpr("\t", first, fixed = TRUE))[[1L]])
+  n_comma <- length(regmatches(first, gregexpr(",", first, fixed = TRUE))[[1L]])
+  if (n_tab >= n_comma) "\t" else ","
 }
 
 
