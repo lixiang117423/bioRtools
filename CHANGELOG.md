@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.58.1] - 2026-06-30
+
+### Fixed
+Crash in the interactive console summary of `enrich_kegg()` / `enrich_go()` when results were non-empty (e.g. `Error in if (nchar(pathway_name) > 50) ... : 参数长度为零`).
+
+- The summary block referenced the **pre-rename** output column names (`Description`, `ID`, `p.adjust`, `gene.count`, `total.genes`, `enrichment.score`) that no longer exist after the columns are renamed to snake_case earlier in the function — so `$Description` was `NULL`, `nchar(NULL)` was length 0, and `if()` crashed.
+- Now uses the renamed columns (`description`, `id`, `p_adjust`, `gene_count`, `total_genes`, `enrichment_score`); added an `!is.na(...)` guard on the name-length check.
+- Regression test: `tests/test_enrich_summary.R` (exercises the summary loop on real enriched results; verified end-to-end with the interactive path forced on).
+
 ## [1.58.0] - 2026-06-30
 
 ### Changed (breaking)

@@ -341,10 +341,10 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
       top_terms <- head(go_results, 5)
       for (i in 1:nrow(top_terms)) {
         cat(sprintf("%s: %s (p.adj = %.2e, genes = %d)\n",
-          top_terms$ID[i],
-          substr(top_terms$Description[i], 1, 50),
-          top_terms$p.adjust[i],
-          top_terms$gene.count[i]))
+          top_terms$id[i],
+          substr(top_terms$description[i], 1, 50),
+          top_terms$p_adjust[i],
+          top_terms$gene_count[i]))
       }
     }
   }
