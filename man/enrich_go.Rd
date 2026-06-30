@@ -22,10 +22,12 @@ expressed genes for enrichment analysis}
 the following columns:
 \itemize{
   \item \code{gene}: Gene identifiers matching those in the gene parameter
-  \item \code{go.id}: GO term identifiers (e.g., "GO:0008150")
-  \item \code{go.term}: GO term descriptions (e.g., "biological_process")
-  \item \code{go.ontology}: Optional. GO ontology category (BP, MF, CC)
-}}
+  \item \code{go_id}: GO term identifiers (e.g., "GO:0008150")
+  \item \code{go_term}: GO term descriptions (e.g., "biological_process")
+  \item \code{go_ontology}: Optional. GO ontology category (BP, MF, CC)
+}
+Legacy dot-case names (\code{go.id}, \code{go.term}, \code{go.ontology})
+are still accepted but deprecated; rename them to snake_case.}
 
 \item{p_adjust_method}{Method for multiple testing correction. Options include:
 \itemize{
@@ -125,11 +127,11 @@ print(go_results_strict)
 # This shows the required structure for go_db parameter
 sample_go_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5"),
-  go.id = c("GO:0008150", "GO:0008150", "GO:0008150",
+  go_id = c("GO:0008150", "GO:0008150", "GO:0008150",
     "GO:0003674", "GO:0003674", "GO:0005575"),
-  go.term = c("biological_process", "biological_process", "biological_process",
+  go_term = c("biological_process", "biological_process", "biological_process",
     "molecular_function", "molecular_function", "cellular_component"),
-  go.ontology = c("BP", "BP", "BP", "MF", "MF", "CC")
+  go_ontology = c("BP", "BP", "BP", "MF", "MF", "CC")
 )
 
 sample_genes <- c("GENE1", "GENE2", "GENE4")
@@ -148,7 +150,7 @@ print(sample_results)
 \dontrun{
 # Filter GO database to only biological processes
 bp_go_db <- df.rnaseq.go \%>\%
-  filter(go.ontology == "BP" | is.na(go.ontology))
+  filter(go_ontology == "BP" | is.na(go_ontology))
 
 bp_results <- enrich_go(
   gene = df.rnaseq.degs$gene,

@@ -9,8 +9,8 @@
 A data frame with 6 rows and 1 columns:
 \describe{
   \item{gene}{gene name}
-  \item{kegg.id}{KEGG term id}
-  \item{kegg.term}{KEGG term name}
+  \item{kegg_id}{KEGG term id}
+  \item{kegg_term}{KEGG term name}
 }
 }
 \source{

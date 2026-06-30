@@ -5,8 +5,15 @@
 #' visualization. t-SNE is a non-linear technique particularly effective at
 #' revealing local structure and clusters in complex datasets.
 #'
-#' @param data Numeric data frame or matrix where rows represent samples and
-#'   columns represent variables (features). All variables should be numeric.
+#' @param data Numeric data frame or matrix of abundance values. Rows are
+#'   samples and columns are variables (features) by default; the transpose
+#'   (features as rows, samples as columns) is also accepted — see
+#'   \code{feature_as_row}. All variables should be numeric.
+#' @param feature_as_row Logical or \code{NA}. \code{NA} (default) auto-detects
+#'   the orientation by matching sample IDs from \code{sample} against the row
+#'   and column names of \code{data}; \code{TRUE} forces features-as-rows;
+#'   \code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+#'   transposed internally so a manual \code{t()} is not needed.
 #' @param sample Data frame containing sample metadata. Must include a
 #'   \code{sample_id} column (or similar) matching the row names of \code{data}.
 #' @param dims Output dimensionality (default: 2). Use 2 for standard 2D
@@ -139,7 +146,8 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
                           seed = 42,
                           color_by = "group", shape_by = NULL,
                           plot_type = "all",
-                          conf_ellipses = FALSE, ellipse_level = 0.95) {
+                          conf_ellipses = FALSE, ellipse_level = 0.95,
+                          feature_as_row = NA) {
 
   # --- Input validation ---
   if (!is.data.frame(data) && !is.matrix(data)) {
@@ -153,6 +161,9 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
   if (nrow(data) == 0 || ncol(data) == 0) {
     stop("'data' cannot be empty")
   }
+
+  # Resolve orientation before as.matrix() so data and data_matrix stay aligned
+  data <- orient_to_sample_row(data, sample, NULL, feature_as_row, FALSE)
 
   data_matrix <- as.matrix(data)
   if (!is.numeric(data_matrix)) {

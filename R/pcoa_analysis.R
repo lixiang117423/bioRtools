@@ -1,6 +1,6 @@
 #' Perform principal coordinate analysis (PCoA).
 #'
-#' @param data Feature table, with rows representing samples and columns representing feature values, such as OTUs.
+#' @param data Feature table, with rows representing samples and columns representing feature values, such as OTUs. The transpose (features as rows, samples as columns) is also accepted — see \code{feature_as_row}.
 #' @param sample Sample table, with the first column containing sample names. There are no specific requirements for the names of the subsequent columns, but the sample names must match those in the feature table.
 #' @param method The method for calculating distances in vegan::vegdist() is defaulted to Bray-Curtis.
 #' @param x The principal coordinate used for the X-axis in the plot is defaulted to PCo1.
@@ -8,6 +8,11 @@
 #' @param size The size of point.
 #' @param color Column names in the sample data frame used for coloring the points.
 #' @param alpha The alpha of point.
+#' @param feature_as_row Logical or \code{NA}. \code{NA} (default) auto-detects
+#'   the orientation by matching sample IDs from \code{sample} against the row
+#'   and column names of \code{data}; \code{TRUE} forces features-as-rows;
+#'   \code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+#'   transposed internally so a manual \code{t()} is not needed.
 #'
 #' @return A list containing four components:
 #' \describe{
@@ -29,7 +34,10 @@
 #'
 #' pcoa_analysis(data = df.pcoa.otu, sample = df.pcoa.sample) -> pcoa_res
 #'
-pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2", size = 2, color = "group", alpha = 1) {
+pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2", size = 2, color = "group", alpha = 1, feature_as_row = NA) {
+  # Resolve orientation before any row-name-based sample matching / vegdist()
+  data <- orient_to_sample_row(data, sample, NULL, feature_as_row, FALSE)
+
   # Auto-detect sample ID column: if no "sample" column, find one matching data rownames
   if (!"sample" %in% colnames(sample)) {
     data_rn <- rownames(data)

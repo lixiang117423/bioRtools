@@ -75,8 +75,8 @@ utils::globalVariables(c(
   "regulation", "up", "down", "upregulated", "downregulated",
 
   # Functional analysis
-  "GO", "go.id", "go.term", "go.ontology", "go.category",
-  "KEGG", "kegg.id", "kegg.term", "kegg.pathway", "kegg.category",
+  "GO", "go_id", "go_term", "go_ontology", "go_category",
+  "KEGG", "kegg_id", "kegg_term", "kegg_pathway", "kegg_category",
   "pathway.name", "term", "description", "ontology", "category",
   "enrichment", "enriched", "depleted", "over.represented",
   "gene.ratio", "bg.ratio", "gene.count", "background.count",

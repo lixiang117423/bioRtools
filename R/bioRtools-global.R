@@ -44,14 +44,14 @@ utils::globalVariables(c(
   "degs",
 
   # enrich_GO
-  "go.id",
-  "go.term",
+  "go_id",
+  "go_term",
   "go.rich",
   "df.term2gene",
   "df.term2name",
   # enrich_KEGGG
-  "kegg.id",
-  "kegg.term",
+  "kegg_id",
+  "kegg_term",
 
   # PCoA
   "pcoa.res",

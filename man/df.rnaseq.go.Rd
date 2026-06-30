@@ -9,9 +9,9 @@
 A data frame with 6 rows and 1 columns:
 \describe{
   \item{gene}{gene name}
-  \item{go.id}{GO term id}
-  \item{go.term}{GP term name}
-  \item{go.ontology}{GP term  ontology}
+  \item{go_id}{GO term id}
+  \item{go_term}{GO term name}
+  \item{go_ontology}{GO term ontology}
 }
 }
 \source{

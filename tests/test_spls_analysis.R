@@ -2,6 +2,7 @@
 # A feature x sample matrix (with or without feature_as_row = TRUE) and the
 # auto-detect path must reproduce the sample x feature result exactly.
 
+source("R/utils-orientation.R")
 source("R/spls_analysis.R")
 
 suppressPackageStartupMessages({

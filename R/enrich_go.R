@@ -12,10 +12,12 @@
 #'   the following columns:
 #'   \itemize{
 #'     \item \code{gene}: Gene identifiers matching those in the gene parameter
-#'     \item \code{go.id}: GO term identifiers (e.g., "GO:0008150")
-#'     \item \code{go.term}: GO term descriptions (e.g., "biological_process")
-#'     \item \code{go.ontology}: Optional. GO ontology category (BP, MF, CC)
+#'     \item \code{go_id}: GO term identifiers (e.g., "GO:0008150")
+#'     \item \code{go_term}: GO term descriptions (e.g., "biological_process")
+#'     \item \code{go_ontology}: Optional. GO ontology category (BP, MF, CC)
 #'   }
+#'   Legacy dot-case names (\code{go.id}, \code{go.term}, \code{go.ontology})
+#'   are still accepted but deprecated; rename them to snake_case.
 #' @param p_adjust_method Method for multiple testing correction. Options include:
 #'   \itemize{
 #'     \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
@@ -107,11 +109,11 @@
 #' # This shows the required structure for go_db parameter
 #' sample_go_db <- data.frame(
 #'   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5"),
-#'   go.id = c("GO:0008150", "GO:0008150", "GO:0008150",
+#'   go_id = c("GO:0008150", "GO:0008150", "GO:0008150",
 #'     "GO:0003674", "GO:0003674", "GO:0005575"),
-#'   go.term = c("biological_process", "biological_process", "biological_process",
+#'   go_term = c("biological_process", "biological_process", "biological_process",
 #'     "molecular_function", "molecular_function", "cellular_component"),
-#'   go.ontology = c("BP", "BP", "BP", "MF", "MF", "CC")
+#'   go_ontology = c("BP", "BP", "BP", "MF", "MF", "CC")
 #' )
 #'
 #' sample_genes <- c("GENE1", "GENE2", "GENE4")
@@ -130,7 +132,7 @@
 #' \dontrun{
 #' # Filter GO database to only biological processes
 #' bp_go_db <- df.rnaseq.go %>%
-#'   filter(go.ontology == "BP" | is.na(go.ontology))
+#'   filter(go_ontology == "BP" | is.na(go_ontology))
 #'
 #' bp_results <- enrich_go(
 #'   gene = df.rnaseq.degs$gene,
@@ -153,8 +155,13 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
     stop("'go_db' must be a non-empty data frame")
   }
 
+  # Accept legacy dot-case column names (deprecated); prefer snake_case
+  go_db <- reconcile_db_columns(go_db,
+    c(go_id = "go.id", go_term = "go.term", go_ontology = "go.ontology"),
+    "go_db")
+
   # Check required columns in go_db
-  required_cols <- c("gene", "go.id", "go.term")
+  required_cols <- c("gene", "go_id", "go_term")
   missing_cols <- setdiff(required_cols, names(go_db))
   if (length(missing_cols) > 0) {
     stop(paste("Missing required columns in go_db:", paste(missing_cols, collapse = ", ")))
@@ -197,7 +204,7 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Clean GO database
   go_db_clean <- go_db %>%
-    dplyr::filter(!is.na(gene), !is.na(go.id), !is.na(go.term)) %>%
+    dplyr::filter(!is.na(gene), !is.na(go_id), !is.na(go_term)) %>%
     dplyr::distinct()
 
   if (nrow(go_db_clean) == 0) {
@@ -219,20 +226,20 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Prepare TERM2GENE and TERM2NAME mappings
   term2gene <- go_db_clean %>%
-    dplyr::select(go.id, gene) %>%
+    dplyr::select(go_id, gene) %>%
     dplyr::distinct()
 
   term2name <- go_db_clean %>%
-    dplyr::select(go.id, go.term) %>%
+    dplyr::select(go_id, go_term) %>%
     dplyr::distinct() %>%
     # Handle cases where one GO ID has multiple descriptions
-    dplyr::group_by(go.id) %>%
+    dplyr::group_by(go_id) %>%
     dplyr::slice_head(n = 1) %>%
     dplyr::ungroup()
 
   # Check gene set sizes and filter if necessary
   term_sizes <- term2gene %>%
-    dplyr::count(go.id, name = "term_size") %>%
+    dplyr::count(go_id, name = "term_size") %>%
     dplyr::filter(term_size >= min_gene_set, term_size <= max_gene_set)
 
   if (nrow(term_sizes) == 0) {
@@ -241,7 +248,7 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Filter TERM2GENE to include only terms meeting size criteria
   term2gene_filtered <- term2gene %>%
-    dplyr::filter(go.id %in% term_sizes$go.id)
+    dplyr::filter(go_id %in% term_sizes$go_id)
 
   # Perform enrichment analysis
   tryCatch(

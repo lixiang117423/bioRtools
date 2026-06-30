@@ -55,9 +55,9 @@
 #' A data frame with 6 rows and 1 columns:
 #' \describe{
 #'   \item{gene}{gene name}
-#'   \item{go.id}{GO term id}
-#'   \item{go.term}{GP term name}
-#'   \item{go.ontology}{GP term  ontology}
+#'   \item{go_id}{GO term id}
+#'   \item{go_term}{GO term name}
+#'   \item{go_ontology}{GO term ontology}
 #' }
 #' @source Xiang Li
 "df.rnaseq.go"
@@ -78,8 +78,8 @@
 #' A data frame with 6 rows and 1 columns:
 #' \describe{
 #'   \item{gene}{gene name}
-#'   \item{kegg.id}{KEGG term id}
-#'   \item{kegg.term}{KEGG term name}
+#'   \item{kegg_id}{KEGG term id}
+#'   \item{kegg_term}{KEGG term name}
 #' }
 #' @source Xiang Li
 "df.rnaseq.kegg"
