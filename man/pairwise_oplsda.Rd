@@ -12,12 +12,15 @@ pairwise_oplsda(
   ortho_components = 1,
   scaling = "standard",
   validation = "CV",
-  cv_folds = 7
+  cv_folds = 7,
+  feature_as_row = NA
 )
 }
 \arguments{
-\item{data}{Numerical matrix or data frame (rows = samples, cols = features).
-Rows should match the samples in \code{sample}.}
+\item{data}{Numerical matrix or data frame. Rows are samples and columns are
+features by default; the transpose (features as rows, samples as columns)
+is also accepted — see \code{feature_as_row}. Rows should match the samples
+in \code{sample}.}
 
 \item{sample}{Data frame of sample metadata. Row names should match
 \code{rownames(data)}. If row names are missing, the function will try to
@@ -37,6 +40,12 @@ find a column whose values match \code{rownames(data)} and use it as row names.}
 \item{validation}{Cross-validation method: "CV" (default) or "none".}
 
 \item{cv_folds}{Number of cross-validation folds (default: 7).}
+
+\item{feature_as_row}{Logical or \code{NA}. \code{NA} (default) auto-detects
+the orientation by matching sample IDs from \code{sample} against the row
+and column names of \code{data}; \code{TRUE} forces features-as-rows;
+\code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+transposed internally so a manual \code{t()} is not needed.}
 }
 \value{
 A named list with:

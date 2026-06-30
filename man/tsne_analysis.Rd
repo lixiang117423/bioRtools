@@ -19,12 +19,15 @@ tsne_analysis(
   shape_by = NULL,
   plot_type = "all",
   conf_ellipses = FALSE,
-  ellipse_level = 0.95
+  ellipse_level = 0.95,
+  feature_as_row = NA
 )
 }
 \arguments{
-\item{data}{Numeric data frame or matrix where rows represent samples and
-columns represent variables (features). All variables should be numeric.}
+\item{data}{Numeric data frame or matrix of abundance values. Rows are
+samples and columns are variables (features) by default; the transpose
+(features as rows, samples as columns) is also accepted — see
+\code{feature_as_row}. All variables should be numeric.}
 
 \item{sample}{Data frame containing sample metadata. Must include a
 \code{sample_id} column (or similar) matching the row names of \code{data}.}
@@ -70,6 +73,12 @@ stochastic; set a seed for reproducible outputs.}
 (default: FALSE).}
 
 \item{ellipse_level}{Confidence level for ellipses (default: 0.95).}
+
+\item{feature_as_row}{Logical or \code{NA}. \code{NA} (default) auto-detects
+the orientation by matching sample IDs from \code{sample} against the row
+and column names of \code{data}; \code{TRUE} forces features-as-rows;
+\code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+transposed internally so a manual \code{t()} is not needed.}
 }
 \value{
 A named list containing:

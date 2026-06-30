@@ -16,12 +16,15 @@ rda_analysis(
   arrow_color = "#222222",
   arrow_alpha = 0.8,
   label_repel = TRUE,
-  permutations = 999
+  permutations = 999,
+  feature_as_row = NA
 )
 }
 \arguments{
-\item{data}{A data frame where rows represent samples and columns represent
-species/OTUs/taxa. Should contain abundance or count data.}
+\item{data}{A data frame of abundance/count data. Rows are samples and
+columns are species/OTUs/taxa by default; the transpose (features as rows,
+samples as columns) is also accepted — see \code{feature_as_row}. Sample
+names must match those in \code{physicochemical}.}
 
 \item{physicochemical}{A data frame containing environmental/physicochemical
 variables where rows represent samples and columns represent environmental
@@ -57,6 +60,13 @@ environmental variables to avoid overlap. Default is TRUE.}
 
 \item{permutations}{Integer specifying the number of permutations for
 environmental fitting significance test. Default is 999.}
+
+\item{feature_as_row}{Logical or \code{NA}. \code{NA} (default) auto-detects
+the orientation by matching sample IDs (from \code{physicochemical} row
+names) against the row and column names of \code{data}; \code{TRUE} forces
+features-as-rows; \code{FALSE} forces samples-as-rows. When detected or
+forced, the matrix is transposed internally so a manual \code{t()} is not
+needed.}
 }
 \value{
 A list containing five components:

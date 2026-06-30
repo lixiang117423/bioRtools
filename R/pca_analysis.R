@@ -7,10 +7,11 @@
 #' of maximum variance in the data, making it essential for exploratory data
 #' analysis in genomics, metabolomics, and other omics fields.
 #'
-#' @param data Numeric data frame or matrix where rows represent samples (observations)
-#'   and columns represent variables (features/genes/metabolites). Missing values
-#'   are allowed and will be handled through imputation or exclusion. All variables
-#'   should be numeric; categorical variables should be excluded or encoded separately
+#' @param data Numeric data frame or matrix of abundance values. Rows are
+#'   samples (observations) and columns are variables (features) by default; the
+#'   transpose (features as rows, samples as columns) is also accepted — see
+#'   \code{feature_as_row}. Missing values are allowed and will be handled
+#'   through imputation or exclusion; categorical variables should be excluded
 #' @param sample Data frame containing sample metadata with at least one column
 #'   matching the row names of the data matrix. Must include:
 #'   \itemize{
@@ -47,6 +48,11 @@
 #'   group separation and overlap
 #' @param ellipse_level Confidence level for ellipses (default: 0.95). Only
 #'   used when conf_ellipses = TRUE
+#' @param feature_as_row Logical or \code{NA}. \code{NA} (default) auto-detects
+#'   the orientation by matching sample IDs from \code{sample} against the row
+#'   and column names of \code{data}; \code{TRUE} forces features-as-rows;
+#'   \code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+#'   transposed internally so a manual \code{t()} is not needed.
 #'
 #' @return A named list containing comprehensive PCA results:
 #'   \describe{
@@ -173,6 +179,17 @@
 #' # Check summary statistics
 #' print(paste("Total variance in first 2 PCs:",
 #'   round(pca_results$summary_stats$total_variance_explained[2], 1), "%"))
+#'
+#' # Pass features-as-rows directly (genes x samples, e.g. DESeq2/edgeR output):
+#' # no manual t() needed — feature_as_row = NA auto-detects from sample IDs.
+#' \dontrun{
+#' gene_counts <- t(as.matrix(iris_data))  # features as rows, samples as cols
+#' pca_fr <- pca_analysis(
+#'   data = gene_counts,
+#'   sample = iris_samples,
+#'   color_by = "species"
+#' )
+#' }
 #'
 #' # Example 2: Customized PCA with different visualization options
 #' pca_custom <- pca_analysis(
@@ -358,7 +375,8 @@
 pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
                          center_data = TRUE, x_axis = "PC1", y_axis = "PC2",
                          color_by = "group", shape_by = NULL, plot_type = "all",
-                         conf_ellipses = FALSE, ellipse_level = 0.95) {
+                         conf_ellipses = FALSE, ellipse_level = 0.95,
+                         feature_as_row = NA) {
   # Input validation
   if (!is.data.frame(data) && !is.matrix(data)) {
     stop("'data' must be a data frame or matrix")
@@ -371,6 +389,9 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
   if (nrow(data) == 0 || ncol(data) == 0) {
     stop("'data' cannot be empty")
   }
+
+  # Resolve orientation before as.matrix() so data and data_matrix stay aligned
+  data <- orient_to_sample_row(data, sample, NULL, feature_as_row, FALSE)
 
   # Convert data to numeric matrix
   data_matrix <- as.matrix(data)

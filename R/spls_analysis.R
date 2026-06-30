@@ -175,24 +175,10 @@ spls_analysis <- function(data,
     stop("'data' must be a matrix or data frame")
   }
 
-  # Resolve orientation: NA auto-detects from sample metadata, TRUE/FALSE force.
-  # Once decided, transpose feature-row input so the rest of the function always
-  # sees the historical samples x features layout.
-  if (!is.logical(feature_as_row) || length(feature_as_row) != 1L) {
-    stop("'feature_as_row' must be TRUE, FALSE, or NA")
-  }
-  if (is.na(feature_as_row)) {
-    feature_as_row <- detect_feature_as_row(data, sample, sample_col)
-  }
-  if (feature_as_row) {
-    if (is.data.frame(data) && !all(sapply(data, is.numeric))) {
-      stop("When 'data' has features as rows, every column must be numeric")
-    }
-    data <- t(as.matrix(data))
-    if (verbose) {
-      message("Features detected as rows; transposed to samples x features.")
-    }
-  }
+  # Resolve orientation: NA auto-detects from sample metadata, TRUE/FALSE force;
+  # transpose feature-row input so the rest of the function always sees the
+  # historical samples x features layout.
+  data <- orient_to_sample_row(data, sample, sample_col, feature_as_row, verbose)
 
   # If sample data frame is provided, filter data and extract group
   sample_info <- NULL
@@ -461,48 +447,4 @@ spls_analysis <- function(data,
     classification_performance = classification_performance,
     model_parameters = model_parameters
   )
-}
-
-
-#' Infer whether abundance data has features as rows
-#'
-#' Compares sample IDs from metadata against \code{data}'s row and column names.
-#' Features-as-rows is signalled when sample IDs align with the columns rather
-#' than the rows. Returns FALSE with no metadata or an ambiguous signal, so the
-#' historical samples-as-rows layout stays the safe default.
-#'
-#' @param data Matrix or data frame of abundance values.
-#' @param sample Sample metadata data frame, or NULL.
-#' @param sample_col Optional column in \code{sample} holding sample IDs.
-#' @return TRUE if \code{data} looks like features-as-rows, else FALSE.
-#' @keywords internal
-detect_feature_as_row <- function(data, sample, sample_col) {
-  if (is.null(sample)) {
-    return(FALSE)
-  }
-
-  if (!is.null(sample_col) && nzchar(sample_col) &&
-      sample_col %in% names(sample)) {
-    candidates <- sample_col
-  } else {
-    candidates <- names(sample)[vapply(sample, is.character, logical(1))]
-  }
-  if (length(candidates) == 0L) {
-    return(FALSE)
-  }
-
-  count_hits <- function(ids) {
-    if (is.null(ids) || length(ids) == 0L) {
-      return(0L)
-    }
-    max(vapply(candidates, function(col) {
-      length(intersect(ids, sample[[col]]))
-    }, integer(1)))
-  }
-
-  col_hits <- count_hits(colnames(data))
-  row_hits <- count_hits(rownames(data))
-
-  # feature-row when sample IDs land in data's columns, not its rows
-  col_hits > row_hits && col_hits >= ceiling(0.5 * length(colnames(data)))
 }

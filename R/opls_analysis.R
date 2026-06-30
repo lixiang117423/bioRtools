@@ -7,10 +7,19 @@
 #' while filtering out orthogonal variation not related to group differences.
 #'
 #' @param data Numerical matrix, data frame, SummarizedExperiment, or ExpressionSet
-#'   object containing the feature data. Rows represent observations (samples) and
-#'   columns represent variables (features/metabolites/genes). Missing values (NA)
-#'   are allowed and will be handled by the OPLS algorithm. For metabolomics data,
-#'   this typically contains peak intensities or concentrations
+#'   object containing the feature data. For matrix/data frame input, rows are
+#'   observations (samples) and columns are variables (features) by default; the
+#'   transpose (features as rows, samples as columns) is also accepted — see
+#'   \code{feature_as_row}. Orientation detection applies to matrix/data frame
+#'   input only; SummarizedExperiment/ExpressionSet keep their own handling.
+#'   Missing values (NA) are allowed and will be handled by the OPLS algorithm.
+#'   For metabolomics data, this typically contains peak intensities or concentrations
+#' @param feature_as_row Logical or \code{NA}. \code{NA} (default) auto-detects
+#'   the orientation by matching sample IDs from \code{sample} against the row
+#'   and column names of \code{data}; \code{TRUE} forces features-as-rows;
+#'   \code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+#'   transposed internally so a manual \code{t()} is not needed. Matrix/data
+#'   frame input only.
 #' @param sample Optional data frame containing sample metadata. When provided together
 #'   with \code{sample_col} and \code{group_col}, the function filters \code{data}
 #'   rows to match samples in \code{sample} and extracts the group vector automatically.
@@ -343,12 +352,19 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           ref_group = NULL, p_threshold = 0.05,
                           test_method = "auto",
                           p_adjust_method = "BH",
-                          verbose = FALSE) {
+                          verbose = FALSE,
+                          feature_as_row = NA) {
   # Input validation
   if (!is.matrix(data) && !is.data.frame(data) &&
     !methods::is(data, "SummarizedExperiment") &&
     !methods::is(data, "ExpressionSet")) {
     stop("'data' must be a matrix, data.frame, SummarizedExperiment, or ExpressionSet")
+  }
+
+  # Resolve orientation for matrix/data.frame input only; SE/ExpressionSet have
+  # their own assay-extraction path below.
+  if (is.matrix(data) || is.data.frame(data)) {
+    data <- orient_to_sample_row(data, sample, sample_col, feature_as_row, verbose)
   }
 
   # If sample data frame is provided, filter data and extract group

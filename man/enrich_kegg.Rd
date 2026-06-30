@@ -22,10 +22,12 @@ differentially expressed genes for pathway enrichment analysis}
 Must include the following columns:
 \itemize{
   \item \code{gene}: Gene identifiers matching those in the gene parameter
-  \item \code{kegg.id}: KEGG pathway identifiers (e.g., "hsa04110", "map00010")
-  \item \code{kegg.term}: KEGG pathway descriptions (e.g., "Cell cycle", "Glycolysis")
-  \item \code{kegg.category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
-}}
+  \item \code{kegg_id}: KEGG pathway identifiers (e.g., "hsa04110", "map00010")
+  \item \code{kegg_term}: KEGG pathway descriptions (e.g., "Cell cycle", "Glycolysis")
+  \item \code{kegg_category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
+}
+Legacy dot-case names (\code{kegg.id}, \code{kegg.term}, \code{kegg.category})
+are still accepted but deprecated; rename them to snake_case.}
 
 \item{p_adjust_method}{Method for multiple testing correction. Options include:
 \itemize{
@@ -141,11 +143,11 @@ print(paste("Strict analysis found", nrow(kegg_strict), "pathways"))
 # This demonstrates the required structure for kegg_db parameter
 sample_kegg_db <- data.frame(
   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5", "GENE6"),
-  kegg.id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
-  kegg.term = c("Cell cycle", "Cell cycle", "Cell cycle",
+  kegg_id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
+  kegg_term = c("Cell cycle", "Cell cycle", "Cell cycle",
     "Glycolysis / Gluconeogenesis", "Glycolysis / Gluconeogenesis",
     "Apoptosis", "Apoptosis"),
-  kegg.category = c("Cell Growth and Death", "Cell Growth and Death", "Cell Growth and Death",
+  kegg_category = c("Cell Growth and Death", "Cell Growth and Death", "Cell Growth and Death",
     "Metabolism", "Metabolism", "Cell Growth and Death", "Cell Growth and Death")
 )
 
@@ -165,7 +167,7 @@ print(sample_results)
 \dontrun{
 # Focus on metabolic pathways only
 metabolism_kegg <- df.rnaseq.kegg \%>\%
-  filter(grepl("Metabolism", kegg.category, ignore.case = TRUE))
+  filter(grepl("Metabolism", kegg_category, ignore.case = TRUE))
 
 metabolism_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,
@@ -177,7 +179,7 @@ print(paste("Metabolic pathways enriched:", nrow(metabolism_results)))
 
 # Focus on signaling pathways
 signaling_kegg <- df.rnaseq.kegg \%>\%
-  filter(grepl("Signal|Signaling", kegg.category, ignore.case = TRUE))
+  filter(grepl("Signal|Signaling", kegg_category, ignore.case = TRUE))
 
 signaling_results <- enrich_kegg(
   gene = df.rnaseq.degs$gene,

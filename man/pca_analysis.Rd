@@ -16,14 +16,16 @@ pca_analysis(
   shape_by = NULL,
   plot_type = "all",
   conf_ellipses = FALSE,
-  ellipse_level = 0.95
+  ellipse_level = 0.95,
+  feature_as_row = NA
 )
 }
 \arguments{
-\item{data}{Numeric data frame or matrix where rows represent samples (observations)
-and columns represent variables (features/genes/metabolites). Missing values
-are allowed and will be handled through imputation or exclusion. All variables
-should be numeric; categorical variables should be excluded or encoded separately}
+\item{data}{Numeric data frame or matrix of abundance values. Rows are
+samples (observations) and columns are variables (features) by default; the
+transpose (features as rows, samples as columns) is also accepted — see
+\code{feature_as_row}. Missing values are allowed and will be handled
+through imputation or exclusion; categorical variables should be excluded}
 
 \item{sample}{Data frame containing sample metadata with at least one column
 matching the row names of the data matrix. Must include:
@@ -71,6 +73,12 @@ group separation and overlap}
 
 \item{ellipse_level}{Confidence level for ellipses (default: 0.95). Only
 used when conf_ellipses = TRUE}
+
+\item{feature_as_row}{Logical or \code{NA}. \code{NA} (default) auto-detects
+the orientation by matching sample IDs from \code{sample} against the row
+and column names of \code{data}; \code{TRUE} forces features-as-rows;
+\code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
+transposed internally so a manual \code{t()} is not needed.}
 }
 \value{
 A named list containing comprehensive PCA results:
@@ -188,6 +196,17 @@ print(pca_results$plots$score_plot)
 # Check summary statistics
 print(paste("Total variance in first 2 PCs:",
   round(pca_results$summary_stats$total_variance_explained[2], 1), "\%"))
+
+# Pass features-as-rows directly (genes x samples, e.g. DESeq2/edgeR output):
+# no manual t() needed — feature_as_row = NA auto-detects from sample IDs.
+\dontrun{
+gene_counts <- t(as.matrix(iris_data))  # features as rows, samples as cols
+pca_fr <- pca_analysis(
+  data = gene_counts,
+  sample = iris_samples,
+  color_by = "species"
+)
+}
 
 # Example 2: Customized PCA with different visualization options
 pca_custom <- pca_analysis(

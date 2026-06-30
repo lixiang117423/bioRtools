@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.58.0] - 2026-06-30
+
+### Changed (breaking)
+`enrich_kegg()` / `enrich_go()` now use **snake_case** for the required annotation-database columns, matching CLAUDE.md §1 and the rest of the package.
+
+- `enrich_kegg()`: `kegg.id` / `kegg.term` / `kegg.category` → `kegg_id` / `kegg_term` / `kegg_category`.
+- `enrich_go()`: `go.id` / `go.term` / `go.ontology` → `go_id` / `go_term` / `go_ontology`.
+- Backward compatible via a small shim: legacy dot-case column names are still accepted but trigger a one-time deprecation warning (`reconcile_db_columns()`, `@keywords internal`). Existing databases keep working; rename them when convenient.
+- Updated the shipped example databases `df.rnaseq.kegg` / `df.rnaseq.go` to snake_case (data unchanged), `data.R` docs, and the `utils::globalVariables()` lists.
+- Tests: new `tests/test_enrich_columns.R` (snake_case runs; legacy dot.case reproduces identical results via the shim).
+
+## [1.57.0] - 2026-06-30
+
+### Changed
+The ordination / dimension-reduction family now accepts a **features × samples** abundance matrix directly (genes as rows, samples as columns) — the same orientation `find_degs_deseq2` / `find_degs_edger` produce — so an RNA-seq workflow no longer needs a manual `t() %>% as.data.frame()` between DEG and ordination steps.
+
+- Added a `feature_as_row` argument (default `NA` = auto-detect) to `pca_analysis`, `pcoa_analysis`, `opls_analysis`, `rda_analysis`, `tsne_analysis`, and `pairwise_oplsda`. With `sample` metadata supplied, the function matches sample IDs against both the row and column names of `data`; a column match triggers an internal transpose. `TRUE` / `FALSE` force an orientation.
+- Extracted the logic into shared internal helpers `detect_feature_as_row()` / `orient_to_sample_row()` (new `R/utils-orientation.R`, `@keywords internal`); refactored `spls_analysis` (which pioneered the pattern in 1.56.0) to use them.
+- Backward compatible: default `NA` resolves to samples-as-rows for existing input, so results are unchanged. `opls_analysis` applies orientation only to matrix/data.frame input (SummarizedExperiment / ExpressionSet keep their own path). `NAMESPACE` unchanged.
+- Tests: new `tests/test_orientation.R` (helper unit tests + per-function equivalence: feature-row input reproduces the sample-row scores exactly); `tests/test_spls_analysis.R` updated to source the shared helper.
+
 ## [1.56.0] - 2026-06-29
 
 ### Added

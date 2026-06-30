@@ -13,10 +13,12 @@
 #'   Must include the following columns:
 #'   \itemize{
 #'     \item \code{gene}: Gene identifiers matching those in the gene parameter
-#'     \item \code{kegg.id}: KEGG pathway identifiers (e.g., "hsa04110", "map00010")
-#'     \item \code{kegg.term}: KEGG pathway descriptions (e.g., "Cell cycle", "Glycolysis")
-#'     \item \code{kegg.category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
+#'     \item \code{kegg_id}: KEGG pathway identifiers (e.g., "hsa04110", "map00010")
+#'     \item \code{kegg_term}: KEGG pathway descriptions (e.g., "Cell cycle", "Glycolysis")
+#'     \item \code{kegg_category}: Optional. KEGG pathway categories (e.g., "Metabolism", "Signaling")
 #'   }
+#'   Legacy dot-case names (\code{kegg.id}, \code{kegg.term}, \code{kegg.category})
+#'   are still accepted but deprecated; rename them to snake_case.
 #' @param p_adjust_method Method for multiple testing correction. Options include:
 #'   \itemize{
 #'     \item \code{"BH"} (default): Benjamini-Hochberg false discovery rate
@@ -129,11 +131,11 @@
 #' # This demonstrates the required structure for kegg_db parameter
 #' sample_kegg_db <- data.frame(
 #'   gene = c("GENE1", "GENE2", "GENE3", "GENE1", "GENE4", "GENE5", "GENE6"),
-#'   kegg.id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
-#'   kegg.term = c("Cell cycle", "Cell cycle", "Cell cycle",
+#'   kegg_id = c("hsa04110", "hsa04110", "hsa04110", "hsa00010", "hsa00010", "hsa04210", "hsa04210"),
+#'   kegg_term = c("Cell cycle", "Cell cycle", "Cell cycle",
 #'     "Glycolysis / Gluconeogenesis", "Glycolysis / Gluconeogenesis",
 #'     "Apoptosis", "Apoptosis"),
-#'   kegg.category = c("Cell Growth and Death", "Cell Growth and Death", "Cell Growth and Death",
+#'   kegg_category = c("Cell Growth and Death", "Cell Growth and Death", "Cell Growth and Death",
 #'     "Metabolism", "Metabolism", "Cell Growth and Death", "Cell Growth and Death")
 #' )
 #'
@@ -153,7 +155,7 @@
 #' \dontrun{
 #' # Focus on metabolic pathways only
 #' metabolism_kegg <- df.rnaseq.kegg %>%
-#'   filter(grepl("Metabolism", kegg.category, ignore.case = TRUE))
+#'   filter(grepl("Metabolism", kegg_category, ignore.case = TRUE))
 #'
 #' metabolism_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
@@ -165,7 +167,7 @@
 #'
 #' # Focus on signaling pathways
 #' signaling_kegg <- df.rnaseq.kegg %>%
-#'   filter(grepl("Signal|Signaling", kegg.category, ignore.case = TRUE))
+#'   filter(grepl("Signal|Signaling", kegg_category, ignore.case = TRUE))
 #'
 #' signaling_results <- enrich_kegg(
 #'   gene = df.rnaseq.degs$gene,
@@ -203,8 +205,13 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
     stop("'kegg_db' must be a non-empty data frame")
   }
 
+  # Accept legacy dot-case column names (deprecated); prefer snake_case
+  kegg_db <- reconcile_db_columns(kegg_db,
+    c(kegg_id = "kegg.id", kegg_term = "kegg.term", kegg_category = "kegg.category"),
+    "kegg_db")
+
   # Check required columns in kegg_db
-  required_cols <- c("gene", "kegg.id", "kegg.term")
+  required_cols <- c("gene", "kegg_id", "kegg_term")
   missing_cols <- setdiff(required_cols, names(kegg_db))
   if (length(missing_cols) > 0) {
     stop(paste("Missing required columns in kegg_db:", paste(missing_cols, collapse = ", ")))
@@ -245,8 +252,8 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
   # Clean KEGG database
   kegg_db_clean <- kegg_db %>%
     dplyr::filter(
-      !is.na(gene), !is.na(kegg.id), !is.na(kegg.term),
-      gene != "", kegg.id != "", kegg.term != ""
+      !is.na(gene), !is.na(kegg_id), !is.na(kegg_term),
+      gene != "", kegg_id != "", kegg_term != ""
     ) %>%
     dplyr::distinct()
 
@@ -270,20 +277,20 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Prepare TERM2GENE and TERM2NAME mappings
   term2gene <- kegg_db_clean %>%
-    dplyr::select(kegg.id, gene) %>%
+    dplyr::select(kegg_id, gene) %>%
     dplyr::distinct()
 
   term2name <- kegg_db_clean %>%
-    dplyr::select(kegg.id, kegg.term) %>%
+    dplyr::select(kegg_id, kegg_term) %>%
     dplyr::distinct() %>%
     # Handle cases where one KEGG ID has multiple descriptions
-    dplyr::group_by(kegg.id) %>%
+    dplyr::group_by(kegg_id) %>%
     dplyr::slice_head(n = 1) %>%
     dplyr::ungroup()
 
   # Check pathway sizes and filter
   pathway_sizes <- term2gene %>%
-    dplyr::count(kegg.id, name = "pathway_size") %>%
+    dplyr::count(kegg_id, name = "pathway_size") %>%
     dplyr::filter(pathway_size >= min_pathway_size, pathway_size <= max_pathway_size)
 
   if (nrow(pathway_sizes) == 0) {
@@ -293,10 +300,10 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Filter TERM2GENE to include only pathways meeting size criteria
   term2gene_filtered <- term2gene %>%
-    dplyr::filter(kegg.id %in% pathway_sizes$kegg.id)
+    dplyr::filter(kegg_id %in% pathway_sizes$kegg_id)
 
   # Check if we have enough pathways to test
-  n_pathways_to_test <- length(unique(term2gene_filtered$kegg.id))
+  n_pathways_to_test <- length(unique(term2gene_filtered$kegg_id))
   if (n_pathways_to_test == 0) {
     stop("No pathways available for testing after size filtering")
   }

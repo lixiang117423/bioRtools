@@ -6,8 +6,16 @@
 #' ordination method that identifies linear combinations of environmental
 #' variables that best explain the variation in species composition.
 #'
-#' @param data A data frame where rows represent samples and columns represent
-#'   species/OTUs/taxa. Should contain abundance or count data.
+#' @param data A data frame of abundance/count data. Rows are samples and
+#'   columns are species/OTUs/taxa by default; the transpose (features as rows,
+#'   samples as columns) is also accepted — see \code{feature_as_row}. Sample
+#'   names must match those in \code{physicochemical}.
+#' @param feature_as_row Logical or \code{NA}. \code{NA} (default) auto-detects
+#'   the orientation by matching sample IDs (from \code{physicochemical} row
+#'   names) against the row and column names of \code{data}; \code{TRUE} forces
+#'   features-as-rows; \code{FALSE} forces samples-as-rows. When detected or
+#'   forced, the matrix is transposed internally so a manual \code{t()} is not
+#'   needed.
 #' @param physicochemical A data frame containing environmental/physicochemical
 #'   variables where rows represent samples and columns represent environmental
 #'   variables. Sample names should match those in \code{data}.
@@ -133,7 +141,8 @@ rda_analysis <- function(data,
                          arrow_color = "#222222",
                          arrow_alpha = 0.8,
                          label_repel = TRUE,
-                         permutations = 999) {
+                         permutations = 999,
+                         feature_as_row = NA) {
   # Input validation
   if (!is.data.frame(data)) {
     stop("'data' must be a data frame")
@@ -146,6 +155,9 @@ rda_analysis <- function(data,
   if (!is.data.frame(sample)) {
     stop("'sample' must be a data frame")
   }
+
+  # Resolve orientation; sample IDs come from physicochemical row names
+  data <- orient_to_sample_row(data, physicochemical, NULL, feature_as_row, FALSE)
 
   # Check if sample names match between data and physicochemical
   if (!identical(rownames(data), rownames(physicochemical))) {
