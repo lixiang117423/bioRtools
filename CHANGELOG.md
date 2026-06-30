@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.59.0] - 2026-06-30
+
+### Added
+`enrich_kegg()` / `enrich_go()` now support **batch mode**: pass a differential-expression result data frame directly (e.g. `find_degs_deseq2()` output) as `gene`, and the function splits it by the `comparison` column, drops non-significant rows, runs enrichment per comparison, and returns the combined results with a `comparison` column — replacing a manual `filter %>% pull %>% enrich %>% bind_rows` loop per contrast.
+
+- Vector input (`gene` as a character vector) is unchanged — backward compatible.
+- New optional params (batch-mode only): `comparison_col`, `gene_col`, `regulation_col` (defaults match `find_degs_deseq2()` output: `"comparison"`, `"gene"`, `"regulation"`), and `keep_regulation` (`NULL` drops `"NS"` by default; a character vector restricts to specific directions, e.g. `"Up"`).
+- A comparison whose genes don't overlap the database, or that otherwise errors, is skipped with a warning instead of aborting the whole run.
+- Shared internal helper `enrich_batch_by_comparison()` (`@keywords internal`); `NAMESPACE` unchanged.
+- Tests: `tests/test_enrich_batch.R`.
+
 ## [1.58.1] - 2026-06-30
 
 ### Fixed

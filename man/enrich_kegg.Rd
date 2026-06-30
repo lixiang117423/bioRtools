@@ -10,13 +10,19 @@ enrich_kegg(
   p_adjust_method = "BH",
   p_adjust = 0.05,
   min_pathway_size = 3,
-  max_pathway_size = 500
+  max_pathway_size = 500,
+  comparison_col = "comparison",
+  gene_col = "gene",
+  regulation_col = "regulation",
+  keep_regulation = NULL
 )
 }
 \arguments{
-\item{gene}{Character vector containing gene identifiers (e.g., gene symbols,
-Entrez IDs, Ensembl IDs, or other identifiers) that correspond to
-differentially expressed genes for pathway enrichment analysis}
+\item{gene}{Character vector of gene identifiers for enrichment, OR a data
+frame of differential-expression results (e.g. from
+\code{find_degs_deseq2()}). A data frame triggers batch mode: it is split
+by \code{comparison_col}, non-significant rows are dropped, enrichment runs
+per comparison, and the results are combined with a comparison column.}
 
 \item{kegg_db}{Data frame containing KEGG pathway annotation information.
 Must include the following columns:
@@ -49,6 +55,18 @@ Only KEGG pathways with adjusted p-values below this threshold will be returned}
 
 \item{max_pathway_size}{Maximum number of genes allowed in a pathway for testing
 (default: 500). Very large pathways can be excluded to focus on specific processes}
+
+\item{comparison_col}{Batch-mode column naming each contrast (default
+"comparison", matching \code{find_degs_deseq2()} output).}
+
+\item{gene_col}{Batch-mode column holding gene identifiers (default "gene").}
+
+\item{regulation_col}{Batch-mode column holding regulation labels (default
+"regulation").}
+
+\item{keep_regulation}{Batch-mode regulation filter: \code{NULL} (default)
+drops rows marked "NS"; a character vector keeps only those levels (e.g.
+\code{c("Up", "Down")} or \code{"Up"}).}
 }
 \value{
 A data frame containing pathway enrichment results with columns:
@@ -204,6 +222,15 @@ kegg_for_plot <- kegg_results \%>\%
 # The results are ready for ggplot2 visualization
 print("Data prepared for pathway visualization")
 print(kegg_for_plot[, c("ID", "pathway_short", "enrichment.score", "Count")])
+}
+
+# Example 6: Batch mode — pass a find_degs_deseq2() result directly. It is
+# split by the comparison column, non-significant rows are dropped, and
+# enrichment runs per comparison; results are combined with a comparison col.
+\dontrun{
+de_results <- find_degs_deseq2(counts, sample_meta)
+kegg_by_comp <- enrich_kegg(de_results, kegg_db = df.rnaseq.kegg)
+table(kegg_by_comp$comparison)  # pathways per comparison
 }
 
 }

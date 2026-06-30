@@ -10,13 +10,19 @@ enrich_go(
   p_adjust_method = "BH",
   p_adjust = 0.05,
   min_gene_set = 3,
-  max_gene_set = NULL
+  max_gene_set = NULL,
+  comparison_col = "comparison",
+  gene_col = "gene",
+  regulation_col = "regulation",
+  keep_regulation = NULL
 )
 }
 \arguments{
-\item{gene}{Character vector containing gene identifiers (e.g., gene symbols,
-Ensembl IDs, or other identifiers) that correspond to differentially
-expressed genes for enrichment analysis}
+\item{gene}{Character vector of gene identifiers for enrichment, OR a data
+frame of differential-expression results (e.g. from
+\code{find_degs_deseq2()}). A data frame triggers batch mode: it is split
+by \code{comparison_col}, non-significant rows are dropped, enrichment runs
+per comparison, and the results are combined with a comparison column.}
 
 \item{go_db}{Data frame containing GO annotation information. Must include
 the following columns:
@@ -49,6 +55,18 @@ Only GO terms with adjusted p-values below this threshold will be returned}
 
 \item{max_gene_set}{Maximum number of genes allowed in a GO term for testing
 (default: length of input gene list). Very large GO terms can be excluded}
+
+\item{comparison_col}{Batch-mode column naming each contrast (default
+"comparison", matching \code{find_degs_deseq2()} output).}
+
+\item{gene_col}{Batch-mode column holding gene identifiers (default "gene").}
+
+\item{regulation_col}{Batch-mode column holding regulation labels (default
+"regulation").}
+
+\item{keep_regulation}{Batch-mode regulation filter: \code{NULL} (default)
+drops rows marked "NS"; a character vector keeps only those levels (e.g.
+\code{c("Up", "Down")} or \code{"Up"}).}
 }
 \value{
 A data frame containing enrichment results with columns:
@@ -160,6 +178,15 @@ bp_results <- enrich_go(
 )
 
 print(paste("Biological process terms found:", nrow(bp_results)))
+}
+
+# Example 5: Batch mode — pass a find_degs_deseq2() result directly. It is
+# split by the comparison column, non-significant rows are dropped, and
+# enrichment runs per comparison; results are combined with a comparison col.
+\dontrun{
+de_results <- find_degs_deseq2(counts, sample_meta)
+go_by_comp <- enrich_go(de_results, go_db = df.rnaseq.go)
+table(go_by_comp$comparison)  # terms per comparison
 }
 
 }
