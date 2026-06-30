@@ -416,18 +416,18 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
     cat("Top enriched pathways:\n")
     top_pathways <- head(kegg_results, 5)
     for (i in 1:nrow(top_pathways)) {
-      pathway_name <- top_pathways$Description[i]
+      pathway_name <- top_pathways$description[i]
       # Truncate long pathway names for display
-      if (nchar(pathway_name) > 50) {
+      if (!is.na(pathway_name) && nchar(pathway_name) > 50) {
         pathway_name <- paste0(substr(pathway_name, 1, 47), "...")
       }
 
-      cat(sprintf("%d. %s: %s\n", i, top_pathways$ID[i], pathway_name))
+      cat(sprintf("%d. %s: %s\n", i, top_pathways$id[i], pathway_name))
       cat(sprintf("   p.adj = %.2e, genes = %d/%d, enrichment = %.1f\n",
-        top_pathways$p.adjust[i],
-        top_pathways$gene.count[i],
-        top_pathways$total.genes[i],
-        top_pathways$enrichment.score[i]))
+        top_pathways$p_adjust[i],
+        top_pathways$gene_count[i],
+        top_pathways$total_genes[i],
+        top_pathways$enrichment_score[i]))
     }
     cat("\n")
   }
