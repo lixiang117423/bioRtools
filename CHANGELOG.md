@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.60.0] - 2026-07-01
+
+### Added
+`theme_prism()` gains a `gray_background` argument (default `FALSE`). When `TRUE`, the panel uses a `theme_gray()`-style look: grey panel background (the exact `theme_gray()` fill, `#EBEBEB`), white major grid lines on both axes, minor grid lines off, and no panel border — while keeping the rest of the Prism aesthetics. The default clean look is unchanged.
+
+- Tests: `tests/test_theme_prism.R` (element checks + a real plot render).
+
 ## [1.59.0] - 2026-06-30
 
 ### Added

@@ -12,7 +12,8 @@ theme_prism(
   base_line_size = base_size/14,
   base_rect_size = base_size/14,
   axis_text_angle = 0,
-  border = FALSE
+  border = FALSE,
+  gray_background = FALSE
 )
 }
 \arguments{
@@ -40,6 +41,10 @@ Must be one of 0, 45, 90, or 270. Default is 0.}
 
 \item{border}{Logical indicating whether to draw a panel border.
 Default is FALSE.}
+
+\item{gray_background}{Logical indicating whether to use a \code{theme_gray()}-style
+panel background (grey panel, white major grid lines, no panel border)
+instead of the default clean Prism look. Default is FALSE.}
 }
 \value{
 A ggplot2 theme object.
@@ -55,6 +60,11 @@ library(ggplot2)
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
   bioRtools::theme_prism()
+
+# theme_gray()-style grey panel with white grid lines
+ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+  geom_boxplot() +
+  bioRtools::theme_prism(gray_background = TRUE)
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>
