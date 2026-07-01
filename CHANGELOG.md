@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.60.1] - 2026-07-01
+
+### Fixed
+Naming sweep — removed remaining dot-case column references that contradicted the snake_case convention.
+
+- `README.md` / `README_en.md` / `README_cn.md`: the "Enrichment Annotation Tables" section now tells users to provide `go_id`/`go_term`/`kegg_id`/`kegg_term` (was `go.id`/`go.term`/`kegg.id`/`kegg.term`).
+- `enrich_kegg()` examples 1 and 5 referenced output columns that were already renamed (`ID`/`Description`/`p.adjust`/`Count`/`enrichment.score` → `id`/`description`/`p_adjust`/`count`/`enrichment_score`); now use the snake_case names.
+- Intentionally kept (backward compatibility): the legacy dot-case names still appear in the `reconcile_db_columns()` shim maps, the deprecation note in each `@param`, the `tests/test_enrich_columns.R` shim test, this changelog, and as internal pre-rename temporaries (`gene.count`/`total.genes`) that are renamed to snake_case before output.
+
 ## [1.60.0] - 2026-07-01
 
 ### Added

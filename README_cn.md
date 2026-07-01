@@ -246,8 +246,8 @@ perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
 
 ### 富集注释表
 
-- GO 注释表应包含 `gene`、`go.id` 和 `go.term`
-- KEGG 注释表应包含 `gene`、`kegg.id` 和 `kegg.term`
+- GO 注释表应包含 `gene`、`go_id` 和 `go_term`
+- KEGG 注释表应包含 `gene`、`kegg_id` 和 `kegg_term`
 
 ## 故障排除
 

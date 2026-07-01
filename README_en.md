@@ -246,8 +246,8 @@ perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
 
 ### Enrichment Annotation Tables
 
-- GO annotation tables should contain `gene`, `go.id`, and `go.term`
-- KEGG annotation tables should contain `gene`, `kegg.id`, and `kegg.term`
+- GO annotation tables should contain `gene`, `go_id`, and `go_term`
+- KEGG annotation tables should contain `gene`, `kegg_id`, and `kegg_term`
 
 ## Troubleshooting
 
