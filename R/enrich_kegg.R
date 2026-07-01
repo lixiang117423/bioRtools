@@ -119,7 +119,7 @@
 #'
 #' # View top enriched pathways
 #' top_pathways <- head(kegg_results, 10)
-#' print(top_pathways[, c("ID", "Description", "pvalue", "p.adjust", "Count")])
+#' print(top_pathways[, c("id", "description", "pvalue", "p_adjust", "count")])
 #' }
 #'
 #' # Example 2: Stringent analysis parameters
@@ -191,17 +191,17 @@
 #' \dontrun{
 #' # Prepare data for plotting
 #' kegg_for_plot <- kegg_results %>%
-#'   arrange(desc(enrichment.score)) %>%
+#'   arrange(desc(enrichment_score)) %>%
 #'   head(15) %>%
 #'   mutate(
-#'     pathway_short = ifelse(nchar(Description) > 40,
-#'       paste0(substr(Description, 1, 37), "..."),
-#'       Description)
+#'     pathway_short = ifelse(nchar(description) > 40,
+#'       paste0(substr(description, 1, 37), "..."),
+#'       description)
 #'   )
 #'
 #' # The results are ready for ggplot2 visualization
 #' print("Data prepared for pathway visualization")
-#' print(kegg_for_plot[, c("ID", "pathway_short", "enrichment.score", "Count")])
+#' print(kegg_for_plot[, c("id", "pathway_short", "enrichment_score", "count")])
 #' }
 #'
 #' # Example 6: Batch mode — pass a find_degs_deseq2() result directly. It is
