@@ -21,6 +21,9 @@
 #'   Must be one of 0, 45, 90, or 270. Default is 0.
 #' @param border Logical indicating whether to draw a panel border.
 #'   Default is FALSE.
+#' @param gray_background Logical indicating whether to use a \code{theme_gray()}-style
+#'   panel background (grey panel, white major grid lines, no panel border)
+#'   instead of the default clean Prism look. Default is FALSE.
 #'
 #' @return A ggplot2 theme object.
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -33,6 +36,11 @@
 #' ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
 #'   bioRtools::theme_prism()
+#'
+#' # theme_gray()-style grey panel with white grid lines
+#' ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+#'   geom_boxplot() +
+#'   bioRtools::theme_prism(gray_background = TRUE)
 theme_prism <- function(palette = "black_and_white",
                         base_size = 14,
                         base_family = "sans",
@@ -40,7 +48,8 @@ theme_prism <- function(palette = "black_and_white",
                         base_line_size = base_size / 14,
                         base_rect_size = base_size / 14,
                         axis_text_angle = 0,
-                        border = FALSE) {
+                        border = FALSE,
+                        gray_background = FALSE) {
   angle <- axis_text_angle[1]
 
   if (!angle %in% c(0, 45, 90, 270)) {
@@ -60,6 +69,10 @@ theme_prism <- function(palette = "black_and_white",
 
   if (!rlang::is_bool(border)) {
     stop("border must be either: TRUE or FALSE")
+  }
+
+  if (!rlang::is_bool(gray_background)) {
+    stop("gray_background must be either: TRUE or FALSE")
   }
 
   if (border) {
@@ -225,6 +238,17 @@ theme_prism <- function(palette = "black_and_white",
     ),
     complete = TRUE
   )
+
+  if (gray_background) {
+    # theme_gray()-style panel: grey background, white major grid lines, no border
+    t$panel.background <- ggplot2::element_rect(
+      fill = ggplot2::theme_gray()$panel.background$fill, colour = NA
+    )
+    t$plot.background <- ggplot2::element_rect(fill = "white", colour = NA)
+    t$panel.grid.major <- ggplot2::element_line(colour = "white", linewidth = 0.5)
+    t$panel.grid.minor <- ggplot2::element_blank()
+    t$panel.border <- ggplot2::element_blank()
+  }
 
   parent <- ggplot2::theme(!!!ggprism::ggprism_data$themes[["all_null"]])
 
