@@ -158,7 +158,7 @@ rownames(iris_data) <- sample_info$sample_id
 pca_result <- pca_analysis(
   data = iris_data,
   sample = sample_info,
-  color.by = "species"
+  color_by = "species"
 )
 
 print(pca_result$plots$score_plot)
@@ -169,12 +169,12 @@ print(pca_result$eigenvalues)
 
 ```r
 cor_result <- cor_analysis(
-  data.1 = iris[, 1:2],
-  data.2 = iris[, 3:4],
+  data_1 = iris[, 1:2],
+  data_2 = iris[, 3:4],
   method = "pearson"
 )
 
-print(cor_result$plot.cor)
+print(head(cor_result))
 ```
 
 ### LEfSe Differential Abundance
@@ -186,8 +186,8 @@ data(df.call_DAMs_LEfSe.sample)
 lefse_result <- find_dams_lefse(
   data = df.call_DAMs_LEfSe.otu,
   sample = df.call_DAMs_LEfSe.sample,
-  groupCol = "group",
-  lda.threshold = 1.0
+  group_col = "group",
+  lda_threshold = 1.0
 )
 
 head(lefse_result)
@@ -219,10 +219,10 @@ perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
     formula = ~group
   )
 
-  sig_genes <- degs$gene[degs$padj < 0.05 & degs$regulation != "Not significant"]
+  sig_genes <- degs$gene[degs$padj < 0.05 & degs$regulation != "NS"]
 
-  go_enrichment <- enrich_go(gene = sig_genes, go.db = go_db)
-  kegg_enrichment <- enrich_kegg(gene = sig_genes, kegg.db = kegg_db)
+  go_enrichment <- enrich_go(gene = sig_genes, go_db = go_db)
+  kegg_enrichment <- enrich_kegg(gene = sig_genes, kegg_db = kegg_db)
 
   volcano_result <- plot_volcano(
     data = degs,

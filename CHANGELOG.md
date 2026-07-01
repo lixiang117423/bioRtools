@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.61.1] - 2026-07-01
+
+### Fixed
+README (en/cn) quick-start examples carried stale names from earlier snake_case renames — now corrected so they run against current code:
+
+- `pca_analysis(color.by=)` → `color_by`; `cor_analysis(data.1=/data.2=)` → `data_1`/`data_2`; `find_dams_lefse(groupCol=/lda.threshold=)` → `group_col`/`lda_threshold`; `enrich_go(go.db=)`/`enrich_kegg(kegg.db=)` → `go_db`/`kegg_db`.
+- `cor_result$plot.cor` → `head(cor_result)` (cor_analysis returns a data frame, not a list with a `plot.cor` element).
+- Workflow example `regulation != "Not significant"` → `!= "NS"` (find_degs_deseq2 marks non-significant as "NS").
+
 ## [1.61.0] - 2026-07-01
 
 ### Changed (breaking)
