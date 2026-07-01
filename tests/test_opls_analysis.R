@@ -92,6 +92,14 @@ stopifnot(!is.null(res_ref$differential_analysis))
 stopifnot(all(unique(res_ref$differential_analysis$ref_group) == "A"))
 cat("✓ Test A3c passed\n\n")
 
+# --- Test A3d: >2 groups + defaults auto-switches to all-pairs -------------
+cat("Test A3d: >2 groups, no ref_group/pairwise -> auto all-pairs\n")
+res_auto <- quiet(opls_analysis(Xm, sample = sample_meta, sample_col = "sample_id",
+                                group_col = "group", verbose = FALSE))
+stopifnot(!is.null(res_auto$models))
+stopifnot(length(unique(res_auto$vip_scores$comparison)) == 3)
+cat("✓ Test A3d passed\n\n")
+
 cat("=====================================\n")
 cat("All opls_analysis tests passed! ✓\n")
 cat("=====================================\n")
