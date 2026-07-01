@@ -1,5 +1,6 @@
 # Tests for opls_analysis() modes + internal pairwise helpers.
 source("R/opls_pairwise_fit.R")
+source("R/utils-orientation.R")
 source("R/opls_analysis.R")
 
 suppressPackageStartupMessages({
@@ -51,3 +52,46 @@ stopifnot(all(diff$regulation %in% c("Up", "Down", "NS")))
 b_vs_a <- diff[diff$comparison == "B vs A", ]
 stopifnot(all(b_vs_a$log2_fc > 0))                       # B up vs A
 cat("✓ Test A2 passed\n\n")
+
+quiet <- function(expr) suppressMessages(suppressWarnings(expr))
+
+# --- Test A3a: pairwise = TRUE -> all-pairs -------------------------------
+cat("Test A3a: pairwise = TRUE produces all-pairs comparisons\n")
+sample_meta <- tibble::tibble(
+  sample_id = rownames(Xm), group = grp
+)
+res_ap <- quiet(opls_analysis(Xm, sample = sample_meta, sample_col = "sample_id",
+                              group_col = "group", pairwise = TRUE, verbose = FALSE))
+stopifnot(length(unique(res_ap$vip_scores$comparison)) == 3)   # choose(3,2) = 3
+stopifnot(!is.null(res_ap$models) && is.list(res_ap$models))
+stopifnot(length(res_ap$models) == 3)
+stopifnot(!is.null(res_ap$differential_analysis))
+stopifnot(length(unique(res_ap$differential_analysis$comparison)) == 3)
+cat("✓ Test A3a passed\n\n")
+
+# --- Test A3b: defaults unchanged (single binary model) --------------------
+# ropls OPLS-DA is binary-only, so single-model mode is exercised on 2 groups.
+cat("Test A3b: default (2 groups, no pairwise) is a single binary model\n")
+two_grp <- grp %in% c("A", "B")
+Xm2 <- Xm[two_grp, ]
+meta2 <- tibble::tibble(sample_id = rownames(Xm2), group = grp[two_grp])
+res_single <- quiet(opls_analysis(Xm2, sample = meta2, sample_col = "sample_id",
+                                  group_col = "group", verbose = FALSE))
+stopifnot(is.null(res_single$models))                          # not pairwise
+stopifnot(is.null(res_single$differential_analysis))           # no ref_group
+stopifnot(!"comparison" %in% names(res_single$vip_scores))
+cat("✓ Test A3b passed\n\n")
+
+# --- Test A3c: ref_group ref-anchored unchanged ---------------------------
+cat("Test A3c: ref_group produces ref-anchored pairwise + diff\n")
+res_ref <- quiet(opls_analysis(Xm, sample = sample_meta, sample_col = "sample_id",
+                               group_col = "group", ref_group = "A", verbose = FALSE))
+stopifnot(length(unique(res_ref$vip_scores$comparison)) == 2)  # B vs A, C vs A
+stopifnot(all(c("B vs A", "C vs A") %in% unique(res_ref$vip_scores$comparison)))
+stopifnot(!is.null(res_ref$differential_analysis))
+stopifnot(all(unique(res_ref$differential_analysis$ref_group) == "A"))
+cat("✓ Test A3c passed\n\n")
+
+cat("=====================================\n")
+cat("All opls_analysis tests passed! ✓\n")
+cat("=====================================\n")
