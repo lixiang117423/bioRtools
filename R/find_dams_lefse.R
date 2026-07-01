@@ -29,7 +29,7 @@
 #'     \item \code{class}: Group where the feature is enriched
 #'     \item \code{pvalue}: Wilcoxon test p-value (NA when using lefser)
 #'     \item \code{comparison}: Pair label, e.g. "CK vs Treatment"
-#'     \item \code{lda.score}: Absolute LDA score
+#'     \item \code{lda_score}: Absolute LDA score
 #'     \item \code{method}: "lefser" or "wilcox_lda"
 #'   }
 #'
@@ -141,14 +141,14 @@ find_dams_lefse <- function(data, sample, group_col = "group",
       class      = character(0),
       pvalue     = numeric(0),
       comparison = character(0),
-      lda.score  = numeric(0),
+      lda_score  = numeric(0),
       method     = character(0),
       stringsAsFactors = FALSE
     ))
   }
 
   rownames(combined) <- NULL
-  combined[order(combined$comparison, -combined$lda.score), ]
+  combined[order(combined$comparison, -combined$lda_score), ]
 }
 
 
@@ -202,9 +202,9 @@ try_lefser <- function(ra, sample_sub, group_col,
 
   if (is.null(res) || nrow(res) == 0) return(NULL)
 
-  res$lda.score <- abs(res$scores)
+  res$lda_score <- abs(res$scores)
   res$pvalue <- NA_real_
-  res[, c("features", "scores", "class", "pvalue", "lda.score")]
+  res[, c("features", "scores", "class", "pvalue", "lda_score")]
 }
 
 
@@ -245,7 +245,7 @@ fallback_wilcox_lda <- function(ra, g1_idx, g2_idx, pair,
     class      = ifelse(m1[sig] > m2[sig], pair[1], pair[2]),
     pvalue     = pvals[sig],
     comparison = paste(pair[1], "vs", pair[2]),
-    lda.score  = abs(lda_raw[sig]),
+    lda_score  = abs(lda_raw[sig]),
     stringsAsFactors = FALSE
   )
 }

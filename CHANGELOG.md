@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.61.0] - 2026-07-01
+
+### Changed (breaking)
+Package-wide sweep converting remaining bioRtools-own dot.case names to snake_case (per CLAUDE.md §1). External-package columns (clusterProfiler `p.adjust`/`GeneRatio`, DESeq2 `log2FoldChange`, factoextra `variance.percent`, etc.), ggplot2 theme elements, base-R args, the `df.`/`result.` data-object naming (§1.5), and the CalExp* legacy interfaces (§1.6) are intentionally preserved.
+
+- `find_dams_lefse()`: output column `lda.score` → `lda_score` (the lone dot.case column; siblings were already snake_case).
+- `enrich_kegg()` / `enrich_go()`: internal temporaries `gene.count` / `total.genes` are now created directly as `gene_count` / `total_genes` (output was already snake_case; no API impact). `globals.R` updated.
+- Return-list element names → snake_case in `plot_volcano` (`plot.volcano`→`plot_volcano`, `data.summary`→`data_summary`), `plot_synteny`, `plot_ld_heatmap` (`plot.ld_heatmap`, `snp.matrix`, `genetic.distances`, `snp.info`, `plot.params`, + stale-doc `plot.ggplot2`/`ld.matrix`), `plot_manhattan` (`plot.manhattan`, `plot.density`, `plot.combined`, `data.processed`, `chromosome.centers`), `rarefy_table` (`data.rarefied`, `rarefaction.info`, `removed.samples`, `rarefaction.depth`), `reorder_heatmap` (`data.reordered`, `column.order`, `row.order`, `peak.summary`), `top_tax_n` (`result.statistics`, `plot.abundance`, `data.processed`, `taxa.summary`, `analysis.parameters`), `plot_tax_upset` (`data.upset`, `data.pav`).
+- README (en/cn) + `tests/test_synteny.R` updated to the new element names. `NAMESPACE` unchanged.
+
+### Note
+A focused 3-agent scan of all 103 `R/*.R` files confirmed bioRtools-own data-frame columns are otherwise already snake_case. The READMEs still carry a few stale example references from earlier arg renames (`data.1`, `groupCol`, `lda.threshold`, `cor_result$plot.cor`, `go.db`) — documentation drift, not code violations; tracked separately.
+
 ## [1.60.1] - 2026-07-01
 
 ### Fixed

@@ -205,8 +205,8 @@ volcano_result <- plot_volcano(
   title = "Differential Expression"
 )
 
-print(volcano_result$plot.volcano)
-print(volcano_result$data.summary)
+print(volcano_result$plot_volcano)
+print(volcano_result$data_summary)
 ```
 
 ## RNA-seq Workflow Example
@@ -234,7 +234,7 @@ perform_rnaseq_analysis <- function(count_data, sample_data, go_db, kegg_db) {
     degs = degs,
     go_enrichment = go_enrichment,
     kegg_enrichment = kegg_enrichment,
-    volcano_plot = volcano_result$plot.volcano
+    volcano_plot = volcano_result$plot_volcano
   )
 }
 ```

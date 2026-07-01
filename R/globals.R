@@ -79,7 +79,7 @@ utils::globalVariables(c(
   "KEGG", "kegg_id", "kegg_term", "kegg_pathway", "kegg_category",
   "pathway.name", "term", "description", "ontology", "category",
   "enrichment", "enriched", "depleted", "over.represented",
-  "gene.ratio", "bg.ratio", "gene.count", "background.count",
+  "gene.ratio", "bg.ratio", "gene_count", "total_genes", "background.count",
 
   # Proteomics
   "protein", "protein.id", "peptide", "abundance", "intensity",

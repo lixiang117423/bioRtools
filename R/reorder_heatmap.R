@@ -33,13 +33,13 @@
 #'
 #' @return A list containing four components:
 #' \describe{
-#'   \item{data.reordered}{A data frame with the same structure as input but
+#'   \item{data_reordered}{A data frame with the same structure as input but
 #'     with reordered factor levels for optimal heatmap visualization.}
-#'   \item{column.order}{A character vector showing the optimal column order
+#'   \item{column_order}{A character vector showing the optimal column order
 #'     based on the number of features that peak in each column.}
-#'   \item{row.order}{A character vector showing the optimal row order based
+#'   \item{row_order}{A character vector showing the optimal row order based
 #'     on peak expression patterns.}
-#'   \item{peak.summary}{A summary data frame showing where each feature peaks
+#'   \item{peak_summary}{A summary data frame showing where each feature peaks
 #'     and how many features peak in each column.}
 #' }
 #'
@@ -87,18 +87,18 @@
 #' )
 #'
 #' # View reordered data
-#' head(reorder_result$data.reordered)
+#' head(reorder_result$data_reordered)
 #'
 #' # Check peak summary
-#' reorder_result$peak.summary
+#' reorder_result$peak_summary
 #'
 #' # View column and row orders
-#' reorder_result$column.order
-#' head(reorder_result$row.order)
+#' reorder_result$column_order
+#' head(reorder_result$row_order)
 #'
 #' # Use the reordered data for heatmap
 #' library(ggplot2)
-#' reorder_result$data.reordered %>%
+#' reorder_result$data_reordered %>%
 #'   ggplot(aes(x = col, y = row, fill = value)) +
 #'   geom_tile() +
 #'   scale_fill_viridis_c() +
@@ -237,10 +237,10 @@ reorder_heatmap <- function(data,
 
   # Return comprehensive results following project conventions
   list(
-    data.reordered = final_data,
-    column.order = result$column_order,
-    row.order = result$row_order,
-    peak.summary = result$summary
+    data_reordered = final_data,
+    column_order = result$column_order,
+    row_order = result$row_order,
+    peak_summary = result$summary
   )
 }
 

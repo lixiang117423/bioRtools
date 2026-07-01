@@ -40,7 +40,7 @@ A data frame with columns:
     \item \code{class}: Group where the feature is enriched
     \item \code{pvalue}: Wilcoxon test p-value (NA when using lefser)
     \item \code{comparison}: Pair label, e.g. "CK vs Treatment"
-    \item \code{lda.score}: Absolute LDA score
+    \item \code{lda_score}: Absolute LDA score
     \item \code{method}: "lefser" or "wilcox_lda"
   }
 }

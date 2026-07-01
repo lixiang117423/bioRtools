@@ -78,13 +78,13 @@ Default is 3.}
 \value{
 A list containing:
 \describe{
-  \item{plot.ld_heatmap}{The LD heatmap plot object from LDheatmap package}
-  \item{plot.ggplot2}{A ggplot2 version of the heatmap (if ggplot_version = TRUE)}
-  \item{ld.matrix}{The linkage disequilibrium matrix (r²) used for plotting}
-  \item{snp.matrix}{The SNP genotype matrix used for LD calculation}
-  \item{genetic.distances}{The genetic distances vector}
-  \item{snp.info}{Information about the SNPs including positions}
-  \item{plot.params}{Parameters used for plotting (colors, dimensions, etc.)}
+  \item{plot_ld_heatmap}{The LD heatmap plot object from LDheatmap package}
+  \item{plot_ggplot2}{A ggplot2 version of the heatmap (if ggplot_version = TRUE)}
+  \item{ld_matrix}{The linkage disequilibrium matrix (r²) used for plotting}
+  \item{snp_matrix}{The SNP genotype matrix used for LD calculation}
+  \item{genetic_distances}{The genetic distances vector}
+  \item{snp_info}{Information about the SNPs including positions}
+  \item{plot_params}{Parameters used for plotting (colors, dimensions, etc.)}
 }
 }
 \description{
@@ -121,7 +121,7 @@ ld_result <- plot_ld_heatmap(
 )
 
 # Display the plot
-ld_result$plot.ld_heatmap
+ld_result$plot_ld_heatmap
 
 # Custom color palette matching your image style
 ld_soft <- plot_ld_heatmap(
@@ -153,13 +153,13 @@ ld_ggplot <- plot_ld_heatmap(
 )
 
 # Save the ggplot2 version
-ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot.ggplot2,
+ggplot2::ggsave("ld_heatmap.png", ld_ggplot$plot_ggplot2,
   width = 10, height = 8, dpi = 300)
-ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot.ggplot2,
+ggplot2::ggsave("ld_heatmap.pdf", ld_ggplot$plot_ggplot2,
   width = 10, height = 8)
 
 # Customize the ggplot2 version further
-custom_plot <- ld_ggplot$plot.ggplot2 +
+custom_plot <- ld_ggplot$plot_ggplot2 +
   ggplot2::theme_minimal() +
   ggplot2::theme(
     axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
