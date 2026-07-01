@@ -69,6 +69,8 @@
 #'   NULL, fit one binary OPLS-DA per all unordered group pairs (all-vs-all),
 #'   mirroring \code{\link{find_dams_deseq2}} with no reference. Ignored when
 #'   \code{ref_group} is set (ref-anchored mode is used instead).
+#'   When FALSE with more than 2 groups and no ref_group, the function automatically
+#'   uses all-pairs mode (OPLS-DA is binary-only), with an informational message.
 #' @param p_threshold Numeric p-value threshold for significance labeling (default: 0.05).
 #'   Used in conjunction with log2FC direction to label features as Up/Down.
 #' @param verbose Logical, whether to print progress messages during pairwise model fitting
@@ -581,8 +583,17 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
   # Run OPLS-DA analysis
   # Decide pairwise mode: ref_group with >2 groups, OR explicit pairwise = TRUE.
+  # OPLS-DA is binary-only; for >2 groups with no ref_group a single model is
+  # impossible, so default to all-pairs pairwise mode (mirrors find_dams_deseq2).
+  auto_pairwise <- n_groups > 2 && is.null(ref_group) && !isTRUE(pairwise)
+  if (auto_pairwise) {
+    message("OPLS-DA supports only binary classification; with >2 groups and no ",
+            "ref_group, defaulting to all-pairs pairwise mode. Set pairwise = TRUE ",
+            "to silence this message, or set ref_group to anchor comparisons to a reference.")
+  }
   pairwise_mode <- (!is.null(ref_group) && n_groups > 2) ||
-                   (isTRUE(pairwise) && is.null(ref_group) && n_groups >= 2)
+                   (isTRUE(pairwise) && is.null(ref_group) && n_groups >= 2) ||
+                   auto_pairwise
 
   pairwise_models <- NULL
   if (pairwise_mode) {
