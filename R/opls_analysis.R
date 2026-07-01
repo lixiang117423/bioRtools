@@ -65,6 +65,10 @@
 #'   analysis. When specified, each non-reference group is compared against this group
 #'   using t-tests with log2FC calculation. If NULL (default), no differential analysis
 #'   is performed. Similar to \code{rstatix::t_test(ref.group = )}.
+#' @param pairwise Logical (default FALSE). When TRUE and \code{ref_group} is
+#'   NULL, fit one binary OPLS-DA per all unordered group pairs (all-vs-all),
+#'   mirroring \code{\link{find_dams_deseq2}} with no reference. Ignored when
+#'   \code{ref_group} is set (ref-anchored mode is used instead).
 #' @param p_threshold Numeric p-value threshold for significance labeling (default: 0.05).
 #'   Used in conjunction with log2FC direction to label features as Up/Down.
 #' @param verbose Logical, whether to print progress messages during pairwise model fitting
@@ -74,6 +78,8 @@
 #'   \describe{
 #'     \item{\code{model}}{OPLS model object from ropls package. In pairwise mode,
 #'       this is the first pairwise model.}
+#'     \item{\code{models}}{In pairwise modes, a named list of ropls model objects
+#'       keyed by comparison; NULL in single-model mode.}
 #'     \item{\code{scores}}{Data frame with sample scores for visualization.
 #'       In pairwise mode, includes a \code{comparison} column.}
 #'     \item{\code{vip_scores}}{Data frame with VIP scores, sorted by VIP descending.
@@ -349,7 +355,8 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           vip_threshold = 1.0, ortho_components = 1,
                           pred_components = NULL, scaling = "standard",
                           validation = "CV", cv_folds = 7,
-                          ref_group = NULL, p_threshold = 0.05,
+                          ref_group = NULL, pairwise = FALSE,
+                          p_threshold = 0.05,
                           test_method = "auto",
                           p_adjust_method = "BH",
                           verbose = FALSE,
@@ -513,6 +520,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     }
   }
 
+  if (!is.logical(pairwise) || length(pairwise) != 1) {
+    stop("'pairwise' must be a single TRUE or FALSE")
+  }
+
   if (!is.numeric(p_threshold) || length(p_threshold) != 1 ||
     p_threshold <= 0 || p_threshold >= 1) {
     stop("'p_threshold' must be a single number between 0 and 1")
@@ -569,134 +580,51 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
   }
 
   # Run OPLS-DA analysis
-  # When ref_group is specified with >2 groups, fit pairwise binary OPLS-DA models
+  # Decide pairwise mode: ref_group with >2 groups, OR explicit pairwise = TRUE.
+  pairwise_mode <- (!is.null(ref_group) && n_groups > 2) ||
+                   (isTRUE(pairwise) && is.null(ref_group) && n_groups >= 2)
+
   pairwise_models <- NULL
-  if (!is.null(ref_group) && n_groups > 2) {
-    # Pairwise mode: one OPLS-DA per (group vs ref_group)
-    other_groups <- setdiff(group_levels, ref_group)
-    pairwise_models <- list()
-    all_scores <- list()
-    all_vip <- list()
-    all_summaries <- list()
-
-    for (grp in other_groups) {
-      idx <- which(group %in% c(ref_group, grp))
-      sub_data <- data_matrix[idx, , drop = FALSE]
-      sub_group <- droplevels(factor(as.character(group[idx])))
-
-      grp_cv_folds <- cv_folds
-      min_grp_size <- min(table(sub_group))
-      if (grp_cv_folds > min_grp_size) {
-        grp_cv_folds <- min_grp_size
-      }
-
-      if (verbose) {
-        message("Fitting OPLS-DA: ", grp, " vs ", ref_group,
-          " (n=", nrow(sub_data), ", cv_folds=", grp_cv_folds, ")")
-      }
-
-      model <- tryCatch(
-        {
-          if (validation == "CV") {
-            ropls::opls(sub_data, sub_group,
-              predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = grp_cv_folds, fig.pdfC = "none", info.txtC = "none")
-          } else {
-            ropls::opls(sub_data, sub_group,
-              predI = 1, orthoI = ortho_components, scaleC = scaling,
-              crossvalI = 0, fig.pdfC = "none", info.txtC = "none")
-          }
-        },
-        error = function(e) {
-          warning("OPLS-DA failed for ", grp, " vs ", ref_group, ": ", e$message)
-          NULL
-        })
-
-      if (!is.null(model)) {
-        pairwise_models[[grp]] <- model
-
-        # Extract scores for this pair
-        tryCatch(
-          {
-            pair_scores <- chemhelper::get_scores(model) %>%
-              as.data.frame()
-            pair_scores$sample_id <- rownames(sub_data)
-            pair_scores$group <- as.character(sub_group)
-            pair_scores$comparison <- paste0(grp, " vs ", ref_group)
-            all_scores[[grp]] <- pair_scores
-          },
-          error = function(e) {
-            pair_scores <- data.frame(
-              t1 = model@scoreMN[, 1],
-              sample_id = rownames(sub_data),
-              group = as.character(sub_group),
-              comparison = paste0(grp, " vs ", ref_group)
-            )
-            if (!is.null(model@orthoScoreMN) && ncol(model@orthoScoreMN) > 0) {
-              pair_scores$to1 <- model@orthoScoreMN[, 1]
-            }
-            all_scores[[grp]] <- pair_scores
-          })
-
-        # Extract VIP
-        tryCatch(
-          {
-            vip_vals <- model@vipVn
-            all_vip[[grp]] <- data.frame(
-              feature = variable_names,
-              vip = as.numeric(vip_vals),
-              group = grp,
-              ref_group = ref_group,
-              stringsAsFactors = FALSE
-            )
-          },
-          error = function(e) {
-            all_vip[[grp]] <- data.frame(
-              feature = variable_names,
-              vip = NA_real_,
-              group = grp,
-              ref_group = ref_group,
-              stringsAsFactors = FALSE
-            )
-          })
-
-        # Extract summary
-        tryCatch(
-          {
-            s <- model@summaryDF
-            all_summaries[[grp]] <- list(
-              group = grp,
-              R2Y = if ("R2Y" %in% names(s)) s$R2Y else NA,
-              Q2Y = if ("Q2Y" %in% names(s)) s$Q2Y else NA,
-              R2X = if ("R2X(cum)" %in% names(s)) s$`R2X(cum)` else NA
-            )
-          },
-          error = function(e) NULL)
-      }
+  if (pairwise_mode) {
+    # Build the pair list: pair[1] = reference, pair[2] = treatment.
+    if (!is.null(ref_group)) {
+      others <- setdiff(group_levels, ref_group)
+      pairs <- lapply(others, function(g) c(ref_group, g))
+    } else {
+      pairs <- utils::combn(group_levels, 2, simplify = FALSE)
     }
 
-    # Combine results
-    opls_model <- pairwise_models[[1]]  # Use first model as representative
-    scores_data <- do.call(rbind, all_scores)
+    fit <- fit_pairwise_opls(
+      data_matrix, group, pairs, variable_names,
+      ortho_components = ortho_components, scaling = scaling,
+      validation = validation, cv_folds = cv_folds, verbose = verbose
+    )
+    pairwise_models <- fit$models
 
-    # Merge sample metadata into scores if available
+    if (length(pairwise_models) == 0) {
+      stop("All pairwise OPLS-DA comparisons failed; check group sizes / data quality")
+    }
+
+    # --- Scores -----------------------------------------------------------
+    scores_data <- fit$scores
     if (!is.null(sample_info)) {
       scores_data$group <- NULL
       scores_data <- scores_data %>%
         dplyr::left_join(sample_info, by = stats::setNames(sample_col, "sample_id"))
     }
 
-    vip_data <- do.call(rbind, all_vip) %>%
-      dplyr::arrange(desc(vip))
-    vip_data$important <- vip_data$vip >= vip_threshold
+    # --- VIP --------------------------------------------------------------
+    vip_data <- fit$vip %>%
+      dplyr::arrange(dplyr::desc(vip))
+    vip_data$important <- !is.na(vip_data$vip) & vip_data$vip >= vip_threshold
 
-    # Build model_summary from pairwise summaries
+    # --- Model summary ----------------------------------------------------
     model_summary <- list(
-      mode = "pairwise (ref_group)",
+      mode = if (!is.null(ref_group)) "pairwise (ref_group)" else "pairwise (all)",
       ref_group = ref_group,
-      pairwise_results = all_summaries,
-      R2Y = mean(sapply(all_summaries, function(x) x$R2Y), na.rm = TRUE),
-      Q2Y = mean(sapply(all_summaries, function(x) x$Q2Y), na.rm = TRUE),
+      pairwise_results = fit$summaries,
+      R2Y = mean(sapply(fit$summaries, function(x) x$R2Y), na.rm = TRUE),
+      Q2Y = mean(sapply(fit$summaries, function(x) x$Q2Y), na.rm = TRUE),
       n_groups = n_groups,
       n_variables = ncol(data_matrix),
       n_samples = nrow(data_matrix)
@@ -704,113 +632,15 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
     loadings_data <- data.frame(feature = variable_names)
 
-    # Pairwise differential analysis (log2FC + p-value for each comparison)
-    diff_analysis <- NULL
-    if (!is.null(ref_group)) {
-      diff_list <- list()
-      ref_idx <- which(group == ref_group)
+    # --- Differential analysis -------------------------------------------
+    diff_analysis <- compute_pairwise_diff(
+      data_matrix, group, pairs, variable_names,
+      vip = fit$vip, test_method = test_method,
+      p_adjust_method = p_adjust_method, p_threshold = p_threshold
+    )
 
-      for (grp in other_groups) {
-        grp_idx <- which(group == grp)
-        ref_data <- data_matrix[ref_idx, , drop = FALSE]
-        grp_data <- data_matrix[grp_idx, , drop = FALSE]
-
-        n_ref <- nrow(ref_data)
-        n_grp <- nrow(grp_data)
-
-        log2fc_vals <- numeric(length(variable_names))
-        p_vals <- numeric(length(variable_names))
-        test_methods <- character(length(variable_names))
-        ref_mean_vals <- numeric(length(variable_names))
-        grp_mean_vals <- numeric(length(variable_names))
-        ref_sd_vals <- numeric(length(variable_names))
-        grp_sd_vals <- numeric(length(variable_names))
-
-        for (j in seq_along(variable_names)) {
-          ref_vals <- ref_data[, j]
-          grp_vals <- grp_data[, j]
-          ref_mean <- mean(ref_vals, na.rm = TRUE)
-          grp_mean <- mean(grp_vals, na.rm = TRUE)
-          ref_mean_vals[j] <- ref_mean
-          grp_mean_vals[j] <- grp_mean
-          ref_sd_vals[j] <- sd(ref_vals, na.rm = TRUE)
-          grp_sd_vals[j] <- sd(grp_vals, na.rm = TRUE)
-          log2fc_vals[j] <- log2((grp_mean + 1e-10) / (ref_mean + 1e-10))
-
-          valid_ref <- ref_vals[!is.na(ref_vals)]
-          valid_grp <- grp_vals[!is.na(grp_vals)]
-          if (length(valid_ref) >= 2 && length(valid_grp) >= 2 &&
-            stats::var(valid_ref) > 0 && stats::var(valid_grp) > 0) {
-            # Determine test method per variable
-            use_t <- if (test_method == "auto") {
-              ref_normal <- length(valid_ref) >= 3 &&
-                tryCatch(stats::shapiro.test(valid_ref)$p.value > 0.05, error = function(e) FALSE)
-              grp_normal <- length(valid_grp) >= 3 &&
-                tryCatch(stats::shapiro.test(valid_grp)$p.value > 0.05, error = function(e) FALSE)
-              ref_normal && grp_normal
-            } else {
-              test_method == "t-test"
-            }
-
-            if (use_t) {
-              test_result <- stats::t.test(valid_grp, valid_ref)
-              test_methods[j] <- "t-test"
-            } else {
-              test_result <- stats::wilcox.test(valid_grp, valid_ref)
-              test_methods[j] <- "wilcoxon"
-            }
-            p_vals[j] <- test_result$p.value
-          } else {
-            p_vals[j] <- NA
-            test_methods[j] <- NA_character_
-          }
-        }
-
-        diff_list[[grp]] <- data.frame(
-          feature = variable_names,
-          group = grp,
-          ref_group = ref_group,
-          group_mean = round(grp_mean_vals, 4),
-          group_sd = round(grp_sd_vals, 4),
-          group_n = n_grp,
-          ref_mean = round(ref_mean_vals, 4),
-          ref_sd = round(ref_sd_vals, 4),
-          ref_n = n_ref,
-          log2_fc = round(log2fc_vals, 4),
-          p_value = p_vals,
-          test_method = test_methods,
-          stringsAsFactors = FALSE
-        )
-      }
-
-      diff_analysis <- do.call(rbind, diff_list)
-      rownames(diff_analysis) <- NULL
-      diff_analysis$comparison <- paste0(diff_analysis$group, " vs ", diff_analysis$ref_group)
-
-      # Adjust p-values per comparison
-      diff_analysis <- diff_analysis %>%
-        dplyr::group_by(comparison) %>%
-        dplyr::mutate(p_adjust = stats::p.adjust(p_value, method = p_adjust_method)) %>%
-        dplyr::ungroup()
-
-      # Add VIP from pairwise results
-      vip_lookup <- vip_data %>%
-        dplyr::select(feature, group, vip)
-      diff_analysis <- diff_analysis %>%
-        dplyr::left_join(vip_lookup, by = c("feature", "group"))
-      diff_analysis$vip <- round(diff_analysis$vip, 4)
-
-      diff_analysis$regulation <- ifelse(
-        is.na(diff_analysis$p_adjust), "NS",
-        ifelse(diff_analysis$log2_fc > 0 & diff_analysis$p_adjust < p_threshold, "Up",
-          ifelse(diff_analysis$log2_fc < 0 & diff_analysis$p_adjust < p_threshold, "Down", "NS")
-        )
-      )
-      reg_order <- c("Up", "Down", "NS")
-      diff_analysis$regulation <- factor(diff_analysis$regulation, levels = reg_order)
-      diff_analysis <- diff_analysis[order(diff_analysis$regulation, -abs(diff_analysis$log2_fc)), ]
-      diff_analysis$regulation <- as.character(diff_analysis$regulation)
-    }
+    # Use first pairwise model as the representative `model` slot
+    opls_model <- pairwise_models[[1]]
 
   } else {
     # Standard single-model mode (2 groups or no ref_group)
@@ -1102,11 +932,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     {
       if (!is.null(pairwise_models)) {
         # Pairwise mode: merge per-comparison metrics
-        metrics_df <- do.call(rbind, lapply(names(pairwise_models), function(grp_name) {
-          m <- pairwise_models[[grp_name]]
+        metrics_df <- do.call(rbind, lapply(names(pairwise_models), function(comp) {
+          m <- pairwise_models[[comp]]
           mdf <- as.data.frame(m@modelDF)
           data.frame(
-            comparison = paste0(grp_name, " vs ", ref_group),
+            comparison = comp,
             variance_t1 = if ("p1" %in% rownames(mdf)) round(mdf["p1", "R2X"] * 100, 2) else NA_real_,
             variance_to1 = if ("o1" %in% rownames(mdf)) round(mdf["o1", "R2X"] * 100, 2) else NA_real_,
             variance_R2X = round(m@summaryDF$`R2X(cum)` * 100, 2),
@@ -1135,6 +965,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
   # Prepare final results
   results <- list(
     model = opls_model,
+    models = if (!is.null(pairwise_models)) pairwise_models else NULL,
     scores = scores_data,
     vip_scores = vip_data,
     loadings = loadings_data,
