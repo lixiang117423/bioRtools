@@ -30,4 +30,7 @@ stopifnot(nrow(fit$scores) == 36)
 stopifnot("comparison" %in% names(fit$scores))
 stopifnot("vip" %in% names(fit$vip) && "comparison" %in% names(fit$vip))
 stopifnot("group" %in% names(fit$vip) && "ref_group" %in% names(fit$vip))
+# summaries must carry real model-quality values (ropls cols are R2Y(cum)/Q2(cum))
+smry <- fit$summaries[[1]]
+stopifnot(!is.na(smry$R2Y), !is.na(smry$Q2Y))
 cat("✓ Test A1 passed\n\n")

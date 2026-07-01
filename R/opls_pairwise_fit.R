@@ -93,8 +93,8 @@ fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
     summaries[[comp_label]] <- list(
       comparison = comp_label,
       group = trt, ref_group = ref,
-      R2Y = if (!is.null(s) && "R2Y" %in% names(s)) s$R2Y else NA_real_,
-      Q2Y = if (!is.null(s) && "Q2Y" %in% names(s)) s$Q2Y else NA_real_,
+      R2Y = if (!is.null(s) && "R2Y(cum)" %in% names(s)) s$`R2Y(cum)` else NA_real_,
+      Q2Y = if (!is.null(s) && "Q2(cum)" %in% names(s)) s$`Q2(cum)` else NA_real_,
       R2X = if (!is.null(s) && "R2X(cum)" %in% names(s)) s$`R2X(cum)` else NA_real_,
       n_samples = nrow(sub_data),
       n_variables = ncol(sub_data)
