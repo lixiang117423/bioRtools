@@ -87,8 +87,8 @@
 #'
 #' @return A list containing two components:
 #' \describe{
-#'   \item{plot.synteny}{A ggplot object displaying the gene synteny plot.}
-#'   \item{data.summary}{A summary table showing the number of genes and links
+#'   \item{plot_synteny}{A ggplot object displaying the gene synteny plot.}
+#'   \item{data_summary}{A summary table showing the number of genes and links
 #'     per species.}
 #' }
 #'
@@ -134,10 +134,10 @@
 #' )
 #'
 #' # Display the plot
-#' synteny_result$plot.synteny
+#' synteny_result$plot_synteny
 #'
 #' # View summary statistics
-#' synteny_result$data.summary
+#' synteny_result$data_summary
 #'
 #' # Customized plot with different colors
 #' plot_synteny(
@@ -149,7 +149,7 @@
 #'   link_alpha = 0.3,
 #'   title = "Gene Synteny Analysis",
 #'   subtitle = "Cross-species comparison"
-#' )$plot.synteny
+#' )$plot_synteny
 #'
 #' # Automatic syntenic data generation using synteny_groups
 #' plot_synteny(
@@ -160,7 +160,7 @@
 #'     group3 = c("Gene02", "Gene05", "Gene11", "Gene14")
 #'   ),
 #'   species_labels = c("A", "B", "C", "D")
-#' )$plot.synteny
+#' )$plot_synteny
 #'
 #' # Easiest method: use syn_group column from gene_data
 #' # If your data has a "syn_group" column, simply call:
@@ -168,7 +168,7 @@
 #'   gene_data = df.synteny.gene
 #'   # syntenic_data is auto-generated from syn_group column
 #'   # species_labels are auto-generated from species column
-#' )$plot.synteny
+#' )$plot_synteny
 #'
 #' @export
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -323,8 +323,8 @@ plot_synteny <- function(gene_data,
 
   # Return results following project conventions
   list(
-    plot.synteny = plot_synteny,
-    data.summary = data_summary
+    plot_synteny = plot_synteny,
+    data_summary = data_summary
   )
 }
 

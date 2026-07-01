@@ -389,18 +389,18 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
   kegg_results <- kegg_enrich@result
 
   # Convert GeneRatio from character to numeric and add derived columns
-  kegg_results$gene.count <- sapply(kegg_results$GeneRatio, function(x) {
+  kegg_results$gene_count <- sapply(kegg_results$GeneRatio, function(x) {
     ratio_parts <- strsplit(as.character(x), "/")[[1]]
     as.numeric(ratio_parts[1])
   })
 
-  kegg_results$total.genes <- sapply(kegg_results$GeneRatio, function(x) {
+  kegg_results$total_genes <- sapply(kegg_results$GeneRatio, function(x) {
     ratio_parts <- strsplit(as.character(x), "/")[[1]]
     as.numeric(ratio_parts[2])
   })
 
   # Calculate numeric GeneRatio
-  kegg_results$gene_ratio <- kegg_results$gene.count / kegg_results$total.genes
+  kegg_results$gene_ratio <- kegg_results$gene_count / kegg_results$total_genes
 
   # Add enrichment score for visualization (-log10 of adjusted p-value)
   kegg_results$enrichment_score <- -log10(kegg_results$p.adjust)
@@ -408,7 +408,7 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
   # Reorder columns for better readability
   kegg_results <- kegg_results %>%
     dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
-      qvalue, geneID, Count, gene.count, total.genes, enrichment_score,
+      qvalue, geneID, Count, gene_count, total_genes, enrichment_score,
       dplyr::everything()) %>%
     dplyr::rename(
       id = ID,
@@ -416,9 +416,7 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
       bg_ratio = BgRatio,
       p_adjust = p.adjust,
       gene_id = geneID,
-      count = Count,
-      gene_count = gene.count,
-      total_genes = total.genes
+      count = Count
     ) %>%
     dplyr::arrange(p_adjust, pvalue)
 

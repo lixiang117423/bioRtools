@@ -36,9 +36,9 @@
 #' @return A list containing:
 #' \describe{
 #'   \item{plot}{A ggplot object with the UpSet plot.}
-#'   \item{data.upset}{A data frame with the feature-group membership data
+#'   \item{data_upset}{A data frame with the feature-group membership data
 #'     used for plotting.}
-#'   \item{data.pav}{A presence/absence matrix (feature × group).}
+#'   \item{data_pav}{A presence/absence matrix (feature × group).}
 #' }
 #'
 #' @details
@@ -227,7 +227,7 @@ plot_tax_upset <- function(data,
 
   list(
     plot = p,
-    data.upset = df_upset,
-    data.pav = df_pav
+    data_upset = df_upset,
+    data_pav = df_pav
   )
 }

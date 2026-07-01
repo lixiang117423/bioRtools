@@ -64,9 +64,9 @@ for point sizes. Default is c(0.5, 4).}
 \value{
 A list containing two components:
 \describe{
-  \item{plot.volcano}{A ggplot object that can be further customized
+  \item{plot_volcano}{A ggplot object that can be further customized
     or directly displayed.}
-  \item{data.summary}{A summary table showing the number of genes in
+  \item{data_summary}{A summary table showing the number of genes in
     each category (up-regulated, down-regulated, not significant).}
 }
 }
@@ -99,28 +99,28 @@ library(dplyr)
 library(bioRtools)
 
 # Load example data
-data(df.rnaseq.plot.volcano)
+data(df.rnaseq.plot_volcano)
 
 # Basic volcano plot
-volcano_result <- plot_volcano(data = df.rnaseq.plot.volcano)
-volcano_result$plot.volcano
+volcano_result <- plot_volcano(data = df.rnaseq.plot_volcano)
+volcano_result$plot_volcano
 
 # View summary statistics
-volcano_result$data.summary
+volcano_result$data_summary
 
 # Customized volcano plot with different thresholds
 volcano_custom <- plot_volcano(
-  data = df.rnaseq.plot.volcano,
+  data = df.rnaseq.plot_volcano,
   xintercept_abs = 1.5,
   yintercept = 0.01,
   title = "Differential Expression Analysis",
   subtitle = "Volcano Plot with Custom Thresholds"
 )
-volcano_custom$plot.volcano
+volcano_custom$plot_volcano
 
 # Using different column names
 plot_volcano(
-  data = df.rnaseq.plot.volcano,
+  data = df.rnaseq.plot_volcano,
   x = "log2FoldChange",
   y = "pvalue",  # Use raw p-values instead of adjusted
   color = "group",

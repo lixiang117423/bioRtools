@@ -45,11 +45,11 @@
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{plot.manhattan}{The main ggplot Manhattan plot object.}
-#'   \item{plot.density}{The density ggplot object (NULL if show_density = FALSE).}
-#'   \item{plot.combined}{The patchwork-combined plot (NULL if show_density = FALSE).}
-#'   \item{data.processed}{The processed data frame used for plotting.}
-#'   \item{chromosome.centers}{A data frame of chromosome center positions.}
+#'   \item{plot_manhattan}{The main ggplot Manhattan plot object.}
+#'   \item{plot_density}{The density ggplot object (NULL if show_density = FALSE).}
+#'   \item{plot_combined}{The patchwork-combined plot (NULL if show_density = FALSE).}
+#'   \item{data_processed}{The processed data frame used for plotting.}
+#'   \item{chromosome_centers}{A data frame of chromosome center positions.}
 #' }
 #'
 #' @details
@@ -73,7 +73,7 @@
 #'   transform_log10 = TRUE,
 #'   threshold_line = 5e-8
 #' )
-#' result$plot.combined
+#' result$plot_combined
 #'
 #' # Manhattan plot with SNP density panel
 #' result <- plot_manhattan(
@@ -295,10 +295,10 @@ plot_manhattan <- function(data = NULL,
 
   # ── Return ────────────────────────────────────────────────────────────────────
   list(
-    plot.manhattan     = p_manhattan,
-    plot.density       = p_density,
-    plot.combined      = p_combined,
-    data.processed     = data_cum,
-    chromosome.centers = chromosome_centers
+    plot_manhattan     = p_manhattan,
+    plot_density       = p_density,
+    plot_combined      = p_combined,
+    data_processed     = data_cum,
+    chromosome_centers = chromosome_centers
   )
 }

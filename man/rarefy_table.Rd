@@ -39,13 +39,13 @@ Default is TRUE.}
 \value{
 A list containing four components:
 \describe{
-  \item{data.rarefied}{A data frame containing the rarefied community matrix
+  \item{data_rarefied}{A data frame containing the rarefied community matrix
     with the same structure as input but standardized sampling depth.}
-  \item{rarefaction.info}{A summary data frame with original and rarefied
+  \item{rarefaction_info}{A summary data frame with original and rarefied
     read counts, number of taxa, and other statistics for each sample.}
-  \item{removed.samples}{Character vector of sample names that were removed
+  \item{removed_samples}{Character vector of sample names that were removed
     due to insufficient reads (if any).}
-  \item{rarefaction.depth}{The actual rarefaction depth used for analysis.}
+  \item{rarefaction_depth}{The actual rarefaction depth used for analysis.}
 }
 }
 \description{
@@ -83,10 +83,10 @@ data(df.permanova.otu)
 rarefy_result <- rarefy_table(data = df.permanova.otu)
 
 # View rarefied data
-head(rarefy_result$data.rarefied)
+head(rarefy_result$data_rarefied)
 
 # Check rarefaction summary
-rarefy_result$rarefaction.info
+rarefy_result$rarefaction_info
 
 # Custom rarefaction depth
 rarefy_custom <- rarefy_table(
@@ -96,7 +96,7 @@ rarefy_custom <- rarefy_table(
 )
 
 # Check rarefaction depth used
-rarefy_custom$rarefaction.depth
+rarefy_custom$rarefaction_depth
 
 # Multiple rarefaction depths (if you have multiple sample types)
 # rarefy_multi <- rarefy_table(

@@ -323,21 +323,21 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
   go_results <- go_enrich@result
 
   # Convert GeneRatio from character to numeric
-  go_results$gene.count <- sapply(go_results$GeneRatio, function(x) {
+  go_results$gene_count <- sapply(go_results$GeneRatio, function(x) {
     as.numeric(strsplit(as.character(x), "/")[[1]][1])
   })
 
-  go_results$total.genes <- sapply(go_results$GeneRatio, function(x) {
+  go_results$total_genes <- sapply(go_results$GeneRatio, function(x) {
     as.numeric(strsplit(as.character(x), "/")[[1]][2])
   })
 
   # Calculate numeric GeneRatio
-  go_results$gene_ratio <- go_results$gene.count / go_results$total.genes
+  go_results$gene_ratio <- go_results$gene_count / go_results$total_genes
 
   # Reorder columns for better readability
   go_results <- go_results %>%
     dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
-      qvalue, geneID, Count, gene.count, total.genes,
+      qvalue, geneID, Count, gene_count, total_genes,
       dplyr::everything()) %>%
     dplyr::rename(
       id = ID,
@@ -345,9 +345,7 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
       bg_ratio = BgRatio,
       p_adjust = p.adjust,
       gene_id = geneID,
-      count = Count,
-      gene_count = gene.count,
-      total_genes = total.genes
+      count = Count
     ) %>%
     dplyr::arrange(p_adjust, pvalue)
 

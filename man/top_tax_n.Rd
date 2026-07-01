@@ -85,16 +85,16 @@ Default is TRUE.}
 \value{
 A list containing five components:
 \describe{
-  \item{result.statistics}{A data frame containing statistical test results
+  \item{result_statistics}{A data frame containing statistical test results
     for each taxon including p-values and significance levels. NULL when
     \code{plot_by = "group"}.}
-  \item{plot.abundance}{A ggplot object showing relative abundance
+  \item{plot_abundance}{A ggplot object showing relative abundance
     visualization with optional significance annotations.}
-  \item{data.processed}{A data frame containing the processed abundance
+  \item{data_processed}{A data frame containing the processed abundance
     data used for plotting and analysis.}
-  \item{taxa.summary}{A summary table showing the top taxa selected and
+  \item{taxa_summary}{A summary table showing the top taxa selected and
     their average abundances across groups.}
-  \item{analysis.parameters}{A data frame recording all analysis parameters
+  \item{analysis_parameters}{A data frame recording all analysis parameters
     for reproducibility.}
 }
 }
@@ -153,13 +153,13 @@ top_result <- top_tax_n(
 )
 
 # View the plot
-top_result$plot.abundance
+top_result$plot_abundance
 
 # Check statistical results
-top_result$result.statistics
+top_result$result_statistics
 
 # View taxa summary
-top_result$taxa.summary
+top_result$taxa_summary
 
 # Group-level composition with percentage labels
 group_result <- top_tax_n(
@@ -171,7 +171,7 @@ group_result <- top_tax_n(
   plot_by = "group",
   show_labels = TRUE
 )
-group_result$plot.abundance
+group_result$plot_abundance
 
 }
 \author{
