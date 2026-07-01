@@ -2,6 +2,7 @@
 source("R/opls_pairwise_fit.R")
 source("R/utils-orientation.R")
 source("R/opls_analysis.R")
+source("R/pairwise_oplsda.R")
 
 suppressPackageStartupMessages({
   library(ropls); library(tibble); library(dplyr)
@@ -99,6 +100,15 @@ res_auto <- quiet(opls_analysis(Xm, sample = sample_meta, sample_col = "sample_i
 stopifnot(!is.null(res_auto$models))
 stopifnot(length(unique(res_auto$vip_scores$comparison)) == 3)
 cat("✓ Test A3d passed\n\n")
+
+# --- Test A4: pairwise_oplsda is a deprecated wrapper ----------------------
+cat("Test A4: pairwise_oplsda delegates to opls_analysis(pairwise=TRUE)\n")
+dep <- quiet(pairwise_oplsda(Xm, sample_meta, group_col = "group"))
+stopifnot(all(c("vip_scores", "model_summary", "scores", "models") %in% names(dep)))
+# Same comparisons as the direct all-pairs call
+stopifnot(identical(sort(unique(dep$vip_scores$comparison)),
+                    sort(unique(res_ap$vip_scores$comparison))))
+cat("✓ Test A4 passed\n\n")
 
 cat("=====================================\n")
 cat("All opls_analysis tests passed! ✓\n")

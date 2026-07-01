@@ -4,6 +4,7 @@
 # sample x feature result exactly.
 
 source("R/utils-orientation.R")
+source("R/opls_pairwise_fit.R")
 for (f in c("pca_analysis", "pcoa_analysis", "opls_analysis",
             "rda_analysis", "tsne_analysis", "pairwise_oplsda")) {
   source(paste0("R/", f, ".R"))
