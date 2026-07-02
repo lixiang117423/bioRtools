@@ -1,4 +1,5 @@
 # Tests for cor2gephi(): cor_analysis edge list -> Gephi nodes/edges CSV.
+source("R/cor_result_to_graph.R")
 source("R/cor2gephi.R")
 source("R/cor_analysis.R")
 
