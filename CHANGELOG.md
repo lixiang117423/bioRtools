@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.63.0] - 2026-07-02
+
+### Added
+- `find_hub_nodes()`: new exported function identifying hub nodes by strength from either a `cor_analysis()` edge list or a `microbiome_net()` result. Computes degree, strength, betweenness, closeness, and eigenvector centrality; flags hubs via `top_percent` (default 10%), `top_n`, or `strength_threshold` criteria (ties at the cutoff are included).
+
+### Changed
+- `cor2gephi()`: refactored to share the new internal `cor_result_to_graph()` helper with `find_hub_nodes()`. The `nodes$Strength` column now sums `|cor|` weights when `weight = "absolute"` (previously summed signed correlations), aligning it with the already-absolute `Eigenvector`/`Modularity` columns.
+
 ## [1.62.0] - 2026-07-02
 
 ### Added
