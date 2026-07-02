@@ -88,7 +88,8 @@
 #'       In pairwise mode, includes \code{group} and \code{ref_group} columns.}
 #'     \item{\code{loadings}}{Data frame with variable loadings.}
 #'     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
-#'       regulation labels for each group vs ref_group. NULL if no ref_group.}
+#'       regulation labels per comparison. NULL in single-model mode without
+#'       ref_group; populated in ref-anchored and all-pairs pairwise modes.}
 #'     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
 #'       In pairwise mode, includes per-comparison results.}
 #'   }

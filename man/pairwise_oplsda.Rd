@@ -67,6 +67,11 @@ Performs OPLS-DA on all pairwise group combinations. For each pair of groups,
 subsets the data, fits an OPLS-DA model via \code{ropls::opls}, and extracts
 VIP scores, sample scores, and model performance metrics.
 }
+\details{
+\strong{Deprecated.} Use \code{\link{opls_analysis}} with
+\code{pairwise = TRUE} instead. This function remains as a thin wrapper and
+will be removed in the next major version.
+}
 \examples{
 set.seed(42)
 mat <- matrix(rnorm(100 * 18), nrow = 18, ncol = 100,

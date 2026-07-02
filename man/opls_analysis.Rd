@@ -17,6 +17,7 @@ opls_analysis(
   validation = "CV",
   cv_folds = 7,
   ref_group = NULL,
+  pairwise = FALSE,
   p_threshold = 0.05,
   test_method = "auto",
   p_adjust_method = "BH",
@@ -90,6 +91,13 @@ analysis. When specified, each non-reference group is compared against this grou
 using t-tests with log2FC calculation. If NULL (default), no differential analysis
 is performed. Similar to \code{rstatix::t_test(ref.group = )}.}
 
+\item{pairwise}{Logical (default FALSE). When TRUE and \code{ref_group} is
+NULL, fit one binary OPLS-DA per all unordered group pairs (all-vs-all),
+mirroring \code{\link{find_dams_deseq2}} with no reference. Ignored when
+\code{ref_group} is set (ref-anchored mode is used instead).
+When FALSE with more than 2 groups and no ref_group, the function automatically
+uses all-pairs mode (OPLS-DA is binary-only), with an informational message.}
+
 \item{p_threshold}{Numeric p-value threshold for significance labeling (default: 0.05).
 Used in conjunction with log2FC direction to label features as Up/Down.}
 
@@ -108,13 +116,16 @@ A named list containing:
   \describe{
     \item{\code{model}}{OPLS model object from ropls package. In pairwise mode,
       this is the first pairwise model.}
+    \item{\code{models}}{In pairwise modes, a named list of ropls model objects
+      keyed by comparison; NULL in single-model mode.}
     \item{\code{scores}}{Data frame with sample scores for visualization.
       In pairwise mode, includes a \code{comparison} column.}
     \item{\code{vip_scores}}{Data frame with VIP scores, sorted by VIP descending.
       In pairwise mode, includes \code{group} and \code{ref_group} columns.}
     \item{\code{loadings}}{Data frame with variable loadings.}
     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
-      regulation labels for each group vs ref_group. NULL if no ref_group.}
+      regulation labels per comparison. NULL in single-model mode without
+      ref_group; populated in ref-anchored and all-pairs pairwise modes.}
     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
       In pairwise mode, includes per-comparison results.}
   }
