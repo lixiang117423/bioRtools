@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.62.0] - 2026-07-02
+
+### Added
+- `opls_analysis()`: new `pairwise` argument. `pairwise = TRUE` with `ref_group = NULL` fits all-vs-all binary OPLS-DA models, mirroring `find_dams_deseq2(ref_group = NULL)`. Pairwise modes now return a `models` slot (named list keyed by comparison) and a `comparison` column in `vip_scores`.
+- `cor2gephi()`: new exported function converting `cor_analysis()` edge lists to Gephi nodes/edges CSV files, with reciprocal-edge deduplication and optional topology enrichment (eigenvector centrality, Louvain modularity, per-community hub flag).
+
+### Changed
+- `opls_analysis()`: for >2 groups with no `ref_group`, now auto-defaults to all-pairs pairwise mode with an informational message (OPLS-DA is binary-only; previously this errored inside ropls).
+
+### Deprecated
+- `pairwise_oplsda()`: now a thin wrapper around `opls_analysis(pairwise = TRUE)`; will be removed in the next major version. Behavior differences during the deprecation window: comparison labels are now treatment-vs-reference (e.g. "B vs A", matching `find_dams_deseq2`); `model_summary` columns changed (drops `n_important`, adds `group`/`ref_group`/`R2X`); a total pairwise fitting failure now stops with an error instead of returning an empty result.
+
 ## [1.61.1] - 2026-07-01
 
 ### Fixed
