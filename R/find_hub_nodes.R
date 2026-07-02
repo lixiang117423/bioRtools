@@ -70,6 +70,10 @@ find_hub_nodes <- function(network, group = NULL,
     stop("'network' must be a cor_analysis() edge list or a microbiome_net() result")
   }
 
+  if (igraph::ecount(g) == 0) {
+    stop("network has no edges; cannot compute hub centrality")
+  }
+
   # --- Centrality -------------------------------------------------------
   nodes <- igraph::V(g)$name
   cent <- data.frame(
