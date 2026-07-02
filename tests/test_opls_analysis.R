@@ -37,6 +37,18 @@ smry <- fit$summaries[[1]]
 stopifnot(!is.na(smry$R2Y), !is.na(smry$Q2Y))
 cat("✓ Test A1 passed\n\n")
 
+# --- Test A1e: zero-variance-in-subset variables are dropped, not errored --
+cat("Test A1e: zero-variance columns dropped per subset\n")
+Xm_zv <- cbind(Xm, ZV = rep(5, nrow(Xm)))   # a constant column across all samples
+feat_zv <- c(features, "ZV")
+fit_zv <- fit_pairwise_opls(Xm_zv, grp, pairs, feat_zv,
+                            ortho_components = 1, scaling = "standard",
+                            validation = "CV", cv_folds = 5, verbose = FALSE)
+stopifnot(length(fit_zv$models) == 3)
+# ZV is zero-variance in every subset, so excluded from every comparison's VIP
+stopifnot(!"ZV" %in% fit_zv$vip$feature)
+cat("✓ Test A1e passed\n\n")
+
 # --- Test A2: compute_pairwise_diff structure + per-comparison p-adjust -----
 cat("Test A2: compute_pairwise_diff computes log2FC/p-value/regulation\n")
 diff <- compute_pairwise_diff(Xm, grp, pairs, features, fit$vip,

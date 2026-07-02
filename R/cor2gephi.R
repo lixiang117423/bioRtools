@@ -97,7 +97,7 @@ cor2gephi <- function(cor_result, prefix = "cor_network",
   }
 
   # --- Nodes table -------------------------------------------------------
-  node_names <- if (igraph::vcount(g)) igraph::V(g)$name else character(0)
+  node_names <- igraph::V(g)$name
   nodes <- data.frame(
     Id = seq_along(node_names),
     Label = node_names,

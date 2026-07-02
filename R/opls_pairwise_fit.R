@@ -47,6 +47,17 @@ fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
       next
     }
 
+    # Drop zero-variance variables within this subset (ropls errors on them;
+    # a feature constant within a group pair is common in omics data).
+    var_in_sub <- apply(sub_data, 2, var, na.rm = TRUE)
+    keep <- var_in_sub > 0
+    if (sum(keep) < 2) {
+      warning(sprintf("%s: fewer than 2 non-constant variables, skipping", comp_label))
+      next
+    }
+    sub_data <- sub_data[, keep, drop = FALSE]
+    var_names_sub <- variable_names[keep]
+
     if (verbose) {
       message("Fitting OPLS-DA: ", comp_label, " (n=", nrow(sub_data), ")")
     }
@@ -81,7 +92,7 @@ fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
     vip_vals <- tryCatch(as.numeric(model@vipVn),
                          error = function(e) rep(NA_real_, ncol(sub_data)))
     vip_list[[comp_label]] <- data.frame(
-      feature = variable_names,
+      feature = var_names_sub,
       vip = vip_vals,
       group = trt,
       ref_group = ref,
@@ -136,6 +147,7 @@ compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
                                   vip, test_method = "auto",
                                   p_adjust_method = "BH", p_threshold = 0.05) {
   group <- as.factor(group)
+  test_method <- match.arg(test_method, c("auto", "t-test", "wilcoxon"))
   diff_list <- list()
 
   for (pair in pairs) {
