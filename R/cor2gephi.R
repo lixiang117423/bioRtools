@@ -34,46 +34,20 @@ cor2gephi <- function(cor_result, prefix = "cor_network",
                       weight = c("absolute", "signed"),
                       enrich = TRUE,
                       community = c("auto", "louvain", "fast_greedy", "none")) {
-  if (!is.data.frame(cor_result)) {
-    stop("'cor_result' must be a data frame (the output of cor_analysis())")
-  }
-  need <- c("from", "to", "cor")
-  missing_cols <- setdiff(need, names(cor_result))
-  if (length(missing_cols)) {
-    stop("'cor_result' is missing required column(s): ",
-         paste(missing_cols, collapse = ", "))
-  }
   weight <- match.arg(weight)
   community <- match.arg(community)
   if (!is.logical(enrich) || length(enrich) != 1) {
     stop("'enrich' must be a single TRUE or FALSE")
   }
 
-  edges_raw <- cor_result
-  if (nrow(edges_raw) == 0) {
-    stop("'cor_result' has no significant correlations to export")
-  }
+  cg <- cor_result_to_graph(cor_result, weight)
+  g <- cg$g
+  edges_raw <- cg$edges
 
-  # --- Deduplicate reciprocal edges (within-dataset mode) ----------------
-  # Symmetric correlations yield both (A,B) and (B,A); keep one per unordered pair.
-  edges_raw$.key <- paste(pmin(edges_raw$from, edges_raw$to),
-                          pmax(edges_raw$from, edges_raw$to), sep = "|")
-  edges_raw <- edges_raw[!duplicated(edges_raw$.key), ]
-  edges_raw$.key <- NULL
-
-  # --- Build igraph ------------------------------------------------------
-  g <- igraph::graph_from_data_frame(
-    edges_raw[, c("from", "to", "cor")],
-    directed = FALSE
-  )
-  igraph::E(g)$weight <- edges_raw$cor
-  g <- igraph::simplify(g, remove.multiple = TRUE, remove.loops = TRUE,
-                        edge.attr.comb = "first")
-
-  # --- Edges table -------------------------------------------------------
   el <- igraph::as_data_frame(g, what = "edges")
-  signed_cor <- el$weight
-  weight_col <- if (weight == "absolute") abs(signed_cor) else signed_cor
+  # E(g)$cor is always signed; E(g)$weight is abs or signed per `weight`.
+  signed_cor <- el$cor
+  weight_col <- el$weight
 
   edges <- data.frame(
     Source = el$from,
@@ -85,8 +59,6 @@ cor2gephi <- function(cor_result, prefix = "cor_network",
     stringsAsFactors = FALSE
   )
   if ("pvalue" %in% names(edges_raw)) {
-    # Map pvalue direction-agnostically (sorted pair key) so it survives any
-    # edge reordering introduced by simplify().
     pv_lookup <- stats::setNames(
       edges_raw$pvalue,
       paste(pmin(edges_raw$from, edges_raw$to),
