@@ -28,7 +28,12 @@
 #'   \code{|cor|} as edge weights (igraph requires non-negative weights for
 #'   these). \code{strength} uses the signed or absolute correlations per
 #'   \code{weight}. Transform edge weights beforehand if you need
-#'   dissimilarity-based shortest paths.
+#'   dissimilarity-based shortest paths. For \code{microbiome_net} input,
+#'   centrality is recomputed on the full \code{$networks[[group]]} graph, so
+#'   values may differ from \code{$node_props}: \code{microbiome_net} normalizes
+#'   degree, uses a dissimilarity for betweenness, and restricts
+#'   closeness/eigenvector to the largest connected component for disconnected
+#'   graphs.
 #' @export
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @seealso \code{\link{cor_analysis}}, \code{\link{microbiome_net}},
