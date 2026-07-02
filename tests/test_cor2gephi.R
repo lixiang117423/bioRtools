@@ -51,6 +51,17 @@ out_s <- cor2gephi(cor_res, prefix = tmp, weight = "signed", enrich = FALSE)
 stopifnot(all(out_s$edges$Weight == out_s$edges$Correlation))
 cat("✓ Test B1d passed\n\n")
 
+# --- Test B2: enrich = TRUE adds topology columns -------------------------
+cat("Test B2: enrich columns + community options\n")
+out_e <- cor2gephi(cor_res, prefix = tmp, enrich = TRUE, community = "auto")
+stopifnot(all(c("Eigenvector", "Modularity", "IsHub") %in% names(out_e$nodes)))
+stopifnot(sum(out_e$nodes$IsHub) == length(unique(out_e$nodes$Modularity)))
+
+out_n <- cor2gephi(cor_res, prefix = tmp, enrich = TRUE, community = "none")
+stopifnot(!"Modularity" %in% names(out_n$nodes))
+stopifnot("Eigenvector" %in% names(out_n$nodes))
+cat("✓ Test B2 passed\n\n")
+
 cat("=====================================\n")
 cat("All cor2gephi tests passed! ✓\n")
 cat("=====================================\n")
