@@ -78,6 +78,14 @@ stopifnot(inherits(try(find_hub_nodes(data.frame()), silent = TRUE), "try-error"
 stopifnot(inherits(try(find_hub_nodes(net_syn, group = NULL), silent = TRUE), "try-error"))
 stopifnot(inherits(try(find_hub_nodes(net_syn, group = "missing"), silent = TRUE), "try-error"))
 stopifnot(inherits(try(find_hub_nodes(edges, method = "threshold"), silent = TRUE), "try-error"))
+# edge-less graph errors cleanly
+g_empty <- igraph::make_empty_graph(n = 2, directed = FALSE)
+igraph::V(g_empty)$name <- c("A", "B")
+net_empty <- list(networks = list(g = g_empty))
+stopifnot(inherits(try(find_hub_nodes(net_empty, group = "g"), silent = TRUE), "try-error"))
+# bad criterion parameters
+stopifnot(inherits(try(find_hub_nodes(edges, method = "top_percent", top_percent = 1.5), silent = TRUE), "try-error"))
+stopifnot(inherits(try(find_hub_nodes(edges, method = "top_n", top_n = 0), silent = TRUE), "try-error"))
 cat("✓ Test 6 passed\n\n")
 
 cat("=====================================\n")
