@@ -134,6 +134,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `get_methylkit_data()` - Extract methylKit data
 - `normalize_int()`, `scale01()`, `scale01_rows()`, `scale01_groups()`, `mutate_scale01()`, `mutate_scale01_named()` - Normalization helpers
 - `row_mean()`, `row_sd()`, `row_cv()`, `row_min()`, `row_max()` - Row statistics
+- `filter_str()`, `dedup_by_col()` - Regex/string row filtering (supports negation) and duplicate removal by column
 
 ### Themes and Palettes
 

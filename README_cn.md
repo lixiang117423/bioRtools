@@ -124,6 +124,7 @@ install.packages(c(
 - `get_methylkit_data()` - 提取 methylKit 数据
 - `normalize_int()`、`scale01()`、`scale01_rows()`、`scale01_groups()`、`mutate_scale01()`、`mutate_scale01_named()` - 标准化辅助函数
 - `row_mean()`、`row_sd()`、`row_cv()`、`row_min()`、`row_max()` - 行统计函数
+- `filter_str()`、`dedup_by_col()` - 按字符串/正则筛选行（支持反向匹配）、按列去重
 
 ### 主题与配色
 
