@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.66.0
+## [1.66.0] - 2026-07-15
 
+### Added
 - `calc_rc_bray()`: Raup-Crick on Bray-Curtis (RCbray), the compositional null-model axis for community-assembly inference (no tree required).
 - `calc_beta_nri()`: betaNRI (ses.betaMPD), the MPD-based complement to betaNTI.
 - `calc_assembly_process()`: classifies sample pairs into the 5 Stegen assembly processes (variable/homogeneous selection, dispersal limitation, homogeneous dispersal, drift) from betaNTI/betaNRI + RCbray, with per-group percentage summary.
+
+### Changed
 - Internal: extracted `calc_ses_beta_core()` shared by `calc_beta_nti` and `calc_beta_nri` (behavior unchanged).
-- Fix: declared missing `picante` dependency used by `calc_beta_nti`.
+
+### Fixed
+- Declared missing `picante` dependency used by `calc_beta_nti`.
 
 ## [1.65.0] - 2026-07-03
 
