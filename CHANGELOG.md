@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.67.0] - 2026-07-15
+
+### Added
+- `normalize_abund()`: unified microbiome normalization dispatcher supporting clr, tss, hellinger, css, tmm, rle, gmpr, and rarefy (taxa × samples orientation). Size/library factors attached as a `"size_factor"` attribute for css/tmm/rle/gmpr. Ported from microeco's `trans_norm`.
+
 ## [1.66.0] - 2026-07-15
 
 ### Added
