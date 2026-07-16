@@ -5,6 +5,11 @@
 #' (.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
 #' First row is treated as column headers for tabular formats.
 #'
+#' A forwarded \code{skip} argument (tabular formats) must be a single
+#' non-negative integer line count; a non-integer such as \code{skip = "--"}
+#' is rejected here with an actionable error instead of being passed to
+#' vroom, which would fail with the opaque "C++ error (unknown cause)".
+#'
 #' A .xls/.xlsx file whose content is actually delimited text (common with
 #' bioinformatics exporters — no ZIP/OLE2 magic bytes) is detected and read as
 #' delimited text with the delimiter guessed from the first line, instead of
@@ -43,6 +48,21 @@
 read_data <- function(file, delim = "\t", ...) {
   if (!file.exists(file)) {
     stop("File not found: ", file)
+  }
+
+  # readr/vroom and readxl both treat 'skip' as a non-negative integer line
+  # count. A non-integer such as skip = "--" is forwarded unchanged to vroom's
+  # C++ backend, which dies with the opaque "C++ error (unknown cause)" instead
+  # of an actionable message — validate it here so the failure is self-evident.
+  dots <- list(...)
+  if (!is.null(dots$skip)) {
+    s <- dots$skip
+    s_num <- suppressWarnings(as.numeric(s))
+    if (length(s) != 1L || is.na(s) || is.na(s_num) ||
+        s_num < 0 || s_num != floor(s_num)) {
+      stop("'skip' must be a single non-negative integer (number of lines ",
+           "to skip from the top of the file), not ", deparse(s))
+    }
   }
 
   ext <- tolower(tools::file_ext(file))

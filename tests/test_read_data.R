@@ -61,6 +61,22 @@ tryCatch({
   cat("✓ Test 4 passed: correctly caught error -", conditionMessage(e), "\n\n")
 })
 
+# --- Test 5: non-integer skip rejected with a clear error --------------------
+cat("Test 5: non-integer skip raises an actionable error\n")
+f_skip <- file.path(out_dir, "skip.tsv")
+write_tsv(df_in, f_skip)
+tryCatch({
+  read_data(f_skip, skip = "--")
+  cat("✗ Test 5 failed: should have thrown on skip = \"--\"\n")
+}, error = function(e) {
+  msg <- conditionMessage(e)
+  stopifnot(grepl("single non-negative integer", msg))
+  cat("✓ Test 5 passed: skip guard caught -", msg, "\n\n")
+})
+res5 <- read_data(f_skip, skip = 1)
+stopifnot(nrow(res5) == 2)
+cat("✓ Test 5b passed: skip = 1 still reads cleanly\n\n")
+
 cat("=====================================\n")
 cat("All read_data tests passed! ✓\n")
 cat("=====================================\n")

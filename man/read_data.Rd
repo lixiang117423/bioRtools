@@ -27,6 +27,11 @@ Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
 First row is treated as column headers for tabular formats.
 }
 \details{
+A forwarded \code{skip} argument (tabular formats) must be a single
+non-negative integer line count; a non-integer such as \code{skip = "--"}
+is rejected here with an actionable error instead of being passed to
+vroom, which would fail with the opaque "C++ error (unknown cause)".
+
 A .xls/.xlsx file whose content is actually delimited text (common with
 bioinformatics exporters — no ZIP/OLE2 magic bytes) is detected and read as
 delimited text with the delimiter guessed from the first line, instead of
