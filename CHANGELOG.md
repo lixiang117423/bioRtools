@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.68.0] - 2026-07-16
+
+### Added
+- `predict_func()`: prokaryote functional prediction via FAPROTAX (v1.2.12, bundled under its BSD-2 license). Reimplements the official `collapse_table.py` 'words' clade-matching; returns a function×sample abundance table and an ASV×function binary matrix.
+- `calc_func_fr()` / `calc_func_fr_comm()`: functional redundancy (per sample×function, weighted/unweighted + optional adjustment factor) and community-level FR.
+- Ships `inst/extdata/FAPROTAX.txt` + `FAPROTAX_LICENSE.txt` (re-derived from the original BSD-2 source; no GPL-3 microeco artifacts).
+
 ## [1.67.0] - 2026-07-15
 
 ### Added
