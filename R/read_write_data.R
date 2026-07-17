@@ -2,7 +2,8 @@
 #'
 #' Reads a data file using the appropriate function based on file extension.
 #' Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
-#' (.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
+#' (.txt), FASTA (.fasta/.fa), GFF3 (.gff/.gff3), and RDS/RData (.rds/.rdata)
+#' files.
 #' First row is treated as column headers for tabular formats.
 #'
 #' A forwarded \code{skip} argument (tabular formats) must be a single
@@ -22,14 +23,21 @@
 #' \code{"Plant.height..PH.."}) — \code{raw_names} keeps the human-readable
 #' originals for plotting, reporting, or pivoting back to original labels.
 #'
+#' For GFF3 (.gff/.gff3), directive/comment lines (those starting with
+#' \code{#}) are dropped and the nine standard columns are returned with
+#' fixed names (\code{seqid, source, type, start, end, score, strand, phase,
+#' attributes}); column 9 is kept as the raw \code{key=value;...} string and
+#' "\code{.}" is read as \code{NA}.
+#'
 #' @param file File path.
 #' @param delim Character string used as field separator for \code{.txt} files.
 #'   Default is \code{"\\t"} (tab). Ignored for other file types.
 #' @param ... Additional arguments passed to the underlying read function.
 #'
 #' @return A data frame for tabular formats, the deserialized R object for
-#'   \code{.rds}/\code{.rdata} files, or a FASTA data frame for
-#'   \code{.fasta}/\code{.fa} files. For tabular formats, attribute
+#'   \code{.rds}/\code{.rdata} files, a FASTA data frame for
+#'   \code{.fasta}/\code{.fa} files, or a 9-column GFF3 data frame for
+#'   \code{.gff}/\code{.gff3} files. For tabular formats, attribute
 #'   \code{raw_names} holds the original column names from the file.
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -44,6 +52,7 @@
 #' df <- read_data("data/counts.csv")
 #' df <- read_data("data/table.tsv")
 #' df <- read_data("data/table.txt", delim = ",")
+#' df <- read_data("data/annotation.gff3")  # 9-column GFF3 data frame
 #' }
 read_data <- function(file, delim = "\t", ...) {
   if (!file.exists(file)) {
@@ -115,7 +124,8 @@ read_data <- function(file, delim = "\t", ...) {
     rds  = readRDS(file, ...),
     rdata = , rda = get(load(file, ...)),
     fasta = , fa = fasta2df(file, ...),
-    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .xls, .csv, .tsv, .txt, .fasta, .fa, .rds, .rdata")
+    gff3 = , gff = gff3_to_df(file, ...),
+    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .xls, .csv, .tsv, .txt, .fasta, .fa, .gff, .gff3, .rds, .rdata")
   )
 }
 
@@ -150,6 +160,49 @@ guess_delim <- function(file) {
   n_tab <- length(regmatches(first, gregexpr("\t", first, fixed = TRUE))[[1L]])
   n_comma <- length(regmatches(first, gregexpr(",", first, fixed = TRUE))[[1L]])
   if (n_tab >= n_comma) "\t" else ","
+}
+
+
+#' Read a GFF3 file into a 9-column data frame
+#'
+#' GFF3 carries no column header and uses "#" for directive/comment lines
+#' (\code{##gff-version}, \code{##sequence-region}, the \code{###} feature
+#' separator, etc.). \code{readr}'s \code{comment = "#"} would also drop any
+#' "\code{#}" appearing inside an attribute value (e.g. \code{Note=foo#bar}),
+#' silently truncating data, so comment lines are filtered here and only data
+#' rows are handed to \code{read_tsv}. Column 9 stays a verbatim
+#' \code{key=value;...} string; the "\code{.}" sentinel becomes \code{NA}.
+#'
+#' @param file Path to a \code{.gff}/\code{.gff3} file.
+#' @param ... Passed to \code{readr::read_tsv} (e.g. \code{n_max}, \code{skip}).
+#' @return A 9-column data frame: \code{seqid, source, type, start, end, score,
+#'   strand, phase, attributes}. \code{start}/\code{end}/\code{phase} are integer,
+#'   \code{score} is double, \code{attributes} is the raw attribute string.
+#' @keywords internal
+gff3_to_df <- function(file, ...) {
+  lines <- readLines(file, warn = FALSE)
+  lines <- lines[!startsWith(lines, "#")]
+  lines <- lines[nzchar(trimws(lines))]
+
+  readr::read_tsv(
+    I(paste(lines, collapse = "\n")),
+    col_names = c("seqid", "source", "type", "start", "end",
+                  "score", "strand", "phase", "attributes"),
+    col_types = readr::cols(
+      seqid      = readr::col_character(),
+      source     = readr::col_character(),
+      type       = readr::col_character(),
+      start      = readr::col_integer(),
+      end        = readr::col_integer(),
+      score      = readr::col_double(),
+      strand     = readr::col_character(),
+      phase      = readr::col_integer(),
+      attributes = readr::col_character()
+    ),
+    na = ".",
+    show_col_types = FALSE,
+    ...
+  )
 }
 
 

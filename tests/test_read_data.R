@@ -77,6 +77,41 @@ res5 <- read_data(f_skip, skip = 1)
 stopifnot(nrow(res5) == 2)
 cat("✓ Test 5b passed: skip = 1 still reads cleanly\n\n")
 
+# --- Test 6: GFF3 parse ------------------------------------------------------
+# Regression guard: readr's comment = "#" truncates any "#" inside an attribute
+# value, so comment lines must be filtered by line-start and data lines left
+# untouched; "." must become NA; types must be integer/double as appropriate.
+cat("Test 6: GFF3 (.gff3) read into a 9-column data frame\n")
+gff_lines <- c(
+  "##gff-version 3",
+  "##sequence-region Chr01 1 10000",
+  "Chr01\ttransdecoder\tgene\t4124\t6282\t.\t+\t.\tID=gene1;Name=gene1",
+  "###",
+  "Chr01\ttransdecoder\tCDS\t4271\t4358\t5.0\t+\t0\tID=cds1;Note=foo#bar"
+)
+f_gff <- file.path(out_dir, "test.gff3")
+writeLines(gff_lines, f_gff)
+res6 <- read_data(f_gff)
+stopifnot(nrow(res6) == 2)
+stopifnot(ncol(res6) == 9)
+stopifnot(identical(
+  names(res6),
+  c("seqid", "source", "type", "start", "end", "score", "strand", "phase", "attributes")
+))
+stopifnot(is.integer(res6$start), is.integer(res6$end))
+stopifnot(is.na(res6$score[1]), res6$score[2] == 5.0)   # "." -> NA, 5.0 kept
+stopifnot(is.na(res6$phase[1]), res6$phase[2] == 0L)    # "." -> NA, CDS phase kept
+stopifnot(is.na(res6$strand[1]) || res6$strand[1] == "+")  # "." strand -> NA
+stopifnot(res6$attributes[2] == "ID=cds1;Note=foo#bar") # "#" preserved, not truncated
+cat("✓ Test 6 passed — read", nrow(res6), "rows; # preserved; . -> NA\n\n")
+
+# .gff shorthand maps to the same reader
+f_gff2 <- file.path(out_dir, "test.gff")
+file.copy(f_gff, f_gff2, overwrite = TRUE)
+res6b <- read_data(f_gff2)
+stopifnot(identical(dim(res6b), c(2L, 9L)))
+cat("✓ Test 6b passed: .gff shorthand reads identically\n\n")
+
 cat("=====================================\n")
 cat("All read_data tests passed! ✓\n")
 cat("=====================================\n")

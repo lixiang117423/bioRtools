@@ -16,14 +16,16 @@ Default is \code{"\\t"} (tab). Ignored for other file types.}
 }
 \value{
 A data frame for tabular formats, the deserialized R object for
-  \code{.rds}/\code{.rdata} files, or a FASTA data frame for
-  \code{.fasta}/\code{.fa} files. For tabular formats, attribute
+  \code{.rds}/\code{.rdata} files, a FASTA data frame for
+  \code{.fasta}/\code{.fa} files, or a 9-column GFF3 data frame for
+  \code{.gff}/\code{.gff3} files. For tabular formats, attribute
   \code{raw_names} holds the original column names from the file.
 }
 \description{
 Reads a data file using the appropriate function based on file extension.
 Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
-(.txt), FASTA (.fasta/.fa), and RDS/RData (.rds/.rdata) files.
+(.txt), FASTA (.fasta/.fa), GFF3 (.gff/.gff3), and RDS/RData (.rds/.rdata)
+files.
 First row is treated as column headers for tabular formats.
 }
 \details{
@@ -43,6 +45,12 @@ from the file are preserved as attribute \code{raw_names}. Use
 \code{readr} sanitizes names (e.g., \code{"Plant height (PH)"} becomes
 \code{"Plant.height..PH.."}) — \code{raw_names} keeps the human-readable
 originals for plotting, reporting, or pivoting back to original labels.
+
+For GFF3 (.gff/.gff3), directive/comment lines (those starting with
+\code{#}) are dropped and the nine standard columns are returned with
+fixed names (\code{seqid, source, type, start, end, score, strand, phase,
+attributes}); column 9 is kept as the raw \code{key=value;...} string and
+"\code{.}" is read as \code{NA}.
 }
 \examples{
 \dontrun{
@@ -52,6 +60,7 @@ attr(df, "raw_names")  # original column names from the file
 df <- read_data("data/counts.csv")
 df <- read_data("data/table.tsv")
 df <- read_data("data/table.txt", delim = ",")
+df <- read_data("data/annotation.gff3")  # 9-column GFF3 data frame
 }
 }
 \seealso{
