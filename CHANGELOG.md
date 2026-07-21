@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.70.0] - 2026-07-21
+
+### Added
+- `plot_ideogram()`: ggplot2 reimplementation of RIdeogram's single-species idiogram. Draws vertical, bottom-aligned chromosomes (3-col, or 5-col with centromere constriction), an overlaid heatmap track (`Chr/Start/End/Value`), and four annotation label tracks — `marker` (triangle/box/circle shapes with leader lines and 1D vertical repel), `heatmap` (second track), `line`, and `polygon`. Returns a ggplot object (themeable, composable) instead of writing an SVG file; chromosome geometry matches the original RIdeogram formulas to full precision.
+- `plot_ideogram_synteny()`: ggplot2 reimplementation of RIdeogram's dual-species synteny mode. Two horizontal chromosome rows with quadratic-Bezier ribbons connecting syntenic blocks, plus chromosome/species labels. Named `plot_ideogram_synteny` to avoid collision with the pre-existing gene-level `plot_synteny()`.
+- Bundled RIdeogram test datasets as `df.ideo.karyotype`, `df.ideo.gene_density`, `df.ideo.ltr_density`, `df.ideo.rna_marker`, `df.ideo.synteny_karyotype`, `df.ideo.synteny` (Artistic-2.0, attributed).
+- Adds `ggnewscale` to Imports (two fill scales when an overlaid heatmap and a heatmap label track coexist).
+
 ## [1.69.0] - 2026-07-21
 
 ### Added

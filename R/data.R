@@ -301,3 +301,95 @@
 #' data(df.synteny.link.ribbon)
 #' head(df.synteny.link.ribbon)
 "df.synteny.link.ribbon"
+
+#' Human karyotype (test data for plot_ideogram)
+#'
+#' Human chromosomes with centromere positions, from the RIdeogram package.
+#'
+#' @format ## `df.ideo.karyotype`
+#' A data frame with 24 rows and 5 columns:
+#' \describe{
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{chromosome start (bp)}
+#'   \item{End}{chromosome length / end (bp)}
+#'   \item{CE_start}{centromere start (bp)}
+#'   \item{CE_end}{centromere end (bp)}
+#' }
+#' @source RIdeogram (Hao et al. 2020, PeerJ Comput. Sci. 6:e251), Artistic-2.0.
+"df.ideo.karyotype"
+
+#' Gene density per 1 Mb window (test data for plot_ideogram overlaid heatmap)
+#'
+#' @format ## `df.ideo.gene_density`
+#' A data frame with 3102 rows and 4 columns:
+#' \describe{
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{window start (bp)}
+#'   \item{End}{window end (bp)}
+#'   \item{Value}{gene count in the window}
+#' }
+#' @source RIdeogram (Hao et al. 2020), Artistic-2.0.
+"df.ideo.gene_density"
+
+#' LTR density per 1 Mb window (test data for plot_ideogram heatmap label track)
+#'
+#' @format ## `df.ideo.ltr_density`
+#' A data frame with 3102 rows and 4 columns:
+#' \describe{
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{window start (bp)}
+#'   \item{End}{window end (bp)}
+#'   \item{Value}{LTR count in the window}
+#' }
+#' @source RIdeogram (Hao et al. 2020), Artistic-2.0.
+"df.ideo.ltr_density"
+
+#' Random RNA gene markers (test data for plot_ideogram marker track)
+#'
+#' @format ## `df.ideo.rna_marker`
+#' A data frame with 500 rows and 6 columns:
+#' \describe{
+#'   \item{Type}{marker category (legend key)}
+#'   \item{Shape}{one of \code{triangle}, \code{box}, \code{circle}}
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{feature start (bp)}
+#'   \item{End}{feature end (bp)}
+#'   \item{color}{fill colour, hex without \code{#}}
+#' }
+#' @source RIdeogram (\code{Random_RNAs_500}; Hao et al. 2020), Artistic-2.0.
+"df.ideo.rna_marker"
+
+#' Dual-species karyotype (test data for plot_ideogram_synteny)
+#'
+#' Chromosomes of \emph{Vitis vinifera} (Grape) and \emph{Populus} compared in
+#' a synteny idiogram.
+#'
+#' @format ## `df.ideo.synteny_karyotype`
+#' A data frame with 38 rows and 7 columns:
+#' \describe{
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{start (bp)}
+#'   \item{End}{chromosome length (bp)}
+#'   \item{fill}{chromosome body colour, hex without \code{#}}
+#'   \item{species}{species name}
+#'   \item{size}{species-label font size}
+#'   \item{color}{species-label colour, hex without \code{#}}
+#' }
+#' @source RIdeogram (\code{karyotype_dual_comparison}; Hao et al. 2020), Artistic-2.0.
+"df.ideo.synteny_karyotype"
+
+#' Dual-species synteny links (test data for plot_ideogram_synteny)
+#'
+#' @format ## `df.ideo.synteny`
+#' A data frame with 2483 rows and 7 columns:
+#' \describe{
+#'   \item{Species_1}{1-based chromosome index in the first species}
+#'   \item{Start_1}{syntenic block start on species 1 (bp)}
+#'   \item{End_1}{syntenic block end on species 1 (bp)}
+#'   \item{Species_2}{1-based chromosome index in the second species}
+#'   \item{Start_2}{syntenic block start on species 2 (bp)}
+#'   \item{End_2}{syntenic block end on species 2 (bp)}
+#'   \item{fill}{ribbon colour, hex without \code{#}}
+#' }
+#' @source RIdeogram (\code{synteny_dual_comparison}; Hao et al. 2020), Artistic-2.0.
+"df.ideo.synteny"
