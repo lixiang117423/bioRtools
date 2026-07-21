@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.69.0] - 2026-07-21
+
+### Added
+- `get_id_description()`: look up descriptions for GO term IDs or KEGG pathway IDs. GO terms resolve via the local `GO.db` (offline, also returns BP/CC/MF ontology); KEGG pathways resolve via `KEGGREST`, with the organism/reference source inferred from the ID prefix (`hsa`/`ath` → organism, `map` → global reference) or overridden by a `species` argument. Auto-detects the source by ID format. Returns a tibble in the `enrich_go`/`enrich_kegg` annotation-database schema (no `gene` column): GO input → `go_id`/`go_term`/`go_ontology`; KEGG input → `kegg_id`/`kegg_term`/`kegg_category` (`kegg_category` always NA, not provided by KEGGREST). `ids = NULL` dumps the full mapping table for the chosen source. Adds `GO.db`, `KEGGREST`, `AnnotationDbi` to Imports.
+
 ## [1.68.2] - 2026-07-17
 
 ### Added
