@@ -66,6 +66,11 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `find_outliers()` - Outlier detection
 - `label_signif()`, `label_significance()` - Significance labels
 - `reorder_heatmap()`, `gg_heatmap()`, `create_heatmap_trees()` - Heatmap utilities
+- `add_cor_p()` - Add per-group correlation and p-value columns
+- `pairs_by_group()` - Generate all pairs within each group
+- `summarise_stats()` - Grouped summary statistics
+- `plot_mantel()` - Mantel test correlogram
+- `cor2gephi()` - Export a cor_analysis result to Gephi node/edge files
 
 ### Microbiome Analysis
 
@@ -87,6 +92,10 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `microbiome_net()` - Microbiome network analysis (construction, centrality, hubs, clusters, multi-group comparison). Methods: `"mb"`/`"glasso"` (huge+pulsar) or `"cor"` (Spearman correlation, fast and low memory)
 - `net2ggnetview()` - Convert microbiome_net result to ggNetView-compatible tbl_graph for network visualization
 - `net2gephi()` - Export microbiome_net result as Gephi-compatible nodes/edges CSV files
+- `find_hub_nodes()` - Identify hub nodes in a correlation/association network
+- `plot_tax_upset()` - UpSet plot of shared and unique taxa
+- `plot_composition_alluvium()` - Taxonomic composition as an alluvial diagram
+- `rf_taxa_classification()` - Random-forest taxonomic classification
 
 ### Transcriptomics and Enrichment
 
@@ -113,6 +122,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `opls_analysis()` - OPLS-DA
 - `pairwise_oplsda()` - Pairwise OPLS-DA across all group combinations
 - `spls_analysis()` - sPLS-DA
+- `tsne_analysis()` - t-SNE dimensionality reduction
 
 ### Population Genetics and Genomics
 
@@ -122,6 +132,10 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `ld_decay_threshold()` - LD decay threshold calculation
 - `admixture_phylo_analysis()`, `extract_tree_hierarchy()` - Population structure and tree helpers
 - `pav_gwas()` - PAV-GWAS helper
+- `plot_ld_decay()` - LD decay with nonlinear fitting (pairs with `ld_decay_threshold()`)
+- `plot_qq()` - QQ plot for p-values or general numeric data (pairs with `plot_gwas_qq()`)
+- `plot_pav()` - Pangenome presence/absence matrix with category annotation
+- `plot_pav_phenotype()` - PAV heatmap with phenotype annotation
 
 ### Gene, Motif, Domain, and Synteny Visualization
 
@@ -131,6 +145,8 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `plot_synteny()` - Synteny plot
 - `plot_pangenome_rarefaction()` - Pangenome rarefaction plot
 - `get_hap_from_heatmap()` - Haplotype extraction from heatmap-like data
+- `plot_upset()` - UpSet plot from a group-feature data frame
+- `plot_venn()` - Venn/Euler diagram
 
 ### Chromosome Idiograms
 
@@ -144,6 +160,12 @@ Ported from RIdeogram (Hao et al. 2020), reimplemented in ggplot2 and returning 
 
 - `df2fasta()`, `fasta2df()` - FASTA/data-frame conversion
 - `read_data()`, `write_data()` - Auto-detect file format read/write (xlsx, csv, tsv, bed, txt, fasta, rds, sh, pdf, png)
+- `write_data_by_group()` - Write a grouped data frame to per-group files (filename templating supported)
+- `name_map()` - Show sanitized-to-raw column-name mapping (pairs with `read_data()`)
+- `colnames_to_df()` - Convert column names to a single-column data frame
+- `df2list()` - Convert a data frame to a named list (for set/Venn analysis)
+- `pivot_longer_from()` - Pivot longer from a starting column to the end
+- `itol_config()` - Generate iTOL configuration files
 - `col2file()` - Export a data frame column to plain text
 - `replace_na_as()` - Replace all NA values in a data frame (default: 0)
 - `ggsave2()` - ggsave wrapper with width=8, height=6, dpi=600 defaults
