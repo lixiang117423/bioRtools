@@ -77,6 +77,13 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `rarefy_table()` - Rarefaction
 - `top_taxa()` - Top taxa extraction
 - `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
+- `calc_alpha_diversity()` - Alpha diversity indices (supports either taxa×samples or samples×taxa orientation)
+- `normalize_abund()` - Normalization dispatcher (clr, tss, hellinger, css, tmm, rle, gmpr, rarefy)
+- `calc_beta_nri()`, `calc_beta_nti()` - Phylogenetic null-model (betaNRI / betaNTI)
+- `calc_rc_bray()` - Raup-Crick on Bray-Curtis (compositional null model)
+- `calc_assembly_process()` - Assembly-process inference (selection vs. dispersal) from betaNTI / RC-Bray
+- `predict_func()` - Prokaryote functional prediction via FAPROTAX
+- `calc_func_fr()`, `calc_func_fr_comm()` - Functional redundancy (per sample×function and community-level)
 - `microbiome_net()` - Microbiome network analysis (construction, centrality, hubs, clusters, multi-group comparison). Methods: `"mb"`/`"glasso"` (huge+pulsar) or `"cor"` (Spearman correlation, fast and low memory)
 - `net2ggnetview()` - Convert microbiome_net result to ggNetView-compatible tbl_graph for network visualization
 - `net2gephi()` - Export microbiome_net result as Gephi-compatible nodes/edges CSV files
