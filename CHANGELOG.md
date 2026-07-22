@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.71.0] - 2026-07-22
+
+### Added
+- `plot_ideogram_ternary()`: three-species (ternary) synteny — species 1 horizontal along the bottom, species 2/3 rotated ±60° in a triangle, with ribbons for all three pairwise comparisons. Chromosome geometry matches the original RIdeogram coordinates exactly; ribbons use a clean self-contained geometry (anchors on the rotated chromosome edges). `fill = "gradient"` blends the two species' colours along a ribbon via polygon subdivision. Bundles `df.ideo.ternary_karyotype` and `df.ideo.ternary` test data.
+- Vignette `ideogram.Rmd` documenting all three idiogram functions with figures.
+
+### Changed
+- `plot_ideogram()`: overlaid / label-heatmap colour bars now show a "Low → High" title and a framed bar; a warning is issued when `overlaid`/`label` contains chromosomes absent from `karyotype$Chr` (those rows are dropped).
+- Fixed `plot_ideogram()` marker/heatmap label tracks when combined with an overlaid heatmap: the second fill scale is now added correctly (`p + ggnewscale::new_scale_fill()`), so marker and two-heatmap plots render instead of returning an empty object.
+
 ## [1.70.0] - 2026-07-21
 
 ### Added

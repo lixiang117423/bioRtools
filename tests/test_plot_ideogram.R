@@ -47,4 +47,22 @@ stopifnot(inherits(try(plot_ideogram(data.frame()), silent = TRUE), "try-error")
 stopifnot(inherits(try(plot_ideogram(data.frame(Chr = "1")), silent = TRUE), "try-error"))
 cat("✓ Test 5 passed\n\n")
 
+cat("Test 6: line / polygon dual-series (7-column Value_1/Value_2)\n")
+ld2 <- aggregate(Value ~ Chr + Start + End, df.ideo.gene_density, mean)
+ld2$Value_2 <- rev(ld2$Value)                       # a second series
+ld2$Value_1 <- ld2$Value
+ld2$color_1 <- "4575b4"; ld2$color_2 <- "d73027"
+ld2$Value <- NULL
+stopifnot(is_ggplot(plot_ideogram(df.ideo.karyotype, label = ld2, label_type = "line")))
+stopifnot(is_ggplot(plot_ideogram(df.ideo.karyotype, label = ld2, label_type = "polygon")))
+cat("✓ Test 6 passed\n\n")
+
+cat("Test 7: Chr-mismatch warning fires for unknown chromosomes\n")
+bad_overlaid <- df.ideo.gene_density
+bad_overlaid$Chr[1] <- "ZZ"
+w <- tryCatch(plot_ideogram(df.ideo.karyotype, overlaid = bad_overlaid),
+              warning = function(w) w$message)
+stopifnot(is.character(w) && grepl("not in 'karyotype\\$Chr'", w))
+cat("✓ Test 7 passed\n\n")
+
 cat("All plot_ideogram tests done.\n")

@@ -95,7 +95,10 @@ plot_ideogram <- function(karyotype, overlaid = NULL, label = NULL,
       data = od,
       ggplot2::aes(xmin = .data$x_left, xmax = .data$x_right,
                    ymin = .data$ymin, ymax = .data$ymax, fill = .data$Value))
-    p <- p + ggplot2::scale_fill_gradientn(colours = color_overlaid)
+    p <- p + ggplot2::scale_fill_gradientn(
+      colours = color_overlaid,
+      guide = ggplot2::guide_colorbar(title = "Low → High", title.position = "top",
+                                      frame.colour = "black", ticks.colour = "black"))
   }
 
   # 3. centromere white band (over heatmap, under outline) -------------------
@@ -147,6 +150,14 @@ plot_ideogram <- function(karyotype, overlaid = NULL, label = NULL,
 # --- merge with a friendly error if a Chr has no layout ---------------------
 merge_validate <- function(df, layout_cols_df, arg_name, by) {
   if (!by %in% names(df)) stop("'", arg_name, "' must have a '", by, "' column")
+  matched <- intersect(unique(df[[by]]), unique(layout_cols_df[[by]]))
+  dropped <- setdiff(unique(df[[by]]), unique(layout_cols_df[[by]]))
+  if (length(dropped)) {
+    warning("'", arg_name, "' contains chromosome(s) not in 'karyotype$Chr': ",
+            paste(head(dropped, 10), collapse = ", "),
+            if (length(dropped) > 10) " ...",
+            " (these rows are dropped)", call. = FALSE)
+  }
   merged <- merge(df, layout_cols_df, by = by, sort = FALSE)
   if (nrow(merged) == 0L) {
     stop("No chromosome in '", arg_name, "' matches 'karyotype$Chr'")
@@ -209,7 +220,10 @@ add_label_heatmap <- function(p, label, layout, max_end, cw, color_label, has_ov
     data = ld,
     ggplot2::aes(xmin = .data$x_left + offset, xmax = .data$x_right + offset,
                  ymin = .data$ymin, ymax = .data$ymax, fill = .data$Value)) +
-    ggplot2::scale_fill_gradientn(colours = color_label)
+    ggplot2::scale_fill_gradientn(
+      colours = color_label,
+      guide = ggplot2::guide_colorbar(title = "Low → High", title.position = "top",
+                                      frame.colour = "black", ticks.colour = "black"))
 
   # second chromosome outline, offset right
   poly2 <- do.call(rbind, lapply(seq_len(nrow(layout)), function(k) {

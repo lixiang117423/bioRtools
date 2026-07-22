@@ -393,3 +393,40 @@
 #' }
 #' @source RIdeogram (\code{synteny_dual_comparison}; Hao et al. 2020), Artistic-2.0.
 "df.ideo.synteny"
+
+#' Three-species ternary karyotype (test data for plot_ideogram_ternary)
+#'
+#' Chromosomes of \emph{Amborella}, \emph{Vitis} (Grape) and \emph{Liriodendron}
+#' arranged for a triangular synteny idiogram.
+#'
+#' @format ## `df.ideo.ternary_karyotype`
+#' A data frame with 138 rows and 7 columns:
+#' \describe{
+#'   \item{Chr}{chromosome identifier}
+#'   \item{Start}{start (bp)}
+#'   \item{End}{chromosome length (bp)}
+#'   \item{fill}{chromosome body colour, hex without \code{#}}
+#'   \item{species}{species name}
+#'   \item{size}{species-label font size}
+#'   \item{color}{species-label colour, hex without \code{#}}
+#' }
+#' @source RIdeogram (\code{karyotype_ternary_comparison}; Hao et al. 2020), Artistic-2.0.
+"df.ideo.ternary_karyotype"
+
+#' Three-species ternary synteny links (test data for plot_ideogram_ternary)
+#'
+#' @format ## `df.ideo.ternary`
+#' A data frame with 590 rows and 8 columns (RIdeogram's ternary column order;
+#' names are historical, positions are what matter):
+#' \describe{
+#'   \item{Species_1}{1-based chromosome index of the pair's first species}
+#'   \item{Start_2}{block start on the first species (bp)}
+#'   \item{End_2}{block end on the first species (bp)}
+#'   \item{Species_2}{1-based chromosome index of the pair's second species}
+#'   \item{Start_1}{block start on the second species (bp)}
+#'   \item{End_1}{block end on the second species (bp)}
+#'   \item{fill}{ribbon colour, hex without \code{#}; or \code{"gradient"}}
+#'   \item{type}{species pair: 1 = species 1-2, 2 = species 1-3, 3 = species 2-3}
+#' }
+#' @source RIdeogram (\code{synteny_ternary_comparison}; Hao et al. 2020), Artistic-2.0.
+"df.ideo.ternary"

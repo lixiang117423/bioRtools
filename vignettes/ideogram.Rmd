@@ -1,0 +1,121 @@
+---
+title: "Drawing chromosome idiograms with plot_ideogram()"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Drawing chromosome idiograms with plot_ideogram()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7, fig.height = 9, fig.align = "center"
+)
+```
+
+```{r setup}
+library(bioRtools)
+```
+
+`bioRtools` provides three ggplot2-based idiogram functions, reimplemented from
+the [RIdeogram](https://cran.r-project.org/package=RIdeogram) package (Hao et
+al. 2020, *PeerJ Comput. Sci.* 6:e251). Unlike RIdeogram — which writes SVG
+files via hand-concatenated strings — these functions return **ggplot objects**,
+so the result is themeable, composable with `patchwork`, and exportable to any
+format via `ggsave()`.
+
+This vignette walks through the single-species, dual-species, and three-species
+(ternary) modes. Test data are bundled with the package.
+
+## Single-species idiogram: `plot_ideogram()`
+
+A karyotype is a data frame of `Chr, Start, End`, optionally with `CE_start,
+CE_end` for the centromere (drawn as a constriction).
+
+```{r karyotype-only, fig.height = 7}
+data(df.ideo.karyotype)
+head(df.ideo.karyotype)
+
+plot_ideogram(df.ideo.karyotype)
+```
+
+### Overlaid heatmap
+
+Pass an `overlaid` data frame (`Chr, Start, End, Value`) to fill each chromosome
+body with a colour-mapped heatmap — e.g. gene density.
+
+```{r overlaid}
+data(df.ideo.gene_density)
+plot_ideogram(df.ideo.karyotype, overlaid = df.ideo.gene_density)
+```
+
+### Annotation label tracks
+
+The `label` argument adds a track to the right of the chromosomes. Four
+`label_type`s are supported:
+
+- **`"marker"`** — `Type, Shape, Chr, Start, End, color`; shapes (`triangle` /
+  `box` / `circle`) with leader lines, vertically repelled to avoid overlap.
+- **`"heatmap"`** — a second heatmap track (`Chr, Start, End, Value`), drawn
+  with its own colour scale.
+- **`"line"`** / **`"polygon"`** — line or filled-area tracks along the
+  chromosomes.
+
+```{r marker}
+data(df.ideo.rna_marker)
+plot_ideogram(df.ideo.karyotype,
+              overlaid = df.ideo.gene_density,
+              label = df.ideo.rna_marker,
+              label_type = "marker")
+```
+
+Two heatmaps at once (overlaid + a heatmap label track) use independent colour
+scales:
+
+```{r two-heatmap}
+data(df.ideo.ltr_density)
+plot_ideogram(df.ideo.karyotype,
+              overlaid = df.ideo.gene_density,
+              label = df.ideo.ltr_density,
+              label_type = "heatmap")
+```
+
+## Dual-species synteny: `plot_ideogram_synteny()`
+
+Two species' chromosomes are drawn as horizontal rows with quadratic-Bezier
+ribbons connecting syntenic blocks. The karyotype needs columns
+`Chr, Start, End, fill, species, size, color` (two species); the synteny links
+need `Species_1, Start_1, End_1, Species_2, Start_2, End_2, fill`.
+
+```{r synteny, fig.width = 8, fig.height = 5}
+data(df.ideo.synteny_karyotype)
+data(df.ideo.synteny)
+plot_ideogram_synteny(df.ideo.synteny_karyotype, df.ideo.synteny)
+```
+
+## Three-species (ternary) synteny: `plot_ideogram_ternary()`
+
+Three species are arranged in a triangle — species 1 horizontal along the
+bottom, species 2 rotated -60° (upper-left), species 3 rotated +60°
+(upper-right) — with ribbons for each of the three pairwise comparisons. Set a
+synteny row's `fill` to `"gradient"` to blend the two species' colours along
+that ribbon.
+
+```{r ternary, fig.width = 8, fig.height = 8}
+data(df.ideo.ternary_karyotype)
+data(df.ideo.ternary)
+plot_ideogram_ternary(df.ideo.ternary_karyotype, df.ideo.ternary)
+```
+
+## Notes on the port
+
+- Chromosome geometry matches the original RIdeogram formulas to full precision
+  (validated against the original SVG coordinates). Ternary ribbons use a clean
+  self-contained geometry, so their curvature is close but not pixel-identical
+  to the original's hand-tuned curves.
+- All three functions return ggplot objects — customize with `+ theme()`,
+  combine with `patchwork`, or save with `ggsave("file.png", p, ...)`.
+- Test datasets (`df.ideo.*`) are repackaged from RIdeogram under its Artistic-2.0
+  license.

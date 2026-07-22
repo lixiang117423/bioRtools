@@ -167,3 +167,53 @@ ideo_finish <- function(p, layout = NULL) {
   p <- p + ggplot2::theme(legend.position = "right")
   p
 }
+
+# --- ternary (3-species) layout --------------------------------------------
+
+# Rotate an n x 2 matrix of points around a pivot (degrees, SVG convention).
+ideo_rotate <- function(xy, angle_deg, pivot) {
+  a <- angle_deg * pi / 180
+  dx <- xy[, 1] - pivot[1]
+  dy <- xy[, 2] - pivot[2]
+  cbind(pivot[1] + dx * cos(a) - dy * sin(a),
+        pivot[2] + dx * sin(a) + dy * cos(a))
+}
+
+# Fixed layout parameters for the triangular arrangement: species 1 horizontal
+# along the bottom, species 2 rotated -60 deg (upper-left), species 3 +60 deg
+# (upper-right). All share a baseline; species 2/3 rotate around their pivots.
+ideo_ternary_params <- function() {
+  baseline <- (2.5 + 11.25833) * ideo_cm_px
+  list(
+    baseline = baseline,
+    pivot2 = c(2 * ideo_cm_px, baseline),
+    pivot3 = c(15 * ideo_cm_px, baseline)
+  )
+}
+
+# Local horizontal layout for one species' chromosomes (mirrors species 1 of
+# the original: x from 3 cm, 0.04 cm gaps). Returns per-chr left edges, widths,
+# the bp->px scale, and total bp.
+ideo_ternary_species <- function(kat) {
+  n <- nrow(kat)
+  scale <- (11 - (n - 1) * 0.04) * ideo_cm_px
+  total <- sum(kat$End)
+  widths <- kat$End * scale / total
+  starts <- 3 * ideo_cm_px +
+    cumsum(c(0, head(widths, -1))) +
+    cumsum(c(0, rep(0.04 * ideo_cm_px, n - 1)))
+  list(starts = starts, widths = widths, scale = scale, total = total)
+}
+
+# Global (x, y) of a genomic position on a species' chromosome. The point is
+# placed in the local horizontal frame then rotated per species.
+ideo_ternary_anchor <- function(sp_idx, chr_idx, pos, species_layouts, params) {
+  lay <- species_layouts[[sp_idx]]
+  local_x <- lay$starts[chr_idx] + pos * lay$scale / lay$total
+  pt <- cbind(local_x, params$baseline)
+  switch(as.character(sp_idx),
+    "2" = ideo_rotate(pt, -60, params$pivot2),
+    "3" = ideo_rotate(pt,  60, params$pivot3),
+    pt)
+}
+
