@@ -75,7 +75,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `find_dams_deseq2()` - DESeq2-based differential abundance analysis
 - `find_dams_lefse()` - LEfSe differential abundance analysis
 - `rarefy_table()` - Rarefaction
-- `top_taxa()` - Top taxa extraction
+- `top_tax_n()` - Top taxa extraction
 - `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
 - `calc_alpha_diversity()` - Alpha diversity indices (supports either taxa×samples or samples×taxa orientation)
 - `normalize_abund()` - Normalization dispatcher (clr, tss, hellinger, css, tmm, rle, gmpr, rarefy)
@@ -118,7 +118,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 
 - `manhattan_plot()`, `plot_manhattan()` - Manhattan plots
 - `plot_gwas_qq()` - GWAS QQ plot
-- `plot_LDheatmap()` - LD heatmap
+- `plot_ld_heatmap()` - LD heatmap
 - `ld_decay_threshold()` - LD decay threshold calculation
 - `admixture_phylo_analysis()`, `extract_tree_hierarchy()` - Population structure and tree helpers
 - `pav_gwas()` - PAV-GWAS helper
@@ -147,7 +147,6 @@ Ported from RIdeogram (Hao et al. 2020), reimplemented in ggplot2 and returning 
 - `col2file()` - Export a data frame column to plain text
 - `replace_na_as()` - Replace all NA values in a data frame (default: 0)
 - `ggsave2()` - ggsave wrapper with width=8, height=6, dpi=600 defaults
-- `get_methylkit_data()` - Extract methylKit data
 - `normalize_int()`, `scale01()`, `scale01_rows()`, `scale01_groups()`, `mutate_scale01()`, `mutate_scale01_named()` - Normalization helpers
 - `row_mean()`, `row_sd()`, `row_cv()`, `row_min()`, `row_max()` - Row statistics
 - `filter_str()`, `dedup_by_col()` - Regex/string row filtering (supports negation) and duplicate removal by column
