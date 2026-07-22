@@ -1,7 +1,7 @@
 # bioRtools
 
 [![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.44.1-green)](https://github.com/lixiang117423/bioRtools)
+[![Version](https://img.shields.io/badge/version-1.71.0-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
 `bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
@@ -12,7 +12,7 @@
 - Multivariate workflows: PCA, PCoA, RDA, sPLS-DA, OPLS-DA, PERMANOVA
 - Differential analysis: DESeq2/edgeR-based DEG/DAM detection and LEfSe biomarker analysis
 - qPCR workflows: standard curves, delta Ct, delta-delta Ct, and efficiency correction
-- Genomics visualization: Manhattan plots, QQ plots, LD heatmaps, synteny, motifs, gene structures, PFAM domains, and pangenome rarefaction
+- Genomics visualization: Manhattan plots, QQ plots, LD heatmaps, synteny, motifs, gene structures, PFAM domains, pangenome rarefaction, and chromosome idiograms
 - Publication-ready ggplot themes, academic palettes, and color/fill/colour scales
 
 ## Requirements
@@ -87,6 +87,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `find_degs_edger()` - edgeR differential expression analysis
 - `enrich_go()` - GO enrichment
 - `enrich_kegg()` - KEGG enrichment
+- `get_id_description()` - Look up GO/KEGG ID descriptions (and GO ontology) from GO.db / KEGGREST
 - `plot_volcano()`, `plot_multi_volcano()` - Volcano plots
 - `plot_ternary()` - Ternary plot for compositional data
 - `plot_dual_axis()` - Dual Y-axis plot with area and scatter layers
@@ -123,6 +124,14 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, 
 - `plot_synteny()` - Synteny plot
 - `plot_pangenome_rarefaction()` - Pangenome rarefaction plot
 - `get_hap_from_heatmap()` - Haplotype extraction from heatmap-like data
+
+### Chromosome Idiograms
+
+Ported from RIdeogram (Hao et al. 2020), reimplemented in ggplot2 and returning ggplot objects.
+
+- `plot_ideogram()` - Single-species idiogram with overlaid heatmap and marker / heatmap / line / polygon label tracks (3- or 5-column karyotype with centromere)
+- `plot_ideogram_synteny()` - Dual-species synteny with quadratic-Bezier ribbons
+- `plot_ideogram_ternary()` - Three-species (triangular) synteny with ribbons for all pairwise comparisons (`fill = "gradient"` blends species colours)
 
 ### Data Conversion and Row Utilities
 
@@ -292,7 +301,7 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.44.1`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.71.0`.
 
 ## Citation
 
@@ -300,7 +309,7 @@ If you use `bioRtools` in your research, please cite:
 
 ```text
 Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.44.1. https://github.com/lixiang117423/bioRtools
+R package version 1.71.0. https://github.com/lixiang117423/bioRtools
 ```
 
 ## Contributing
