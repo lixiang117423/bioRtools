@@ -43,6 +43,43 @@ grob <- ggplot2::ggplotGrob(p)   # errors if the theme is malformed
 stopifnot(inherits(grob, "gtable"))
 cat("✓ Test 4 passed — plot builds without error\n\n")
 
+# --- Test 5: light = TRUE (default) uses refined values ---------------------
+cat("Test 5: light = TRUE (default) — plain text, thinner lines\n")
+th_light <- theme_prism()   # light defaults to TRUE
+stopifnot(identical(th_light$text$face, "plain"))
+stopifnot(isTRUE(all.equal(th_light$line$linewidth, 14 / 22)))
+stopifnot(isTRUE(all.equal(th_light$rect$linewidth, 14 / 22)))
+cat("✓ Test 5 passed — plain fontface, base_size/22 line + rect widths\n\n")
+
+# --- Test 6: light = FALSE reproduces the old bold Prism look ---------------
+cat("Test 6: light = FALSE — reproduces old bold + base_size/14\n")
+th_bold <- theme_prism(light = FALSE)
+stopifnot(identical(th_bold$text$face, "bold"))
+stopifnot(isTRUE(all.equal(th_bold$line$linewidth, 14 / 14)))
+stopifnot(isTRUE(all.equal(th_bold$rect$linewidth, 14 / 14)))
+cat("✓ Test 6 passed — bold fontface, base_size/14 line + rect widths\n\n")
+
+# --- Test 7: plot.tag panel labels stay bold in both modes (Nature guide) ----
+cat("Test 7: plot.tag face bold in both light modes\n")
+stopifnot(identical(th_light$plot.tag$face, "bold"))
+stopifnot(identical(th_bold$plot.tag$face, "bold"))
+cat("✓ Test 7 passed — panel labels (a/b/c) bold regardless of light\n\n")
+
+# --- Test 8: strip.text follows base_fontface in each mode ------------------
+cat("Test 8: strip.text face follows base_fontface\n")
+stopifnot(identical(th_light$strip.text$face, "plain"))
+stopifnot(identical(th_bold$strip.text$face, "bold"))
+cat("✓ Test 8 passed — facet strip lightens in light mode\n\n")
+
+# --- Test 9: invalid light errors -------------------------------------------
+cat("Test 9: invalid light errors\n")
+tryCatch({
+  theme_prism(light = "nope")
+  cat("✗ Test 9 failed: should have errored\n")
+}, error = function(e) {
+  cat("✓ Test 9 passed:", conditionMessage(e), "\n\n")
+})
+
 cat("=====================================\n")
 cat("All theme_prism tests passed! ✓\n")
 cat("=====================================\n")

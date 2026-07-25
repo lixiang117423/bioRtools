@@ -8,12 +8,13 @@ theme_prism(
   palette = "black_and_white",
   base_size = 14,
   base_family = "sans",
-  base_fontface = "bold",
-  base_line_size = base_size/14,
-  base_rect_size = base_size/14,
+  base_fontface = NULL,
+  base_line_size = NULL,
+  base_rect_size = NULL,
   axis_text_angle = 0,
   border = FALSE,
-  gray_background = FALSE
+  gray_background = FALSE,
+  light = TRUE
 )
 }
 \arguments{
@@ -28,13 +29,16 @@ Default is 14.}
 Default is "sans".}
 
 \item{base_fontface}{Character string specifying the base font face.
-Default is "bold".}
+Default depends on \code{light}: \code{"plain"} when \code{light = TRUE}
+(the default), \code{"bold"} when \code{light = FALSE}.}
 
 \item{base_line_size}{Numeric value specifying the base line width.
-Default is \code{base_size / 14}.}
+Default is \code{base_size / 22} when \code{light = TRUE}, \code{base_size / 14}
+when \code{light = FALSE}.}
 
 \item{base_rect_size}{Numeric value specifying the base rectangle line width.
-Default is \code{base_size / 14}.}
+Default is \code{base_size / 22} when \code{light = TRUE}, \code{base_size / 14}
+when \code{light = FALSE}.}
 
 \item{axis_text_angle}{Numeric value specifying the axis text rotation angle.
 Must be one of 0, 45, 90, or 270. Default is 0.}
@@ -45,6 +49,12 @@ Default is FALSE.}
 \item{gray_background}{Logical indicating whether to use a \code{theme_gray()}-style
 panel background (grey panel, white major grid lines, no panel border)
 instead of the default clean Prism look. Default is FALSE.}
+
+\item{light}{Logical indicating whether to use the refined "light" look
+(plain text, thinner \code{base_size / 22} lines) instead of the original
+bold Prism look (bold text, \code{base_size / 14} lines). Default is
+\code{TRUE}. Set to \code{FALSE} to restore the original bold appearance.
+Panel labels (\code{plot.tag}) stay bold in both modes.}
 }
 \value{
 A ggplot2 theme object.
@@ -65,6 +75,11 @@ ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
   bioRtools::theme_prism(gray_background = TRUE)
+
+# original bold Prism look (plain text + thinner lines is the default)
+ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+  geom_boxplot() +
+  bioRtools::theme_prism(light = FALSE)
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

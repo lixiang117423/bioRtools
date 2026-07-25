@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.72.0] - 2026-07-25
+
+### Added
+- `theme_prism()`: `light` argument (default `TRUE`). When `TRUE`, the theme uses plain text and thinner (`base_size / 22`) lines — a refined look better suited to multi-panel (组图) figures; when `FALSE`, it reproduces the original bold Prism look exactly. `light` only sets the default triplet (`base_fontface`, `base_line_size`, `base_rect_size`); each stays independently overridable, so e.g. `theme_prism(base_line_size = 0.4)` still wins.
+
+### Changed
+- `theme_prism()`: the default look is now the light variant (plain text, `base_size / 22` lines) instead of the original bold (`base_size / 14`) look. This is an aesthetic change to existing plots; pass `light = FALSE` to restore the prior appearance.
+- `theme_prism()`: panel labels (`plot.tag`) are now always bold regardless of `light`, matching the Nature figure guide (8-pt bold lowercase a, b, c). Facet strip text (`strip.text`) now follows `base_fontface` (plain in light mode) instead of being hardcoded bold.
+
 ## [1.71.0] - 2026-07-22
 
 ### Added

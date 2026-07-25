@@ -12,11 +12,14 @@
 #' @param base_family Character string specifying the base font family.
 #'   Default is "sans".
 #' @param base_fontface Character string specifying the base font face.
-#'   Default is "bold".
+#'   Default depends on \code{light}: \code{"plain"} when \code{light = TRUE}
+#'   (the default), \code{"bold"} when \code{light = FALSE}.
 #' @param base_line_size Numeric value specifying the base line width.
-#'   Default is \code{base_size / 14}.
+#'   Default is \code{base_size / 22} when \code{light = TRUE}, \code{base_size / 14}
+#'   when \code{light = FALSE}.
 #' @param base_rect_size Numeric value specifying the base rectangle line width.
-#'   Default is \code{base_size / 14}.
+#'   Default is \code{base_size / 22} when \code{light = TRUE}, \code{base_size / 14}
+#'   when \code{light = FALSE}.
 #' @param axis_text_angle Numeric value specifying the axis text rotation angle.
 #'   Must be one of 0, 45, 90, or 270. Default is 0.
 #' @param border Logical indicating whether to draw a panel border.
@@ -24,6 +27,11 @@
 #' @param gray_background Logical indicating whether to use a \code{theme_gray()}-style
 #'   panel background (grey panel, white major grid lines, no panel border)
 #'   instead of the default clean Prism look. Default is FALSE.
+#' @param light Logical indicating whether to use the refined "light" look
+#'   (plain text, thinner \code{base_size / 22} lines) instead of the original
+#'   bold Prism look (bold text, \code{base_size / 14} lines). Default is
+#'   \code{TRUE}. Set to \code{FALSE} to restore the original bold appearance.
+#'   Panel labels (\code{plot.tag}) stay bold in both modes.
 #'
 #' @return A ggplot2 theme object.
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -41,15 +49,21 @@
 #' ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
 #'   bioRtools::theme_prism(gray_background = TRUE)
+#'
+#' # original bold Prism look (plain text + thinner lines is the default)
+#' ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
+#'   geom_boxplot() +
+#'   bioRtools::theme_prism(light = FALSE)
 theme_prism <- function(palette = "black_and_white",
                         base_size = 14,
                         base_family = "sans",
-                        base_fontface = "bold",
-                        base_line_size = base_size / 14,
-                        base_rect_size = base_size / 14,
+                        base_fontface = NULL,
+                        base_line_size = NULL,
+                        base_rect_size = NULL,
                         axis_text_angle = 0,
                         border = FALSE,
-                        gray_background = FALSE) {
+                        gray_background = FALSE,
+                        light = TRUE) {
   angle <- axis_text_angle[1]
 
   if (!angle %in% c(0, 45, 90, 270)) {
@@ -74,6 +88,18 @@ theme_prism <- function(palette = "black_and_white",
   if (!rlang::is_bool(gray_background)) {
     stop("gray_background must be either: TRUE or FALSE")
   }
+
+  if (!rlang::is_bool(light)) {
+    stop("light must be either: TRUE or FALSE")
+  }
+
+  # `light` is a convenience that picks the default triplet; each stays
+  # independently overridable via its own argument. light = FALSE reproduces
+  # the original bold Prism look exactly.
+  line_divisor <- if (light) 22 else 14
+  if (is.null(base_fontface)) base_fontface <- if (light) "plain" else "bold"
+  if (is.null(base_line_size)) base_line_size <- base_size / line_divisor
+  if (is.null(base_rect_size)) base_rect_size <- base_size / line_divisor
 
   if (border) {
     panel.border <- ggplot2::element_rect(fill = NA)
@@ -183,7 +209,7 @@ theme_prism <- function(palette = "black_and_white",
     ),
     strip.text = ggplot2::element_text(
       colour = "black",
-      face = "bold",
+      face = base_fontface,
       size = ggplot2::rel(0.9),
       hjust = 0.5,
       vjust = 0.5,
@@ -230,7 +256,7 @@ theme_prism <- function(palette = "black_and_white",
     ),
     plot.caption.position = "panel",
     plot.tag = ggplot2::element_text(
-      size = ggplot2::rel(1.2), hjust = 0.5, vjust = 0.5
+      size = ggplot2::rel(1.2), face = "bold", hjust = 0.5, vjust = 0.5
     ),
     plot.tag.position = "topleft",
     plot.margin = ggplot2::margin(
