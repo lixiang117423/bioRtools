@@ -173,11 +173,13 @@ Ported from RIdeogram (Hao et al. 2020), reimplemented in ggplot2 and returning 
 - `row_mean()`, `row_sd()`, `row_cv()`, `row_min()`, `row_max()` - Row statistics
 - `filter_str()`, `dedup_by_col()` - Regex/string row filtering (supports negation) and duplicate removal by column
 
-### Themes and Palettes
+### Themes, Palettes, and Export
 
-- `theme_prism()` - Publication-ready plot theme
+- `theme_prism()` - Publication-ready plot theme; the default is the refined **light** variant (plain text, thinner lines), pass `light = FALSE` for the original bold Prism look
+- `wong_palette()`, `scale_colour_wong()` / `scale_color_wong()` / `scale_fill_wong()` - Wong (Okabe-Ito) colourblind-safe palette, recommended for accessible figures
 - `pal_sci()`, `pal_nature()`, `pal_science()`, `pal_cell()`, `pal_jacs()`, `pal_fuel()`, `pal_chem_eng()`, `pal_nat_comm()`, `pal_shinkai()`, `pal_research()` - Academic palettes
 - `scale_color_*()`, `scale_colour_*()`, and `scale_fill_*()` variants are available for discrete and continuous palette scales
+- `save_fig()` - Export figures with embedded TrueType fonts (vector PDF/EPS) and high-dpi raster for journal submission
 
 ## Quick Start
 
@@ -246,6 +248,33 @@ volcano_result <- plot_volcano(
 print(volcano_result$plot_volcano)
 print(volcano_result$data_summary)
 ```
+
+### Journal Figure Workflow
+
+Combine a colourblind-safe palette, a clean theme, and font-embedded export to
+meet journal figure specifications (e.g. the Springer Nature guide: accessible
+colours, no background gridlines, bold panel labels, vector artwork with
+embedded fonts):
+
+```r
+library(bioRtools)
+library(ggplot2)
+
+p <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
+  geom_boxplot() +
+  scale_fill_wong() +          # colourblind-safe (Wong/Okabe-Ito) palette
+  theme_prism() +              # light, clean theme (default); bold panel labels
+  labs(x = NULL, y = "Sepal length (cm)", tag = "a")
+
+# export: vector PDF (fonts embedded, text stays editable) + raster PNG
+save_fig(p, "fig1", formats = c("pdf", "png"),
+         width = 90, height = 70, units = "mm", dpi = 450)
+```
+
+`save_fig()` writes PDF/EPS via font-embedding devices (`cairo_pdf`/`cairo_ps`),
+so text is not outlined when the file is opened in Illustrator, and PNG/TIFF/JPEG
+via `ragg` for high-quality raster. Verify embedded fonts with
+`pdffonts fig1.pdf` (look for `emb yes`).
 
 ## RNA-seq Workflow Example
 
@@ -326,6 +355,10 @@ memory.limit(size = 16000)
 theme_bio(base_family = "Arial")
 theme_prism(base_family = "Arial")
 ```
+
+For submission PDFs, export with `save_fig()` — it embeds TrueType fonts
+(`cairo_pdf`) so text is not converted to outlines when opened in Illustrator.
+Check with `pdffonts file.pdf` (each font should show `emb yes`).
 
 ## Version History
 
