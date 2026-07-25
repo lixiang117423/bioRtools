@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.74.0] - 2026-07-25
+
+### Added
+- `save_fig()`: figure-export helper for journal submission. Wraps `ggplot2::ggsave()` with publication-sensible defaults. Vector formats use font-embedding devices — `pdf` via `grDevices::cairo_pdf`, `eps` via `grDevices::cairo_ps` — so text stays editable (not outlined) in Illustrator, which is what the Nature figure guide asks for (embedded TrueType fonts, vector artwork). Raster formats (`png`/`tiff`/`jpeg`) use `ragg` (`agg_png`/`agg_tiff`/`agg_jpeg`) for high-quality anti-aliasing. Supports one-call dual export, e.g. `save_fig(p, "fig", formats = c("pdf", "png"))`. Adds `ragg` to Imports.
+
 ## [1.73.0] - 2026-07-25
 
 ### Added
