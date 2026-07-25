@@ -75,18 +75,24 @@ create_continuous_scale <- function(data, aesthetic = "colour", low_color = "#3C
 #' bioRtools color schemes.
 #'
 #' @param n_groups Number of groups to color
-#' @param palette Palette name ("Set1", "Dark2", etc., default: "Set1")
+#' @param palette Palette name ("Set1", "Dark2", etc., default: "Set1").
+#'   Use `"wong"` for the colourblind-safe Wong (Okabe-Ito) palette.
 #' @param aesthetic Aesthetic name ("colour" or "fill")
 #'
 #' @return A ggplot2 scale object
 #' @keywords internal
 #' @noRd
 create_discrete_scale <- function(n_groups, palette = "Set1", aesthetic = "colour") {
-  colors <- RColorBrewer::brewer.pal(min(n_groups, 9), palette)
+  if (palette == "wong") {
+    # colourblind-safe set; recycle for >8 groups
+    colors <- wong_palette(n_groups)
+  } else {
+    colors <- RColorBrewer::brewer.pal(min(n_groups, 9), palette)
 
-  if (n_groups > length(colors)) {
-    # Extend palette if needed
-    colors <- colorRampPalette(colors)(n_groups)
+    if (n_groups > length(colors)) {
+      # Extend palette if needed
+      colors <- colorRampPalette(colors)(n_groups)
+    }
   }
 
   scale_fn <- if (aesthetic == "colour") {

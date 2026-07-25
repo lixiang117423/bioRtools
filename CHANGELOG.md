@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.73.0] - 2026-07-25
+
+### Added
+- Wong (Okabe-Ito) colour-blind-friendly palette — the accessible qualitative palette recommended by the Nature figure guide (Wong, B. *Points of view: Colour blindness.* Nature Methods 8, 441; 2011). New `R/wong_palette.R`:
+  - `wong_palette(n = NULL)` — the 8 hex colours (`#000000 #E69F00 #56B4E9 #009E73 #F0E442 #0072B2 #D55E00 #CC79A7`); recycles for `n > 8` (interpolation deliberately avoided so colours stay colourblind-safe).
+  - `scale_colour_wong()` / `scale_color_wong()` / `scale_fill_wong()` — drop-in ggplot2 discrete scales (`+ bioRtools::scale_fill_wong()`), mirroring the ggsci API. No new dependency.
+
+### Changed
+- `create_discrete_scale()` (internal) now accepts `palette = "wong"`, branching to `wong_palette()`; default remains `"Set1"`, so existing callers are unaffected.
+
 ## [1.72.0] - 2026-07-25
 
 ### Added
