@@ -79,7 +79,6 @@ A data frame containing enrichment results with columns:
     \item \code{p_adjust}: Adjusted p-value using specified method
     \item \code{qvalue}: Q-value (if calculated)
     \item \code{gene_id}: Gene identifiers contributing to this term (separated by "/")
-    \item \code{count}: Number of input genes in this GO term
     \item \code{gene_count}: Number of input genes in this GO term
     \item \code{total_genes}: Total number of input genes tested
   }

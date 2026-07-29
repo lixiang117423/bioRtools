@@ -56,7 +56,6 @@
 #'     \item \code{p_adjust}: Adjusted p-value using specified method
 #'     \item \code{qvalue}: Q-value (if calculated)
 #'     \item \code{gene_id}: Gene identifiers contributing to this term (separated by "/")
-#'     \item \code{count}: Number of input genes in this GO term
 #'     \item \code{gene_count}: Number of input genes in this GO term
 #'     \item \code{total_genes}: Total number of input genes tested
 #'   }
@@ -312,7 +311,6 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
       p_adjust = numeric(0),
       qvalue = numeric(0),
       gene_id = character(0),
-      count = integer(0),
       gene_count = integer(0),
       total_genes = integer(0)
     )
@@ -334,18 +332,23 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
   # Calculate numeric GeneRatio
   go_results$gene_ratio <- go_results$gene_count / go_results$total_genes
 
-  # Reorder columns for better readability
+  # Emit only the documented columns. The raw GeneRatio (e.g. "15/15") is fully
+  # captured by gene_ratio / gene_count / total_genes, and clusterProfiler's
+  # Count equals gene_count — so neither is carried forward. Listing columns
+  # explicitly (instead of everything()) also stops newer clusterProfiler
+  # columns (RichFactor, FoldEnrichment, zScore) from leaking into the output.
   go_results <- go_results %>%
-    dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
-      qvalue, geneID, Count, gene_count, total_genes,
-      dplyr::everything()) %>%
-    dplyr::rename(
+    dplyr::select(
       id = ID,
       description = Description,
+      gene_ratio,
       bg_ratio = BgRatio,
+      pvalue,
       p_adjust = p.adjust,
+      qvalue,
       gene_id = geneID,
-      count = Count
+      gene_count,
+      total_genes
     ) %>%
     dplyr::arrange(p_adjust, pvalue)
 

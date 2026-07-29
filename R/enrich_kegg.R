@@ -57,7 +57,6 @@
 #'     \item \code{p_adjust}: Adjusted p-value using specified method
 #'     \item \code{qvalue}: Q-value (if calculated)
 #'     \item \code{gene_id}: Gene identifiers contributing to this pathway (separated by "/")
-#'     \item \code{count}: Number of input genes in this pathway
 #'     \item \code{gene_count}: Number of input genes in this pathway
 #'     \item \code{total_genes}: Total number of input genes tested
 #'     \item \code{enrichment_score}: -log10(p.adjust) for visualization
@@ -119,7 +118,7 @@
 #'
 #' # View top enriched pathways
 #' top_pathways <- head(kegg_results, 10)
-#' print(top_pathways[, c("id", "description", "pvalue", "p_adjust", "count")])
+#' print(top_pathways[, c("id", "description", "pvalue", "p_adjust", "gene_count")])
 #' }
 #'
 #' # Example 2: Stringent analysis parameters
@@ -201,7 +200,7 @@
 #'
 #' # The results are ready for ggplot2 visualization
 #' print("Data prepared for pathway visualization")
-#' print(kegg_for_plot[, c("id", "pathway_short", "enrichment_score", "count")])
+#' print(kegg_for_plot[, c("id", "pathway_short", "enrichment_score", "gene_count")])
 #' }
 #'
 #' # Example 6: Batch mode — pass a find_degs_deseq2() result directly. It is
@@ -371,7 +370,6 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
       p_adjust = numeric(0),
       qvalue = numeric(0),
       gene_id = character(0),
-      count = integer(0),
       gene_count = integer(0),
       total_genes = integer(0),
       enrichment_score = numeric(0)
@@ -405,18 +403,24 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
   # Add enrichment score for visualization (-log10 of adjusted p-value)
   kegg_results$enrichment_score <- -log10(kegg_results$p.adjust)
 
-  # Reorder columns for better readability
+  # Emit only the documented columns. The raw GeneRatio (e.g. "15/15") is fully
+  # captured by gene_ratio / gene_count / total_genes, and clusterProfiler's
+  # Count equals gene_count — so neither is carried forward. Listing columns
+  # explicitly (instead of everything()) also stops newer clusterProfiler
+  # columns (RichFactor, FoldEnrichment, zScore) from leaking into the output.
   kegg_results <- kegg_results %>%
-    dplyr::select(ID, Description, gene_ratio, BgRatio, pvalue, p.adjust,
-      qvalue, geneID, Count, gene_count, total_genes, enrichment_score,
-      dplyr::everything()) %>%
-    dplyr::rename(
+    dplyr::select(
       id = ID,
       description = Description,
+      gene_ratio,
       bg_ratio = BgRatio,
+      pvalue,
       p_adjust = p.adjust,
+      qvalue,
       gene_id = geneID,
-      count = Count
+      gene_count,
+      total_genes,
+      enrichment_score
     ) %>%
     dplyr::arrange(p_adjust, pvalue)
 

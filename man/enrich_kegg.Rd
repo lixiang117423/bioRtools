@@ -79,7 +79,6 @@ A data frame containing pathway enrichment results with columns:
     \item \code{p_adjust}: Adjusted p-value using specified method
     \item \code{qvalue}: Q-value (if calculated)
     \item \code{gene_id}: Gene identifiers contributing to this pathway (separated by "/")
-    \item \code{count}: Number of input genes in this pathway
     \item \code{gene_count}: Number of input genes in this pathway
     \item \code{total_genes}: Total number of input genes tested
     \item \code{enrichment_score}: -log10(p.adjust) for visualization
@@ -139,7 +138,7 @@ print(paste("Found", nrow(kegg_results), "enriched pathways"))
 
 # View top enriched pathways
 top_pathways <- head(kegg_results, 10)
-print(top_pathways[, c("id", "description", "pvalue", "p_adjust", "count")])
+print(top_pathways[, c("id", "description", "pvalue", "p_adjust", "gene_count")])
 }
 
 # Example 2: Stringent analysis parameters
@@ -221,7 +220,7 @@ kegg_for_plot <- kegg_results \%>\%
 
 # The results are ready for ggplot2 visualization
 print("Data prepared for pathway visualization")
-print(kegg_for_plot[, c("id", "pathway_short", "enrichment_score", "count")])
+print(kegg_for_plot[, c("id", "pathway_short", "enrichment_score", "gene_count")])
 }
 
 # Example 6: Batch mode — pass a find_degs_deseq2() result directly. It is

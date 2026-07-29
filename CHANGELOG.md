@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.75.0] - 2026-07-29
+
+### Fixed
+- `enrich_go()` / `enrich_kegg()`: removed duplicated output columns. The result frame previously carried both the derived `gene_ratio` (numeric) and the raw clusterProfiler `GeneRatio` (character, e.g. `"15/15"`), plus both `count` and `gene_count` (identical values — `count` is `clusterProfiler::enricher()`'s `Count`, `gene_count` is the parsed `GeneRatio` numerator). The build step used `dplyr::select(..., dplyr::everything())`, which also swept in newer clusterProfiler columns (`RichFactor`, `FoldEnrichment`, `zScore`) under their original camelCase names. Replaced with an explicit `select()` so the output is exactly the documented schema. `count`, `GeneRatio`, `RichFactor`, `FoldEnrichment`, and `zScore` are dropped; the ratio is fully represented by `gene_ratio` / `gene_count` / `total_genes`. No internal code or test referenced the dropped columns.
+
 ## [1.74.0] - 2026-07-25
 
 ### Added
