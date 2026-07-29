@@ -282,7 +282,7 @@ theme_prism(base_family = "Arial")
 
 ## 版本历史
 
-完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.16.1`。
+完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.76.0`。
 
 ## 引用
 

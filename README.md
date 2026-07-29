@@ -362,7 +362,7 @@ Check with `pdffonts file.pdf` (each font should show `emb yes`).
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.71.0`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.76.0`.
 
 ## Citation
 

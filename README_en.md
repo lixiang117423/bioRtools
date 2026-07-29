@@ -282,7 +282,7 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.16.1`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.76.0`.
 
 ## Citation
 
