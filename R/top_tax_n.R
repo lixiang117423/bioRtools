@@ -376,6 +376,10 @@ top_tax_n <- function(data,
           })
       }) %>%
       dplyr::ungroup() %>%
+      # Drop rstatix's own p.adj (Holm) and p.adj.signif so only our FDR p_adj /
+      # significance remain. Otherwise results with >=3 groups carry two
+      # adjusted-p columns under different correction methods.
+      dplyr::select(-dplyr::any_of(c("p.adj", "p.adj.signif"))) %>%
       dplyr::mutate(
         p_adj = p.adjust(p, method = "fdr"),
         significance = dplyr::case_when(

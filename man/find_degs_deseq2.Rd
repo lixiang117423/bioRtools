@@ -71,26 +71,38 @@ improve multiple testing correction and statistical power}
 remove genes with non-finite values (Inf, -Inf, NaN) (default: TRUE).
 If TRUE, problematic genes are removed with a warning. If FALSE, the function
 will stop with an error message detailing which genes and samples have issues}
+
+\item{pairwise}{Logical indicating whether to perform pairwise comparisons
+between groups (default: TRUE). When FALSE, runs a single overall comparison.}
+
+\item{ref_group}{Optional reference group for pairwise comparisons. If NULL,
+every group is tested against every other; otherwise each group is tested
+against \code{ref_group}.}
 }
 \value{
-A data frame containing differential expression results with columns:
+A data frame of differential expression results. Column set depends on
+  the mode (\code{pairwise = TRUE} is the default):
   \itemize{
     \item \code{gene}: Gene identifiers (from row names of input matrix)
     \item \code{baseMean}: Mean normalized counts across all samples
     \item \code{log2FoldChange}: Log2 fold change between conditions
     \item \code{lfcSE}: Standard error of log2 fold change estimate
-    \item \code{stat}: Wald test statistic
-    \item \code{pvalue}: Raw p-value from Wald test
+    \item \code{stat}: Wald statistic. Absent when \code{shrink_lfc = TRUE}
+      and apeglm shrinkage succeeds (DESeq2 drops it during lfcShrink)
+    \item \code{pvalue}: Raw p-value from the Wald test
     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
-    \item \code{regulation}: Gene regulation classification:
-      \itemize{
-        \item "Up-regulated": log2FC > threshold & padj < threshold
-        \item "Down-regulated": log2FC < -threshold & padj < threshold
-        \item "Not significant": Does not meet both criteria
-      }
+    \item \code{regulation}: Regulation class. Pairwise mode (default) uses
+      "Up" / "Down" / "NS"; single mode uses "Up-regulated" /
+      "Down-regulated" / "Not significant"
     \item \code{fold_change}: Actual fold change (2^log2FoldChange)
     \item \code{abs_log2fc}: Absolute log2 fold change for ranking
-    \item \code{significance_level}: Detailed significance classification
+    \item \code{comparison}, \code{group}, \code{ref_group}: Pairwise mode only
+    \item \code{group_mean}, \code{group_sd}, \code{group_n},
+      \code{ref_mean}, \code{ref_sd}, \code{ref_n}, \code{test_method}:
+      per-group descriptive stats, pairwise mode only
+    \item \code{significance_level}: Detailed significance classification,
+      single mode only
+    \item Original input count columns, joined back by \code{gene}
   }
 }
 \description{

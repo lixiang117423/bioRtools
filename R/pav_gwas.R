@@ -47,7 +47,7 @@
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{gwas_results}{Data frame with association test results including chromosomal positions (chr, start, end), sequence information, and statistical results for all PAV features.}
+#'   \item{gwas_results}{Data frame with association test results including chromosomal positions (chr, start, end), sequence information, and statistical results for all PAV features. Also carries Manhattan-plot helper columns added during plotting: \code{chr_num} (numeric chromosome index), \code{abs_pos} / \code{cum_length} (genome-aligned cumulative position), and \code{chr_color} (alternating chromosome colour).}
 #'   \item{phenotype_stats}{Summary statistics of phenotype distribution.}
 #'   \item{pca_results}{PCA results for population structure (if used).}
 #'   \item{filtered_features}{Information about PAV feature filtering.}

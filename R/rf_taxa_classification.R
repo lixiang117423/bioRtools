@@ -292,7 +292,7 @@ rf_taxa_classification <- function(data,
   # ── Top features boxplot ─────────────────────────────────────────────────
   plot_top <- NULL
   top_features <- all_importance %>%
-    dplyr::filter(tax_group == "otu") %>%
+    dplyr::filter(tax_group == "OTU") %>%
     dplyr::arrange(desc(importance)) %>%
     dplyr::slice_head(n = top_n) %>%
     dplyr::pull(tax)

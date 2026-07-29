@@ -33,14 +33,18 @@
 #' @return A named list with:
 #'   \describe{
 #'     \item{\code{vip_scores}}{Data frame of VIP scores for all comparisons,
-#'       with columns \code{feature}, \code{vip}, \code{important}, and
-#'       \code{comparison}. Sorted by comparison then VIP descending.}
+#'       with columns \code{feature}, \code{vip}, \code{important},
+#'       \code{comparison}, \code{group}, and \code{ref_group}. Sorted by
+#'       comparison then VIP descending.}
 #'     \item{\code{model_summary}}{Data frame with one row per comparison,
-#'       containing R2Y, Q2Y, n_samples, n_variables, n_important, and the
-#'       comparison label.}
+#'       containing \code{comparison}, \code{group}, \code{ref_group},
+#'       \code{R2X}, \code{R2Y}, \code{Q2Y}, \code{n_samples}, and
+#'       \code{n_variables}.}
 #'     \item{\code{scores}}{Data frame of sample scores for all comparisons,
 #'       with columns \code{t1}, \code{to1} (if available), \code{sample_id},
-#'       \code{group}, and \code{comparison}.}
+#'       \code{group}, \code{comparison}, plus merged sample-metadata columns
+#'       and \code{variance_t1} / \code{variance_to1} / \code{variance_R2X} /
+#'       \code{variance_R2Y} / \code{variance_Q2} when present.}
 #'     \item{\code{models}}{Named list of raw \code{ropls} model objects.}
 #'   }
 #'

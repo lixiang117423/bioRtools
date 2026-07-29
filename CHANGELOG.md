@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.76.0] - 2026-07-29
+
+### Fixed
+- `pca_analysis()`: eigenvalue frame was built with `eigenvalue = eig_values` (a 3-column data frame), which R flattened into `eigenvalue.eigenvalue` / `eigenvalue.variance.percent` / `eigenvalue.cumulative.variance.percent` — duplicating `variance_percent` / `cumulative_percent` and leaving no plain `eigenvalue` column. Downstream `$eigenvalue` returned NULL, so `summary_stats$kaiser_criterion` was empty, `n_components_kaiser` was 0, and `effective_dimensionality` was NaN on every run. Fixed to `eig_values$eigenvalue`; output now matches the documented schema and the Kaiser/broken-stick/effective-dimensionality stats resolve.
+- `top_tax_n()`: with 3+ groups, `result_statistics` carried both rstatix's `p.adj` (Holm) and the function's own `p_adj` (FDR) — two adjusted-p columns under different correction methods. Now drops rstatix's `p.adj` / `p.adj.signif` so only the FDR `p_adj` / `significance` remain.
+- `rf_taxa_classification()`: top-features boxplot never rendered — `tax_group` is stored as `"OTU"` but was filtered with `"otu"` (case mismatch). Fixed to `"OTU"`.
+- `calc_expression_delta_ct()`: `calculate_target_expression()` lacked the closing `select()` its three sibling qPCR functions have, leaking the reference-gene join intermediate `mean_ref_cq` and the raw `position` into `expression_data`.
+
+### Changed
+- `pcoa_analysis()`: `eigenvalue_pcoa` no longer carries `Relative_eig` (0-1) alongside the derived `relative_eig` (%) — a scaled duplicate. Now returns `pcoa`, `relative_eig`, `percentage`, `label`.
+- `pav_gwas()`: `@return` now documents the Manhattan-plot helper columns (`chr_num`, `abs_pos`, `cum_length`, `chr_color`) that `gwas_results` carries.
+- `find_degs_deseq2()` / `find_degs_edger()` / `pairwise_oplsda()`: corrected `@param` / `@return` drift — `find_degs_deseq2` was documenting the non-default single-comparison branch (default is `pairwise = TRUE`); added missing `@param pairwise` / `@param ref_group`; documented the `"Up/Down/NS"` (pairwise) vs `"Up-regulated/…"` (single) regulation labels, the pairwise-only descriptive-stat columns, and the `stat` column's conditional absence under apeglm shrinkage; `pairwise_oplsda` `@return` no longer lists the non-existent `n_important`.
+
 ## [1.75.0] - 2026-07-29
 
 ### Fixed

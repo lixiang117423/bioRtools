@@ -515,7 +515,7 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
 
       data.frame(
         component = paste0("PC", 1:nrow(eig_values)),
-        eigenvalue = eig_values,
+        eigenvalue = eig_values$eigenvalue,
         variance_percent = round(eig_values$variance.percent, 2),
         cumulative_percent = round(eig_values$cumulative.variance.percent, 2)
       )

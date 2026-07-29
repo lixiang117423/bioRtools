@@ -93,14 +93,13 @@ A data frame containing differential expression results. In pairwise
     \item \code{logCPM}: Average log2 counts per million
     \item \code{pvalue}: Raw p-value from the statistical test
     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
-    \item \code{regulation}: Gene regulation classification:
-      \itemize{
-        \item "Up": log2FC > threshold & fdr < threshold
-        \item "Down": log2FC < -threshold & fdr < threshold
-        \item "NS": Does not meet both criteria
-      }
+    \item \code{regulation}: Gene regulation classification. Pairwise mode
+      (default): "Up" / "Down" / "NS". Single mode: "Up-regulated" /
+      "Down-regulated" / "Not significant"
     \item \code{fold_change}: Actual fold change (2^log2FoldChange)
     \item \code{abs_log2fc}: Absolute log2 fold change for ranking
+    \item \code{significance_level}: Detailed significance classification
+      (single mode only)
     \item \code{comparison}: Comparison label (pairwise mode only)
     \item \code{group}: Test group name (pairwise mode only)
     \item \code{ref_group}: Reference group name (pairwise mode only)

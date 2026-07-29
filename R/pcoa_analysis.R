@@ -66,7 +66,10 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
       relative_eig = round(Relative_eig * 100, 2),
       percentage = paste0(relative_eig, "%"),
       label = paste0(pcoa, " (", percentage, ")")
-    ) -> eigenvalue_pcoa
+    ) %>%
+    # Relative_eig (0-1) is fully represented by relative_eig (%); drop it so
+    # eigenvalue_pcoa doesn't carry a scaled duplicate of the same quantity.
+    dplyr::select(pcoa, relative_eig, percentage, label) -> eigenvalue_pcoa
 
   # Step 3: Extract coordinate data and merge with sample information
   pcoa_res$vectors %>%

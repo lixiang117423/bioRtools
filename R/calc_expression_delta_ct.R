@@ -131,7 +131,13 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
       sd_expression = stats::sd(.data$relative_expression, na.rm = TRUE),
       se_expression = .data$sd_expression / sqrt(.data$n_replicates)
     ) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    # Drop the reference-gene join intermediate and the well position; keep the
+    # measured Cq plus the per-replicate expression values and stats. Mirrors
+    # the closing select() in the sibling qPCR functions.
+    dplyr::select(.data$group, .data$gene, .data$bio_rep, .data$cq,
+      .data$delta_ct, .data$relative_expression, .data$n_replicates,
+      .data$mean_expression, .data$sd_expression, .data$se_expression)
 
   expression_data
 }
