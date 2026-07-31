@@ -1,6 +1,6 @@
 # bioRtools 开发规范
 
-> 版本: 2.0 | 日期: 2026-06-08
+> 版本: 2.1 | 日期: 2026-07-31
 > 基于 [tidyverse 风格指南](https://style.tidyverse.org/)，结合项目实际约定
 
 ---
@@ -139,11 +139,19 @@ calculate_stats <- function(x) {
 }
 ```
 
+### 2.3 导出 vs 内部函数判定
+
+- **导出（加 `@export`）**：用户直接调用、属于核心功能、API 稳定不会频繁变动。
+- **保持内部（`@keywords internal`，不加 `@export`）**：实现细节、可能重构、仅包内复用。内部函数可假设输入已被上游校验，只检查关键不变量。
+- 可选约定：内部辅助函数用 `.` 前缀命名（如 `.compute_metrics()`）与导出函数视觉区分。bioRtools 目前未统一使用，**新代码可选，不强制**。
+
 ---
 
 ## 三、代码风格
 
 ### 3.1 管道操作
+
+统一用 magrittr 的 `%>%`，不混用原生 `|>`（bioRtools 全库一致使用 `%>%`）。
 
 ```r
 # Good：每行一步
@@ -193,6 +201,20 @@ threshold <- 0.5
 # Set threshold to 0.5
 threshold <- 0.5
 ```
+
+### 3.6 路径与包内数据
+
+严禁硬编码绝对路径（尤其含用户名的路径）。访问包内置数据用 `system.file()`：
+
+```r
+# Good — 包内 extdata 数据
+path <- system.file("extdata", "example.otu.csv", package = "bioRtools")
+
+# Bad — 硬编码本地路径
+read.csv("/Users/xxx/data/example.csv")
+```
+
+用户传入的路径参数不要假设固定位置，交给调用方决定。
 
 ---
 
@@ -255,6 +277,36 @@ result <- tryCatch({
 })
 ```
 
+### 6.1 错误消息质量
+
+- 消息要**具体、可操作**：点明哪个参数、期望什么类型、实际收到什么。
+- 用户面函数抛错时给出修正提示。
+
+```r
+if (!is.numeric(data[[value_col]])) {
+  stop("'value_col' 必须是数值列，当前类型：", class(data[[value_col]])[1])
+}
+```
+
+bioRtools 全库统一用 `stop()`（不引入 cli），保持一致即可。
+
+### 6.2 输入校验分层
+
+- **用户面函数（导出）**：全面校验类型、长度、取值范围、列存在性。
+- **内部函数**：假设输入已被上游校验，只断言关键不变量，避免重复开销。
+
+### 6.3 避免全局状态副作用
+
+不要修改全局状态（`options()`、`par()` 等）。确需临时修改时，用 `on.exit()` 退出时还原：
+
+```r
+plot_helper <- function(...) {
+  old_par <- par(mar = c(5, 4, 2, 2))
+  on.exit(par(old_par), add = TRUE)
+  # ... 绘图逻辑
+}
+```
+
 ---
 
 ## 七、版本控制
@@ -286,6 +338,50 @@ result <- tryCatch({
 - [ ] 参数名改动需同步更新 roxygen `@param` 和 `@examples`
 - [ ] 输出列名改动需同步更新下游函数引用
 - [ ] 向后兼容函数保持旧接口不变
+
+### 发布版本前
+
+- [ ] `devtools::document()` 文档已重新生成
+- [ ] `devtools::check()` 0 error / 0 warning / 0 note
+- [ ] `devtools::test()` 全部测试通过
+- [ ] `urlchecker::url_check()` README 与文档链接有效
+- [ ] `DESCRIPTION` 版本号按语义化版本升级（patch / minor / major）
+- [ ] `CHANGELOG.md` 已更新
+- [ ] commit message 符合 `version X.Y.Z: ...` 格式
+
+---
+
+## 九、依赖管理
+
+bioRtools 已有较多依赖（Imports 近 50 个），新增依赖需谨慎权衡。
+
+### 9.1 何时引入新依赖
+
+引入依赖应满足至少一条：
+
+- 功能收益显著（自己实现成本高、易出错）
+- 明显降低维护负担
+- 涉及复杂实现（正则、日期解析、web 请求、生信专用算法）
+
+简单工具函数（取长度、判断类型、基础算术）优先用 base R，不为小功能引入新包。
+
+### 9.2 依赖类型划分（DESCRIPTION）
+
+```
+# 强依赖：包运行必需，写进 Imports，建议带版本下限
+Imports:
+    dplyr (>= 1.0.0),
+    ggplot2 (>= 3.4.0)
+
+# 可选依赖：仅测试 / vignette / 个别功能用到，写进 Suggests
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+```
+
+- 用 `requireNamespace("pkg", quietly = TRUE)` 检查 Suggests 依赖是否可用，再调用。
+- 重型元包（`tidyverse` 整包、`shiny`）只在确有交互需求时引入，避免拖累安装。
 
 ---
 
