@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.77.0] - 2026-08-03
+
+### Added
+- `add_origin_lines()`: ggplot2 helper returning `geom_vline()` + `geom_hline()`
+  dashed reference lines through the origin, e.g. for PCA / PCoA / RDA / t-SNE
+  score plots. Use it as `p + add_origin_lines()`. Defaults are
+  `x_intercept = 0`, `y_intercept = 0`, `linetype = "dashed"`; `color`,
+  `alpha`, and `linewidth` default to `NULL` so the lines inherit the ggplot2
+  theme defaults and render exactly like a bare `geom_vline()` +
+  `geom_hline()`, with `...` forwarded to both geoms.
+
 ## [1.76.0] - 2026-07-29
 
 ### Fixed
@@ -1013,5 +1024,3 @@ Normalize function parameter names to snake_case per DEVELOP_GUIDE 1.1, 1.3. For
 
 ### Changed
 - move normentR to Suggests
-
-

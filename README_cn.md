@@ -129,6 +129,7 @@ install.packages(c(
 ### 主题与配色
 
 - `theme_bio()`、`theme_prism()` - 绘图主题
+- `add_origin_lines()` - 为 PCA 等排序图叠加过原点的水平/垂直虚线（`p + add_origin_lines()`）
 - `pal_sci()`、`pal_nature()`、`pal_science()`、`pal_cell()`、`pal_jacs()`、`pal_fuel()`、`pal_chem_eng()`、`pal_nat_comm()`、`pal_shinkai()`、`pal_research()` - 学术配色
 - `scale_color_*()`、`scale_colour_*()` 和 `scale_fill_*()` 系列提供离散和连续配色标尺
 
@@ -282,7 +283,7 @@ theme_prism(base_family = "Arial")
 
 ## 版本历史
 
-完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.76.0`。
+完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.77.0`。
 
 ## 引用
 

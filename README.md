@@ -176,6 +176,7 @@ Ported from RIdeogram (Hao et al. 2020), reimplemented in ggplot2 and returning 
 ### Themes, Palettes, and Export
 
 - `theme_prism()` - Publication-ready plot theme; the default is the refined **light** variant (plain text, thinner lines), pass `light = FALSE` for the original bold Prism look
+- `add_origin_lines()` - Add dashed x/y reference lines through the origin for PCA-style score plots (`p + add_origin_lines()`)
 - `wong_palette()`, `scale_colour_wong()` / `scale_color_wong()` / `scale_fill_wong()` - Wong (Okabe-Ito) colourblind-safe palette, recommended for accessible figures
 - `pal_sci()`, `pal_nature()`, `pal_science()`, `pal_cell()`, `pal_jacs()`, `pal_fuel()`, `pal_chem_eng()`, `pal_nat_comm()`, `pal_shinkai()`, `pal_research()` - Academic palettes
 - `scale_color_*()`, `scale_colour_*()`, and `scale_fill_*()` variants are available for discrete and continuous palette scales
@@ -362,7 +363,7 @@ Check with `pdffonts file.pdf` (each font should show `emb yes`).
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.76.0`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.77.0`.
 
 ## Citation
 

@@ -129,6 +129,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 ### Themes and Palettes
 
 - `theme_bio()`, `theme_prism()` - Plot themes
+- `add_origin_lines()` - Add dashed x/y reference lines through the origin for PCA-style score plots (`p + add_origin_lines()`)
 - `pal_sci()`, `pal_nature()`, `pal_science()`, `pal_cell()`, `pal_jacs()`, `pal_fuel()`, `pal_chem_eng()`, `pal_nat_comm()`, `pal_shinkai()`, `pal_research()` - Academic palettes
 - `scale_color_*()`, `scale_colour_*()`, and `scale_fill_*()` variants are available for discrete and continuous palette scales
 
@@ -282,7 +283,7 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.76.0`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.77.0`.
 
 ## Citation
 
