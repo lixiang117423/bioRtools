@@ -204,6 +204,10 @@ add_label_marker <- function(p, label, layout, max_end, cw, has_overlaid = FALSE
     size = size_mm, color = "black", stroke = 0.3) +
     ggplot2::scale_shape_manual(values = shape_map) +
     ggplot2::scale_fill_manual(values = stats::setNames(type_color$fill, type_color$Type))
+
+  # shape 19 (ggplot2 default key glyph) ignores `fill`, so the Type legend keys
+  # would render black. Force a fillable key shape so the mapped colours show.
+  p <- p + ggplot2::guides(fill = ggplot2::guide_legend(override.aes = list(shape = 21)))
   p
 }
 

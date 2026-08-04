@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.77.1] - 2026-08-04
+
+### Fixed
+- `plot_ideogram()` (`label_type = "marker"`): the `Type` legend rendered as solid black dots — the mapped `color` column was discarded in the legend even though the chromosome markers themselves were coloured correctly. `add_label_marker()` maps `fill = Type` and `shape = Shape` on one `geom_point()`; ggplot2 draws the `fill`-legend key glyphs with the default point shape `pch = 19`, which honours only `colour` (not `fill`), so with the geom's `color = "black"` every key came out black. Added `guides(fill = guide_legend(override.aes = list(shape = 21)))` to force a fillable key shape, so the mapped colours now show in the legend. Verified against the `ggnewscale::new_scale_fill()` (overlaid-heatmap) path as well.
+
 ## [1.77.0] - 2026-08-03
 
 ### Added
