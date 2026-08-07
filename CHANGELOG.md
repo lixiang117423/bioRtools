@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.78.0] - 2026-08-07
+
+### Added
+- `plot_sv_accumulation()`: pan- and core-SV accumulation curve. Takes an SV
+  presence/absence matrix (data.frame, data.table, or file path) and computes
+  pan-SV (present in ≥1 sample) and core-SV (present in ≥`core_threshold`
+  proportion of samples, default 0.95) cumulative counts via random permutation
+  of sample order. Returns a list with the ggplot object, the plot-ready data
+  frame, the raw permutation matrices, and summary counts. Uses
+  `scale_color_manual()` with configurable pan/core colors and
+  `ggprism::theme_prism()` for a publication-ready default appearance.
+
 ## [1.77.1] - 2026-08-04
 
 ### Fixed
