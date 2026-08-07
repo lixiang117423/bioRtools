@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.79.0] - 2026-08-07
+
+### Added
+- `plot_cim_lod()`: Manhattan-style LOD score plot for CIM/QTL scan results.
+  Computes cumulative physical positions across chromosomes with alternating
+  color scheme, configurable position scaling (Mbp→bp), LOD offset for
+  zero-handling, and optional genome-wide threshold line. Accepts data.frame,
+  data.table, or file path as input. Returns a list with the ggplot object,
+  processed data, and chromosome center positions.
+
 ## [1.78.0] - 2026-08-07
 
 ### Added
