@@ -125,7 +125,11 @@ A named list containing:
     \item{\code{loadings}}{Data frame with variable loadings.}
     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
       regulation labels per comparison. NULL in single-model mode without
-      ref_group; populated in ref-anchored and all-pairs pairwise modes.}
+      ref_group; populated in ref-anchored and all-pairs pairwise modes.
+      Columns \code{feature_id}, \code{log2FoldChange}, \code{padj}, and
+      \code{pvalue} are aliases for \code{feature}, \code{log2_fc},
+      \code{p_adjust}, and \code{p_value} respectively, for direct use with
+      \code{\link{plot_multi_volcano}}.}
     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
       In pairwise mode, includes per-comparison results.}
   }

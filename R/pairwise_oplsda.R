@@ -29,6 +29,15 @@
 #'   "standard" (default), "pareto", "center", or "none".
 #' @param validation Cross-validation method: "CV" (default) or "none".
 #' @param cv_folds Number of cross-validation folds (default: 7).
+#' @param ref_group Character string specifying the reference group. When set,
+#'   compares each non-reference group against this group instead of all
+#'   pairwise combinations. Passed to \code{\link{opls_analysis}}.
+#' @param test_method Statistical test for p-values: \code{"auto"} (default),
+#'   \code{"t-test"}, or \code{"wilcoxon"}. Passed to \code{\link{opls_analysis}}.
+#' @param p_adjust_method P-value adjustment method (default: "BH").
+#'   See \code{\link[stats]{p.adjust}}.
+#' @param p_threshold Adjusted p-value threshold for significance labeling
+#'   (default: 0.05).
 #'
 #' @return A named list with:
 #'   \describe{
@@ -46,6 +55,11 @@
 #'       and \code{variance_t1} / \code{variance_to1} / \code{variance_R2X} /
 #'       \code{variance_R2Y} / \code{variance_Q2} when present.}
 #'     \item{\code{models}}{Named list of raw \code{ropls} model objects.}
+#'     \item{\code{differential_analysis}}{Data frame with log2FC, p-values,
+#'       and regulation labels per comparison. Compatible with
+#'       \code{\link{plot_multi_volcano}} via the \code{feature_id},
+#'       \code{log2FoldChange}, \code{padj}, and \code{pvalue} alias columns.
+#'       NULL when neither \code{ref_group} nor \code{pairwise = TRUE} is used.}
 #'   }
 #'
 #' @seealso \code{\link{opls_analysis}} for single OPLS-DA analysis,
@@ -69,7 +83,12 @@
 pairwise_oplsda <- function(data, sample, group_col = "group",
                             vip_threshold = 1.0, ortho_components = 1,
                             scaling = "standard", validation = "CV",
-                            cv_folds = 7, feature_as_row = NA) {
+                            cv_folds = 7, feature_as_row = NA,
+                            ref_group = NULL,
+                            test_method = "auto",
+                            p_adjust_method = "BH",
+                            p_threshold = 0.05,
+                            verbose = FALSE) {
   .Deprecated(
     "opls_analysis",
     package = "bioRtools",
@@ -78,16 +97,21 @@ pairwise_oplsda <- function(data, sample, group_col = "group",
   )
 
   res <- opls_analysis(
-    data           = data,
-    sample         = sample,
-    group_col      = group_col,
-    vip_threshold  = vip_threshold,
+    data             = data,
+    sample           = sample,
+    group_col        = group_col,
+    vip_threshold    = vip_threshold,
     ortho_components = ortho_components,
-    scaling        = scaling,
-    validation     = validation,
-    cv_folds       = cv_folds,
-    pairwise       = TRUE,
-    feature_as_row = feature_as_row
+    scaling          = scaling,
+    validation       = validation,
+    cv_folds         = cv_folds,
+    pairwise         = TRUE,
+    feature_as_row   = feature_as_row,
+    ref_group        = ref_group,
+    test_method      = test_method,
+    p_adjust_method  = p_adjust_method,
+    p_threshold      = p_threshold,
+    verbose          = verbose
   )
 
   # Reshape into the legacy shape.
@@ -104,9 +128,10 @@ pairwise_oplsda <- function(data, sample, group_col = "group",
   rownames(scores) <- NULL
 
   list(
-    vip_scores    = vip_scores,
-    model_summary = model_summary,
-    scores        = scores,
-    models        = res$models
+    vip_scores            = vip_scores,
+    model_summary         = model_summary,
+    scores                = scores,
+    models                = res$models,
+    differential_analysis = res$differential_analysis
   )
 }

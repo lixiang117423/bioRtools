@@ -246,5 +246,12 @@ compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
   res$regulation <- factor(res$regulation, levels = reg_order)
   res <- res[order(res$regulation, -abs(res$log2_fc)), ]
   res$regulation <- as.character(res$regulation)
+
+  # plot_multi_volcano-compatible column aliases
+  res$feature_id     <- res$feature
+  res$log2FoldChange <- res$log2_fc
+  res$padj           <- res$p_adjust
+  res$pvalue         <- res$p_value
+
   res
 }

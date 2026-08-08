@@ -13,7 +13,12 @@ pairwise_oplsda(
   scaling = "standard",
   validation = "CV",
   cv_folds = 7,
-  feature_as_row = NA
+  feature_as_row = NA,
+  ref_group = NULL,
+  test_method = "auto",
+  p_adjust_method = "BH",
+  p_threshold = 0.05,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -46,6 +51,19 @@ the orientation by matching sample IDs from \code{sample} against the row
 and column names of \code{data}; \code{TRUE} forces features-as-rows;
 \code{FALSE} forces samples-as-rows. When detected or forced, the matrix is
 transposed internally so a manual \code{t()} is not needed.}
+
+\item{ref_group}{Character string specifying the reference group. When set,
+compares each non-reference group against this group instead of all
+pairwise combinations. Passed to \code{\link{opls_analysis}}.}
+
+\item{test_method}{Statistical test for p-values: \code{"auto"} (default),
+\code{"t-test"}, or \code{"wilcoxon"}. Passed to \code{\link{opls_analysis}}.}
+
+\item{p_adjust_method}{P-value adjustment method (default: "BH").
+See \code{\link[stats]{p.adjust}}.}
+
+\item{p_threshold}{Adjusted p-value threshold for significance labeling
+(default: 0.05).}
 }
 \value{
 A named list with:
@@ -64,6 +82,11 @@ A named list with:
       and \code{variance_t1} / \code{variance_to1} / \code{variance_R2X} /
       \code{variance_R2Y} / \code{variance_Q2} when present.}
     \item{\code{models}}{Named list of raw \code{ropls} model objects.}
+    \item{\code{differential_analysis}}{Data frame with log2FC, p-values,
+      and regulation labels per comparison. Compatible with
+      \code{\link{plot_multi_volcano}} via the \code{feature_id},
+      \code{log2FoldChange}, \code{padj}, and \code{pvalue} alias columns.
+      NULL when neither \code{ref_group} nor \code{pairwise = TRUE} is used.}
   }
 }
 \description{

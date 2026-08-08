@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.0] - 2026-08-08
+
+### Added
+- `opls_analysis()`: `differential_analysis` output now includes `feature_id`,
+  `log2FoldChange`, `padj`, and `pvalue` alias columns, making it directly
+  compatible with `plot_multi_volcano()` auto-detection (no manual column
+  renaming needed). Applies to both ref-anchored and all-pairs pairwise modes.
+- `pairwise_oplsda()` (deprecated wrapper): now accepts and forwards
+  `ref_group`, `test_method`, `p_adjust_method`, `p_threshold`, and `verbose`
+  to `opls_analysis()`. Return list now includes `differential_analysis`.
+
 ## [1.79.0] - 2026-08-07
 
 ### Added

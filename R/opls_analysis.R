@@ -89,7 +89,11 @@
 #'     \item{\code{loadings}}{Data frame with variable loadings.}
 #'     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
 #'       regulation labels per comparison. NULL in single-model mode without
-#'       ref_group; populated in ref-anchored and all-pairs pairwise modes.}
+#'       ref_group; populated in ref-anchored and all-pairs pairwise modes.
+#'       Columns \code{feature_id}, \code{log2FoldChange}, \code{padj}, and
+#'       \code{pvalue} are aliases for \code{feature}, \code{log2_fc},
+#'       \code{p_adjust}, and \code{p_value} respectively, for direct use with
+#'       \code{\link{plot_multi_volcano}}.}
 #'     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
 #'       In pairwise mode, includes per-comparison results.}
 #'   }
@@ -937,6 +941,14 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     diff_analysis$regulation <- factor(diff_analysis$regulation, levels = reg_order)
     diff_analysis <- diff_analysis[order(diff_analysis$regulation, -abs(diff_analysis$log2_fc)), ]
     diff_analysis$regulation <- as.character(diff_analysis$regulation)
+  }
+
+  # Add plot_multi_volcano-compatible column aliases
+  if (!is.null(diff_analysis)) {
+    diff_analysis$feature_id     <- diff_analysis$feature
+    diff_analysis$log2FoldChange <- diff_analysis$log2_fc
+    diff_analysis$padj           <- diff_analysis$p_adjust
+    diff_analysis$pvalue         <- diff_analysis$p_value
   }
 
   # Add variance metrics to scores as columns
