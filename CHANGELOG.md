@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.1] - 2026-08-08
+
+### Fixed
+- `opls_analysis()` / `compute_pairwise_diff()`: p-values from t-test/Wilcoxon
+  could be extremely small (e.g. 1e-200) with strong group separation, causing
+  `stats::p.adjust()` (BH) to return exactly 0. This made `plot_multi_volcano()`
+  classify every feature as significant (no NS grey points), producing a
+  clearly wrong volcano plot. p-values are now capped at
+  `.Machine$double.xmin` before and after adjustment to prevent exact zeros.
+
 ## [1.80.0] - 2026-08-08
 
 ### Added

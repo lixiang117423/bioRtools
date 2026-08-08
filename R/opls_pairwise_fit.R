@@ -228,7 +228,13 @@ compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
 
   res <- res %>%
     dplyr::group_by(comparison) %>%
-    dplyr::mutate(p_adjust = stats::p.adjust(p_value, method = p_adjust_method)) %>%
+    dplyr::mutate(
+      # Cap p-values at double.xmin to prevent padj = 0 after BH correction,
+      # which would make -log10(padj) infinite and break volcano-plot coloring.
+      p_value = pmax(p_value, .Machine$double.xmin),
+      p_adjust = stats::p.adjust(p_value, method = p_adjust_method),
+      p_adjust = pmax(p_adjust, .Machine$double.xmin)
+    ) %>%
     dplyr::ungroup()
 
   # VIP is unique per (feature, comparison); join on both to stay unambiguous

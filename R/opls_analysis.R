@@ -922,7 +922,11 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     # Adjust p-values per comparison
     diff_analysis <- diff_analysis %>%
       dplyr::group_by(comparison) %>%
-      dplyr::mutate(p_adjust = stats::p.adjust(p_value, method = p_adjust_method)) %>%
+      dplyr::mutate(
+        p_value = pmax(p_value, .Machine$double.xmin),
+        p_adjust = stats::p.adjust(p_value, method = p_adjust_method),
+        p_adjust = pmax(p_adjust, .Machine$double.xmin)
+      ) %>%
       dplyr::ungroup()
 
     # Add VIP scores
