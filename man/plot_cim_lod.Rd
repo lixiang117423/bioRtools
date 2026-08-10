@@ -68,8 +68,9 @@ Default is "dashed".}
 \item{threshold_linewidth}{Numeric. Threshold line width.
 Default is 0.8.}
 
-\item{y_max}{Numeric. Y-axis upper limit. Default is NULL (auto-computed
-from data as max LOD × 1.05).}
+\item{y_max}{Numeric. Y-axis upper limit. Default is NULL (auto-computed:
+uses max LOD × 1.05; falls back to threshold × 1.1 when max LOD is
+below the threshold line).}
 
 \item{y_breaks}{Numeric vector. Y-axis tick positions.
 Default is NULL (auto-computed by ggplot2).}

@@ -33,8 +33,9 @@
 #'   Default is "dashed".
 #' @param threshold_linewidth Numeric. Threshold line width.
 #'   Default is 0.8.
-#' @param y_max Numeric. Y-axis upper limit. Default is NULL (auto-computed
-#'   from data as max LOD × 1.05).
+#' @param y_max Numeric. Y-axis upper limit. Default is NULL (auto-computed:
+#'   uses max LOD × 1.05; falls back to threshold × 1.1 when max LOD is
+#'   below the threshold line).
 #' @param y_breaks Numeric vector. Y-axis tick positions.
 #'   Default is NULL (auto-computed by ggplot2).
 #' @param line_size Numeric. Line width for LOD curves. Default is 0.5.
@@ -168,6 +169,18 @@ plot_cim_lod <- function(data,
   chr_colors <- rep(colors, length.out = n_chr)
   names(chr_colors) <- unique(df_plot$chr)
 
+  # ── Determine y-axis upper limit ────────────────────────────────────────────
+  max_lod <- max(df_plot$lod)
+  if (is.null(y_max)) {
+    y_upper <- if (!is.null(threshold) && max_lod < threshold) {
+      threshold * 1.1
+    } else {
+      max_lod * 1.05
+    }
+  } else {
+    y_upper <- y_max
+  }
+
   # ── Build ggplot ────────────────────────────────────────────────────────────
   p <- ggplot2::ggplot(
     df_plot,
@@ -180,7 +193,7 @@ plot_cim_lod <- function(data,
     ) +
     ggplot2::scale_y_continuous(
       expand = c(0, 0),
-      limits = c(0, if (is.null(y_max)) max(df_plot$lod) * 1.05 else y_max),
+      limits = c(0, y_upper),
       breaks = if (is.null(y_breaks)) ggplot2::waiver() else y_breaks
     ) +
     ggplot2::scale_color_manual(values = chr_colors) +
