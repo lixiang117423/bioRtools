@@ -94,6 +94,14 @@ read_data <- function(file, delim = "\t", ...) {
                                              show_col_types = FALSE,
                                              name_repair = "minimal"))
       }
+      # n_max=0 read may detect fewer columns than the full read when data
+      # rows extend beyond the header row — pad with sanitized names
+      if (length(raw_names) < ncol(df)) {
+        raw_names <- c(raw_names,
+                       names(df)[(length(raw_names) + 1):ncol(df)])
+      } else if (length(raw_names) > ncol(df)) {
+        raw_names <- raw_names[seq_len(ncol(df))]
+      }
       attr(df, "raw_names") <- raw_names
       df
     },
@@ -102,6 +110,12 @@ read_data <- function(file, delim = "\t", ...) {
       raw_names <- names(readr::read_csv(file, n_max = 0,
                                           show_col_types = FALSE,
                                           name_repair = "minimal"))
+      if (length(raw_names) < ncol(df)) {
+        raw_names <- c(raw_names,
+                       names(df)[(length(raw_names) + 1):ncol(df)])
+      } else if (length(raw_names) > ncol(df)) {
+        raw_names <- raw_names[seq_len(ncol(df))]
+      }
       attr(df, "raw_names") <- raw_names
       df
     },
@@ -110,6 +124,12 @@ read_data <- function(file, delim = "\t", ...) {
       raw_names <- names(readr::read_tsv(file, n_max = 0,
                                           show_col_types = FALSE,
                                           name_repair = "minimal"))
+      if (length(raw_names) < ncol(df)) {
+        raw_names <- c(raw_names,
+                       names(df)[(length(raw_names) + 1):ncol(df)])
+      } else if (length(raw_names) > ncol(df)) {
+        raw_names <- raw_names[seq_len(ncol(df))]
+      }
       attr(df, "raw_names") <- raw_names
       df
     },
@@ -118,6 +138,12 @@ read_data <- function(file, delim = "\t", ...) {
       raw_names <- names(readr::read_delim(file, delim = delim, n_max = 0,
                                             show_col_types = FALSE,
                                             name_repair = "minimal"))
+      if (length(raw_names) < ncol(df)) {
+        raw_names <- c(raw_names,
+                       names(df)[(length(raw_names) + 1):ncol(df)])
+      } else if (length(raw_names) > ncol(df)) {
+        raw_names <- raw_names[seq_len(ncol(df))]
+      }
       attr(df, "raw_names") <- raw_names
       df
     },

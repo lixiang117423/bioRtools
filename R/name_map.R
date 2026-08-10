@@ -46,7 +46,15 @@ name_map <- function(df) {
     warning("No 'raw_names' attribute. Did you read with bioRtools::read_data()? Falling back to sanitized as raw.")
     raw <- sanitized
   } else if (length(raw) != length(sanitized)) {
-    warning(sprintf("Length mismatch: raw_names has %d entries but data frame has %d columns. Output rows may be misaligned.", length(raw), length(sanitized)))
+    warning(sprintf("Length mismatch: raw_names has %d entries but data frame has %d columns. Padding raw_names with sanitized names for missing entries.", length(raw), length(sanitized)))
+    # Pad raw with sanitized for extra columns (e.g. when Excel data extends
+    # beyond the header row, creating auto-named columns the header-only read
+    # for raw_names didn't see).
+    if (length(raw) < length(sanitized)) {
+      raw <- c(raw, sanitized[(length(raw) + 1):length(sanitized)])
+    } else {
+      raw <- raw[seq_along(sanitized)]
+    }
   }
 
   data.frame(name = sanitized, raw = raw, stringsAsFactors = FALSE)

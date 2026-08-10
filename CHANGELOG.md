@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.3] - 2026-08-10
+
+### Fixed
+- `name_map()`: gracefully handles length mismatch between `raw_names` attribute
+  and actual column count by padding/truncating instead of crashing with
+  "arguments imply differing number of rows".
+- `read_data()`: normalizes `raw_names` to match `ncol(df)` in all tabular
+  branches, preventing the mismatch at the source when Excel data rows extend
+  beyond the header row.
+
 ## [1.80.2] - 2026-08-10
 
 ### Changed
