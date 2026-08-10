@@ -33,9 +33,10 @@
 #'   Default is "dashed".
 #' @param threshold_linewidth Numeric. Threshold line width.
 #'   Default is 0.8.
-#' @param y_max Numeric. Y-axis upper limit. Default is 100.
+#' @param y_max Numeric. Y-axis upper limit. Default is NULL (auto-computed
+#'   from data as max LOD × 1.05).
 #' @param y_breaks Numeric vector. Y-axis tick positions.
-#'   Default is seq(0, 100, 20).
+#'   Default is NULL (auto-computed by ggplot2).
 #' @param line_size Numeric. Line width for LOD curves. Default is 0.5.
 #'
 #' @return A list containing:
@@ -73,9 +74,7 @@
 #'
 #' # From file
 #' result <- plot_cim_lod("cim_lod_data.tsv",
-#'   threshold = 3.5,
-#'   y_max = 80,
-#'   y_breaks = seq(0, 80, 10)
+#'   threshold = 3.5
 #' )
 #' result$plot
 #' }
@@ -94,8 +93,8 @@ plot_cim_lod <- function(data,
                          threshold_color = "red",
                          threshold_linetype = "dashed",
                          threshold_linewidth = 0.8,
-                         y_max = 100,
-                         y_breaks = seq(0, 100, 20),
+                         y_max = NULL,
+                         y_breaks = NULL,
                          line_size = 0.5) {
 
   # ── Read file if path provided ──────────────────────────────────────────────
@@ -122,8 +121,8 @@ plot_cim_lod <- function(data,
     stop("'pos_scale' must be a positive number")
   }
 
-  if (!is.numeric(y_max) || y_max <= 0) {
-    stop("'y_max' must be a positive number")
+  if (!is.null(y_max) && (!is.numeric(y_max) || y_max <= 0)) {
+    stop("'y_max' must be NULL or a positive number")
   }
 
   # ── Preprocess data ─────────────────────────────────────────────────────────
@@ -181,8 +180,8 @@ plot_cim_lod <- function(data,
     ) +
     ggplot2::scale_y_continuous(
       expand = c(0, 0),
-      limits = c(0, y_max),
-      breaks = y_breaks
+      limits = c(0, if (is.null(y_max)) max(df_plot$lod) * 1.05 else y_max),
+      breaks = if (is.null(y_breaks)) ggplot2::waiver() else y_breaks
     ) +
     ggplot2::scale_color_manual(values = chr_colors) +
     ggplot2::labs(

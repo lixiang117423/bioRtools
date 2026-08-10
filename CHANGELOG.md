@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.2] - 2026-08-10
+
+### Changed
+- `plot_cim_lod()`: `y_max` and `y_breaks` now default to NULL, auto-computing
+  the y-axis range from the data (max LOD × 1.05) and letting ggplot2 determine
+  tick positions. Explicit values are still accepted for manual control.
+
 ## [1.80.1] - 2026-08-08
 
 ### Fixed

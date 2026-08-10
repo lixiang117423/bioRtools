@@ -20,8 +20,8 @@ plot_cim_lod(
   threshold_color = "red",
   threshold_linetype = "dashed",
   threshold_linewidth = 0.8,
-  y_max = 100,
-  y_breaks = seq(0, 100, 20),
+  y_max = NULL,
+  y_breaks = NULL,
   line_size = 0.5
 )
 }
@@ -68,10 +68,11 @@ Default is "dashed".}
 \item{threshold_linewidth}{Numeric. Threshold line width.
 Default is 0.8.}
 
-\item{y_max}{Numeric. Y-axis upper limit. Default is 100.}
+\item{y_max}{Numeric. Y-axis upper limit. Default is NULL (auto-computed
+from data as max LOD × 1.05).}
 
 \item{y_breaks}{Numeric vector. Y-axis tick positions.
-Default is seq(0, 100, 20).}
+Default is NULL (auto-computed by ggplot2).}
 
 \item{line_size}{Numeric. Line width for LOD curves. Default is 0.5.}
 }
@@ -114,9 +115,7 @@ result$plot
 
 # From file
 result <- plot_cim_lod("cim_lod_data.tsv",
-  threshold = 3.5,
-  y_max = 80,
-  y_breaks = seq(0, 80, 10)
+  threshold = 3.5
 )
 result$plot
 }
