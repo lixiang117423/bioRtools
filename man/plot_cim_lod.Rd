@@ -6,7 +6,7 @@
 \usage{
 plot_cim_lod(
   data,
-  threshold = NULL,
+  threshold = "threshold",
   chr_col = "chr",
   pos_col = "pos",
   lod_col = "lod",
@@ -31,7 +31,10 @@ If a file path, it is read with \code{data.table::fread()}.
 Must contain chromosome, position, and LOD score columns.}
 
 \item{threshold}{Numeric value for a genome-wide horizontal threshold
-line. Default is NULL (no line).}
+line, or a character string naming a column in \code{data} that contains
+per-row threshold values (the column maximum is used as the cutoff).
+Default is "threshold" — auto-detects a column named "threshold".
+Set to NULL to suppress the threshold line entirely.}
 
 \item{chr_col}{Character. Column name for chromosome. Default is "chr".}
 

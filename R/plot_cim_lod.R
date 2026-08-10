@@ -10,7 +10,10 @@
 #'   If a file path, it is read with \code{data.table::fread()}.
 #'   Must contain chromosome, position, and LOD score columns.
 #' @param threshold Numeric value for a genome-wide horizontal threshold
-#'   line. Default is NULL (no line).
+#'   line, or a character string naming a column in \code{data} that contains
+#'   per-row threshold values (the column maximum is used as the cutoff).
+#'   Default is "threshold" — auto-detects a column named "threshold".
+#'   Set to NULL to suppress the threshold line entirely.
 #' @param chr_col Character. Column name for chromosome. Default is "chr".
 #' @param pos_col Character. Column name for physical position.
 #'   Default is "pos".
@@ -80,7 +83,7 @@
 #' result$plot
 #' }
 plot_cim_lod <- function(data,
-                         threshold = NULL,
+                         threshold = "threshold",
                          chr_col = "chr",
                          pos_col = "pos",
                          lod_col = "lod",
@@ -169,11 +172,24 @@ plot_cim_lod <- function(data,
   chr_colors <- rep(colors, length.out = n_chr)
   names(chr_colors) <- unique(df_plot$chr)
 
+  # ── Resolve threshold value ──────────────────────────────────────────────────
+  if (is.character(threshold)) {
+    if (threshold %in% colnames(df)) {
+      threshold_val <- max(df[[threshold]], na.rm = TRUE)
+    } else {
+      threshold_val <- NULL
+    }
+  } else if (is.numeric(threshold)) {
+    threshold_val <- threshold
+  } else {
+    threshold_val <- NULL
+  }
+
   # ── Determine y-axis upper limit ────────────────────────────────────────────
   max_lod <- max(df_plot$lod)
   if (is.null(y_max)) {
-    y_upper <- if (!is.null(threshold) && max_lod < threshold) {
-      threshold * 1.1
+    y_upper <- if (!is.null(threshold_val) && max_lod < threshold_val) {
+      threshold_val * 1.1
     } else {
       max_lod * 1.05
     }
@@ -205,14 +221,11 @@ plot_cim_lod <- function(data,
     ggprism::theme_prism() +
     ggplot2::theme(legend.position = "none")
 
-  # ── Add threshold line if requested ─────────────────────────────────────────
-  if (!is.null(threshold)) {
-    if (!is.numeric(threshold) || length(threshold) != 1L) {
-      stop("'threshold' must be a single numeric value")
-    }
+  # ── Add threshold line if available ─────────────────────────────────────────
+  if (!is.null(threshold_val)) {
     p <- p +
       ggplot2::geom_hline(
-        yintercept = threshold,
+        yintercept = threshold_val,
         color = threshold_color,
         linetype = threshold_linetype,
         linewidth = threshold_linewidth
