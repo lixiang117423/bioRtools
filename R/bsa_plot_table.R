@@ -43,24 +43,33 @@ bsa_plot_table <- function(data) {
     stop("Required columns missing: ", paste(missing, collapse = ", "))
   }
 
+  # Natural sort chromosome order
+  chr_levels <- stringr::str_sort(unique(df$Chromosome), numeric = TRUE)
+  df <- df %>%
+    dplyr::mutate(
+      Position = .data$Position / 1000000,
+      Chromosome = factor(.data$Chromosome, levels = chr_levels)
+    )
+
   p <- df %>%
-    dplyr::mutate(Position = .data$Position / 1000000) %>%
     ggplot2::ggplot() +
     ggplot2::geom_point(
       ggplot2::aes(.data$Position, .data$Raw_Value),
       color = "grey80"
     ) +
     ggplot2::geom_hline(
-      ggplot2::aes(yintercept = .data$Threshold),
-      color = "red"
+      ggplot2::aes(yintercept = .data$Threshold, color = Method)
     ) +
     ggplot2::geom_line(
       ggplot2::aes(.data$Position, .data$Smooth_Value),
       color = "blue"
     ) +
     ggplot2::facet_grid(Method ~ Chromosome, scales = "free") +
-    ggplot2::labs(x = "Position (Mb)", y = "Value") +
-    ggplot2::theme_bw()
+    ggplot2::labs(x = "Position (Mb)", y = "Value", color = NULL) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      strip.text.y = ggplot2::element_text(angle = 0)
+    )
 
   table <- df %>%
     dplyr::filter(.data$Above_Threshold == TRUE) %>%
