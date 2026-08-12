@@ -57,18 +57,22 @@ bsa_plot_table <- function(data) {
       ggplot2::aes(.data$Position, .data$Raw_Value),
       color = "grey80"
     ) +
+    # Method 已由 facet_grid 分面体现, hline 用固定色即可, 避免 color legend 与 strip 重复
     ggplot2::geom_hline(
-      ggplot2::aes(yintercept = .data$Threshold, color = Method)
+      ggplot2::aes(yintercept = .data$Threshold),
+      color = "red",
+      linetype = "dashed"
     ) +
     ggplot2::geom_line(
       ggplot2::aes(.data$Position, .data$Smooth_Value),
       color = "blue"
     ) +
     ggplot2::facet_grid(Method ~ Chromosome, scales = "free") +
-    ggplot2::labs(x = "Position (Mb)", y = "Value", color = NULL) +
+    ggplot2::labs(x = "Position (Mb)", y = "Value") +
     ggplot2::theme_bw() +
     ggplot2::theme(
-      strip.text.y = ggplot2::element_text(angle = 0)
+      strip.text.y = ggplot2::element_text(angle = 0),
+      legend.position = "none"
     )
 
   table <- df %>%
