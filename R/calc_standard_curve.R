@@ -92,6 +92,7 @@ calc_standard_curve <- function(cq_table,
 
 #' Merge data and handle gene information flexibly
 #' @keywords internal
+#' @noRd
 merge_standard_curve_data <- function(cq_table, concentration_table, gene_name) {
   # Basic merge
   merged_data <- cq_table %>%
@@ -115,6 +116,7 @@ merge_standard_curve_data <- function(cq_table, concentration_table, gene_name) 
 
 #' Validate input parameters (after merging)
 #' @keywords internal
+#' @noRd
 validate_inputs_fixed <- function(merged_data, highest_concentration,
                                   lowest_concentration, dilution_factor, use_mean_cq) {
 
@@ -167,6 +169,7 @@ validate_inputs_fixed <- function(merged_data, highest_concentration,
 
 #' Prepare and filter data for analysis
 #' @keywords internal
+#' @noRd
 prepare_data_fixed <- function(merged_data, highest_concentration,
                                lowest_concentration, dilution_factor, use_mean_cq) {
   # Filter concentration range and remove missing values
@@ -209,6 +212,7 @@ prepare_data_fixed <- function(merged_data, highest_concentration,
 
 #' Calculate regression statistics for each gene
 #' @keywords internal
+#' @noRd
 calculate_regression_stats <- function(processed_data, dilution_factor, use_mean_cq) {
 
   genes <- unique(processed_data$Gene)
@@ -321,6 +325,7 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
 
 #' Create standard curve plot
 #' @keywords internal
+#' @noRd
 create_standard_curve_plot <- function(processed_data, use_mean_cq) {
 
   if (nrow(processed_data) == 0) {

@@ -78,6 +78,7 @@ calc_expression_delta_ct <- function(cq_table,
 
 #' Prepare and merge data for delta-Ct calculation
 #' @keywords internal
+#' @noRd
 prepare_delta_ct_data <- function(cq_table, design_table) {
   # Use the same approach as original function - no strict validation
   merged_data <- cq_table %>%
@@ -96,6 +97,7 @@ prepare_delta_ct_data <- function(cq_table, design_table) {
 
 #' Calculate reference gene mean Cq values
 #' @keywords internal
+#' @noRd
 calculate_reference_means <- function(merged_data, reference_gene) {
 
   reference_means <- merged_data %>%
@@ -113,6 +115,7 @@ calculate_reference_means <- function(merged_data, reference_gene) {
 
 #' Calculate target gene expression levels
 #' @keywords internal
+#' @noRd
 calculate_target_expression <- function(merged_data, reference_data, reference_gene) {
 
   expression_data <- merged_data %>%
@@ -144,6 +147,7 @@ calculate_target_expression <- function(merged_data, reference_data, reference_g
 
 #' Calculate summary statistics for expression data
 #' @keywords internal
+#' @noRd
 calculate_expression_summary <- function(expression_data) {
 
   summary_stats <- expression_data %>%
@@ -168,6 +172,7 @@ calculate_expression_summary <- function(expression_data) {
 
 #' Create expression level plot
 #' @keywords internal
+#' @noRd
 create_expression_plot <- function(summary_table) {
 
   if (nrow(summary_table) == 0) {

@@ -123,6 +123,7 @@ calc_expression_standard_curve <- function(cq_table,
 
 #' Calculate expression using standard curves
 #' @keywords internal
+#' @noRd
 calculate_curve_expression <- function(cq_table, curve_table, design_table) {
   # Determine treatment column name
   treatment_col <- if ("Treatment" %in% names(design_table)) "Treatment" else "Group"
@@ -155,6 +156,7 @@ calculate_curve_expression <- function(cq_table, curve_table, design_table) {
 
 #' Validate input parameters for standard curve calculation (after merging)
 #' @keywords internal
+#' @noRd
 validate_curve_inputs_fixed <- function(merged_data, curve_table, reference_gene,
                                         reference_group, statistical_method, plot_type) {
 
@@ -206,6 +208,7 @@ validate_curve_inputs_fixed <- function(merged_data, curve_table, reference_gene
 
 #' Check for Cq values outside curve range
 #' @keywords internal
+#' @noRd
 check_curve_range <- function(expression_data) {
 
   out_of_range_data <- expression_data %>%
@@ -228,6 +231,7 @@ check_curve_range <- function(expression_data) {
 
 #' Normalize expression by reference gene
 #' @keywords internal
+#' @noRd
 normalize_by_reference_gene <- function(expression_data, reference_gene) {
   # Calculate reference gene means by treatment
   reference_means <- expression_data %>%
@@ -250,6 +254,7 @@ normalize_by_reference_gene <- function(expression_data, reference_gene) {
 
 #' Calculate summary statistics
 #' @keywords internal
+#' @noRd
 calculate_curve_summary <- function(expression_data) {
 
   summary_stats <- expression_data %>%
@@ -273,6 +278,7 @@ calculate_curve_summary <- function(expression_data) {
 
 #' Perform statistical analysis for standard curve data
 #' @keywords internal
+#' @noRd
 perform_curve_statistical_analysis <- function(expression_data, reference_group, statistical_method) {
 
   tryCatch(
@@ -361,6 +367,7 @@ perform_curve_statistical_analysis <- function(expression_data, reference_group,
 
 #' Add statistical annotations to summary table
 #' @keywords internal
+#' @noRd
 add_curve_statistical_annotations <- function(summary_table, statistical_results, reference_group) {
 
   if (is.list(statistical_results) && "letters" %in% names(statistical_results)) {
@@ -428,6 +435,7 @@ add_curve_statistical_annotations <- function(summary_table, statistical_results
 
 #' Create standard curve expression plot
 #' @keywords internal
+#' @noRd
 create_curve_expression_plot <- function(summary_data, plot_type, plot_ncol) {
 
   if (nrow(summary_data) == 0) {

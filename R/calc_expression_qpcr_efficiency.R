@@ -119,6 +119,7 @@ calc_expression_qpcr_efficiency <- function(cq_table,
 
 #' Merge data exactly as in original
 #' @keywords internal
+#' @noRd
 merge_qpcr_data <- function(cq_table, design_table) {
 
   df <- cq_table %>%
@@ -138,6 +139,7 @@ merge_qpcr_data <- function(cq_table, design_table) {
 
 #' Validate merged data (after merging, not separate tables)
 #' @keywords internal
+#' @noRd
 validate_qpcr_inputs_fixed <- function(merged_data, statistical_method, plot_type) {
 
   if (!is.data.frame(merged_data)) {
@@ -180,6 +182,7 @@ validate_qpcr_inputs_fixed <- function(merged_data, statistical_method, plot_typ
 
 #' Calculate expression using original algorithm exactly
 #' @keywords internal
+#' @noRd
 calculate_qpcr_expression <- function(df) {
 
   df_expression <- df %>%
@@ -203,6 +206,7 @@ calculate_qpcr_expression <- function(df) {
 
 #' Find reference genes using original GeNorm implementation
 #' @keywords internal
+#' @noRd
 find_reference_genes_original <- function(df_expression) {
   # Handle case with insufficient genes for GeNorm
   all_genes <- unique(df_expression$gene)
@@ -330,6 +334,7 @@ find_reference_genes_original <- function(df_expression) {
 
 #' Calculate normalization factors using original algorithm
 #' @keywords internal
+#' @noRd
 calculate_normalization_factors_original <- function(df_expression, reference_gene) {
   # Original geometric mean function
   geometric_mean <- function(x) {
@@ -383,6 +388,7 @@ calculate_normalization_factors_original <- function(df_expression, reference_ge
 
 #' Calculate corrected expression using original algorithm
 #' @keywords internal
+#' @noRd
 calculate_corrected_expression_original <- function(df_expression, reference_gene, df_factor) {
 
   df_goi <- df_expression %>%
@@ -429,6 +435,7 @@ calculate_corrected_expression_original <- function(df_expression, reference_gen
 
 #' Perform statistical analysis using original method
 #' @keywords internal
+#' @noRd
 perform_statistical_analysis_original <- function(res_all, reference_group, statistical_method) {
 
   tryCatch(
@@ -595,6 +602,7 @@ perform_statistical_analysis_original <- function(res_all, reference_group, stat
 
 #' Create plot using original approach
 #' @keywords internal
+#' @noRd
 create_plot_original <- function(res_all, plot_type, plot_ncol) {
 
   if (nrow(res_all) == 0) {

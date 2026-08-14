@@ -110,6 +110,7 @@ calc_expression_delta_delta_ct <- function(cq_table,
 
 #' Prepare and merge data for delta-delta Ct calculation
 #' @keywords internal
+#' @noRd
 prepare_ddct_data <- function(cq_table, design_table) {
 
   merged_data <- cq_table %>%
@@ -128,6 +129,7 @@ prepare_ddct_data <- function(cq_table, design_table) {
 
 #' Validate input parameters for delta-delta Ct calculation (after merging)
 #' @keywords internal
+#' @noRd
 validate_ddct_inputs_fixed <- function(merged_data, reference_gene,
                                        reference_group, statistical_method, plot_type) {
   # Check if reference gene exists in merged data
@@ -161,6 +163,7 @@ validate_ddct_inputs_fixed <- function(merged_data, reference_gene,
 
 #' Calculate delta-delta Ct expression values
 #' @keywords internal
+#' @noRd
 calculate_ddct_expression <- function(merged_data, reference_gene, reference_group) {
   # Get target genes (all except reference gene)
   target_genes <- setdiff(unique(merged_data$gene), reference_gene)
@@ -223,6 +226,7 @@ calculate_ddct_expression <- function(merged_data, reference_gene, reference_gro
 
 #' Remove outliers using IQR method
 #' @keywords internal
+#' @noRd
 remove_expression_outliers <- function(expression_data) {
 
   find_outliers <- function(x) {
@@ -245,6 +249,7 @@ remove_expression_outliers <- function(expression_data) {
 
 #' Calculate summary statistics
 #' @keywords internal
+#' @noRd
 calculate_ddct_summary <- function(expression_data) {
 
   summary_stats <- expression_data %>%
@@ -268,6 +273,7 @@ calculate_ddct_summary <- function(expression_data) {
 
 #' Perform statistical analysis
 #' @keywords internal
+#' @noRd
 perform_statistical_analysis <- function(expression_data, reference_group, statistical_method) {
 
   tryCatch(
@@ -325,6 +331,7 @@ perform_statistical_analysis <- function(expression_data, reference_group, stati
 
 #' Add statistical annotations to summary table
 #' @keywords internal
+#' @noRd
 add_statistical_annotations <- function(summary_table, statistical_results) {
 
   if (nrow(statistical_results) == 0) {
@@ -378,6 +385,7 @@ add_statistical_annotations <- function(summary_table, statistical_results) {
 
 #' Create delta-delta Ct plot
 #' @keywords internal
+#' @noRd
 create_ddct_plot <- function(summary_data, expression_data, plot_type, plot_ncol) {
 
   if (nrow(summary_data) == 0) {
