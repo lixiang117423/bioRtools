@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.6] - 2026-08-14
+
+### Changed
+- Development guide upgraded to v2.2 (CLAUDE.md): fixed template/rule
+  contradictions, added a testing section (testthat 3e), a hard rule for
+  declaring every `pkg::`/`importFrom` dependency in DESCRIPTION, an
+  expanded global-state checklist (RNG seed, graphics devices, parallel
+  clusters), message/cat conventions, WIP-function conventions, and
+  seq_len loop guidance.
+
 ## [1.80.5] - 2026-08-12
 
 ### Changed
