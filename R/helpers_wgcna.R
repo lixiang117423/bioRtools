@@ -291,8 +291,8 @@ calculate_module_trait_correlations <- function(expression_data, module_colors,
   module_trait_pval <- matrix(NA, nrow = nrow(module_trait_cor),
                               ncol = ncol(module_trait_cor))
 
-  for (i in 1:nrow(module_trait_cor)) {
-    for (j in 1:ncol(module_trait_cor)) {
+  for (i in seq_len(nrow(module_trait_cor))) {
+    for (j in seq_len(ncol(module_trait_cor))) {
       pval <- stats::cor.test(module_eigengenes[, i], traits[, j],
                              method = correlation_method)$p.value
       module_trait_pval[i, j] <- pval

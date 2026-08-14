@@ -50,14 +50,14 @@
 #'
 #' p <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
-#'   bioRtools::theme_nature()
+#'   bioRtools:::theme_nature()
 #'
 #' # Single-column Nature figure
-#' bioRtools::save_pub(p, "~/figures/fig1", width_mm = 89)
+#' bioRtools:::save_pub(p, "~/figures/fig1", width_mm = 89)
 #' # writes: fig1.svg, fig1.pdf, fig1.tiff
 #'
 #' # PDF only
-#' bioRtools::save_pub(p, "~/figures/fig1", formats = "pdf")
+#' bioRtools:::save_pub(p, "~/figures/fig1", formats = "pdf")
 #' }
 save_pub <- function(plot, filename, width_mm = 183, height_mm = 120,
                      dpi = 600, formats = c("svg", "pdf", "tiff"),

@@ -125,7 +125,9 @@ plot_sv_accumulation <- function(data,
   mode(mat) <- "integer"
 
   # ── Random permutation: Pan/Core accumulation ───────────────────────────────
+  old_seed <- capture_rng_state()
   set.seed(seed)
+  on.exit(restore_rng_state(old_seed), add = TRUE)
 
   pan_mat <- matrix(NA_integer_, nrow = n_perm, ncol = n_sample)
   core_mat <- matrix(NA_integer_, nrow = n_perm, ncol = n_sample)

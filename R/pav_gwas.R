@@ -528,7 +528,7 @@ pav_gwas <- function(pav_data,
 
     if (verbose) {
       cat("  Categorical phenotype:\n")
-      for (i in 1:length(pheno_stats$categories)) {
+      for (i in seq_along(pheno_stats$categories)) {
         cat(sprintf("    %s: %d samples (%.1f%%)\n",
           pheno_stats$categories[i],
           pheno_stats$category_counts[i],
@@ -695,7 +695,7 @@ pav_gwas <- function(pav_data,
     } else if (analysis_type == "categorical") {
       category_counts <- table(transformed_phenotype)
       cat("Categorical transformation:\n")
-      for (i in 1:length(category_counts)) {
+      for (i in seq_along(category_counts)) {
         cat(sprintf("  Category %d: %d samples\n", i, category_counts[i]))
       }
     } else if (analysis_type %in% c("continuous", "continuous_raw")) {
@@ -1082,13 +1082,11 @@ pav_gwas <- function(pav_data,
     }
   }
 
-  # Set up parallel processing
+  # Set up parallel processing (cluster cleaned up on exit, including errors)
   cl <- parallel::makeCluster(n_cores)
+  on.exit(parallel::stopCluster(cl), add = TRUE)
   parallel::clusterExport(cl, c("test_feature_association", "test_type", "transformed_phenotype", "covariates"),
     envir = environment())
-  parallel::clusterEvalQ(cl, {
-    library(stats)
-  })
 
   # Perform association tests
   start_time <- Sys.time()
@@ -1100,8 +1098,6 @@ pav_gwas <- function(pav_data,
     result$feature_index <- i
     result
   })
-
-  parallel::stopCluster(cl)
 
   end_time <- Sys.time()
   if (verbose) {
@@ -1301,7 +1297,7 @@ pav_gwas <- function(pav_data,
     cat(sprintf("Method used: %s analysis with %s test\n", analysis_type, test_type))
     cat(sprintf("Significance threshold (Bonferroni): %.2e\n", analysis_summary$significance_threshold))
     cat("\n=== Significant associations at different thresholds ===\n")
-    for (i in 1:nrow(threshold_info)) {
+    for (i in seq_len(nrow(threshold_info))) {
       cat(sprintf("p < %s: %d features\n",
         threshold_info$threshold_label[i],
         threshold_info$n_significant[i]))
@@ -1318,7 +1314,7 @@ pav_gwas <- function(pav_data,
         cat(sprintf("Found %d significant associations for continuous phenotype\n", n_sig))
         top_hits <- head(gwas_results[order(gwas_results$p_value), ], 5)
         cat("Top 5 associations:\n")
-        for (i in 1:nrow(top_hits)) {
+        for (i in seq_len(nrow(top_hits))) {
           cat(sprintf("  %s: p=%.2e, effect=%.3f\n",
             top_hits$feature_id[i], top_hits$p_value[i], top_hits$effect_size[i]))
         }
@@ -1336,7 +1332,7 @@ pav_gwas <- function(pav_data,
   # Save results for each significance threshold
   if (verbose) cat("Creating threshold-specific result files...\n")
 
-  for (i in 1:nrow(threshold_info)) {
+  for (i in seq_len(nrow(threshold_info))) {
     thresh <- threshold_info$threshold[i]
     thresh_label <- threshold_info$threshold_label[i]
 
@@ -1400,7 +1396,7 @@ pav_gwas <- function(pav_data,
     ggplot2::scale_color_identity()
 
   # Add multiple threshold lines individually
-  for (i in 1:nrow(threshold_lines)) {
+  for (i in seq_len(nrow(threshold_lines))) {
     manhattan_plot <- manhattan_plot +
       geom_hline(yintercept = threshold_lines$neg_log10_threshold[i],
         linetype = "dashed", color = threshold_lines$color[i],
@@ -1552,7 +1548,7 @@ pav_gwas <- function(pav_data,
 
   # Create threshold summary lines
   threshold_summary_lines <- character(nrow(threshold_info))
-  for (i in 1:nrow(threshold_info)) {
+  for (i in seq_len(nrow(threshold_info))) {
     threshold_summary_lines[i] <- paste0("p < ", threshold_info$threshold_label[i],
       ": ", threshold_info$n_significant[i], " features")
   }
@@ -1629,7 +1625,7 @@ pav_gwas <- function(pav_data,
     cat("  - analysis_summary.txt: Enhanced summary report\n")
 
     cat("\nThreshold-specific output files:\n")
-    for (i in 1:nrow(threshold_info)) {
+    for (i in seq_len(nrow(threshold_info))) {
       thresh_label <- threshold_info$threshold_label[i]
       n_sig <- threshold_info$n_significant[i]
       filename <- paste0("significant_p", gsub("e-0?", "e-", thresh_label), ".csv")

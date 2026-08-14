@@ -857,7 +857,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
         dplyr::filter(regulation != "Not significant") %>%
         head(5)
 
-      for (i in 1:nrow(top_genes)) {
+      for (i in seq_len(nrow(top_genes))) {
         direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "↑", "↓")
         cat(sprintf("  %s %s: %s (log2FC = %.2f, padj = %.2e)\n",
           direction_symbol,

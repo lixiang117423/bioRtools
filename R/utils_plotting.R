@@ -22,7 +22,7 @@
 #' @noRd
 apply_bioRtools_theme <- function(plot, base_size = 12, base_family = "Arial") {
   plot +
-    bioRtools::theme_bio(base_size = base_size, base_family = base_family) +
+    theme_bio(base_size = base_size, base_family = base_family) +
     ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, size = base_size + 2, face = "bold"))
 }
 

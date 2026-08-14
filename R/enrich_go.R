@@ -372,7 +372,7 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
     if (nrow(go_results) > 0) {
       cat("Top 5 enriched terms:\n")
       top_terms <- head(go_results, 5)
-      for (i in 1:nrow(top_terms)) {
+      for (i in seq_len(nrow(top_terms))) {
         cat(sprintf("%s: %s (p.adj = %.2e, genes = %d)\n",
           top_terms$id[i],
           substr(top_terms$description[i], 1, 50),

@@ -127,7 +127,9 @@ normalize_abund <- function(data,
     depth <- min(colSums(m))
     if (verbose) message("rarefy depth (min colSum): ", depth)
   }
+  old_seed <- capture_rng_state()
   set.seed(seed)
+  on.exit(restore_rng_state(old_seed), add = TRUE)
   r <- vegan::rrarefy(t(m), sample = depth)   # rrarefy: rows = samples
   t(r)
 }

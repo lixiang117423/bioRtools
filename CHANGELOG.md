@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.8] - 2026-08-14
+
+### Fixed
+- plot_volcano()/apply_bioRtools_theme(): replaced broken
+  bioRtools::theme_bio() self-references (theme_bio is not exported) with
+  direct internal calls, fixing a runtime error present since v1.20.0.
+- pav_gwas(): parallel cluster is now stopped via on.exit(), so worker
+  processes no longer leak when the association tests error; removed a
+  redundant clusterEvalQ(library(stats)) call and a duplicate stopCluster().
+- plot_ld_heatmap(): the file graphics device is now closed via on.exit()
+  (also on error) and par(xpd = TRUE) is restored on exit instead of leaking
+  into the user's graphics state; namespaced grDevices::/graphics:: calls.
+- Added capture_rng_state()/restore_rng_state() helpers and used them at all
+  six set.seed() call sites (tsne_analysis, normalize_abund, rarefy_table,
+  plot_sv_accumulation, rf_taxa_classification x2) so user RNG state is
+  restored on exit.
+- Replaced all 16 for-loop 1:nrow()/1:ncol()/1:length() bounds with
+  seq_len()/seq_along() to avoid the silent 1:0 bug on empty inputs.
+- save_pub()/theme_nature() examples: switched bioRtools:: to bioRtools:::
+  for these unexported WIP functions and wrapped theme_nature examples in
+  \dontrun{}.
+
 ## [1.80.7] - 2026-08-14
 
 ### Fixed

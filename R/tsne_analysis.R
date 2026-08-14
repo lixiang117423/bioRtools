@@ -250,7 +250,9 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
 
   # --- Run t-SNE ---
   if (!is.null(seed)) {
+    old_seed <- capture_rng_state()
     set.seed(seed)
+    on.exit(restore_rng_state(old_seed), add = TRUE)
   }
 
   tsne_model <- tryCatch({

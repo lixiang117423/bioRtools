@@ -210,8 +210,8 @@ plot_volcano <- function(data,
       size = ifelse(size == "baseMean", "Base Mean", size),
       color = ifelse(color == "group", "Group", color)
     ) +
-    # Apply custom theme
-    bioRtools::theme_bio() +
+    # Apply custom theme (theme_bio is internal; call directly, not via ::)
+    theme_bio() +
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5, size = 14, face = "bold"),
       plot.subtitle = ggplot2::element_text(hjust = 0.5, size = 12),

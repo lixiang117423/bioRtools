@@ -182,8 +182,10 @@ rarefy_table <- function(data,
     }
   }
 
-  # Set seed for reproducibility
+  # Set seed for reproducibility (restored on exit)
+  old_seed <- capture_rng_state()
   set.seed(seed)
+  on.exit(restore_rng_state(old_seed), add = TRUE)
 
   # Perform rarefaction
   if (verbose) {

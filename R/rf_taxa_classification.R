@@ -215,7 +215,9 @@ rf_taxa_classification <- function(data,
     task_rf <- mlr3::as_task_classif(df_ml, target = "group")
 
     # Train/test split
+    old_seed <- capture_rng_state()
     set.seed(seed)
+    on.exit(restore_rng_state(old_seed), add = TRUE)
     split <- mlr3::partition(task_rf, ratio = ratio)
 
     # Learner
@@ -243,7 +245,9 @@ rf_taxa_classification <- function(data,
     )
 
     # Tune
+    old_seed_tune <- capture_rng_state()
     set.seed(seed_tune)
+    on.exit(restore_rng_state(old_seed_tune), add = TRUE)
     at$train(task_rf, row_ids = split$train)
 
     # Train with best params

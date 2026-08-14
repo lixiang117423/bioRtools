@@ -1044,7 +1044,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     if (n_important_vars > 0) {
       cat("\nTop 5 important variables:\n")
       top_vip <- head(vip_data[vip_data$important, ], 5)
-      for (i in 1:nrow(top_vip)) {
+      for (i in seq_len(nrow(top_vip))) {
         cat(sprintf("  %s: VIP = %.3f\n", top_vip$feature[i], top_vip$vip[i]))
       }
     }

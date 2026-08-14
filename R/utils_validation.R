@@ -298,3 +298,41 @@ validate_file_exists <- function(file_path, file_type = "File") {
 
   invisible(TRUE)
 }
+
+# ============================================================================
+# RNG State Management
+# ============================================================================
+
+#' Capture the current global RNG state
+#'
+#' Returns the current code{.Random.seed} (or NULL when the RNG has not been
+#' initialized yet), so that code{set.seed()} calls inside functions can be
+#' undone with code{restore_rng_state()} on exit.
+#'
+#' @return The current code{.Random.seed}, or NULL if it does not exist.
+#' @keywords internal
+#' @noRd
+capture_rng_state <- function() {
+  if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+    get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+  } else {
+    NULL
+  }
+}
+
+#' Restore a previously captured global RNG state
+#'
+#' @param old_seed State returned by code{capture_rng_state()}.
+#' @return Invisibly NULL.
+#' @keywords internal
+#' @noRd
+restore_rng_state <- function(old_seed) {
+  if (is.null(old_seed)) {
+    if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+      rm(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    }
+  } else {
+    assign(".Random.seed", old_seed, envir = .GlobalEnv, inherits = FALSE)
+  }
+  invisible(NULL)
+}

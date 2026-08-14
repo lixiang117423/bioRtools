@@ -794,7 +794,7 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
         head(3)
 
       cat("\nTop 3 variables contributing to PC1:\n")
-      for (i in 1:nrow(important_vars_pc1)) {
+      for (i in seq_len(nrow(important_vars_pc1))) {
         cat(sprintf("  %s (loading = %.3f)\n",
           important_vars_pc1$variable[i],
           important_vars_pc1$PC1[i]))

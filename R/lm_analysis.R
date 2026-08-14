@@ -355,7 +355,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
         dplyr::filter(significance == "Significant") %>%
         dplyr::select(!!rlang::sym(group), slope, r_squared, overall_pvalue_formatted)
 
-      for (i in 1:nrow(sig_results)) {
+      for (i in seq_len(nrow(sig_results))) {
         cat(sprintf("  %s: slope = %.3f, R² = %.3f, p = %s\n",
           sig_results[[group]][i],
           sig_results$slope[i],

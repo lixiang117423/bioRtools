@@ -307,7 +307,7 @@ plot_ld_heatmap <- function(vcf_file,
     color_function <- function(n) color_scheme[1:n]
   } else {
     # Generate gradient from provided colors
-    color_function <- colorRampPalette(rev(color_scheme), space = "rgb")
+    color_function <- grDevices::colorRampPalette(rev(color_scheme), space = "rgb")
   }
 
   # Generate final colors
@@ -339,26 +339,28 @@ plot_ld_heatmap <- function(vcf_file,
     # Create output filename
     output_filename <- paste0(output_file, ".", file_format)
 
-    # Set up graphics device
+    # Set up graphics device; close it on exit (including on error)
     if (file_format == "pdf") {
-      pdf(output_filename, width = width, height = height)
+      grDevices::pdf(output_filename, width = width, height = height)
     } else if (file_format %in% c("png", "PNG")) {
-      png(output_filename, width = width * dpi, height = height * dpi, res = dpi)
+      grDevices::png(output_filename, width = width * dpi, height = height * dpi, res = dpi)
     } else if (file_format %in% c("jpeg", "jpg", "JPEG", "JPG")) {
-      jpeg(output_filename, width = width * dpi, height = height * dpi,
+      grDevices::jpeg(output_filename, width = width * dpi, height = height * dpi,
         res = dpi, quality = 95)
     } else if (file_format %in% c("tiff", "TIFF")) {
-      tiff(output_filename, width = width * dpi, height = height * dpi, res = dpi)
+      grDevices::tiff(output_filename, width = width * dpi, height = height * dpi, res = dpi)
     }
-
-    par(xpd = TRUE)
+    on.exit(grDevices::dev.off(), add = TRUE)
   } else {
-    # Set up display device if needed
-    if (is.null(dev.list())) {
-      dev.new(width = width, height = height)
+    # Set up display device if needed (leave it open so the plot stays visible)
+    if (is.null(grDevices::dev.list())) {
+      grDevices::dev.new(width = width, height = height)
     }
-    par(xpd = TRUE)
   }
+
+  # xpd = TRUE lets the diagonal legend sit outside the panel; restore on exit
+  old_par <- graphics::par(xpd = TRUE)
+  on.exit(graphics::par(old_par), add = TRUE)
 
   # -------------------------------------------------------------------------
   # Generate LD heatmap
@@ -377,16 +379,12 @@ plot_ld_heatmap <- function(vcf_file,
       )
     },
     error = function(e) {
-      if (!is.null(output_file)) dev.off()
       stop("Error generating LD heatmap: ", e$message)
     })
 
-  # Close graphics device if file output
-  if (!is.null(output_file)) {
-    dev.off()
-    if (verbose) {
-      message("LD heatmap saved to: ", file.path(getwd(), output_filename))
-    }
+  # Device is closed by on.exit(); just report the output path
+  if (!is.null(output_file) && verbose) {
+    message("LD heatmap saved to: ", file.path(getwd(), output_filename))
   }
 
   # -------------------------------------------------------------------------
