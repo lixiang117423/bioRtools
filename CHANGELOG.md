@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.80.7] - 2026-08-14
+
+### Fixed
+- DESCRIPTION: declared every package referenced in code. Added 18 missing
+  Imports (aplot, Biobase, ggalluvial, huge, igraph, minpack.lm, pheatmap,
+  pulsar, readr, readxl, Rtsne, SpiecEasi, stats4, tidyselect, treeio,
+  viridis, writexl, XML) and 17 missing Suggests (BiocManager, ggforce,
+  gggenes, ggupset, ggVennDiagram, gridExtra, gtools, itol.toolkit,
+  LDheatmap, methylKit, mlr3, mlr3tuning, moments, paradox, svglite,
+  tidygraph, ttplot). Sorted both fields alphabetically.
+- DESCRIPTION: raised the R version floor from 2.10 (2009, incompatible with
+  current tidyverse dependencies) to 4.1.0, matching the lambda syntax used
+  in the code.
+- README: synced the R and version badges with DESCRIPTION.
+
 ## [1.80.6] - 2026-08-14
 
 ### Changed

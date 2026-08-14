@@ -1,7 +1,7 @@
 # bioRtools
 
-[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.71.0-green)](https://github.com/lixiang117423/bioRtools)
+[![R](https://img.shields.io/badge/R-%3E%3D4.1.0-blue)](https://www.r-project.org/)
+[![Version](https://img.shields.io/badge/version-1.80.7-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
 `bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
@@ -17,7 +17,7 @@
 
 ## Requirements
 
-- R >= 2.10, as declared in `DESCRIPTION`
+- R >= 4.1.0, as declared in `DESCRIPTION`
 - R >= 4.0.0 is recommended for a smoother dependency experience
 
 ## Installation
