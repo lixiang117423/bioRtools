@@ -12,7 +12,9 @@ compute_pairwise_diff(
   vip,
   test_method = "auto",
   p_adjust_method = "BH",
-  p_threshold = 0.05
+  p_threshold = 0.05,
+  vip_threshold = 1,
+  diff_method = c("vip", "pvalue")
 )
 }
 \arguments{
@@ -32,12 +34,22 @@ compute_pairwise_diff(
 
 \item{p_adjust_method}{P-value adjustment method (see \code{stats::p.adjust}).}
 
-\item{p_threshold}{Regulation significance threshold.}
+\item{p_threshold}{Regulation significance threshold. Only used when
+\code{diff_method = "pvalue"}.}
+
+\item{vip_threshold}{VIP threshold for differential labeling. Only used
+when \code{diff_method = "vip"}.}
+
+\item{diff_method}{How differential features are determined:
+\code{"vip"} (default) labels features with VIP >= \code{vip_threshold}
+as differential (direction from log2FC sign; p-values are still computed
+and kept for plotting), \code{"pvalue"} uses
+\code{p_adjust < p_threshold} with log2FC direction (legacy behavior).}
 }
 \value{
 Data frame: \code{feature, group, ref_group, group_mean, group_sd,
   group_n, ref_mean, ref_sd, ref_n, log2_fc, p_value, test_method,
-  comparison, p_adjust, vip, regulation}.
+  comparison, p_adjust, vip, regulation, is_differential}.
 }
 \description{
 Internal helper shared by the pairwise modes of [opls_analysis()]. For each

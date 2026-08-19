@@ -19,6 +19,7 @@ opls_analysis(
   ref_group = NULL,
   pairwise = FALSE,
   p_threshold = 0.05,
+  diff_method = "vip",
   test_method = "auto",
   p_adjust_method = "BH",
   verbose = FALSE,
@@ -54,7 +55,9 @@ required. Multi-group OPLS-DA is supported for more than two groups}
 
 \item{vip_threshold}{Numerical threshold for Variable Importance in Projection
 (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
-are considered important for group discrimination. Common thresholds:
+are considered important for group discrimination, and with
+\code{diff_method = "vip"} (the default) they are also the ones labeled
+as differential metabolites/features. Common thresholds:
 \itemize{
   \item 1.0: Standard threshold for variable selection
   \item 1.5: More stringent selection for highly important variables
@@ -98,8 +101,15 @@ mirroring \code{\link{find_dams_deseq2}} with no reference. Ignored when
 When FALSE with more than 2 groups and no ref_group, the function automatically
 uses all-pairs mode (OPLS-DA is binary-only), with an informational message.}
 
-\item{p_threshold}{Numeric p-value threshold for significance labeling (default: 0.05).
-Used in conjunction with log2FC direction to label features as Up/Down.}
+\item{p_threshold}{Numeric p-value threshold for significance labeling
+(default: 0.05). Only used when \code{diff_method = "pvalue"}; the
+\code{p_adjust} column is always computed and kept for downstream plotting.}
+
+\item{diff_method}{How differential features are determined (default: "vip").
+\code{"vip"}: features with VIP >= \code{vip_threshold} are differential
+(Up/Down direction from log2FC sign; p-values are computed but only used
+for plotting). \code{"pvalue"}: \code{p_adjust < p_threshold} with
+log2FC direction (legacy behavior).}
 
 \item{verbose}{Logical, whether to print progress messages during pairwise model fitting
 (default: FALSE).}
@@ -126,9 +136,13 @@ A named list containing:
     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
       regulation labels per comparison. NULL in single-model mode without
       ref_group; populated in ref-anchored and all-pairs pairwise modes.
-      Columns \code{feature_id}, \code{log2FoldChange}, \code{padj}, and
-      \code{pvalue} are aliases for \code{feature}, \code{log2_fc},
-      \code{p_adjust}, and \code{p_value} respectively, for direct use with
+      The \code{regulation} column (Up/Down/NS) follows \code{diff_method}
+      (VIP-based by default) and \code{is_differential} is a logical flag
+      for differential features; p-value and log2FC columns are always
+      computed and kept for plotting. Columns \code{feature_id},
+      \code{log2FoldChange}, \code{padj}, and \code{pvalue} are aliases
+      for \code{feature}, \code{log2_fc}, \code{p_adjust}, and
+      \code{p_value} respectively, for direct use with
       \code{\link{plot_multi_volcano}}.}
     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
       In pairwise mode, includes per-comparison results.}

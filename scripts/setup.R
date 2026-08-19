@@ -268,6 +268,8 @@ format_and_document <- function() {
 #' Useful for testing changes during development.
 #'
 #' @param force Logical. Force reinstallation. Default is TRUE.
+#' @param lib Library directory to install into. Default is code{NULL},
+#'   which picks the first writable entry of code{.libPaths()}.
 #'
 #' @return Invisible TRUE on success
 #'
@@ -280,14 +282,30 @@ format_and_document <- function() {
 #'
 #' @export
 
-quick_install <- function(force = TRUE) {
+quick_install <- function(force = TRUE, lib = NULL) {
 
   message("Quick install...")
 
   generate_documentation(check = FALSE)
-  pak::pak("local::.", upgrade = FALSE)
 
-  message("✓ Package installed!\n")
+  # Install straight from the source directory with base R, so dependency
+  # resolution is left to the packages already installed in the user's
+  # library. pak is avoided here: it resolves the whole dependency graph
+  # from remote repos, and some Imports cannot be found there even though
+  # they are installed locally (SpiecEasi: Bioconductor only; linkET:
+  # removed from CRAN).
+  if (is.null(lib)) {
+    writable <- .libPaths()[file.access(.libPaths(), 2) == 0]
+    if (length(writable) == 0) {
+      stop("No writable R library found in .libPaths(); ",
+           "create a user library or pass 'lib' explicitly")
+    }
+    lib <- writable[[1]]
+  }
+
+  install.packages(normalizePath("."), repos = NULL, type = "source", lib = lib)
+
+  message("✓ Package installed to ", lib, "!\n")
   invisible(TRUE)
 }
 

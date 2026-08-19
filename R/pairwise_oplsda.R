@@ -37,7 +37,9 @@
 #' @param p_adjust_method P-value adjustment method (default: "BH").
 #'   See \code{\link[stats]{p.adjust}}.
 #' @param p_threshold Adjusted p-value threshold for significance labeling
-#'   (default: 0.05).
+#'   (default: 0.05). Only used when \code{diff_method = "pvalue"}.
+#' @param diff_method How differential features are determined
+#'   (default: "vip"). Passed to \code{\link{opls_analysis}}.
 #'
 #' @return A named list with:
 #'   \describe{
@@ -88,6 +90,7 @@ pairwise_oplsda <- function(data, sample, group_col = "group",
                             test_method = "auto",
                             p_adjust_method = "BH",
                             p_threshold = 0.05,
+                            diff_method = "vip",
                             verbose = FALSE) {
   .Deprecated(
     "opls_analysis",
@@ -111,6 +114,7 @@ pairwise_oplsda <- function(data, sample, group_col = "group",
     test_method      = test_method,
     p_adjust_method  = p_adjust_method,
     p_threshold      = p_threshold,
+    diff_method      = diff_method,
     verbose          = verbose
   )
 

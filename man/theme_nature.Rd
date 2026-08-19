@@ -41,16 +41,18 @@ Design rationale (from Nature 2026 sampled figures):
 }
 }
 \examples{
+\dontrun{
 library(ggplot2)
 
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  bioRtools::theme_nature()
+  bioRtools:::theme_nature()
 
 # Larger base for single-panel figures
 ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
   geom_point() +
-  bioRtools::theme_nature(base_size = 9)
+  bioRtools:::theme_nature(base_size = 9)
+}
 }
 \seealso{
 \code{\link{save_pub}} for publication export (SVG/PDF/TIFF),

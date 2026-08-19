@@ -137,17 +137,28 @@ fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
 #'   \code{vip} (from [fit_pairwise_opls()]).
 #' @param test_method \code{"auto"}, \code{"t-test"}, or \code{"wilcoxon"}.
 #' @param p_adjust_method P-value adjustment method (see \code{stats::p.adjust}).
-#' @param p_threshold Regulation significance threshold.
+#' @param p_threshold Regulation significance threshold. Only used when
+#'   \code{diff_method = "pvalue"}.
+#' @param vip_threshold VIP threshold for differential labeling. Only used
+#'   when \code{diff_method = "vip"}.
+#' @param diff_method How differential features are determined:
+#'   \code{"vip"} (default) labels features with VIP >= \code{vip_threshold}
+#'   as differential (direction from log2FC sign; p-values are still computed
+#'   and kept for plotting), \code{"pvalue"} uses
+#'   \code{p_adjust < p_threshold} with log2FC direction (legacy behavior).
 #'
 #' @return Data frame: \code{feature, group, ref_group, group_mean, group_sd,
 #'   group_n, ref_mean, ref_sd, ref_n, log2_fc, p_value, test_method,
-#'   comparison, p_adjust, vip, regulation}.
+#'   comparison, p_adjust, vip, regulation, is_differential}.
 #' @keywords internal
 compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
                                   vip, test_method = "auto",
-                                  p_adjust_method = "BH", p_threshold = 0.05) {
+                                  p_adjust_method = "BH", p_threshold = 0.05,
+                                  vip_threshold = 1,
+                                  diff_method = c("vip", "pvalue")) {
   group <- as.factor(group)
   test_method <- match.arg(test_method, c("auto", "t-test", "wilcoxon"))
+  diff_method <- match.arg(diff_method)
   diff_list <- list()
 
   for (pair in pairs) {
@@ -243,15 +254,26 @@ compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
   res <- res %>% dplyr::left_join(vip_lookup, by = c("feature", "comparison"))
   res$vip <- round(res$vip, 4)
 
-  res$regulation <- ifelse(
-    is.na(res$p_adjust), "NS",
-    ifelse(res$log2_fc > 0 & res$p_adjust < p_threshold, "Up",
-      ifelse(res$log2_fc < 0 & res$p_adjust < p_threshold, "Down", "NS"))
-  )
+  # Label regulation. VIP-based by default: the VIP threshold alone decides
+  # differential status; p-values and log2FC stay in the table for plotting.
+  if (diff_method == "vip") {
+    res$regulation <- ifelse(
+      is.na(res$vip) | res$vip < vip_threshold | !is.finite(res$log2_fc), "NS",
+      ifelse(res$log2_fc > 0, "Up",
+        ifelse(res$log2_fc < 0, "Down", "NS"))
+    )
+  } else {
+    res$regulation <- ifelse(
+      is.na(res$p_adjust) | !is.finite(res$log2_fc), "NS",
+      ifelse(res$log2_fc > 0 & res$p_adjust < p_threshold, "Up",
+        ifelse(res$log2_fc < 0 & res$p_adjust < p_threshold, "Down", "NS"))
+    )
+  }
   reg_order <- c("Up", "Down", "NS")
   res$regulation <- factor(res$regulation, levels = reg_order)
   res <- res[order(res$regulation, -abs(res$log2_fc)), ]
   res$regulation <- as.character(res$regulation)
+  res$is_differential <- res$regulation %in% c("Up", "Down")
 
   # plot_multi_volcano-compatible column aliases
   res$feature_id     <- res$feature

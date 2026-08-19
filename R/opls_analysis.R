@@ -35,7 +35,9 @@
 #'   required. Multi-group OPLS-DA is supported for more than two groups
 #' @param vip_threshold Numerical threshold for Variable Importance in Projection
 #'   (VIP) scores (default: 1.0). Variables with VIP scores >= this threshold
-#'   are considered important for group discrimination. Common thresholds:
+#'   are considered important for group discrimination, and with
+#'   \code{diff_method = "vip"} (the default) they are also the ones labeled
+#'   as differential metabolites/features. Common thresholds:
 #'   \itemize{
 #'     \item 1.0: Standard threshold for variable selection
 #'     \item 1.5: More stringent selection for highly important variables
@@ -71,8 +73,14 @@
 #'   \code{ref_group} is set (ref-anchored mode is used instead).
 #'   When FALSE with more than 2 groups and no ref_group, the function automatically
 #'   uses all-pairs mode (OPLS-DA is binary-only), with an informational message.
-#' @param p_threshold Numeric p-value threshold for significance labeling (default: 0.05).
-#'   Used in conjunction with log2FC direction to label features as Up/Down.
+#' @param p_threshold Numeric p-value threshold for significance labeling
+#'   (default: 0.05). Only used when \code{diff_method = "pvalue"}; the
+#'   \code{p_adjust} column is always computed and kept for downstream plotting.
+#' @param diff_method How differential features are determined (default: "vip").
+#'   \code{"vip"}: features with VIP >= \code{vip_threshold} are differential
+#'   (Up/Down direction from log2FC sign; p-values are computed but only used
+#'   for plotting). \code{"pvalue"}: \code{p_adjust < p_threshold} with
+#'   log2FC direction (legacy behavior).
 #' @param verbose Logical, whether to print progress messages during pairwise model fitting
 #'   (default: FALSE).
 #'
@@ -90,9 +98,13 @@
 #'     \item{\code{differential_analysis}}{Data frame with log2FC, p-values, and
 #'       regulation labels per comparison. NULL in single-model mode without
 #'       ref_group; populated in ref-anchored and all-pairs pairwise modes.
-#'       Columns \code{feature_id}, \code{log2FoldChange}, \code{padj}, and
-#'       \code{pvalue} are aliases for \code{feature}, \code{log2_fc},
-#'       \code{p_adjust}, and \code{p_value} respectively, for direct use with
+#'       The \code{regulation} column (Up/Down/NS) follows \code{diff_method}
+#'       (VIP-based by default) and \code{is_differential} is a logical flag
+#'       for differential features; p-value and log2FC columns are always
+#'       computed and kept for plotting. Columns \code{feature_id},
+#'       \code{log2FoldChange}, \code{padj}, and \code{pvalue} are aliases
+#'       for \code{feature}, \code{log2_fc}, \code{p_adjust}, and
+#'       \code{p_value} respectively, for direct use with
 #'       \code{\link{plot_multi_volcano}}.}
 #'     \item{\code{model_summary}}{List with R2Y, Q2Y, and other model metrics.
 #'       In pairwise mode, includes per-comparison results.}
@@ -364,6 +376,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
                           validation = "CV", cv_folds = 7,
                           ref_group = NULL, pairwise = FALSE,
                           p_threshold = 0.05,
+                          diff_method = "vip",
                           test_method = "auto",
                           p_adjust_method = "BH",
                           verbose = FALSE,
@@ -536,6 +549,10 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     stop("'p_threshold' must be a single number between 0 and 1")
   }
 
+  if (!diff_method %in% c("vip", "pvalue")) {
+    stop("'diff_method' must be 'vip' or 'pvalue'")
+  }
+
   if (validation == "CV") {
     if (!is.numeric(cv_folds) || length(cv_folds) != 1 ||
       cv_folds < 2 || cv_folds != round(cv_folds)) {
@@ -652,7 +669,8 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     diff_analysis <- compute_pairwise_diff(
       data_matrix, group, pairs, variable_names,
       vip = fit$vip, test_method = test_method,
-      p_adjust_method = p_adjust_method, p_threshold = p_threshold
+      p_adjust_method = p_adjust_method, p_threshold = p_threshold,
+      vip_threshold = vip_threshold, diff_method = diff_method
     )
 
     # Use first pairwise model as the representative `model` slot
@@ -932,19 +950,31 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
     # Add VIP scores
     diff_analysis$vip <- round(as.numeric(vip_lookup[diff_analysis$feature]), 4)
 
-    # Label regulation
-    diff_analysis$regulation <- ifelse(
-      is.na(diff_analysis$p_adjust), "NS",
-      ifelse(diff_analysis$log2_fc > 0 & diff_analysis$p_adjust < p_threshold, "Up",
-        ifelse(diff_analysis$log2_fc < 0 & diff_analysis$p_adjust < p_threshold, "Down", "NS")
+    # Label regulation. VIP-based by default: the VIP threshold alone decides
+    # differential status; p-values and log2FC stay in the table for plotting.
+    if (diff_method == "vip") {
+      diff_analysis$regulation <- ifelse(
+        is.na(diff_analysis$vip) | diff_analysis$vip < vip_threshold |
+          !is.finite(diff_analysis$log2_fc), "NS",
+        ifelse(diff_analysis$log2_fc > 0, "Up",
+          ifelse(diff_analysis$log2_fc < 0, "Down", "NS")
+        )
       )
-    )
+    } else {
+      diff_analysis$regulation <- ifelse(
+        is.na(diff_analysis$p_adjust) | !is.finite(diff_analysis$log2_fc), "NS",
+        ifelse(diff_analysis$log2_fc > 0 & diff_analysis$p_adjust < p_threshold, "Up",
+          ifelse(diff_analysis$log2_fc < 0 & diff_analysis$p_adjust < p_threshold, "Down", "NS")
+        )
+      )
+    }
 
     # Sort by regulation significance then log2_fc
     reg_order <- c("Up", "Down", "NS")
     diff_analysis$regulation <- factor(diff_analysis$regulation, levels = reg_order)
     diff_analysis <- diff_analysis[order(diff_analysis$regulation, -abs(diff_analysis$log2_fc)), ]
     diff_analysis$regulation <- as.character(diff_analysis$regulation)
+    diff_analysis$is_differential <- diff_analysis$regulation %in% c("Up", "Down")
   }
 
   # Add plot_multi_volcano-compatible column aliases

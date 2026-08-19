@@ -5,6 +5,86 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.88.0] - 2026-08-16
+
+### Changed
+- find_admixture_k(): plots now include a dual-axis combined_plot showing
+  the CV error (left axis) and the Kneedle distance (right axis) together
+  with the elbow marked.
+
+## [1.87.0] - 2026-08-16
+
+### Added
+- find_admixture_k(): pick the best K from an ADMIXTURE CV-error curve
+  (Kneedle elbow, second-difference curvature, relative-drop thresholds)
+  with diagnostic tables and two plots; accepts a data frame or file path.
+
+## [1.86.0] - 2026-08-16
+
+### Added
+- read_data(): now reads Newick tree files (.nwk/.newick/.tree/.treefile)
+  via ggtree::read.tree() and returns a phylo object ready for ggtree
+  visualization.
+
+## [1.85.0] - 2026-08-16
+
+### Added
+- split_pick(): generic string split-and-pick (str_split(x, sep) %>%
+  sapply("[", i) in one call); literal separator, optional second split
+  (split2/index2), NA for too-short strings. Path parsing is just one use case.
+- read_many(): read many delimited files into one data frame with an
+  identifier column (map + read_delim + unnest in one call); supports
+  basename/path ids and forwards extra arguments to readr::read_delim().
+
+## [1.84.0] - 2026-08-15
+
+### Changed
+- plot_metab_volcano(): Up/Down points are now horizontally jittered too
+  (new sig_jitter_width argument, default: same as jitter_width; y positions
+  stay exact), so the colored points no longer collapse into a vertical line
+  per comparison. Set sig_jitter_width = 0 for the exact group-center line.
+
+## [1.83.0] - 2026-08-15
+
+### Changed
+- plot_metab_volcano(): coloring now follows the regulation column when
+  present (auto-detected, or set via the new regulation_col argument), so
+  colored points match the Up/Down/NS counts of the opls_analysis()
+  differential table (VIP-based by default) exactly. log2fc_thr/padj_thr
+  only apply when no regulation column is available.
+
+## [1.82.0] - 2026-08-15
+
+### Changed
+- opls_analysis(): differential features are now determined by VIP by
+  default (new diff_method argument, default "vip"): features with
+  VIP >= vip_threshold are labeled Up/Down by log2FC sign, while p-value
+  and log2FC columns are still computed and kept for plotting only.
+  diff_method = "pvalue" restores the legacy p_adjust < p_threshold
+  labeling. differential_analysis gains an is_differential logical
+  column; non-finite log2FC now labels NS instead of NA. Also applied to
+  compute_pairwise_diff() and forwarded through pairwise_oplsda().
+
+### Fixed
+- man/save_pub.Rd, man/theme_nature.Rd: regenerated to match the
+  bioRtools::: example calls already present in the R sources
+  (doc drift from v1.80.8).
+
+## [1.81.0] - 2026-08-14
+
+### Added
+- plot_metab_volcano(): metabolomics-oriented multi-group volcano plot.
+  NS features are horizontally jittered (y stays exact, so log2FC is never
+  distorted) and Up/Down features are drawn as fixed, larger points on top
+  of the NS layer; features with NA adjusted p-values are kept visible as
+  NS instead of being silently dropped. Input columns auto-detected from
+  opls_analysis() differential output (comparison/feature_id/
+  log2FoldChange/padj) or Seurat-style cluster tables.
+
+### Changed
+- DESCRIPTION: ggplot2 version floor raised to >= 3.5.0
+  (plot_metab_volcano uses the modern legend.position.inside argument).
+
 ## [1.80.10] - 2026-08-14
 
 ### Added

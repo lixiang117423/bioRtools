@@ -14,6 +14,9 @@
 test_*.png
 test_*.pdf
 Rplots.pdf
+
+# Preview/scratch plots
+plots/
 Rplots.rdb
 Rplots.rdx
 

@@ -2,8 +2,8 @@
 #'
 #' Reads a data file using the appropriate function based on file extension.
 #' Supports Excel (.xlsx/.xls), CSV (.csv), TSV (.tsv), delimited text
-#' (.txt), FASTA (.fasta/.fa), GFF3 (.gff/.gff3), and RDS/RData (.rds/.rdata)
-#' files.
+#' (.txt), FASTA (.fasta/.fa), GFF3 (.gff/.gff3), RDS/RData (.rds/.rdata),
+#' and Newick tree files (.nwk/.newick/.tree/.treefile).
 #' First row is treated as column headers for tabular formats.
 #'
 #' A forwarded \code{skip} argument (tabular formats) must be a single
@@ -29,6 +29,11 @@
 #' attributes}); column 9 is kept as the raw \code{key=value;...} string and
 #' "\code{.}" is read as \code{NA}.
 #'
+#' For Newick tree files (.nwk/.newick/.tree/.treefile), the tree is read
+#' with \code{\link[ggtree]{read.tree}} (a thin wrapper around
+#' \code{ape::read.tree}) and returned as a \code{phylo} object ready for
+#' ggtree visualization.
+#'
 #' @param file File path.
 #' @param delim Character string used as field separator for \code{.txt} files.
 #'   Default is \code{"\\t"} (tab). Ignored for other file types.
@@ -36,9 +41,10 @@
 #'
 #' @return A data frame for tabular formats, the deserialized R object for
 #'   \code{.rds}/\code{.rdata} files, a FASTA data frame for
-#'   \code{.fasta}/\code{.fa} files, or a 9-column GFF3 data frame for
-#'   \code{.gff}/\code{.gff3} files. For tabular formats, attribute
-#'   \code{raw_names} holds the original column names from the file.
+#'   \code{.fasta}/\code{.fa} files, a 9-column GFF3 data frame for
+#'   \code{.gff}/\code{.gff3} files, or a \code{phylo} object for Newick
+#'   tree files. For tabular formats, attribute \code{raw_names} holds the
+#'   original column names from the file.
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -53,6 +59,9 @@
 #' df <- read_data("data/table.tsv")
 #' df <- read_data("data/table.txt", delim = ",")
 #' df <- read_data("data/annotation.gff3")  # 9-column GFF3 data frame
+#'
+#' tree <- read_data("data/tree.nwk")  # phylo object, ready for ggtree
+#' ggtree::ggtree(tree) + ggtree::geom_tiplab()
 #' }
 read_data <- function(file, delim = "\t", ...) {
   if (!file.exists(file)) {
@@ -151,7 +160,8 @@ read_data <- function(file, delim = "\t", ...) {
     rdata = , rda = get(load(file, ...)),
     fasta = , fa = fasta2df(file, ...),
     gff3 = , gff = gff3_to_df(file, ...),
-    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .xls, .csv, .tsv, .txt, .fasta, .fa, .gff, .gff3, .rds, .rdata")
+    nwk = , newick = , tree = , treefile = ggtree::read.tree(file, ...),
+    stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .xls, .csv, .tsv, .txt, .fasta, .fa, .gff, .gff3, .nwk, .newick, .tree, .treefile, .rds, .rdata")
   )
 }
 

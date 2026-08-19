@@ -18,6 +18,7 @@ pairwise_oplsda(
   test_method = "auto",
   p_adjust_method = "BH",
   p_threshold = 0.05,
+  diff_method = "vip",
   verbose = FALSE
 )
 }
@@ -63,7 +64,10 @@ pairwise combinations. Passed to \code{\link{opls_analysis}}.}
 See \code{\link[stats]{p.adjust}}.}
 
 \item{p_threshold}{Adjusted p-value threshold for significance labeling
-(default: 0.05).}
+(default: 0.05). Only used when \code{diff_method = "pvalue"}.}
+
+\item{diff_method}{How differential features are determined
+(default: "vip"). Passed to \code{\link{opls_analysis}}.}
 }
 \value{
 A named list with:
