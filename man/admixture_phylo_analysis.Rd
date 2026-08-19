@@ -2,164 +2,156 @@
 % Please edit documentation in R/admixture_phylo_analysis.R
 \name{admixture_phylo_analysis}
 \alias{admixture_phylo_analysis}
-\title{Analyze Admixture results with phylogenetic tree and visualization}
+\title{Analyze Admixture Results with a Phylogenetic Tree}
 \usage{
 admixture_phylo_analysis(
   admixture_path,
   tree_file = NULL,
   sample_group = NULL,
   k_range = NULL,
-  color_scale = "aaas",
-  tree_color_scale = "d3",
+  fam_id_col = 2,
+  color_scale = c("default", "aaas", "npg", "lancet", "jco", "ucscgb", "uchicago",
+    "simpsons", "rickandmorty", "manual"),
+  tree_color_scale = c("default", "d3", "aaas", "npg", "lancet", "jco", "ucscgb",
+    "uchicago", "simpsons", "rickandmorty"),
   manual_colors = NULL,
   tree_width = 0.2,
   tree_linewidth = 0.2,
   tip_point_size = 0.1,
   show_branch_length = FALSE,
+  save = NULL,
   verbose = TRUE
 )
 }
 \arguments{
-\item{admixture_path}{Character string specifying the directory path containing
-Admixture .Q files and .fam file. All .Q files in this directory will be processed.}
+\item{admixture_path}{Character string specifying the directory containing
+Admixture .Q files and the .fam file.}
 
-\item{tree_file}{Optional character string specifying the path to the phylogenetic tree
-file (Newick format). If provided, a phylogenetic tree will be drawn and combined
-with the admixture plot. If NULL, only admixture plot will be returned. Default is NULL.}
+\item{tree_file}{Optional path to a Newick tree file, or a \code{phylo}
+object (e.g. from \code{ape::read.tree()} or \code{\link{read_data}}).
+If provided, the tree is drawn and combined with the admixture plot.
+If \code{NULL}, only the admixture plot is returned. Default is \code{NULL}.}
 
-\item{sample_group}{Optional data frame containing sample grouping information
-with columns 'label' (sample names), 'group', and optionally 'color'.
-Can also be a file path to read the grouping information.
-If provided when tree_file is given, tree tips will be colored by groups. Default is NULL.}
+\item{sample_group}{Optional data frame with columns \code{label} (sample
+names), \code{group}, and optionally \code{color}, or a file path to a
+tab-delimited file with the same columns. When provided together with a
+tree, tree tips are colored by group. Default is \code{NULL}.}
 
-\item{k_range}{Integer vector specifying which K values to include in the
-analysis. Can be specified as a range (e.g., 2:5) or specific values
-(e.g., c(2,3,5)). If NULL, all available K values will be used. Default is NULL.}
+\item{k_range}{Integer vector of K values to include (e.g. \code{2:5} or
+\code{c(2, 3, 5)}). If \code{NULL}, all available K values are used.
+Default is \code{NULL}.}
 
-\item{color_scale}{Character string specifying the color scale to use for admixture.
-Options: "default" (uses optimized base colors), "aaas", "npg", "lancet",
-"jco", "ucscgb", "uchicago", "simpsons", "rickandmorty", or "manual".
-Default is "aaas".}
+\item{fam_id_col}{Column of the .fam file holding the sample ID
+(default: 2, the PLINK IID column). Use 1 to take the FID instead.}
 
-\item{tree_color_scale}{Character string specifying the color scale for tree groups.
-Options: "d3", "aaas", "npg", "lancet", etc. Default is "d3".}
+\item{color_scale}{Color scale for the admixture bars. One of
+\code{"default"} (optimized base palette), \code{"aaas"}, \code{"npg"},
+\code{"lancet"}, \code{"jco"}, \code{"ucscgb"}, \code{"uchicago"},
+\code{"simpsons"}, \code{"rickandmorty"}, or \code{"manual"}.
+Default is \code{"aaas"}.}
 
-\item{manual_colors}{Character vector of colors for manual admixture color scale.
-Only used when color_scale = "manual". Default is NULL.}
+\item{tree_color_scale}{Color scale for tree tip groups. One of
+\code{"default"}, \code{"d3"}, \code{"aaas"}, \code{"npg"},
+\code{"lancet"}, \code{"jco"}, \code{"ucscgb"}, \code{"uchicago"},
+\code{"simpsons"}, or \code{"rickandmorty"}. Default is \code{"d3"}.}
 
-\item{tree_width}{Numeric value specifying the relative width of the tree plot.
-Default is 0.2 (20% of total width).}
+\item{manual_colors}{Character vector of colors for the admixture scale;
+used only when \code{color_scale = "manual"}. Default is \code{NULL}.}
 
-\item{tree_linewidth}{Numeric value specifying the line width for tree branches.
-Default is 0.2.}
+\item{tree_width}{Numeric relative width of the tree panel
+(0-1, default: 0.2).}
 
-\item{tip_point_size}{Numeric value specifying the size of tip points in tree.
-Default is 0.1.}
+\item{tree_linewidth}{Numeric line width for tree branches (default: 0.2).}
 
-\item{show_branch_length}{Logical indicating whether to show branch lengths.
-Default is FALSE.}
+\item{tip_point_size}{Numeric size of tree tip points (default: 0.1).}
 
-\item{verbose}{Logical indicating whether to print progress information.
-Default is TRUE.}
+\item{show_branch_length}{Logical; show branch lengths (default: FALSE).}
 
-\item{k_ncol}{Integer specifying number of columns for K value facets.
-Default is 9.}
+\item{save}{Optional output file path. When given, the main plot (the
+combined plot in tree mode, otherwise the admixture plot) is saved via
+\code{\link{ggsave2}} (8 x 6 in, 600 dpi; the directory is created
+when missing). Default is \code{NULL} (no file written).}
+
+\item{verbose}{Logical; print progress messages (default: TRUE).}
 }
 \value{
-A list containing:
-  \code{combined_plot}: Combined plot object (aplot) when tree_file provided,
-    otherwise NULL
-
-  \code{admixture_plot}: ggplot2 object of the admixture structure plot
-
-  \code{tree_plot}: ggplot2/ggtree object when tree_file provided, otherwise NULL
+An object of class \code{admixture_phylo_results} (a list) with:
+  \item{combined_plot}{aplot object (NULL without tree)}
+  \item{admixture_plot}{ggplot2 structure plot}
+  \item{tree_plot}{ggtree object (NULL without tree)}
+  \item{samples}{character vector of sample IDs from the .fam file}
+  \item{k_values}{numeric vector of K values used}
+  \item{matched_samples}{character vector of samples present in both the
+  .Q files and the tree}
+  A \code{print} method shows a summary.
 }
 \description{
-Process Admixture .Q files and create population structure plots with integrated
-phylogenetic tree visualization using ggplot2 and ggtree. This function creates
-a rotated layout with samples on Y-axis and values on X-axis, with K values
-arranged horizontally, and optionally combines with a phylogenetic tree.
+Process Admixture .Q files and create population structure plots with
+integrated phylogenetic tree visualization using ggplot2 and ggtree. This
+function creates a rotated layout with samples on the Y-axis and K values
+arranged horizontally, and optionally combines the plot with a
+phylogenetic tree.
 }
 \details{
-The function has two distinct modes based on whether tree_file is provided:
+Two modes exist depending on whether a tree is provided:
 
-**Mode 1: Without tree_file (Traditional Layout)**
-  - Samples arranged horizontally (X-axis)
-  - K values arranged vertically as facets (ncol = 1)
-  - Strip labels on the left with 90-degree rotation
-  - Returns only admixture plot
+\strong{Mode 1: without tree (traditional layout)}
+\itemize{
+  \item Samples on the X-axis, K values as vertical facets
+  \item Strip labels on the left
+  \item Returns the admixture plot only
+}
 
-**Mode 2: With tree_file (Rotated Layout)**
-  - Reading phylogenetic tree and extracting tip order with proper label cleaning
-  - Samples arranged vertically (Y-axis)
-  - K values arranged horizontally as facets (ncol = auto-calculated from k_range)
-  - Strip labels on top with 90-degree rotation
-  - Optional sample grouping with colored tree tips
-  - Returns combined plot, admixture plot, and tree plot
+\strong{Mode 2: with tree (rotated layout)}
+\itemize{
+  \item Samples on the Y-axis in tree tip order, K values as horizontal
+    facets
+  \item Strip labels on top
+  \item Optional tip coloring from \code{sample_group}
+  \item Returns the combined plot, admixture plot, and tree plot
+}
 
-The sample_group parameter can be:
-  - A data.frame with columns: 'label', 'group', and optionally 'color'
-  - A file path to a tab-delimited file with the same columns
-  - NULL for no grouping (default)
+The .fam file may be named arbitrarily but must end in \code{.fam}. By
+default sample IDs are taken from column 2 (PLINK IID); pass
+\code{fam_id_col = 1} to use the FID column. Each .Q file must have
+exactly as many rows as the .fam file. Samples present in only one of the
+tree and the .Q files are reported with a warning (not silently dropped).
 }
 \note{
-- Requires tidyverse and ggplot2 packages
-  - When using phylogenetic features: requires ape, treeio, ggtree, aplot packages
-  - When using ggsci color scales: requires ggsci package
-  - Returns aplot object when tree provided, ggplot2 object otherwise
-  - No files are saved automatically - use ggsave() if needed
+Sample labels are matched after removing surrounding single quotes, so
+\code{'S1'} in a tree matches \code{S1} in the .fam file. No files are
+saved unless \code{save} is given.
 }
 \examples{
-library(bioRtools)
 \dontrun{
-# Mode 1: Analysis without tree (traditional layout)
-result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/"
-)
-print(result$admixture_plot)  # ggplot2 object
-# result$combined_plot and result$tree_plot will be NULL
+# Mode 1: without tree (traditional layout)
+result <- admixture_phylo_analysis("path/to/admixture/results/")
+result$admixture_plot
 
-# Mode 2: Analysis with tree (rotated layout)
+# Mode 2: with tree, tree read beforehand and reused
+tree <- read_data("path/to/phylogenetic_tree.nwk")  # phylo object
 result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/",
-  tree_file = "path/to/phylogenetic_tree.nwk"
-)
-print(result$combined_plot)   # aplot combined object
-print(result$admixture_plot)  # ggplot2 admixture plot
-print(result$tree_plot)       # ggtree plot
-
-# Mode 2 with sample grouping (data frame)
-sample_group <- data.frame(
-  label = c("sample1", "sample2", "sample3"),
-  group = c("A", "A", "B"),
-  color = c("A", "A", "B")
-)
-
-result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/",
-  tree_file = "path/to/phylogenetic_tree.nwk",
-  sample_group = sample_group,
+  "path/to/admixture/results/",
+  tree_file = tree,
   k_range = 2:6
 )
+result$combined_plot
 
-# Mode 2 with sample grouping (file path)
-result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/",
-  tree_file = "path/to/phylogenetic_tree.nwk",
-  sample_group = "path/to/sample_groups.txt"  # Tab-delimited file
+# Mode 2 with sample grouping
+sample_group <- data.frame(
+  label = c("S1", "S2", "S3"),
+  group = c("A", "A", "B")
 )
-
-# Custom styling
 result <- admixture_phylo_analysis(
-  admixture_path = "path/to/admixture/results/",
+  "path/to/admixture/results/",
   tree_file = "path/to/phylogenetic_tree.nwk",
+  sample_group = sample_group,
   color_scale = "npg",
   tree_color_scale = "aaas",
   tree_width = 0.3,
-  tip_point_size = 0.2
+  save = "figures/admixture_tree.png"
 )
 }
-
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>
