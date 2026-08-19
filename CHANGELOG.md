@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.90.0] - 2026-08-16
+
+### Changed
+- admixture_phylo_analysis(): new ladderize argument (default TRUE, matching
+  ggtree::ggtree's default). The tree is ladderized with right = FALSE and
+  the admixture bar order is now taken from the drawn tree itself, so the
+  function's output is identical to a plain ggtree::ggtree() call. Set
+  ladderize = FALSE for the previous behavior.
+
 ## [1.89.0] - 2026-08-16
 
 ### Changed

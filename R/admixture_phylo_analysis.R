@@ -38,6 +38,9 @@
 #' @param tree_linewidth Numeric line width for tree branches (default: 0.2).
 #' @param tip_point_size Numeric size of tree tip points (default: 0.1).
 #' @param show_branch_length Logical; show branch lengths (default: FALSE).
+#' @param ladderize Logical; reorder the tree to a ladderized layout,
+#'   matching \code{ggtree}'s default (default: TRUE). The admixture bar
+#'   order always follows the drawn tree.
 #' @param save Optional output file path. When given, the main plot (the
 #'   combined plot in tree mode, otherwise the admixture plot) is saved via
 #'   \code{\link{ggsave2}} (8 x 6 in, 600 dpi; the directory is created
@@ -129,6 +132,7 @@ admixture_phylo_analysis <- function(admixture_path,
                                      tree_linewidth = 0.2,
                                      tip_point_size = 0.1,
                                      show_branch_length = FALSE,
+                                     ladderize = TRUE,
                                      save = NULL,
                                      verbose = TRUE) {
   # ---- 1. Input validation ----
@@ -158,6 +162,9 @@ admixture_phylo_analysis <- function(admixture_path,
   if (!is.logical(show_branch_length) || length(show_branch_length) != 1L ||
       is.na(show_branch_length)) {
     stop("'show_branch_length' must be TRUE or FALSE")
+  }
+  if (!is.logical(ladderize) || length(ladderize) != 1L || is.na(ladderize)) {
+    stop("'ladderize' must be TRUE or FALSE")
   }
   if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
     stop("'verbose' must be TRUE or FALSE")
@@ -197,15 +204,14 @@ admixture_phylo_analysis <- function(admixture_path,
       stop("'tree_file' must be a phylo object or a path to an existing Newick file")
     }
 
+    # ladderize here exactly like ggtree's default (right = FALSE), so the
+    # extracted tip order matches the tree as it will be drawn
+    if (ladderize) {
+      phylo_tree <- ape::ladderize(phylo_tree, right = FALSE)
+    }
+
     # clean tip labels once, so the order table and the drawn tree agree
     phylo_tree$tip.label <- .clean_tip_labels(phylo_tree$tip.label)
-
-    df_order_tree <- treeio::as_tibble(phylo_tree) %>%
-      dplyr::filter(!is.na(.data$label)) %>%
-      dplyr::transmute(sample = .data$label, order = .data$node) %>%
-      as.data.frame()
-
-    if (verbose) message("Found ", nrow(df_order_tree), " samples in tree")
   }
 
   # ---- 3. Read the .fam file ----
@@ -292,6 +298,27 @@ admixture_phylo_analysis <- function(admixture_path,
   available_k <- sort(unique(df_admixture$k_value))
   df_admixture <- df_admixture %>%
     dplyr::mutate(k = factor(.data$k, levels = paste0("K = ", available_k)))
+
+  # ---- 5b. Build the tree plot first, so the bar order can follow it ----
+  p_tree <- NULL
+  if (!is.null(phylo_tree)) {
+    if (verbose) message("Creating phylogenetic tree plot...")
+
+    # the tree was already ladderized above, so drawing must not reorder again
+    p_tree <- ggtree::ggtree(phylo_tree,
+      branch.length = if (show_branch_length) NULL else "none",
+      ladderize = FALSE,
+      linewidth = tree_linewidth)
+
+    # take the tip order from the drawn tree itself, bottom to top
+    df_order_tree <- p_tree$data %>%
+      dplyr::filter(.data$isTip) %>%
+      dplyr::arrange(.data$y) %>%
+      dplyr::transmute(sample = .data$label, order = .data$y) %>%
+      as.data.frame()
+
+    if (verbose) message("Found ", nrow(df_order_tree), " samples in tree")
+  }
 
   # ---- 6. Check sample matching ----
   matched_samples <- intersect(df_admixture$sample, df_order_tree$sample)
@@ -415,8 +442,6 @@ admixture_phylo_analysis <- function(admixture_path,
   combined_plot <- NULL
 
   if (!is.null(phylo_tree)) {
-    if (verbose) message("Creating phylogenetic tree plot...")
-
     sample_group_data <- NULL
     if (!is.null(sample_group)) {
       if (is.character(sample_group) && length(sample_group) == 1L) {

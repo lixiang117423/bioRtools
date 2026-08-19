@@ -148,3 +148,48 @@ test_that("input validation rejects bad arguments", {
   expect_error(admixture_phylo_analysis(dir, tree_file = "missing.nwk"),
                "phylo object or a path")
 })
+test_that("ladderize defaults to TRUE and matches plain ggtree", {
+  dir <- make_admix_dir()
+  tr <- ape::read.tree(text = "((S1:1,S2:1):1,((S3:1,S4:1):1,S5:1):1);")
+
+  res <- suppressWarnings(admixture_phylo_analysis(dir, tree_file = tr))
+
+  tips <- res$tree_plot$data %>%
+    dplyr::filter(.data$isTip) %>%
+    dplyr::arrange(.data$y) %>%
+    dplyr::pull(.data$label)
+  ref <- ggtree::ggtree(tr)
+  ref_tips <- ref$data %>%
+    dplyr::filter(.data$isTip) %>%
+    dplyr::arrange(.data$y) %>%
+    dplyr::pull(.data$label)
+  expect_equal(tips, ref_tips)
+
+  # the admixture bar order follows the drawn tree
+  built <- ggplot2::ggplot_build(res$admixture_plot)
+  y_labs <- built$layout$panel_params[[1]]$y$get_labels()
+  expect_equal(tips, y_labs)
+})
+
+test_that("ladderize = FALSE keeps the original tree order", {
+  dir <- make_admix_dir()
+  tr <- ape::read.tree(text = "((S1:1,S2:1):1,((S3:1,S4:1):1,S5:1):1);")
+
+  res <- suppressWarnings(admixture_phylo_analysis(dir, tree_file = tr, ladderize = FALSE))
+
+  tips <- res$tree_plot$data %>%
+    dplyr::filter(.data$isTip) %>%
+    dplyr::arrange(.data$y) %>%
+    dplyr::pull(.data$label)
+  ref <- ggtree::ggtree(tr, ladderize = FALSE)
+  ref_tips <- ref$data %>%
+    dplyr::filter(.data$isTip) %>%
+    dplyr::arrange(.data$y) %>%
+    dplyr::pull(.data$label)
+  expect_equal(tips, ref_tips)
+})
+
+test_that("ladderize argument is validated", {
+  dir <- make_admix_dir()
+  expect_error(admixture_phylo_analysis(dir, ladderize = "yes"), "TRUE or FALSE")
+})

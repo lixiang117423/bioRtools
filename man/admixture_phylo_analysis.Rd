@@ -19,6 +19,7 @@ admixture_phylo_analysis(
   tree_linewidth = 0.2,
   tip_point_size = 0.1,
   show_branch_length = FALSE,
+  ladderize = TRUE,
   save = NULL,
   verbose = TRUE
 )
@@ -66,6 +67,10 @@ used only when \code{color_scale = "manual"}. Default is \code{NULL}.}
 \item{tip_point_size}{Numeric size of tree tip points (default: 0.1).}
 
 \item{show_branch_length}{Logical; show branch lengths (default: FALSE).}
+
+\item{ladderize}{Logical; reorder the tree to a ladderized layout,
+matching \code{ggtree}'s default (default: TRUE). The admixture bar
+order always follows the drawn tree.}
 
 \item{save}{Optional output file path. When given, the main plot (the
 combined plot in tree mode, otherwise the admixture plot) is saved via
