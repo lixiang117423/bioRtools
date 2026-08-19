@@ -20,7 +20,7 @@ Ignored when \code{group} is a formula.}
 Tukey's Honest Significant Difference test or "Duncan" for Duncan's Multiple
 Range Test}
 
-\item{level}{Confidence level for the comparisons (default: 0.95, i.e., 95%)}
+\item{level}{Confidence level for the comparisons (default: 0.95, i.e., 95\%)}
 }
 \value{
 A data frame containing:

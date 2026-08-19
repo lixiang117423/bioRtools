@@ -31,7 +31,7 @@ membership. Default is 500.}
 
 \item{threshold}{Numeric. Threshold for determining core cutoff using the
 "last increase" method. Represents the minimum proportional increase in
-Bray-Curtis dissimilarity (e.g., 0.02 = 2% increase). Default is 0.02.}
+Bray-Curtis dissimilarity (e.g., 0.02 = 2\% increase). Default is 0.02.}
 }
 \value{
 A list with class "core_microbiome" containing:

@@ -14,7 +14,7 @@
 #' @param method Method for post-hoc comparison. Either "Tukey" (default) for
 #'   Tukey's Honest Significant Difference test or "Duncan" for Duncan's Multiple
 #'   Range Test
-#' @param level Confidence level for the comparisons (default: 0.95, i.e., 95%)
+#' @param level Confidence level for the comparisons (default: 0.95, i.e., 95\%)
 #'
 #' @return A data frame containing:
 #'   - Grouping columns (if data was grouped)
