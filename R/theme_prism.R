@@ -102,11 +102,11 @@ theme_prism <- function(palette = "black_and_white",
   if (is.null(base_rect_size)) base_rect_size <- base_size / line_divisor
 
   if (border) {
-    panel.border <- ggplot2::element_rect(fill = NA)
+    panel.border <- ggplot2::element_rect(linewidth = 0.5, colour = "black", fill = NA)
     axis.line <- ggplot2::element_blank()
   } else {
     panel.border <- ggplot2::element_blank()
-    axis.line <- ggplot2::element_line()
+    axis.line <- ggplot2::element_line(linewidth = 0.4, colour = "black")
   }
 
   t <- ggplot2::theme(
@@ -128,10 +128,7 @@ theme_prism <- function(palette = "black_and_white",
     axis.line = axis.line,
     axis.line.x = NULL,
     axis.line.y = NULL,
-    axis.text = ggplot2::element_text(
-      size = ggplot2::rel(0.95),
-      colour = colours["axisLabelColor"]
-    ),
+    axis.text = ggplot2::element_text(size = 9, colour = "black"),
     axis.text.x = ggplot2::element_text(
       margin = ggplot2::margin(t = 0.8 * base_size / 4),
       angle = axis_text_angle,
@@ -147,7 +144,7 @@ theme_prism <- function(palette = "black_and_white",
     axis.text.y.right = ggplot2::element_text(
       margin = ggplot2::margin(l = 0.5 * base_size / 4), hjust = 0
     ),
-    axis.ticks = ggplot2::element_line(),
+    axis.ticks = ggplot2::element_line(linewidth = 0.4, colour = "black"),
     axis.ticks.length = ggplot2::unit(base_size / 2.5, "pt"),
     axis.ticks.length.x = NULL,
     axis.ticks.length.x.top = NULL,
@@ -155,7 +152,7 @@ theme_prism <- function(palette = "black_and_white",
     axis.ticks.length.y = NULL,
     axis.ticks.length.y.left = NULL,
     axis.ticks.length.y.right = NULL,
-    axis.title = ggplot2::element_text(colour = colours["axisTitleColor"]),
+    axis.title = ggplot2::element_text(size = 11, colour = "black"),
     axis.title.x = ggplot2::element_text(
       margin = ggplot2::margin(t = base_size * 0.6), vjust = 1
     ),
@@ -176,13 +173,13 @@ theme_prism <- function(palette = "black_and_white",
       base_size / 2, base_size / 2, base_size / 2, base_size / 2
     ),
     legend.key = ggplot2::element_blank(),
-    legend.key.size = ggplot2::unit(1.2, "lines"),
+    legend.key.size = ggplot2::unit(0.4, "cm"),
     legend.key.height = NULL,
     legend.key.width = ggplot2::unit(base_size * 1.8, "pt"),
-    legend.text = ggplot2::element_text(size = ggplot2::rel(0.8), face = "plain"),
+    legend.text = ggplot2::element_text(size = 9, face = "plain"),
     legend.text.align = NULL,
     legend.title = ggplot2::element_text(
-      size = ggplot2::rel(0.9), face = "plain",
+      size = 10, face = "plain",
       colour = colours["axisTitleColor"]
     ),
     legend.title.align = NULL,
@@ -199,18 +196,19 @@ theme_prism <- function(palette = "black_and_white",
     ),
     panel.border = panel.border,
     panel.grid = ggplot2::element_blank(),
+    panel.grid.major = ggplot2::element_line(linewidth = 0.2, colour = "grey85"),
     panel.grid.minor = ggplot2::element_blank(),
     panel.spacing = ggplot2::unit(base_size / 2, "pt"),
     panel.spacing.x = NULL,
     panel.spacing.y = NULL,
     panel.ontop = FALSE,
     strip.background = ggplot2::element_rect(
-      fill = "grey85", colour = NA
+      fill = "grey90", colour = NA
     ),
     strip.text = ggplot2::element_text(
       colour = "black",
-      face = base_fontface,
-      size = ggplot2::rel(0.9),
+      face = "bold",
+      size = 9,
       hjust = 0.5,
       vjust = 0.5,
       margin = ggplot2::margin(
@@ -242,12 +240,12 @@ theme_prism <- function(palette = "black_and_white",
       fill = colours["pageBackgroundColor"], colour = NA
     ),
     plot.title = ggplot2::element_text(
-      size = ggplot2::rel(1.2), hjust = 0.5, vjust = 1,
-      margin = ggplot2::margin(b = base_size)
+      size = 12, face = "bold", family = "Arial-Bold", hjust = 0, vjust = 1,
+      margin = ggplot2::margin(b = 8)
     ),
     plot.title.position = "panel",
     plot.subtitle = ggplot2::element_text(
-      hjust = 0.5, vjust = 1,
+      size = 10, colour = "grey30", hjust = 0.5, vjust = 1,
       margin = ggplot2::margin(b = base_size / 2)
     ),
     plot.caption = ggplot2::element_text(
@@ -259,9 +257,7 @@ theme_prism <- function(palette = "black_and_white",
       size = ggplot2::rel(1.2), face = "bold", hjust = 0.5, vjust = 0.5
     ),
     plot.tag.position = "topleft",
-    plot.margin = ggplot2::margin(
-      base_size / 2, base_size / 2, base_size / 2, base_size / 2
-    ),
+    plot.margin = ggplot2::margin(10, 10, 10, 10),
     complete = TRUE
   )
 

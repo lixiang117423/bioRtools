@@ -1,3 +1,24 @@
+#' OcBSA sliding-window results (synthetic).
+#'
+#' Simulated OcBSA output for a diploid genome with five chromosomes
+#' (prefixed \code{So120_}), including a simulated QTL on Chr1 around 12 Mb
+#' where the two pools diverge. Used in \code{\link{plot_ocbsa}} examples.
+#'
+#' @format ## `df.ocbsa.window`
+#' A data frame with 1,155 rows and 8 columns:
+#' \describe{
+#'   \item{Chr}{chromosome name, e.g. \code{So120_Chr1}}
+#'   \item{Pos}{window midpoint, bp}
+#'   \item{ChrLen}{chromosome length, bp}
+#'   \item{VirtualIndex}{binomial-distribution threshold curve (99.99 percent)}
+#'   \item{Pool1Index}{SNP-index of the first bulk}
+#'   \item{Pool2Index}{SNP-index of the second bulk}
+#'   \item{DeltaIndex}{Delta(SNP-index), pool1 minus pool2}
+#'   \item{MarkerNum}{marker count per window}
+#' }
+#' @source Simulated; Xiang Li
+"df.ocbsa.window"
+
 #' Test data.
 #'
 #' @format ## `test_data`

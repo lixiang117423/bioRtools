@@ -97,7 +97,7 @@ plot_multi_volcano <- function(data,
   # Resolve colors: palette name or explicit vector
   if (is.character(group_colors) && length(group_colors) == 1) {
     pal <- tryCatch(
-      bioRtools:::academic_db$research[[group_colors]],
+      academic_db$research[[group_colors]],
       error = function(e) NULL
     )
     if (!is.null(pal)) group_colors <- unname(pal)

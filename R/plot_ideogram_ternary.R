@@ -152,7 +152,7 @@ quad_ribbon <- function(a1, a2, b1, b2, hex, id, n_curve = 12) {
 # A gradient ribbon: N slices interpolated between the two species' colours.
 gradient_ribbon <- function(a1, a2, b1, b2, hex_a, hex_b, id, n_slice = 12) {
   ca <- grDevices::col2rgb(hex_a); cb <- grDevices::col2rgb(hex_b)
-  ramp <- colorRampSubdiv(ca, cb, n_slice)
+  ramp <- color_ramp_subdiv(ca, cb, n_slice)
   pts_top <- (seq_len(n_slice + 1) - 1) / n_slice   # a-side interpolation fractions
   rows <- vector("list", n_slice)
   for (k in seq_len(n_slice)) {
@@ -168,7 +168,7 @@ gradient_ribbon <- function(a1, a2, b1, b2, hex_a, hex_b, id, n_slice = 12) {
 
 # n colours interpolating from rgb matrix ca to cb (grDevices::colorRampPalette
 # would reorder; do it manually to keep direction).
-colorRampSubdiv <- function(ca, cb, n) {
+color_ramp_subdiv <- function(ca, cb, n) {
   cols <- vector("character", n)
   for (k in seq_len(n)) {
     t <- (k - 1) / (n - 1)

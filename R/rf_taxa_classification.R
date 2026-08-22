@@ -324,7 +324,7 @@ rf_taxa_classification <- function(data,
       )
 
     if (fill_palette == "research") {
-      plot_top <- plot_top + bioRtools::scale_fill_research()
+      plot_top <- plot_top + scale_fill_research()
     }
     plot_top <- plot_top + ggprism::theme_prism()
   }

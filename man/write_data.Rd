@@ -9,8 +9,9 @@ write_data(
   file,
   col = 1,
   col_names = TRUE,
-  width = 8,
-  height = 6,
+  width = NULL,
+  height = NULL,
+  units = "cm",
   dpi = 600,
   ...
 )
@@ -19,6 +20,15 @@ write_data(
 \item{data}{A data frame (or ggplot object for image formats) to write.}
 
 \item{file}{File path. The extension determines the output format.}
+
+\item{width, height}{Image dimensions in \code{units}. Both \code{NULL}
+(default) saves at 8.5 x 6 cm; when only one is supplied, the other is
+computed from the golden ratio (1.618:1, width:height).}
+
+\item{units}{Units of \code{width}/\code{height}: "cm" (default), "in",
+"mm", or "px".}
+
+\item{dpi}{Image resolution in dots per inch (default 600).}
 
 \item{...}{Additional arguments passed to the underlying write function.}
 }
@@ -40,7 +50,9 @@ data frame as plain text with no header and no quoting, suitable for
 shell scripts or sample lists.
 
 For image formats, calls \code{ggplot2::ggsave} with sensible defaults
-(width=8, height=6, dpi=600).
+(width=8.5, height=6, units="cm", dpi=600). If only one of
+\code{width}/\code{height} is supplied, the other is derived from the
+golden ratio (1.618:1, width:height).
 }
 \examples{
 \dontrun{

@@ -8,7 +8,7 @@ plot_pfam(
   data,
   tree_file = NULL,
   tile_height = 0.8,
-  fill_scale = bioRtools::scale_fill_cell(),
+  fill_scale = scale_fill_cell(),
   tree_xlim_factor = 1.5,
   tree_width = 1,
   tree_layout = "ellipse",

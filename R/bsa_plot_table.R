@@ -29,7 +29,7 @@
 bsa_plot_table <- function(data) {
 
   if (is.character(data)) {
-    df <- bioRtools::read_data(data)
+    df <- read_data(data)
   } else if (is.data.frame(data)) {
     df <- data
   } else {

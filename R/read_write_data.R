@@ -242,6 +242,29 @@ gff3_to_df <- function(file, ...) {
 }
 
 
+#' Resolve image dimensions via the golden ratio
+#'
+#' Both sides missing falls back to the 8.5 x 6 cm default; a single supplied
+#' side gets its counterpart from the golden ratio (1.618:1, width:height),
+#' so one-argument saves land on pleasing proportions without having to
+#' measure the plot.
+#'
+#' @keywords internal
+#' @noRd
+resolve_image_dims <- function(width, height) {
+  golden_ratio <- 1.618
+  if (is.null(width) && is.null(height)) {
+    return(list(width = 8.5, height = 6))
+  }
+  if (is.null(height)) {
+    height <- width / golden_ratio
+  } else if (is.null(width)) {
+    width <- height * golden_ratio
+  }
+  list(width = width, height = height)
+}
+
+
 #' Write Data File by Extension
 #'
 #' Writes a data frame to file using the appropriate function based on file
@@ -257,10 +280,18 @@ gff3_to_df <- function(file, ...) {
 #' shell scripts or sample lists.
 #'
 #' For image formats, calls \code{ggplot2::ggsave} with sensible defaults
-#' (width=8, height=6, dpi=600).
+#' (width=8.5, height=6, units="cm", dpi=600). If only one of
+#' \code{width}/\code{height} is supplied, the other is derived from the
+#' golden ratio (1.618:1, width:height).
 #'
 #' @param data A data frame (or ggplot object for image formats) to write.
 #' @param file File path. The extension determines the output format.
+#' @param width,height Image dimensions in \code{units}. Both \code{NULL}
+#'   (default) saves at 8.5 x 6 cm; when only one is supplied, the other is
+#'   computed from the golden ratio (1.618:1, width:height).
+#' @param units Units of \code{width}/\code{height}: "cm" (default), "in",
+#'   "mm", or "px".
+#' @param dpi Image resolution in dots per inch (default 600).
 #' @param ... Additional arguments passed to the underlying write function.
 #'
 #' @return The input \code{data}, invisibly.
@@ -275,8 +306,9 @@ gff3_to_df <- function(file, ...) {
 #' write_data(df, "output/table.tsv")
 #' }
 write_data <- function(data, file, col = 1, col_names = TRUE,
-                       width = 8, height = 6, dpi = 600, ...) {
+                       width = NULL, height = NULL, units = "cm", dpi = 600, ...) {
   ext <- tolower(tools::file_ext(file))
+  dims <- resolve_image_dims(width, height)
 
   switch(ext,
     xlsx = writexl::write_xlsx(data, path = file, ...),
@@ -292,10 +324,11 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
             } else {
               df2fasta(data, output_file = file, ...)
             },
-    pdf = ggplot2::ggsave(filename = file, plot = data, width = width, height = height,
-              dpi = dpi, device = cairo_pdf, ...),
+    pdf = ggplot2::ggsave(filename = file, plot = data, width = dims$width, height = dims$height,
+              units = units, dpi = dpi, device = cairo_pdf, ...),
     png = , svg = , tiff = , jpg = , jpeg = , eps =
-      ggplot2::ggsave(filename = file, plot = data, width = width, height = height, dpi = dpi, ...),
+      ggplot2::ggsave(filename = file, plot = data, width = dims$width, height = dims$height,
+              units = units, dpi = dpi, ...),
     stop("Unsupported format: .", ext, "\n  Supported: .xlsx, .csv, .tsv, .bed, .txt, .sh, .fa, .fasta, .pdf, .png, .svg, .tiff, .jpg, .eps, .rds")
   )
   invisible(data)

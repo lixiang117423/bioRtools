@@ -80,7 +80,7 @@
 #' library(readr)
 #' library(dplyr)
 #'
-#' ld <- read_delim("ld_result.txt") |>
+#' ld <- read_delim("ld_result.txt") %>%
 #'     select(dist, r2)
 #'
 #' # Basic usage — distance in bp (default)
@@ -137,12 +137,12 @@ ld_decay_threshold <- function(
     dist_unit <- match.arg(dist_unit)
 
     # ── 1. Data preparation ────────────────────────────────────────────────────
-    df <- data |>
+    df <- data %>%
         dplyr::select(
             dist = !!rlang::sym(dist_col),
             r2   = !!rlang::sym(value_col)
-        ) |>
-        dplyr::filter(!is.na(dist), !is.na(r2), r2 > 0, dist >= 0) |>
+        ) %>%
+        dplyr::filter(!is.na(dist), !is.na(r2), r2 > 0, dist >= 0) %>%
         dplyr::mutate(
             dist_kb = if (dist_unit == "bp") dist / 1000 else dist
         )
@@ -213,9 +213,9 @@ ld_decay_threshold <- function(
     # ── 3. Background LD estimation ───────────────────────────────────────────
     dist_bg_cutoff <- stats::quantile(df$dist_kb, probs = bg_quantile)
 
-    background_r2 <- df |>
-        dplyr::filter(dist_kb >= dist_bg_cutoff) |>
-        dplyr::summarise(bg = mean(r2)) |>
+    background_r2 <- df %>%
+        dplyr::filter(dist_kb >= dist_bg_cutoff) %>%
+        dplyr::summarise(bg = mean(r2)) %>%
         dplyr::pull(bg)
 
     if (verbose) {
@@ -241,7 +241,7 @@ ld_decay_threshold <- function(
         }
     )
 
-    decay_table <- decay_table |>
+    decay_table <- decay_table %>%
         dplyr::mutate(
             bg_ratio       = round(threshold / background_r2, 2),
             recommendation = dplyr::case_when(

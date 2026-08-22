@@ -65,11 +65,11 @@ stopifnot(identical(th_light$plot.tag$face, "bold"))
 stopifnot(identical(th_bold$plot.tag$face, "bold"))
 cat("✓ Test 7 passed — panel labels (a/b/c) bold regardless of light\n\n")
 
-# --- Test 8: strip.text follows base_fontface in each mode ------------------
-cat("Test 8: strip.text face follows base_fontface\n")
-stopifnot(identical(th_light$strip.text$face, "plain"))
+# --- Test 8: strip.text always bold (journal style) --------------------------
+cat("Test 8: strip.text face bold in both modes\n")
+stopifnot(identical(th_light$strip.text$face, "bold"))
 stopifnot(identical(th_bold$strip.text$face, "bold"))
-cat("✓ Test 8 passed — facet strip lightens in light mode\n\n")
+cat("✓ Test 8 passed — facet strips stay bold\n\n")
 
 # --- Test 9: invalid light errors -------------------------------------------
 cat("Test 9: invalid light errors\n")

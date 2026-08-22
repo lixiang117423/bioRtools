@@ -5,6 +5,84 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.93.0] - 2026-08-22
+
+### Added
+- New bioinfo colour palette family (Nature / Science / Nat Commun figure
+  styles), with testthat coverage:
+  - `get_cat_colors()` — 20-colour categorical palette (10 hues in
+    dark/light pairs; dark tones spent first, interleaved up to 20,
+    interpolated beyond)
+  - `get_seq_colors()` — 10 single-hue sequential ramps sharing hue names
+    with the categorical palette
+  - `get_div_colors()` — diverging ramps ("soft" five-step /
+    "strong" three-step) for z-scores, log2FC, correlations
+  - `get_multiseq_colors()` — multi-hue sequential (viridis-like) ramp
+  - ggplot2 scales: `scale_color/colour/fill_bioinfo()` (discrete),
+    `scale_*_bioinfo_seq()` (single-hue continuous),
+    `scale_*_bioinfo_div()` (diverging, with alpha/reverse)
+  - `preview_bioinfo_palettes()` — draws every palette with
+    `scales::show_col()`
+
+### Changed
+- DESCRIPTION: declared `grDevices` and `graphics` in Imports (used by
+  existing code but previously undeclared); testthat floor raised to
+  (>= 3.2.0) for `expect_no_error()`.
+
+## [1.92.1] - 2026-08-22
+
+### Fixed
+- pav_gwas(): parallel association tests now iterate with
+  seq_len(nrow(filtered_matrix)) — a zero-row filtered matrix no longer
+  silently runs 1:0 as two bogus iterations.
+- Removed package-internal bioRtools:: self-references (bsa_plot_table,
+  plot_ocbsa, plot_pfam, plot_pav_phenotype, rda_analysis,
+  rf_taxa_classification) and bioRtools:::academic_db in plot_multi_volcano;
+  all replaced with direct calls per the development guide (§2.4).
+
+### Changed
+- ld_decay_threshold(): native |> pipes replaced with magrittr %>% to match
+  the project-wide pipe convention (§3.1).
+- Renamed internal helper colorRampSubdiv() to color_ramp_subdiv()
+  (snake_case, §1.1).
+
+### Dependencies
+- Added nnet to Suggests — it is used (guarded by requireNamespace) in
+  pav_gwas() but was not declared in DESCRIPTION.
+
+## [1.92.0] - 2026-08-20
+
+### Added
+- plot_ocbsa(): genome-wide SNP-index plot replicating the OcBSA style —
+  cumulative x-axis with chromosomes laid end to end, binomial threshold
+  curve (VirtualIndex), both pool index lines, and Delta(SNP-index) points
+  colored by marker count (viridis plasma). Chromosomes are sorted naturally
+  (Chr2 before Chr10); chr_sep/chr_index optionally strip accession prefixes
+  (So120_Chr1 -> Chr1). Accepts a file path or data frame. New synthetic
+  dataset df.ocbsa.window ships with the package for examples/tests.
+
+### Added
+- write_data(): golden-ratio auto-sizing for image export. width/height now
+  default to NULL; supplying only one derives the other at 1.618:1
+  (width:height). Both omitted still saves 8.5 x 6 cm. New testthat suite
+  test-write_data.R asserts the saved PNG pixel dimensions for every case.
+
+### Changed
+- write_data(): image-saving defaults changed from inches to centimetres —
+  width 8 -> 8.5, height 6 (unchanged), new units = "cm" (was ggsave's
+  implicit "in"). Existing calls that passed explicit width/height in inches
+  must add units = "in" or rescale.
+- theme_prism(): element values replaced with the publication-style
+  (theme_pub) values — plot.title 12 pt bold Arial-Bold left-aligned with
+  8 pt bottom margin; plot.subtitle 10 pt grey30; axis.title 11 pt and
+  axis.text 9 pt (hardcoded black, no longer palette-driven); axis.line and
+  axis.ticks 0.4 black; faint grey85 major grid lines restored (minor grid
+  stays off); border = TRUE now draws a 0.5 black panel border; legend.title
+  10 pt, legend.text 9 pt, legend keys 0.4 cm; strip.text bold 9 pt (always
+  bold again, no longer follows base_fontface) on grey90; fixed 10 pt plot
+  margin. Text sizes are absolute now (previously rel()), so they no longer
+  scale with base_size.
+
 ## [1.91.0] - 2026-08-16
 
 ### Fixed

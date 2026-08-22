@@ -184,7 +184,7 @@ plot_pav_phenotype <- function(data_pav, data_phenotype,
 
   # Use scale_fill_research if available, otherwise scale_fill_brewer
   tryCatch({
-    p_phenotype <- p_phenotype + bioRtools::scale_fill_research()
+    p_phenotype <- p_phenotype + scale_fill_research()
   }, error = function(e) {
     p_phenotype <<- p_phenotype + ggplot2::scale_fill_brewer(palette = "Set1")
   })

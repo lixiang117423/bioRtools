@@ -1091,7 +1091,7 @@ pav_gwas <- function(pav_data,
   # Perform association tests
   start_time <- Sys.time()
 
-  results <- parallel::parLapply(cl, 1:nrow(filtered_matrix), function(i) {
+  results <- parallel::parLapply(cl, seq_len(nrow(filtered_matrix)), function(i) {
     feature_presence <- filtered_matrix[i, ]
     result <- test_feature_association(feature_presence, transformed_phenotype, test_type, covariates)
     result$feature_id <- rownames(filtered_matrix)[i]

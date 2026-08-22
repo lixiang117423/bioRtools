@@ -100,7 +100,7 @@ Threshold recommendation logic:
 library(readr)
 library(dplyr)
 
-ld <- read_delim("ld_result.txt") |>
+ld <- read_delim("ld_result.txt") \%>\%
     select(dist, r2)
 
 # Basic usage — distance in bp (default)
