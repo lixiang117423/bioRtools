@@ -42,6 +42,7 @@ deve.R.backup
 # Local development files
 .rdevrc
 backup_original_files/
+bioRtools_review_agent.md
 CODE_REVIEW_REPORT.md
 SETUP.md
 INSTALL_SYNTENY.md
