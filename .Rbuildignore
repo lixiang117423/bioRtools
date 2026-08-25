@@ -11,5 +11,4 @@
 ^scripts/
 ^.*\.backup$
 ^\.github/
-^data/df\.synteny\..*\.rda$
 ^CLAUDE\.md$

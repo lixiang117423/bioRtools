@@ -184,11 +184,12 @@ library(bioRtools)
 data(df.synteny.gene)
 data(df.synteny.link)
 
-# Create basic synteny plot
+# Create basic synteny plot (df.synteny.link carries curve-style links)
 synteny_result <- plot_synteny(
   gene_data = df.synteny.gene,
   syntenic_data = df.synteny.link,
-  species_labels = c("A", "B", "C", "D")
+  species_labels = c("A", "B", "C", "D"),
+  link_type = "curve"
 )
 
 # Display the plot
@@ -202,6 +203,7 @@ plot_synteny(
   gene_data = df.synteny.gene,
   syntenic_data = df.synteny.link,
   species_labels = c("Sp1", "Sp2", "Sp3", "Sp4"),
+  link_type = "curve",
   fill_colors = c("#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"),
   link_color = "grey50",
   link_alpha = 0.3,

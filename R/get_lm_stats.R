@@ -119,16 +119,22 @@ validate_lm_model <- function(model) {
     )
   }
 
-  # Check if summary method exists
-  if (!hasMethod("summary", class(model))) {
+  # Check if summary method exists (S3 first, then S4)
+  has_summary <- !is.null(
+    utils::getS3method("summary", class(model)[1], optional = TRUE)
+  ) || methods::hasMethod("summary", class(model))
+  if (!has_summary) {
     stop(
       "Model object does not have a summary() method",
       call. = FALSE
     )
   }
 
-  # Check if anova method exists
-  if (!hasMethod("anova", class(model))) {
+  # Check if anova method exists (S3 first, then S4)
+  has_anova <- !is.null(
+    utils::getS3method("anova", class(model)[1], optional = TRUE)
+  ) || methods::hasMethod("anova", class(model))
+  if (!has_anova) {
     stop(
       "Model object does not have an anova() method",
       call. = FALSE

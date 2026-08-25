@@ -16,6 +16,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library(bioRtools)
 #' # Without phylogenetic tree
 #' plot_pfam(data = "path/to/pfam.tsv")
@@ -32,6 +33,7 @@
 #'   tree_width = 1.5,
 #'   rounded_corners = TRUE,
 #'   corner_radius = 0.15)
+#' }
 plot_pfam <- function(data,
                       tree_file = NULL,
                       tile_height = 0.8,

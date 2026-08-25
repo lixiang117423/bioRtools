@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.94.0] - 2026-08-25
+
+### Added
+- `plot_admixture_grouping()` — single-K population grouping bar chart
+  with samples ordered by tree tip order (left to right = tree top to
+  bottom), using `scale_fill_bioinfo()` and `theme_void()`; accepts tree
+  and data paths or objects, numeric or character K column selection,
+  with warnings for unmatched samples.
+
+### Changed
+- `plot_admixture_grouping()` — legend hidden by default; new
+  `show_legend = FALSE` argument opts back in.
+
+### Fixed
+- `data/df.synteny.*` datasets are included in the package build again
+  (previously excluded via `.Rbuildignore`, which broke examples that
+  call `data(df.synteny.gene)`).
+- `get_lm_stats()` / `format_lm_stats()` rejected valid `lm`/`glm` models:
+  `hasMethod()` only finds S4 methods, so the S3 `summary`/`anova` methods
+  of `lm` objects were never detected. Validation now checks S3 methods via
+  `utils::getS3method()` (with S4 fallback).
+
 ## [1.93.0] - 2026-08-22
 
 ### Added

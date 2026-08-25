@@ -1,7 +1,7 @@
 Type: Package
 Package: bioRtools
 Title: Convenience Functions for Biological Data Processing
-Version: 1.93.0
+Version: 1.94.0
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
 Description: This package provides a comprehensive suite of convenience
@@ -59,6 +59,7 @@ Imports:
     lefser,
     linkET,
     magrittr,
+    methods,
     minpack.lm,
     mixOmics,
     multcomp,

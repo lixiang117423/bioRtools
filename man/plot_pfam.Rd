@@ -45,6 +45,7 @@ Plot protein domain (from Pfam and other tools) distribution with optional phylo
 When rounded_corners = TRUE, the ggforce package is required
 }
 \examples{
+\dontrun{
 library(bioRtools)
 # Without phylogenetic tree
 plot_pfam(data = "path/to/pfam.tsv")
@@ -61,6 +62,7 @@ plot_pfam(data = "path/to/pfam.tsv",
   tree_width = 1.5,
   rounded_corners = TRUE,
   corner_radius = 0.15)
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>
