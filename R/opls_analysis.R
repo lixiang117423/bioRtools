@@ -73,6 +73,11 @@
 #'   \code{ref_group} is set (ref-anchored mode is used instead).
 #'   When FALSE with more than 2 groups and no ref_group, the function automatically
 #'   uses all-pairs mode (OPLS-DA is binary-only), with an informational message.
+#' @param test_method Statistical test for p-values: "auto" (default) uses
+#'   shapiro.test() per variable to choose between t-test and Wilcoxon;
+#'   "t-test" and "wilcoxon" force the corresponding test.
+#' @param p_adjust_method P-value adjustment method (default: "BH"), one of
+#'   \code{stats::p.adjust.methods}.
 #' @param p_threshold Numeric p-value threshold for significance labeling
 #'   (default: 0.05). Only used when \code{diff_method = "pvalue"}; the
 #'   \code{p_adjust} column is always computed and kept for downstream plotting.

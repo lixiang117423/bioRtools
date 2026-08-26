@@ -53,7 +53,7 @@
 #' @param gaps_row Integer vector of row positions for gap lines.
 #' @param gaps_col Integer vector of column positions for gap lines.
 #' @param border_color Cell border color. Default is "grey60".
-#' @param na_col Color for NA values. Default is "\#DDDDDD".
+#' @param na_col Color for NA values. Default is "#DDDDDD".
 #' @param legend Logical, whether to show the color legend. Default is TRUE.
 #' @param filename File path to save the plot. Default is NULL (no saving).
 #' @param width Plot width in inches for saving. Default is 7.

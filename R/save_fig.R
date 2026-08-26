@@ -22,8 +22,9 @@
 #'   `fig.png`.
 #' @param formats Character vector of formats to write (e.g. `c("pdf", "png")`).
 #'   `NULL` (default) writes a single file using `filename`'s extension.
-#' @param width,height,in Plot dimensions. `NA` (default) lets ggsave pick from
-#'   the current device.
+#' @param width,height,units Plot dimensions and their units. `NA` (default)
+#'   for width/height lets ggsave pick from the current device; `units` is
+#'   "in" by default ("cm", "mm", "px" also accepted).
 #' @param dpi Dots per inch for raster output (default 300; raise for Nature's
 #'   450-dpi preference).
 #' @param scale Multiplicative scaling factor (default 1).

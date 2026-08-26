@@ -1,7 +1,14 @@
 # Tests for plot_ideogram_synteny(): dual-species synteny (RIdeogram port).
-source("R/plot_ideogram_synteny.R")
-source("R/utils_ideogram.R")
-suppressPackageStartupMessages({ library(ggplot2); library(pkgload) })
+suppressPackageStartupMessages(library(bioRtools))
+build_synteny_ribbons <- bioRtools:::build_synteny_ribbons
+ideo_synteny_row_layout <- bioRtools:::ideo_synteny_row_layout
+ideo_cm_px <- bioRtools:::ideo_cm_px
+ideo_qbezier <- bioRtools:::ideo_qbezier
+ideo_qt_edge <- bioRtools:::ideo_qt_edge
+ideo_synteny_x <- bioRtools:::ideo_synteny_x
+ideo_finish <- bioRtools:::ideo_finish
+ideo_synteny_row_layout <- bioRtools:::ideo_synteny_row_layout
+build_synteny_ribbons <- bioRtools:::build_synteny_ribbons
 data(df.ideo.synteny_karyotype); data(df.ideo.synteny)
 
 is_ggplot <- function(x) inherits(x, "ggplot")

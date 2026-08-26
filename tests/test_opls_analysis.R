@@ -1,9 +1,8 @@
 # Tests for opls_analysis() modes + internal pairwise helpers.
-source("R/opls_pairwise_fit.R")
-source("R/utils-orientation.R")
-source("R/opls_analysis.R")
-source("R/pairwise_oplsda.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+fit_pairwise_opls <- bioRtools:::fit_pairwise_opls
+compute_pairwise_diff <- bioRtools:::compute_pairwise_diff
 suppressPackageStartupMessages({
   library(ropls); library(tibble); library(dplyr)
 })

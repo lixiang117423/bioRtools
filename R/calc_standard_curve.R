@@ -264,7 +264,7 @@ calculate_regression_stats <- function(processed_data, dilution_factor, use_mean
 
         # Determine which qPCR method can be used
         method_recommendation <- dplyr::case_when(
-          efficiency >= 0.90 & efficiency <= 1.10 ~ "2^-ΔΔCt method (relative quantification)",
+          efficiency >= 0.90 & efficiency <= 1.10 ~ "2^-\u0394\u0394Ct method (relative quantification)",
           efficiency >= 0.80 & efficiency <= 1.20 ~ "Efficiency correction method recommended",
           TRUE ~ "Standard curve method required"
         )

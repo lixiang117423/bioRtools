@@ -82,7 +82,7 @@ get_methylkit_data <- function(methyl_obj,
                                hi_perc = 100,
                                destrand = FALSE) {
   # --- 1. 过滤、标准化和合并数据 ---
-  message(paste("步骤 1: 正在为", context, "数据按覆盖度过滤、标准化并合并样本..."))
+  message(paste("Step 1: filtering, normalizing and merging", context, "data by coverage..."))
   myobj_final <- methylKit::filterByCoverage(methyl_obj,
     lo.count = lo_count,
     lo.perc = lo_perc,
@@ -92,13 +92,13 @@ get_methylkit_data <- function(methyl_obj,
     methylKit::unite(destrand = destrand)
 
   # --- 2. 提取数据和样本信息 ---
-  message("步骤 2: 正在提取处理后的数据和样本ID...")
+  message("Step 2: extracting processed data and sample IDs...")
   united_data <- methylKit::getData(myobj_final)
   sample_names <- methylKit::getSampleID(myobj_final)
   num_samples <- length(sample_names)
 
   # --- 3. 创建基础数据框并循环添加所有信息 ---
-  message("步骤 3: 正在构建包含上下文、原始计数和百分比的最终表格...")
+  message("Step 3: building the final table with context, raw counts and percentages...")
 
   # 初始化结果数据框，包含固定的位点信息和【新增的上下文信息】
   final_df <- data.frame(
@@ -134,6 +134,6 @@ get_methylkit_data <- function(methyl_obj,
     final_df[[dest_pct_col]] <- meth_percent
   }
 
-  message("处理完成！最终综合性表格已生成。")
+  message("Done! Final combined table generated.")
   final_df
 }

@@ -1,7 +1,7 @@
 # Tests for get_id_description(): GO/KEGG id -> description (+ GO ontology).
 # GO branch is offline (local GO.db). KEGG branch needs network and is skipped
 # if KEGGREST cannot reach the API.
-source("R/get_id_description.R")
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(GO.db); library(AnnotationDbi) })
 
 cat("Test 1: GO lookup — columns, values, ontology\n")

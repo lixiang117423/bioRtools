@@ -1,9 +1,12 @@
 # Tests for plot_ideogram(): single-species idiogram (RIdeogram port).
 # Validates return type, that every label mode runs, and that the chromosome
 # layout matches the original RIdeogram formulas to full precision.
-source("R/plot_ideogram.R")
-source("R/utils_ideogram.R")
-suppressPackageStartupMessages({ library(ggplot2); library(pkgload) })
+suppressPackageStartupMessages(library(bioRtools))
+ideo_layout_chr <- bioRtools:::ideo_layout_chr
+ideo_y_of_pos <- bioRtools:::ideo_y_of_pos
+ideo_cap_arc <- bioRtools:::ideo_cap_arc
+ideo_chr_outline <- bioRtools:::ideo_chr_outline
+ideo_centromere_band <- bioRtools:::ideo_centromere_band
 data(df.ideo.karyotype); data(df.ideo.gene_density)
 data(df.ideo.ltr_density); data(df.ideo.rna_marker)
 

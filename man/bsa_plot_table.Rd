@@ -18,7 +18,7 @@ A named list containing:
       with Smooth_Value line and Threshold reference line, faceted by
       Method and Chromosome.}
     \item{\code{table}}{Data frame of significant QTL regions
-      (Above_Threshold == TRUE) with Chinese column names.}
+      (Above_Threshold == TRUE) with English snake_case column names.}
   }
 }
 \description{

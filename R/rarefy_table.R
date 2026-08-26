@@ -245,7 +245,7 @@ rarefy_table <- function(data,
 
   if (verbose) {
     message("Rarefaction completed successfully!")
-    message("Final dataset: ", nrow(rarefied_df), " samples × ", ncol(rarefied_df), " taxa")
+    message("Final dataset: ", nrow(rarefied_df), " samples \u00d7 ", ncol(rarefied_df), " taxa")
     if (length(unique(rarefaction_info$rarefaction_depth)) == 1) {
       message("Rarefaction depth: ", unique(rarefaction_info$rarefaction_depth))
     }

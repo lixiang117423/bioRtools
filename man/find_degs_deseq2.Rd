@@ -338,7 +338,7 @@ count data. Genome Biology, 11, R106.
 }
 \seealso{
 \itemize{
-  \item \code{\link{volcano_plot}} for visualization of DE results
+  \item \code{\link{plot_volcano}} for visualization of DE results
   \item \code{\link{enrich_go}} for functional enrichment of DE genes
   \item \code{\link{enrich_kegg}} for pathway enrichment analysis
 }

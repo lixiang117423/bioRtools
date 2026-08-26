@@ -1,8 +1,7 @@
 # Regression: calc_beta_nti output must be byte-identical after the
 # calc_ses_beta_core refactor.
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(ape); library(dplyr); library(tidyr); library(picante) })
-source("R/calc_ses_beta_core.R")
-source("R/calc_beta_nti.R")
 
 otu <- matrix(c(10,20,5,0,8,15, 20,5,10,12,0,3, 0,15,20,8,10,5,
                 5,0,3,20,15,10, 15,10,8,5,20,0, 8,12,0,15,3,20),
@@ -14,7 +13,7 @@ tree <- ape::read.tree(text =
 meta <- data.frame(sample = colnames(otu),
                    group = c("A","A","A","B","B","B"), stringsAsFactors = FALSE)
 
-baseline <- readRDS("tests/baselines/calc_beta_nti_fixture.rds")
+baseline <- readRDS(system.file("extdata", "calc_beta_nti_fixture.rds", package = "bioRtools"))
 
 cat("Test 1: ungrouped output identical to baseline\n")
 set.seed(42)

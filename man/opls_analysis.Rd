@@ -111,6 +111,13 @@ uses all-pairs mode (OPLS-DA is binary-only), with an informational message.}
 for plotting). \code{"pvalue"}: \code{p_adjust < p_threshold} with
 log2FC direction (legacy behavior).}
 
+\item{test_method}{Statistical test for p-values: "auto" (default) uses
+shapiro.test() per variable to choose between t-test and Wilcoxon;
+"t-test" and "wilcoxon" force the corresponding test.}
+
+\item{p_adjust_method}{P-value adjustment method (default: "BH"), one of
+\code{stats::p.adjust.methods}.}
+
 \item{verbose}{Logical, whether to print progress messages during pairwise model fitting
 (default: FALSE).}
 

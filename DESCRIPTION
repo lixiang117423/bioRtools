@@ -1,7 +1,7 @@
 Type: Package
 Package: bioRtools
 Title: Convenience Functions for Biological Data Processing
-Version: 1.94.0
+Version: 1.94.1
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
 Description: This package provides a comprehensive suite of convenience
@@ -34,6 +34,7 @@ Imports:
     data.table,
     DESeq2,
     dplyr,
+    dynamicTreeCut,
     edgeR,
     factoextra,
     FactoMineR,
@@ -64,7 +65,6 @@ Imports:
     mixOmics,
     multcomp,
     patchwork,
-    pheatmap,
     picante,
     pulsar,
     purrr,
@@ -77,7 +77,6 @@ Imports:
     rstatix,
     Rtsne,
     scales,
-    SpiecEasi,
     stats,
     stats4,
     stringr,

@@ -1,6 +1,7 @@
 # Tests for internal gmpr(): GMPR size factors (Chen et al. 2018).
-source("R/gmpr.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+gmpr <- bioRtools:::gmpr
 otu <- matrix(c(10L,20L,5L,0L,8L,
                 20L,5L,10L,12L,0L,
                 0L,15L,20L,8L,10L,

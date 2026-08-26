@@ -240,7 +240,7 @@ theme_prism <- function(palette = "black_and_white",
       fill = colours["pageBackgroundColor"], colour = NA
     ),
     plot.title = ggplot2::element_text(
-      size = 12, face = "bold", family = "Arial-Bold", hjust = 0, vjust = 1,
+      size = 12, face = "bold", family = base_family, hjust = 0, vjust = 1,
       margin = ggplot2::margin(b = 8)
     ),
     plot.title.position = "panel",

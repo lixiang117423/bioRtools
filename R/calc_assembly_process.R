@@ -61,12 +61,12 @@ calc_assembly_process <- function(beta_nti, rc_bray,
   } else if ("beta_nri" %in% names(beta_nti)) {
     "beta_nri"
   } else {
-    stop("找不到 beta_nti 或 beta_nri 列;请传入 calc_beta_nti() 或 calc_beta_nri() 的输出")
+    stop("No 'beta_nti' or 'beta_nri' column found; pass the output of calc_beta_nti() or calc_beta_nri()")
   }
 
   has_group <- "group" %in% names(beta_nti)
   if (has_group != ("group" %in% names(rc_bray))) {
-    stop("beta_nti 与 rc_bray 的 group 设置不一致;请用相同的 sample/group_col 计算")
+    stop("'beta_nti' and 'rc_bray' have inconsistent group settings; compute both with the same sample/group_col")
   }
 
   pair_key <- function(df) {
@@ -83,7 +83,7 @@ calc_assembly_process <- function(beta_nti, rc_bray,
   # Require the pair sets to match exactly — a mismatch means betaNTI/betaNRI
   # and RCbray were computed on different sample sets (user error).
   if (!setequal(b$.pair, r$.pair)) {
-    stop("beta_nti 和 rc_bray 的样本对不一致;请确保两者来自同一组样本")
+    stop("'beta_nti' and 'rc_bray' have different sample pairs; ensure both come from the same sample set")
   }
   joined <- dplyr::inner_join(b, r, by = ".pair")
   if (has_group) {

@@ -331,7 +331,7 @@ format_lm_stats <- function(model,
 
   stats <- get_lm_stats(model, r_squared_type, r_squared_digits)
 
-  r2_symbol <- if (r_squared_type == "adjusted") "R²" else "R²"
+  r2_symbol <- if (r_squared_type == "adjusted") "R\u00b2" else "R\u00b2"
   r2_value <- sprintf(paste0("%.", r_squared_digits, "f"), stats$r_squared)
   p_value <- sprintf(paste0("%.", p_digits, "f"), stats$p_value)
 

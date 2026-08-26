@@ -18,6 +18,7 @@
 #' @export
 #'
 #' @examples
+#' library(dplyr)
 #' df <- data.frame(group = rep(c("A", "B"), each = 5), value = c(1:10))
 #'
 #' # Ungrouped (default column name "value")

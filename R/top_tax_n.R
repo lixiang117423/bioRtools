@@ -38,7 +38,7 @@
 #'   "alluvial". Default is "stacked_bar". "alluvial" creates a flow/alluvial
 #'   diagram using \pkg{ggalluvial}.
 #' @param group_col Character string specifying the column name in the sample
-#'   table that defines groups. Default is "group".
+#'   table that defines groups. Default is "treatment".
 #' @param plot_by Character string specifying the aggregation level for plotting.
 #'   Options: "sample" (plot each sample separately), "group" (aggregate to
 #'   group level and plot by group). Default is "sample".
@@ -110,7 +110,8 @@
 #'   data = df.top10.otu,
 #'   sample = df.top10.sample,
 #'   taxo = df.top10.class,
-#'   which = "phylum"
+#'   which = "phylum",
+#'   group_col = "group"
 #' )
 #'
 #' # View the plot

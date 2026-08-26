@@ -5,6 +5,72 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.94.1] - 2026-08-26
+
+### Changed
+- `plot_admixture_grouping()` — numeric `k` now selects the `K<k>_qgroup`
+  column (current Admixture output format), falling back to the legacy
+  `K<k>` column when the `_qgroup` variant is absent; character `k`
+  remains a direct column name. Error message lists both formats among
+  the available K columns.
+
+### Fixed
+- `rda_analysis()`: `data` and `physicochemical` rows no longer need to be in
+  identical order — the sample sets are checked and rows are aligned internally
+  (vegan::rda already matches by name).
+- `theme_prism()`: `plot.title` used the hardcoded font family `"Arial-Bold"`,
+  which is not a valid PostScript font and broke rendering on pdf/PostScript
+  devices (e.g. during R CMD check examples). Now uses `base_family` with
+  `face = "bold"`.
+- Non-ASCII characters in R strings replaced with `\uXXXX` escapes (R², cos²,
+  ±, ×, →, ↑/↓, ≥, ΔΔCt, ∞); Chinese error/message strings translated to
+  English (`calc_assembly_process()`, `get_methylkit_data()`) per §6.1.
+- `bsa_plot_table()`: output table column names renamed from Chinese to English
+  snake_case (method, chromosome, position_bp, position_mb, raw_value,
+  fitted_value, method_threshold, above_threshold).
+- `fasta2df()`: rebuilt the malformed Rd — example code had been embedded
+  inside the `\value` section, producing invalid Rd and a `\dontrun` warning.
+- `gg_heatmap()`: roxygen no longer escapes `\#` in `na_col` docs.
+- Rd cross-references: `volcano_plot` links → `plot_volcano`; `Biostrings`
+  links → `\pkg{Biostrings}` (no anchor needed).
+- `df.synteny.gene` docs: added the missing `syn_group` column and fixed the
+  `@description` braces (lost-brace Rd warning).
+- Missing `@param` documentation added (`opls_analysis()` test_method /
+  p_adjust_method, `pairwise_oplsda()` verbose, `plot_ld_heatmap()` verbose,
+  `print.core_microbiome()` x/..., `save_fig()` units,
+  `write_data()` col / col_names).
+- `reorder_by_peak()`: the returned summary no longer tries to drop a
+  non-existent `row_order` column (dplyr error when running the
+  `reorder_heatmap()` example).
+- `spls_analysis()`: `sample_scores` component columns are named `comp1`/
+  `comp2`/... again — the percentage was previously baked into the column
+  names (e.g. `comp1 (33.93%)`), which broke the documented example and the
+  snake_case column rule. Percentages remain available in
+  `variance_explained$label`.
+- Examples fixed so they run under R CMD check: `theme_bio()` (internal
+  function) uses `bioRtools:::`; `top_tax_n()` passes `group_col = "group"`
+  and the `@param` default doc now matches the actual `"treatment"` default;
+  `summarise_stats()` loads `dplyr` for `%>%`; `reorder_heatmap()` assigns the
+  example plot instead of auto-printing it (its axis labels contain non-ASCII
+  characters that PostScript devices cannot render).
+- Legacy tests at `tests/*.R` no longer `source("R/xxx.R")` — they load the
+  package via `library(bioRtools)` (internal helpers via `bioRtools:::`), so
+  R CMD check's test run no longer fails; `plot_multi_volcano()` /
+  `plot_composition_alluvium()` tests rewritten with synthetic data (the old
+  ones read external files under `PlotCase/`); `plot_synteny()` tests use
+  `link_type = "curve"`; `check_alluvium_data.R` (data-inspection script)
+  moved to `scripts/`; the `calc_beta_nti` baseline fixture moved to
+  `inst/extdata/` and is read via `system.file()`.
+- R CMD check hygiene: `.Rbuildignore` now excludes agent directories
+  (`.claude/`, `.superpowers/`, `.workbuddy/`, `.rdevrc`), docs, and other
+  non-package top-level files; stray `Rplots.pdf` artifacts removed.
+
+### Dependencies
+- Added `dynamicTreeCut` to Imports — `WGCNA::cutreeDynamic()` is not exported
+  by WGCNA; the call now uses `dynamicTreeCut::cutreeDynamic()`.
+- Removed `SpiecEasi` and `pheatmap` from Imports (referenced only in docs;
+  the network code uses `huge`/`pulsar` directly).
+
 ## [1.94.0] - 2026-08-25
 
 ### Added

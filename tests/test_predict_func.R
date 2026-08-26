@@ -1,7 +1,8 @@
 # Tests for predict_func() (FAPROTAX) + match_words().
-source("R/parse_faprotax.R")
-source("R/predict_func.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+match_words <- bioRtools:::match_words
+parse_faprotax <- bioRtools:::parse_faprotax
 cat("Test 1: parse_faprotax — ~90 functions, methanotrophy clades\n")
 parsed <- parse_faprotax()
 stopifnot(length(parsed$func_tax) >= 85 && length(parsed$func_tax) <= 105)

@@ -1,7 +1,9 @@
 # Tests for plot_ideogram_ternary(): three-species triangular synteny (RIdeogram port).
-source("R/utils_ideogram.R")
-source("R/plot_ideogram_ternary.R")
-suppressPackageStartupMessages({ library(ggplot2); library(pkgload) })
+suppressPackageStartupMessages(library(bioRtools))
+ideo_ternary_params <- bioRtools:::ideo_ternary_params
+ideo_ternary_species <- bioRtools:::ideo_ternary_species
+ideo_ternary_anchor <- bioRtools:::ideo_ternary_anchor
+ideo_rotate <- bioRtools:::ideo_rotate
 data(df.ideo.ternary_karyotype); data(df.ideo.ternary)
 
 is_ggplot <- function(x) inherits(x, "ggplot")

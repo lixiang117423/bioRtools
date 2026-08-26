@@ -72,7 +72,9 @@ of the heatmap in addition to the LDheatmap version. Default is TRUE.}
 \item{show_values}{Logical indicating whether to show LD values in the ggplot2
 heatmap tiles. Default is FALSE (recommended for large datasets).}
 
-\item{text_size}{Numeric value for text size in ggplot2 version when show_values = TRUE.
+\item{text_size}{Numeric value for text size in ggplot2 version when show_values = TRUE.}
+
+\item{verbose}{Logical, whether to print progress messages (default: TRUE).
 Default is 3.}
 }
 \value{

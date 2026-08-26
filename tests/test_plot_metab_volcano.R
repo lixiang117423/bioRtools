@@ -3,10 +3,8 @@
 # jittered, Up/Down points are drawn exactly and always on top of NS.
 
 # Source the function directly (for testing before package installation)
-source("R/academic_color_scales.R")
-source("R/plot_multi_volcano.R")   # provides internal detect_volcano_cols()
-source("R/plot_metab_volcano.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 library(ggplot2)
 
 # --- Synthetic opls_analysis differential_analysis-style data ---------------

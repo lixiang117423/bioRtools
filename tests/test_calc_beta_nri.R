@@ -1,6 +1,5 @@
 # Tests for calc_beta_nri(): betaNRI = ses.betaMPD (MPD-based).
-source("R/calc_ses_beta_core.R")
-source("R/calc_beta_nri.R")
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(ape); library(picante); library(magrittr) })
 
 otu <- matrix(c(10,20,5,0,8,15, 20,5,10,12,0,3, 0,15,20,8,10,5,

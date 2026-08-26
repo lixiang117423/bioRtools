@@ -27,8 +27,9 @@ file is written per format, e.g. `"fig"` + `c("pdf","png")` -> `fig.pdf`,
 \item{formats}{Character vector of formats to write (e.g. `c("pdf", "png")`).
 `NULL` (default) writes a single file using `filename`'s extension.}
 
-\item{width, height, in}{Plot dimensions. `NA` (default) lets ggsave pick from
-the current device.}
+\item{width, height, units}{Plot dimensions and their units. `NA` (default)
+for width/height lets ggsave pick from the current device; `units` is
+"in" by default ("cm", "mm", "px" also accepted).}
 
 \item{dpi}{Dots per inch for raster output (default 300; raise for Nature's
 450-dpi preference).}

@@ -1,11 +1,8 @@
 # Test script for enrich_kegg/enrich_go batch mode: pass a find_degs_deseq2()-
 # style data frame, auto-split by comparison, enrich per group, combine.
 
-source("R/utils-orientation.R")
-source("R/enrich_batch.R")
-source("R/enrich_kegg.R")
-source("R/enrich_go.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages(library(dplyr))
 
 gene_pool <- paste0("G", 1:20)

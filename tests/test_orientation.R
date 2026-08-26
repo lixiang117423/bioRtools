@@ -3,12 +3,12 @@
 # a feature x sample matrix (auto-detected AND forced) must reproduce the
 # sample x feature result exactly.
 
-source("R/utils-orientation.R")
-source("R/opls_pairwise_fit.R")
-for (f in c("pca_analysis", "pcoa_analysis", "opls_analysis",
-            "rda_analysis", "tsne_analysis", "pairwise_oplsda")) {
-  source(paste0("R/", f, ".R"))
-}
+suppressPackageStartupMessages(library(bioRtools))
+capture_rng_state <- bioRtools:::capture_rng_state
+restore_rng_state <- bioRtools:::restore_rng_state
+detect_feature_as_row <- bioRtools:::detect_feature_as_row
+orient_to_sample_row <- bioRtools:::orient_to_sample_row
+# All functions below are exported and loaded via library(bioRtools)
 
 suppressPackageStartupMessages({
   library(tibble); library(dplyr)

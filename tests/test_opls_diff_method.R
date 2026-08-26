@@ -1,8 +1,9 @@
 # Tests for the VIP-based differential determination in compute_pairwise_diff().
 # Standalone: no ropls needed (VIP table is supplied directly).
 
-source("R/opls_pairwise_fit.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+compute_pairwise_diff <- bioRtools:::compute_pairwise_diff
 suppressPackageStartupMessages(library(dplyr))
 
 set.seed(2)

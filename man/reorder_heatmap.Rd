@@ -119,12 +119,13 @@ head(reorder_result$row_order)
 
 # Use the reordered data for heatmap
 library(ggplot2)
-reorder_result$data_reordered \%>\%
-  ggplot(aes(x = col, y = row, fill = value)) +
+reorder_plot <- reorder_result$data_reordered \%>\%
+  ggplot(aes(x = sample, y = meta, fill = value)) +
   geom_tile() +
   scale_fill_viridis_c() +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# (assigning without printing avoids drawing non-ASCII labels on check devices)
 
 # Alternative reordering methods
 reorder_hierarchical <- reorder_heatmap(

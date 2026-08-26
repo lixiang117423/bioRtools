@@ -76,7 +76,7 @@
 #' @seealso
 #' \code{\link{fasta2df}} for the reverse conversion,
 #' \code{\link{writeLines}} for file writing operations,
-#' \code{\link{Biostrings}} package for advanced sequence manipulation
+#' \pkg{Biostrings} package for advanced sequence manipulation
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @references

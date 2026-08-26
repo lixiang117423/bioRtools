@@ -12,3 +12,17 @@
 ^.*\.backup$
 ^\.github/
 ^CLAUDE\.md$
+^AGENTS\.md$
+^CHANGELOG\.md$
+^LICENSE\.md$
+^README_cn\.md$
+^README_en\.md$
+^Rplots\.pdf$
+^SETUP\.md$
+^_pkgdown\.yml$
+^bioRtools_review_agent\.md$
+^docs/
+^\.rdevrc$
+^\.claude$
+^\.superpowers$
+^\.workbuddy$

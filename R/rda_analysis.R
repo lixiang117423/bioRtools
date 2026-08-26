@@ -159,10 +159,13 @@ rda_analysis <- function(data,
   # Resolve orientation; sample IDs come from physicochemical row names
   data <- orient_to_sample_row(data, physicochemical, NULL, feature_as_row, FALSE)
 
-  # Check if sample names match between data and physicochemical
-  if (!identical(rownames(data), rownames(physicochemical))) {
+  # Check that the sample sets match between data and physicochemical
+  # (same samples; row order may differ and is aligned below)
+  if (!identical(sort(rownames(data)), sort(rownames(physicochemical)))) {
     stop("Sample names (row names) must match between 'data' and 'physicochemical'")
   }
+  # Align row order so both matrices list samples identically
+  physicochemical <- physicochemical[rownames(data), , drop = FALSE]
 
   # Check if color column exists in sample data
   if (!color %in% colnames(sample)) {

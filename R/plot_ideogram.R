@@ -97,7 +97,7 @@ plot_ideogram <- function(karyotype, overlaid = NULL, label = NULL,
                    ymin = .data$ymin, ymax = .data$ymax, fill = .data$Value))
     p <- p + ggplot2::scale_fill_gradientn(
       colours = color_overlaid,
-      guide = ggplot2::guide_colorbar(title = "Low → High", title.position = "top",
+      guide = ggplot2::guide_colorbar(title = "Low \u2192 High", title.position = "top",
                                       frame.colour = "black", ticks.colour = "black"))
   }
 
@@ -226,7 +226,7 @@ add_label_heatmap <- function(p, label, layout, max_end, cw, color_label, has_ov
                  ymin = .data$ymin, ymax = .data$ymax, fill = .data$Value)) +
     ggplot2::scale_fill_gradientn(
       colours = color_label,
-      guide = ggplot2::guide_colorbar(title = "Low → High", title.position = "top",
+      guide = ggplot2::guide_colorbar(title = "Low \u2192 High", title.position = "top",
                                       frame.colour = "black", ticks.colour = "black"))
 
   # second chromosome outline, offset right

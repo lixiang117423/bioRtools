@@ -127,7 +127,7 @@ If a matrix, display those values instead.}
 
 \item{border_color}{Cell border color. Default is "grey60".}
 
-\item{na_col}{Color for NA values. Default is "\#DDDDDD".}
+\item{na_col}{Color for NA values. Default is "#DDDDDD".}
 
 \item{legend}{Logical, whether to show the color legend. Default is TRUE.}
 

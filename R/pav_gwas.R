@@ -490,7 +490,7 @@ pav_gwas <- function(pav_data,
 
     # Enhanced verbose output
     if (verbose) {
-      cat(sprintf("  Numeric phenotype: %.3f ± %.3f (range: %.3f - %.3f)\n",
+      cat(sprintf("  Numeric phenotype: %.3f \u00b1 %.3f (range: %.3f - %.3f)\n",
         pheno_stats$mean, pheno_stats$sd, pheno_stats$min, pheno_stats$max))
       cat(sprintf("  %d unique values (%.1f%% of samples)\n",
         pheno_stats$n_unique, pheno_stats$n_unique / pheno_stats$n_samples * 100))
@@ -699,7 +699,7 @@ pav_gwas <- function(pav_data,
         cat(sprintf("  Category %d: %d samples\n", i, category_counts[i]))
       }
     } else if (analysis_type %in% c("continuous", "continuous_raw")) {
-      cat(sprintf("Continuous transformation: %.3f ± %.3f (range: %.3f - %.3f)\n",
+      cat(sprintf("Continuous transformation: %.3f \u00b1 %.3f (range: %.3f - %.3f)\n",
         mean(transformed_phenotype, na.rm = TRUE),
         sd(transformed_phenotype, na.rm = TRUE),
         min(transformed_phenotype, na.rm = TRUE),

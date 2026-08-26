@@ -1,5 +1,5 @@
 # Tests for calc_assembly_process(): 5-process Stegen classification.
-source("R/calc_assembly_process.R")
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(magrittr) })
 
 proc_levels <- c("Variable selection","Homogeneous selection",

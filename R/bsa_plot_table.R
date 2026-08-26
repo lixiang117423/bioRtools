@@ -14,7 +14,7 @@
 #'       with Smooth_Value line and Threshold reference line, faceted by
 #'       Method and Chromosome.}
 #'     \item{\code{table}}{Data frame of significant QTL regions
-#'       (Above_Threshold == TRUE) with Chinese column names.}
+#'       (Above_Threshold == TRUE) with English snake_case column names.}
 #'   }
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
@@ -78,8 +78,8 @@ bsa_plot_table <- function(data) {
   table <- df %>%
     dplyr::filter(.data$Above_Threshold == TRUE) %>%
     magrittr::set_names(
-      c("方法", "染色体", "位置_bp", "位置_Mb",
-        "原始值", "拟合值", "方法阈值", "是否超过阈值")
+      c("method", "chromosome", "position_bp", "position_mb",
+        "raw_value", "fitted_value", "method_threshold", "above_threshold")
     )
 
   list(plot = p, table = table)

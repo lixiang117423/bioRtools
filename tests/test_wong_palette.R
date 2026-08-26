@@ -1,8 +1,8 @@
 # Test script for the Wong (Okabe-Ito) colour-blind palette.
 
-source("R/wong_palette.R")
-source("R/utils_plotting.R")   # for create_discrete_scale()
 
+suppressPackageStartupMessages(library(bioRtools))
+create_discrete_scale <- bioRtools:::create_discrete_scale
 suppressPackageStartupMessages({
   library(ggplot2)
 })

@@ -70,7 +70,7 @@ symbols on the plot. Default is TRUE.}
 diagram using \pkg{ggalluvial}.}
 
 \item{group_col}{Character string specifying the column name in the sample
-table that defines groups. Default is "group".}
+table that defines groups. Default is "treatment".}
 
 \item{plot_by}{Character string specifying the aggregation level for plotting.
 Options: "sample" (plot each sample separately), "group" (aggregate to
@@ -149,7 +149,8 @@ top_result <- top_tax_n(
   data = df.top10.otu,
   sample = df.top10.sample,
   taxo = df.top10.class,
-  which = "phylum"
+  which = "phylum",
+  group_col = "group"
 )
 
 # View the plot

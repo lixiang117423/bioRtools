@@ -1,5 +1,5 @@
 # Tests for calc_rc_bray(): Raup-Crick on Bray-Curtis.
-source("R/calc_rc_bray.R")
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(picante); library(vegan); library(magrittr) })
 
 otu <- matrix(c(10,20,5,0,8,15, 20,5,10,12,0,3, 0,15,20,8,10,5,

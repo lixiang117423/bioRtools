@@ -222,7 +222,7 @@ the edgeR quasi-likelihood pipeline. F1000Research, 5, 1438.
 \seealso{
 \itemize{
   \item \code{\link{find_degs_deseq2}} for DESeq2-based differential expression
-  \item \code{\link{volcano_plot}} for visualization of DE results
+  \item \code{\link{plot_volcano}} for visualization of DE results
   \item \code{\link{enrich_go}} for functional enrichment of DE genes
 }
 }

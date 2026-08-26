@@ -5,7 +5,7 @@
 \alias{df.synteny.gene}
 \title{Gene Synteny Example Data}
 \format{
-A data frame with 15 rows and 7 columns containing gene information
+A data frame with 15 rows and 8 columns containing gene information
   for synteny visualization:
 \describe{
   \item{start}{Gene start position (numeric)}
@@ -15,6 +15,7 @@ A data frame with 15 rows and 7 columns containing gene information
   \item{species}{Species name (character)}
   \item{direction}{Gene strand direction, "+" or "-" (character)}
   \item{gene_type}{Gene category for color coding (character)}
+  \item{syn_group}{Synteny group identifier (character, NA for ungrouped)}
 }
 }
 \source{
@@ -24,10 +25,8 @@ Simulated example data inspired by comparative genomics studies
 df.synteny.gene
 }
 \description{
-{
 Test data for synteny plot containing gene information for 4 species
 with 15 genes total.
-}
 }
 \details{
 Test data for synteny plot.

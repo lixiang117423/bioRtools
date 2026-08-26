@@ -1,7 +1,7 @@
 # Test script for save_fig() journal export helper.
 
-source("R/save_fig.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({
   library(ggplot2)
 })

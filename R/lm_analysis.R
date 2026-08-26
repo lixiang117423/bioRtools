@@ -356,7 +356,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
         dplyr::select(!!rlang::sym(group), slope, r_squared, overall_pvalue_formatted)
 
       for (i in seq_len(nrow(sig_results))) {
-        cat(sprintf("  %s: slope = %.3f, R² = %.3f, p = %s\n",
+        cat(sprintf("  %s: slope = %.3f, R\u00b2 = %.3f, p = %s\n",
           sig_results[[group]][i],
           sig_results$slope[i],
           sig_results$r_squared[i],

@@ -1,10 +1,9 @@
 # Test script for the enrich_kegg / enrich_go db column rename (snake_case)
 # with a backward-compat shim that still accepts legacy dot.case names.
 
-source("R/utils-orientation.R")
-source("R/enrich_kegg.R")
-source("R/enrich_go.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+reconcile_db_columns <- bioRtools:::reconcile_db_columns
 suppressPackageStartupMessages({
   library(dplyr)
 })

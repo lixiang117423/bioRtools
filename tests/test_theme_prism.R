@@ -1,7 +1,7 @@
 # Test script for theme_prism() gray_background option.
 
-source("R/theme_prism.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({
   library(ggplot2)
 })

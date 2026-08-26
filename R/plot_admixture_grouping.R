@@ -12,11 +12,13 @@
 #'   taken from the drawn tips via \code{ggtree::get_taxa_name()}.
 #' @param data Path to a delimited file readable by \code{\link{read_data}},
 #'   or a data frame containing an ID column and one cluster-assignment
-#'   column per K value (e.g. \code{K2}, \code{K3}, ...). Each \code{Kx}
-#'   column holds the dominant cluster number for each sample at K = x.
+#'   column per K value (e.g. \code{K2_qgroup}, \code{K3_qgroup}, ...;
+#'   legacy \code{K2}, \code{K3}, ... also supported). Each such column
+#'   holds the dominant cluster number for each sample at K = x.
 #' @param k K value to plot (default: 8). A numeric \code{k} selects the
-#'   column \code{K8}; a character string is used as the column name
-#'   directly.
+#'   column \code{K<k>_qgroup}, falling back to the legacy \code{K<k>}
+#'   column when the \code{_qgroup} variant is absent; a character string
+#'   is used as the column name directly.
 #' @param id_col Column of \code{data} holding the sample IDs
 #'   (default: \code{"FID"}).
 #'
@@ -73,18 +75,23 @@ plot_admixture_grouping <- function(tree, data, k = 8, id_col = "FID",
   }
 
   if (is.numeric(k) && length(k) == 1L && !is.na(k) && k >= 1 && k == floor(k)) {
-    cluster_col <- paste0("K", k)
+    # current data uses K<k>_qgroup; legacy data used K<k>
+    cluster_candidates <- c(paste0("K", k, "_qgroup"), paste0("K", k))
   } else if (is.character(k) && length(k) == 1L && nzchar(k)) {
-    cluster_col <- k
+    cluster_candidates <- k
   } else {
-    stop("'k' must be a single positive integer (selects the column K<k>) ",
-         "or a column name")
+    stop("'k' must be a single positive integer (selects the column ",
+         "K<k>_qgroup, or legacy K<k>) or a column name")
   }
-  if (!cluster_col %in% colnames(df)) {
-    stop("Cluster column '", cluster_col, "' not found in data. Available ",
-         "K columns: ",
-         paste(grep("^K[0-9]+$", colnames(df), value = TRUE), collapse = ", "))
+  matched_cols <- intersect(cluster_candidates, colnames(df))
+  if (length(matched_cols) == 0L) {
+    attempted <- paste0("'", paste(cluster_candidates, collapse = "'/'"), "'")
+    stop("Cluster column ", attempted, " not found in data. Available K ",
+         "columns: ",
+         paste(grep("^K[0-9]+(_qgroup)?$", colnames(df), value = TRUE),
+               collapse = ", "))
   }
+  cluster_col <- matched_cols[1]
 
   if (!is.logical(show_legend) || length(show_legend) != 1L || is.na(show_legend)) {
     stop("'show_legend' must be a single logical value")

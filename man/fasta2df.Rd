@@ -27,68 +27,6 @@ For single file input: A data frame with two columns:
 \describe{
   \item{id}{Character vector containing FASTA headers (including the '>' symbol)}
   \item{seq}{Character vector containing the corresponding DNA/RNA/protein sequences}
-
-# Working with multiple files (vectorized)
-fasta_files <- c("seq1.fasta", "seq2.fasta", "seq3.fasta")
-results_list <- fasta2df(fasta_files)
-
-# Access individual results
-first_file_data <- results_list[[1]]
-
-# Combine all results
-all_sequences <- do.call(rbind, results_list)
-}
-
-# Integration with tidyverse workflows
-\dontrun{
-library(dplyr)
-library(purrr)
-
-# Method 1: Using rowwise() for line-by-line processing
-file_data <- data.frame(
-  species = c("species1", "species2", "species3"),
-  file_path = c("seq1.fasta", "seq2.fasta", "seq3.fasta")
-) %>%
-  rowwise() %>%
-  mutate(sequences = list(fasta2df(file_path))) %>%
-  ungroup()
-
-# Method 2: Using map() for functional programming approach
-file_data2 <- data.frame(
-  species = c("species1", "species2", "species3"),
-  file_path = c("seq1.fasta", "seq2.fasta", "seq3.fasta")
-) %>%
-  mutate(sequences = map(file_path, fasta2df))
-
-# Method 3: Process all files at once (most efficient)
-all_files <- c("seq1.fasta", "seq2.fasta", "seq3.fasta")
-all_results <- fasta2df(all_files)  # Returns a list
-
-# Convert to a tidy format
-tidy_results <- all_results %>%
-  imap_dfr(~ .x %>% mutate(source_file = .y))
-
-# Your specific use case - SOLUTION
-dir("G://database/十字花科基因组/叶绿体基因组/chloroplast_genomes/") %>%
-  as.data.frame() %>%
-  set_names("file") %>%
-  filter(!str_detect(file, "network_failed")) %>%
-  mutate(
-    species = str_split(file, "_chl") %>% map_chr(1),
-    path = paste0("G://database/十字花科基因组/叶绿体基因组/chloroplast_genomes/", file)
-  ) %>%
-  rowwise() %>%  # Key: enables row-by-row processing
-  mutate(seq = list(fasta2df(path))) %>%  # Key: use list() wrapper
-  ungroup()
-
-# Alternative: Using the tidy wrapper
-dir("path/to/files/") %>%
-  as.data.frame() %>%
-  set_names("file") %>%
-  mutate(
-    path = paste0("path/to/files/", file),
-    seq = map(path, fasta2df_tidy)  # Simpler syntax
-  )
 }
 For multiple file input: A list of data frames, one per input file.
 Each data frame has the same structure as the single file output.
@@ -177,7 +115,7 @@ FASTA format specification: \url{https://en.wikipedia.org/wiki/FASTA_format}
 }
 \seealso{
 \code{\link{readLines}} for reading text files,
-\code{\link{Biostrings}} package for advanced sequence manipulation
+\pkg{Biostrings} package for advanced sequence manipulation
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -217,14 +217,14 @@ library(bioRtools)
 iris \%>\%
   ggplot(aes(Species, Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  theme_bio(base_size = 12, legend.position = "none") +
+  bioRtools:::theme_bio(base_size = 12, legend.position = "none") +
   scale_y_continuous(expand = c(0, 0))
 
 # Enhanced usage with automatic scale application
 iris \%>\%
   ggplot(aes(Species, Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  theme_bio(
+  bioRtools:::theme_bio(
     base_size = 12,
     legend.position = "none",
     y_expand = c(0, 0),

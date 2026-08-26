@@ -715,7 +715,7 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
       ggplot2::coord_flip() +
       ggplot2::labs(
         x = "Variables",
-        y = "Quality of Representation (cos²)",
+        y = "Quality of Representation (cos\u00b2)",
         title = "Variable Contribution to Principal Components",
         fill = "Component"
       ) +

@@ -129,7 +129,7 @@
 #' @seealso
 #' \itemize{
 #'   \item \code{\link{find_degs_deseq2}} for DESeq2-based differential expression
-#'   \item \code{\link{volcano_plot}} for visualization of DE results
+#'   \item \code{\link{plot_volcano}} for visualization of DE results
 #'   \item \code{\link{enrich_go}} for functional enrichment of DE genes
 #' }
 #'
@@ -622,7 +622,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
       abs_log2fc = abs(log2FoldChange),
       padj = ifelse(is.na(padj), 1, padj),
       significance_level = dplyr::case_when(
-        padj >= 0.05 ~ "NS (p≥0.05)",
+        padj >= 0.05 ~ "NS (p\u22650.05)",
         padj >= 0.01 ~ "* (p<0.05)",
         padj >= 0.001 ~ "** (p<0.01)",
         padj >= 0.0001 ~ "*** (p<0.001)",
@@ -699,7 +699,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
         head(5)
 
       for (i in seq_len(nrow(top_genes))) {
-        direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "↑", "↓")
+        direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "\u2191", "\u2193")
         cat(sprintf("  %s %s: %s (log2FC = %.2f, padj = %.2e)\n",
           direction_symbol,
           top_genes$gene[i],

@@ -540,6 +540,10 @@ plot_neutral_model <- function(fitting_results, neutral_results) {
 
 
 #' Print Method for Core Microbiome Results
+#'
+#' @param x A \code{core_microbiome} object.
+#' @param ... Additional arguments (ignored).
+#'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 print.core_microbiome <- function(x, ...) {

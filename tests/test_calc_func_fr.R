@@ -1,7 +1,7 @@
 # Tests for calc_func_fr() + calc_func_fr_comm().
-source("R/calc_func_fr.R")
 
 # 3 ASVs x 3 functions (ASV x function):
+suppressPackageStartupMessages(library(bioRtools))
 asv_func <- matrix(c(1, 1, 0,
                      0, 1, 1,
                      1, 0, 1), nrow = 3, ncol = 3)

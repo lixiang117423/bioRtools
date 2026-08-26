@@ -4,10 +4,8 @@
 # and nchar(NULL) -> "argument is of length zero". This verifies the renamed
 # columns exist and the summary loop runs on real enriched results.
 
-source("R/utils-orientation.R")
-source("R/enrich_kegg.R")
-source("R/enrich_go.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages(library(dplyr))
 
 gene_pool <- paste0("G", 1:20)

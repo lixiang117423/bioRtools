@@ -27,6 +27,7 @@ by one or more categorical columns. Designed to follow \code{dplyr::group_by()}
 in a pipe: \code{df \%>\% group_by(group) \%>\% summarise_stats(value)}.
 }
 \examples{
+library(dplyr)
 df <- data.frame(group = rep(c("A", "B"), each = 5), value = c(1:10))
 
 # Ungrouped (default column name "value")

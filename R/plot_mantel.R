@@ -182,7 +182,7 @@ plot_mantel <- function(data_spec,
   feature_col <- colnames(data_spec)[1]
   feature_names <- as.character(data_spec[[feature_col]])
 
-  if (verbose) message("Transposing data_spec: features × samples → samples × features")
+  if (verbose) message("Transposing data_spec: features \u00d7 samples \u2192 samples \u00d7 features")
 
   data_spec <- data_spec %>%
     dplyr::select(-dplyr::all_of(feature_col)) %>%

@@ -41,7 +41,7 @@ validate_wgcna_inputs <- function(expression_data, sample_info, trait_columns,
   }
 
   if (!is.numeric(min_gene_sd) || min_gene_sd < 0) {
-    stop(err_invalid_threshold("min_gene_sd", min_gene_sd, "[0, ∞)"))
+    stop(err_invalid_threshold("min_gene_sd", min_gene_sd, "[0, \u221e)"))
   }
 
   if (!tom_type %in% c("signed", "unsigned", "signed hybrid")) {
@@ -156,7 +156,7 @@ analyze_softthreshold_power <- function(expression_data, power_vector = 1:30,
 
   if (verbose) {
     cat("Soft-thresholding analysis complete.\n")
-    cat(sprintf("Recommended power: %d (R² = %.3f)\n\n",
+    cat(sprintf("Recommended power: %d (R\u00b2 = %.3f)\n\n",
       powers_analysis$powerEstimate,
       powers_analysis$fitIndices[
         which.min(abs(powers_analysis$fitIndices$SFT.R.sq - 0.9)),
@@ -236,7 +236,7 @@ detect_modules <- function(tom_matrix, min_module_size = 50,
   gene_tree <- stats::hclust(stats::as.dist(dissimilarity), method = "average")
 
   # Cut dendrogram to detect modules
-  dynamic_colors <- WGCNA::cutreeDynamic(
+  dynamic_colors <- dynamicTreeCut::cutreeDynamic(
     dendro = gene_tree,
     distM = dissimilarity,
     deepSplit = 2,

@@ -1,7 +1,6 @@
 # Tests for normalize_abund(): 8 normalization methods.
-source("R/gmpr.R")
-source("R/normalize_abund.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 otu <- matrix(c(10L,20L,5L,0L,8L,
                 20L,5L,10L,12L,0L,
                 0L,15L,20L,8L,10L,

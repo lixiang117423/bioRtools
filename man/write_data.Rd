@@ -21,6 +21,12 @@ write_data(
 
 \item{file}{File path. The extension determines the output format.}
 
+\item{col}{Column index or name used for plain-text (.sh) output
+(default: 1).}
+
+\item{col_names}{Logical, whether to write a header row for csv/tsv/txt
+output (default: TRUE). .bed output never writes a header.}
+
 \item{width, height}{Image dimensions in \code{units}. Both \code{NULL}
 (default) saves at 8.5 x 6 cm; when only one is supplied, the other is
 computed from the golden ratio (1.618:1, width:height).}

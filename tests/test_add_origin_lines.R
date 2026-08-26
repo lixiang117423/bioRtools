@@ -1,7 +1,7 @@
 # Test script for add_origin_lines() reference-line helper.
 
-source("R/add_origin_lines.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({
   library(ggplot2)
 })

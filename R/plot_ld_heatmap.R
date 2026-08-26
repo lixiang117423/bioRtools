@@ -42,6 +42,7 @@
 #' @param show_values Logical indicating whether to show LD values in the ggplot2
 #'   heatmap tiles. Default is FALSE (recommended for large datasets).
 #' @param text_size Numeric value for text size in ggplot2 version when show_values = TRUE.
+#' @param verbose Logical, whether to print progress messages (default: TRUE).
 #'   Default is 3.
 #'
 #' @return A list containing:
@@ -411,7 +412,7 @@ plot_ld_heatmap <- function(vcf_file,
 
   if (verbose) {
     message("LD heatmap analysis completed successfully!")
-    message("Matrix dimensions: ", nrow(snp_matrix), " samples × ", ncol(snp_matrix), " SNPs")
+    message("Matrix dimensions: ", nrow(snp_matrix), " samples \u00d7 ", ncol(snp_matrix), " SNPs")
     message("Genetic region span: ", min(genetic_distances), " - ", max(genetic_distances))
     if (!is.null(output_file)) {
       message("Output saved as: ", output_filename)

@@ -115,13 +115,54 @@ test_that("invalid inputs raise errors", {
   expect_error(plot_admixture_grouping(tree = tr, data = 42, k = 8),
                "'data' must be a data frame or a path")
   expect_error(plot_admixture_grouping(tr, df, k = 99),
-               "Cluster column 'K99' not found")
+               "Cluster column 'K99_qgroup'/'K99' not found")
   expect_error(plot_admixture_grouping(tr, df, k = "K9"),
                "Cluster column 'K9' not found")
   expect_error(plot_admixture_grouping(tr, df, id_col = "nope"),
                "'id_col' \\(nope\\) not found")
   expect_error(plot_admixture_grouping(tr, df, k = 1.5),
                "'k' must be a single positive integer")
+})
+test_that("numeric k selects the K<k>_qgroup column", {
+  tr <- make_group_tree()
+  df <- make_group_df()
+  df$K8_qgroup <- c(2, 1, 3, 2, 1)
+
+  p <- plot_admixture_grouping(tr, df, k = 8)
+  expect_equal(levels(p$data$cluster), c("1", "2", "3"))
+  expect_equal(as.character(p$data$cluster), c("2", "1", "3", "2", "1"))
+})
+
+test_that("K<k>_qgroup takes precedence over legacy K<k>", {
+  tr <- make_group_tree()
+  df <- make_group_df()
+  df$K8_qgroup <- c(2, 2, 2, 2, 2)  # both K8 and K8_qgroup present
+
+  p <- plot_admixture_grouping(tr, df, k = 8)
+  expect_equal(as.character(p$data$cluster), rep("2", 5))
+})
+
+test_that("numeric k past 9 selects K10_qgroup with numerically sorted levels", {
+  tr <- make_group_tree()
+  df <- make_group_df()
+  df$K10_qgroup <- c(1, 10, 2, 9, 8)
+
+  p <- plot_admixture_grouping(tr, df, k = 10)
+  expect_equal(levels(p$data$cluster), c("1", "2", "8", "9", "10"))
+})
+
+test_that("character k accepts the qgroup column name directly", {
+  tr <- make_group_tree()
+  df <- make_group_df()
+  df$K8_qgroup <- c(2, 1, 3, 2, 1)
+
+  p <- plot_admixture_grouping(tr, df, k = "K8_qgroup")
+  expect_equal(as.character(p$data$cluster), c("2", "1", "3", "2", "1"))
+
+  # missing qgroup column is reported among the available K columns
+  df2 <- df[, c("FID", "IID", "K8_qgroup")]
+  expect_error(plot_admixture_grouping(tr, df2, k = 9),
+               "Available K columns: K8_qgroup")
 })
 
 test_that("no matching samples raises an error", {

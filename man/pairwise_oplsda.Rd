@@ -68,6 +68,9 @@ See \code{\link[stats]{p.adjust}}.}
 
 \item{diff_method}{How differential features are determined
 (default: "vip"). Passed to \code{\link{opls_analysis}}.}
+
+\item{verbose}{Logical, whether to print progress messages during pairwise
+model fitting (default: FALSE).}
 }
 \value{
 A named list with:

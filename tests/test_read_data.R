@@ -2,8 +2,9 @@
 # Regression guard: a .xls/.xlsx whose content is actually delimited text
 # (no ZIP/OLE2 magic bytes) must be read as text, not handed to readxl.
 
-source("R/read_write_data.R")
 
+suppressPackageStartupMessages(library(bioRtools))
+is_excel_file <- bioRtools:::is_excel_file
 library(readr)
 
 out_dir <- file.path(tempdir(), "read_data_test")

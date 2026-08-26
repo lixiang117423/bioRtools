@@ -304,7 +304,7 @@ spls_analysis <- function(data,
 
   if (verbose) {
     message("Starting sPLS-DA analysis...")
-    message("Data dimensions: ", nrow(data), " samples × ", ncol(data), " variables")
+    message("Data dimensions: ", nrow(data), " samples \u00d7 ", ncol(data), " variables")
     message("Groups: ", paste(names(group_counts), " (n=", group_counts, ")", collapse = ", "))
     message("Components: ", ncomp)
     if (!is.null(keep_x)) {
@@ -360,12 +360,6 @@ spls_analysis <- function(data,
     ) %>%
     dplyr::select(component, proportion, percentage, percentage_label, label)
 
-  # Rename score columns with variance percentage
-  pct_labels <- paste0("comp", seq_len(ncomp), " (", variance_explained$percentage_label, ")")
-  comp_cols <- paste0("comp", seq_len(ncomp))
-  for (i in seq_along(comp_cols)) {
-    names(sample_scores)[names(sample_scores) == comp_cols[i]] <- pct_labels[i]
-  }
 
   # Extract variable loadings if available
   variable_loadings <- NULL

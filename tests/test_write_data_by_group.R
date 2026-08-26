@@ -1,8 +1,8 @@
 # Test script for write_data_by_group function
 # Writes one file per group, reads each back, and compares.
 
-source("R/read_write_data.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 library(dplyr)
 
 # Build a small grouped data frame

@@ -13,12 +13,14 @@ taken from the drawn tips via \code{ggtree::get_taxa_name()}.}
 
 \item{data}{Path to a delimited file readable by \code{\link{read_data}},
 or a data frame containing an ID column and one cluster-assignment
-column per K value (e.g. \code{K2}, \code{K3}, ...). Each \code{Kx}
-column holds the dominant cluster number for each sample at K = x.}
+column per K value (e.g. \code{K2_qgroup}, \code{K3_qgroup}, ...;
+legacy \code{K2}, \code{K3}, ... also supported). Each such column
+holds the dominant cluster number for each sample at K = x.}
 
 \item{k}{K value to plot (default: 8). A numeric \code{k} selects the
-column \code{K8}; a character string is used as the column name
-directly.}
+column \code{K<k>_qgroup}, falling back to the legacy \code{K<k>}
+column when the \code{_qgroup} variant is absent; a character string
+is used as the column name directly.}
 
 \item{id_col}{Column of \code{data} holding the sample IDs
 (default: \code{"FID"}).}

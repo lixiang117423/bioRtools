@@ -6,6 +6,11 @@
 \usage{
 \method{print}{core_microbiome}(x, ...)
 }
+\arguments{
+\item{x}{A \code{core_microbiome} object.}
+
+\item{...}{Additional arguments (ignored).}
+}
 \description{
 Print Method for Core Microbiome Results
 }

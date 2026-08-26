@@ -1,7 +1,6 @@
 # Tests for find_hub_nodes(): cor_analysis edge list + microbiome_net result.
-source("R/cor_result_to_graph.R")
-source("R/find_hub_nodes.R")
 
+suppressPackageStartupMessages(library(bioRtools))
 suppressPackageStartupMessages({ library(igraph) })
 
 # Known 5-node edge list. Absolute strengths:
