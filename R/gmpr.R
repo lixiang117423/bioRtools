@@ -17,6 +17,7 @@
 #'   peers per sample.
 #'
 #' @keywords internal
+#' @noRd
 gmpr <- function(comm, intersect_no = 10, ct_min = 1) {
   comm[comm < ct_min] <- 0
   results <- sapply(seq_len(ncol(comm)), function(i) {

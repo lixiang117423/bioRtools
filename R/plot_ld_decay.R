@@ -66,7 +66,7 @@
 #' df.ld <- bioRtools::read_data("ld_result.tsv") %>%
 #'   dplyr::filter(population != "Unknown")
 #'
-#' res <- bioRtools::plot_ld_decay(df.ld, bin_size = 1000)
+#' res <- plot_ld_decay(df.ld, bin_size = 1000)
 #'
 #' # View plot
 #' print(res$plot)
@@ -75,7 +75,7 @@
 #' print(res$half_decay)
 #'
 #' # Custom palette
-#' res <- bioRtools::plot_ld_decay(df.ld, palette = c(
+#' res <- plot_ld_decay(df.ld, palette = c(
 #'   PopA = "#E64B35", PopB = "#4DBBD5", PopC = "#00A087"
 #' ))
 #' }

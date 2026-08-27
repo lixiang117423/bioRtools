@@ -130,6 +130,7 @@ add_cor_p <- function(df, x, y, from = NULL, to = NULL,
 
 #' Compute correlation p-value, returning NA on failure
 #' @keywords internal
+#' @noRd
 safe_cor_test_p <- function(x, y, method) {
   tryCatch({
     stats::cor.test(x, y, method = method)$p.value
@@ -138,6 +139,7 @@ safe_cor_test_p <- function(x, y, method) {
 
 #' Compute lm R-squared, returning NA on failure
 #' @keywords internal
+#' @noRd
 safe_lm_r2 <- function(x, y) {
   tryCatch({
     summary(stats::lm(y ~ x))$r.squared
@@ -146,6 +148,7 @@ safe_lm_r2 <- function(x, y) {
 
 #' Compute lm F-test p-value, returning NA on failure
 #' @keywords internal
+#' @noRd
 safe_lm_pvalue <- function(x, y) {
   tryCatch({
     s <- summary(stats::lm(y ~ x))

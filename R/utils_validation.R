@@ -4,6 +4,7 @@
 #' These utilities improve code consistency and reduce duplication.
 #'
 #' @keywords internal
+#' @noRd
 
 # ============================================================================
 # Matrix/Data Frame Validation

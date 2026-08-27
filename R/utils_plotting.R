@@ -4,6 +4,7 @@
 #' These utilities ensure consistent styling and reduce code duplication in plotting code.
 #'
 #' @keywords internal
+#' @noRd
 
 # ============================================================================
 # Theme Application

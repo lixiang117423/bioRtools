@@ -14,6 +14,7 @@
 #'   \code{E(g)$pvalue} added when present) and \code{edges} (the deduped edge
 #'   data frame, for callers needing the table form).
 #' @keywords internal
+#' @noRd
 cor_result_to_graph <- function(cor_result, weight = c("absolute", "signed")) {
   if (!is.data.frame(cor_result)) {
     stop("'cor_result' must be a data frame (the output of cor_analysis())")

@@ -30,8 +30,8 @@
 #'
 #' ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
-#'   bioRtools::scale_fill_wong() +
-#'   bioRtools::theme_prism()
+#'   scale_fill_wong() +
+#'   theme_prism()
 NULL
 
 # Wong (2011) Nature Methods 8:441 — eight-colour colourblind-safe set.

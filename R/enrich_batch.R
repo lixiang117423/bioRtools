@@ -21,6 +21,7 @@
 #' @return Combined enrichment data frame with a comparison column (0 rows if
 #'   nothing was enriched).
 #' @keywords internal
+#' @noRd
 enrich_batch_by_comparison <- function(degs, db, enrich_fun,
                                        comparison_col = "comparison",
                                        gene_col = "gene",

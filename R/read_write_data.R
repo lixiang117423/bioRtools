@@ -175,6 +175,7 @@ read_data <- function(file, delim = "\t", ...) {
 #' @param file File path.
 #' @return \code{TRUE} if the file is a genuine Excel binary, else \code{FALSE}.
 #' @keywords internal
+#' @noRd
 is_excel_file <- function(file) {
   magic <- readBin(file, "raw", n = 4)
   if (length(magic) < 4) {
@@ -191,6 +192,7 @@ is_excel_file <- function(file) {
 #' @return \code{"\\t"} if the first line holds at least as many tabs as commas,
 #'   otherwise \code{","}.
 #' @keywords internal
+#' @noRd
 guess_delim <- function(file) {
   first <- readLines(file, n = 1, warn = FALSE)
   n_tab <- length(regmatches(first, gregexpr("\t", first, fixed = TRUE))[[1L]])
@@ -215,6 +217,7 @@ guess_delim <- function(file) {
 #'   strand, phase, attributes}. \code{start}/\code{end}/\code{phase} are integer,
 #'   \code{score} is double, \code{attributes} is the raw attribute string.
 #' @keywords internal
+#' @noRd
 gff3_to_df <- function(file, ...) {
   lines <- readLines(file, warn = FALSE)
   lines <- lines[!startsWith(lines, "#")]

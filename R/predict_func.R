@@ -7,6 +7,7 @@
 #' nor `-`. Internal helper.
 #'
 #' @keywords internal
+#' @noRd
 match_words <- function(expression, candidate, vws = "-") {
   words <- strsplit(expression, "*", fixed = TRUE)[[1]]
   words <- words[nzchar(words)]

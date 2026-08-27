@@ -13,6 +13,7 @@
 #' @param sample_col Optional column in \code{sample} holding sample IDs.
 #' @return TRUE if \code{data} looks like features-as-rows, else FALSE.
 #' @keywords internal
+#' @noRd
 detect_feature_as_row <- function(data, sample, sample_col) {
   if (is.null(sample)) {
     return(FALSE)
@@ -69,6 +70,7 @@ detect_feature_as_row <- function(data, sample, sample_col) {
 #' @param verbose Logical; print a message when transposing.
 #' @return \code{data} in samples-as-rows orientation.
 #' @keywords internal
+#' @noRd
 orient_to_sample_row <- function(data, sample, sample_col, feature_as_row, verbose) {
   if (!is.logical(feature_as_row) || length(feature_as_row) != 1L) {
     stop("'feature_as_row' must be TRUE, FALSE, or NA")
@@ -101,6 +103,7 @@ orient_to_sample_row <- function(data, sample, sample_col, feature_as_row, verbo
 #' @param arg_name Argument name used in the deprecation warning.
 #' @return \code{db} with legacy columns renamed to snake_case.
 #' @keywords internal
+#' @noRd
 reconcile_db_columns <- function(db, map, arg_name) {
   renamed <- character(0)
   for (new in names(map)) {

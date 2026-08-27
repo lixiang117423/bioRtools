@@ -12,6 +12,7 @@
 #'   (named list of metadata strings), `ver` (database version).
 #'
 #' @keywords internal
+#' @noRd
 parse_faprotax <- function(path = system.file("extdata", "FAPROTAX.txt",
                                               package = "bioRtools")) {
   if (!nzchar(path) || !file.exists(path)) {

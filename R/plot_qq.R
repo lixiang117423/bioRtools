@@ -239,6 +239,7 @@ plot_qq <- function(df,
 
 #' Compute QQ stats for a single group
 #' @keywords internal
+#' @noRd
 qq_compute <- function(values, type, ci_level) {
 
   alpha <- 1 - ci_level
@@ -295,6 +296,7 @@ qq_compute <- function(values, type, ci_level) {
 
 #' Build single-group QQ plot
 #' @keywords internal
+#' @noRd
 qq_build_single <- function(qq_df, line_df, title, x_lab, y_lab,
                             point_color, point_size, point_alpha,
                             ribbon_fill, ribbon_alpha,
@@ -322,6 +324,7 @@ qq_build_single <- function(qq_df, line_df, title, x_lab, y_lab,
 
 #' Build grouped QQ plot (preserves group column for downstream faceting)
 #' @keywords internal
+#' @noRd
 qq_build_grouped <- function(qq_df, line_df, group_column, title, x_lab, y_lab,
                              point_color, point_size, point_alpha,
                              ribbon_fill, ribbon_alpha,

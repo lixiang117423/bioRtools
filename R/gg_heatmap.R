@@ -80,7 +80,7 @@
 #'
 #' # Basic usage
 #' if (interactive()) {
-#'   bioRtools::gg_heatmap(mat)
+#'   gg_heatmap(mat)
 #' }
 gg_heatmap <- function(
     mat,

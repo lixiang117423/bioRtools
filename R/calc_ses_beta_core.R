@@ -15,6 +15,7 @@
 #' @inheritParams calc_beta_nti
 #'
 #' @keywords internal
+#' @noRd
 calc_ses_beta_core <- function(data, tree, beta_reps = 999,
                                abundance_weighted = TRUE, verbose = TRUE,
                                sample = NULL, sample_id = "sample",

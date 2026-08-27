@@ -115,6 +115,7 @@
 #'   that can be added to any ggplot.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' library(dplyr)
@@ -125,14 +126,14 @@
 #' iris %>%
 #'   ggplot(aes(Species, Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
-#'   bioRtools:::theme_bio(base_size = 12, legend.position = "none") +
+#'   theme_bio(base_size = 12, legend.position = "none") +
 #'   scale_y_continuous(expand = c(0, 0))
 #'
 #' # Enhanced usage with automatic scale application
 #' iris %>%
 #'   ggplot(aes(Species, Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
-#'   bioRtools:::theme_bio(
+#'   theme_bio(
 #'     base_size = 12,
 #'     legend.position = "none",
 #'     y_expand = c(0, 0),
@@ -566,6 +567,7 @@ theme_bio <- function(base_size = 10,
 #' @return A combined theme_bio_list object
 #'
 #' @keywords internal
+#' @noRd
 `+.theme_bio_list` <- function(e1, e2) {
   if (inherits(e2, "theme_bio_list")) {
     # Adding two theme_bio_list objects

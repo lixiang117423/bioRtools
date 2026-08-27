@@ -220,6 +220,7 @@ plot_multi_volcano <- function(data,
 
 #' @rdname plot_multi_volcano
 #' @keywords internal
+#' @noRd
 detect_volcano_cols <- function(data, group_col, feature_col, log2fc_col, padj_col) {
   nms <- names(data)
 

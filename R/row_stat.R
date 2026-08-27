@@ -13,7 +13,6 @@
 #'
 #' @examples
 #' # Use in dplyr::mutate()
-#' library(dplyr)
 #' df <- data.frame(
 #'   sample1 = c(100, 23, 95),
 #'   sample2 = c(55, 24, 6),
@@ -22,10 +21,10 @@
 #' )
 #'
 #' # Add standard deviation column using mutate
-#' df %>% mutate(sd = row_sd(.))
+#' dplyr::mutate(df, sd = row_sd(df))
 #'
 #' # Calculate SD for specific columns
-#' df %>% mutate(sd = row_sd(., cols = c("sample1", "sample2")))
+#' dplyr::mutate(df, sd = row_sd(df, cols = c("sample1", "sample2")))
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #'

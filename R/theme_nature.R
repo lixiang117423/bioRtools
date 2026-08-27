@@ -34,6 +34,7 @@
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @keywords internal
+#' @noRd
 #'
 #' @examples
 #' \dontrun{
@@ -41,12 +42,12 @@
 #'
 #' ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
 #'   geom_boxplot() +
-#'   bioRtools:::theme_nature()
+#'   theme_nature()
 #'
 #' # Larger base for single-panel figures
 #' ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
 #'   geom_point() +
-#'   bioRtools:::theme_nature(base_size = 9)
+#'   theme_nature(base_size = 9)
 #' }
 theme_nature <- function(base_size = 6.5, base_family = "Arial",
                          line_width = 0.35) {

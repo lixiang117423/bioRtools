@@ -64,7 +64,7 @@
 #'   group = sample(c("G1", "G2", "G3"), 20, replace = TRUE)
 #' )
 #'
-#' res <- bioRtools::plot_pav_phenotype(df.pav, df.pheno,
+#' res <- plot_pav_phenotype(df.pav, df.pheno,
 #'   pav_sample_col = "sample",
 #'   title = "Rps1-k"
 #' )

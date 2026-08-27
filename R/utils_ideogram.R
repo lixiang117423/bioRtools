@@ -6,6 +6,7 @@
 #'
 #' @name utils_ideogram
 #' @keywords internal
+#' @noRd
 NULL
 
 # Pixel-per-mm and pixel-per-cm at 90 DPI (90 / 25.4 = 3.543307).

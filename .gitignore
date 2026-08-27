@@ -46,3 +46,8 @@ bioRtools_review_agent.md
 CODE_REVIEW_REPORT.md
 SETUP.md
 INSTALL_SYNTENY.md
+
+# Agent working files
+.omp/
+.workbuddy/
+.superpowers/

@@ -23,6 +23,7 @@
 #'   comparison), \code{scores} (data frame), \code{vip} (data frame with
 #'   feature/vip/group/ref_group/comparison), \code{summaries} (named list).
 #' @keywords internal
+#' @noRd
 fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
                               ortho_components = 1, scaling = "standard",
                               validation = "CV", cv_folds = 7, verbose = FALSE) {
@@ -151,6 +152,7 @@ fit_pairwise_opls <- function(data_matrix, group, pairs, variable_names,
 #'   group_n, ref_mean, ref_sd, ref_n, log2_fc, p_value, test_method,
 #'   comparison, p_adjust, vip, regulation, is_differential}.
 #' @keywords internal
+#' @noRd
 compute_pairwise_diff <- function(data_matrix, group, pairs, variable_names,
                                   vip, test_method = "auto",
                                   p_adjust_method = "BH", p_threshold = 0.05,
