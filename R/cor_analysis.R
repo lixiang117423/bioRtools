@@ -304,13 +304,17 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
 
   # Print summary if interactive
   if (interactive()) {
-    cat("Correlation Analysis Summary:\n")
-    cat("Method:", method, "\n")
-    cat("Correlation threshold: |r| >=", cor, "\n")
-    cat("P-value threshold: p <=", pvalue, "\n")
-    cat("Add regression:", add_regression, "\n")
-    cat("Analysis type:", attr(result_cor, "analysis_type"), "\n")
-    cat("Significant correlations found:", nrow(result_cor), "\n\n")
+    message(paste(
+      "Correlation Analysis Summary:",
+      paste("Method:", method),
+      paste("Correlation threshold: |r| >=", cor),
+      paste("P-value threshold: p <=", pvalue),
+      paste("Add regression:", add_regression),
+      paste("Analysis type:", attr(result_cor, "analysis_type")),
+      paste("Significant correlations found:", nrow(result_cor)),
+      "",
+      sep = "\n"
+    ))
   }
 
   result_cor

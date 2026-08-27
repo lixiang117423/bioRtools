@@ -504,17 +504,22 @@ manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
 
   # Print summary if interactive
   if (interactive()) {
-    cat("Manhattan Plot Summary:\n")
-    cat("======================\n")
-    cat("Total SNPs plotted:", format(n_total, big.mark = ","), "\n")
-    cat("Chromosomes:", paste(sort(unique(gwas_data$chr)), collapse = ", "), "\n")
-    cat("Significance threshold:", format(p_threshold, scientific = TRUE), "\n")
-    cat("Significant SNPs:", format(n_significant, big.mark = ","),
-      paste0("(", round(100 * n_significant / n_total, 2), "%)"), "\n")
-    cat("Labeled SNPs:", n_labeled, "\n")
-    cat("Most significant p-value:", format(min_p, scientific = TRUE), "\n")
+    msg_lines <- c(
+      "Manhattan Plot Summary:",
+      "======================",
+      paste("Total SNPs plotted:", format(n_total, big.mark = ",")),
+      paste("Chromosomes:", paste(sort(unique(gwas_data$chr)), collapse = ", ")),
+      paste("Significance threshold:", format(p_threshold, scientific = TRUE)),
+      paste("Significant SNPs:", format(n_significant, big.mark = ","),
+        paste0("(", round(100 * n_significant / n_total, 2), "%)")),
+      paste("Labeled SNPs:", n_labeled),
+      paste("Most significant p-value:", format(min_p, scientific = TRUE))
+    )
 
     if (n_significant > 0) {
+      msg_lines <- c(msg_lines, "", "Top 5 significant hits:")
+      message(paste(msg_lines, collapse = "\n"))
+
       # Show top hits
       top_hits <- gwas_data %>%
         dplyr::filter(p < highlight_threshold) %>%
@@ -522,10 +527,11 @@ manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
         dplyr::select(chr, posi, p, dplyr::any_of(c("snp", "plot_label"))) %>%
         head(5)
 
-      cat("\nTop 5 significant hits:\n")
       print(top_hits)
+    } else {
+      message(paste(msg_lines, collapse = "\n"))
     }
-    cat("\n")
+    message("")
   }
 
   manhattan_plot

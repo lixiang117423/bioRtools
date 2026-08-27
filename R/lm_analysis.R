@@ -340,30 +340,35 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
 
   # Print summary if interactive
   if (interactive()) {
-    cat("Linear Regression Analysis Summary:\n")
-    cat("==================================\n")
-    cat("Total observations:", n_total_obs, "\n")
-    cat("Number of groups:", n_groups, "\n")
-    cat("Groups with significant relationships:", n_significant,
-      paste0("(", round(100 * n_significant / n_groups, 1), "%)"), "\n")
-    cat("Significance level:", alpha, "\n")
-    cat("Confidence level:", conf_level, "\n\n")
+    msg_lines <- c(
+      "Linear Regression Analysis Summary:",
+      "==================================",
+      paste("Total observations:", n_total_obs),
+      paste("Number of groups:", n_groups),
+      paste("Groups with significant relationships:", n_significant,
+        paste0("(", round(100 * n_significant / n_groups, 1), "%)")),
+      paste("Significance level:", alpha),
+      paste("Confidence level:", conf_level),
+      ""
+    )
 
     if (n_significant > 0) {
-      cat("Significant relationships:\n")
+      msg_lines <- c(msg_lines, "Significant relationships:")
       sig_results <- regression_results %>%
         dplyr::filter(significance == "Significant") %>%
         dplyr::select(!!rlang::sym(group), slope, r_squared, overall_pvalue_formatted)
 
       for (i in seq_len(nrow(sig_results))) {
-        cat(sprintf("  %s: slope = %.3f, R\u00b2 = %.3f, p = %s\n",
-          sig_results[[group]][i],
-          sig_results$slope[i],
-          sig_results$r_squared[i],
-          sig_results$overall_pvalue_formatted[i]))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s: slope = %.3f, R\u00b2 = %.3f, p = %s",
+            sig_results[[group]][i],
+            sig_results$slope[i],
+            sig_results$r_squared[i],
+            sig_results$overall_pvalue_formatted[i]))
       }
     }
-    cat("\n")
+    msg_lines <- c(msg_lines, "")
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   # Prepare final result

@@ -1047,56 +1047,66 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
 
   # Print summary if interactive
   if (interactive()) {
-    cat("OPLS-DA Analysis Summary:\n")
-    cat("========================\n")
-    cat("Samples:", nrow(data_matrix), "\n")
-    cat("Variables:", ncol(data_matrix), "\n")
-    cat("Groups:", n_groups, "(", paste(names(group_sizes), collapse = ", "), ")\n")
-    cat("Group sizes:", paste(group_sizes, collapse = ", "), "\n")
-    cat("Predictive components:", pred_components, "\n")
-    cat("Orthogonal components:", ortho_components, "\n")
-    cat("Scaling method:", scaling, "\n\n")
+    msg_lines <- c(
+      "OPLS-DA Analysis Summary:",
+      "========================",
+      paste("Samples:", nrow(data_matrix)),
+      paste("Variables:", ncol(data_matrix)),
+      paste("Groups:", n_groups, "(", paste(names(group_sizes), collapse = ", "), ")"),
+      paste("Group sizes:", paste(group_sizes, collapse = ", ")),
+      paste("Predictive components:", pred_components),
+      paste("Orthogonal components:", ortho_components),
+      paste("Scaling method:", scaling),
+      ""
+    )
 
     if (!is.na(model_summary$R2Y) && !is.na(model_summary$Q2Y)) {
-      cat("Model Performance:\n")
-      cat("R2Y (explained variance):", round(model_summary$R2Y, 3), "\n")
-      cat("Q2Y (predictive ability):", round(model_summary$Q2Y, 3), "\n")
+      msg_lines <- c(msg_lines,
+        "Model Performance:",
+        paste("R2Y (explained variance):", round(model_summary$R2Y, 3)),
+        paste("Q2Y (predictive ability):", round(model_summary$Q2Y, 3)))
 
       if (model_summary$Q2Y > 0.9) {
-        cat("Model quality: Excellent\n")
+        msg_lines <- c(msg_lines, "Model quality: Excellent")
       } else if (model_summary$Q2Y > 0.5) {
-        cat("Model quality: Good\n")
+        msg_lines <- c(msg_lines, "Model quality: Good")
       } else {
-        cat("Model quality: Poor (possible overfitting)\n")
+        msg_lines <- c(msg_lines, "Model quality: Poor (possible overfitting)")
       }
     }
 
-    cat("\nVariable Selection:\n")
-    cat("VIP threshold:", vip_threshold, "\n")
-    cat("Important variables:", n_important_vars,
-      paste0("(", round(100 * n_important_vars / ncol(data_matrix), 1), "%)"), "\n")
+    msg_lines <- c(msg_lines,
+      "",
+      "Variable Selection:",
+      paste("VIP threshold:", vip_threshold),
+      paste("Important variables:", n_important_vars,
+        paste0("(", round(100 * n_important_vars / ncol(data_matrix), 1), "%)")))
 
     if (n_important_vars > 0) {
-      cat("\nTop 5 important variables:\n")
       top_vip <- head(vip_data[vip_data$important, ], 5)
+      msg_lines <- c(msg_lines, "", "Top 5 important variables:")
       for (i in seq_len(nrow(top_vip))) {
-        cat(sprintf("  %s: VIP = %.3f\n", top_vip$feature[i], top_vip$vip[i]))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s: VIP = %.3f", top_vip$feature[i], top_vip$vip[i]))
       }
     }
 
     if (!is.null(diff_analysis)) {
-      cat("\nDifferential Analysis (ref_group =", ref_group, "):\n")
-      cat("------------------------------------------\n")
+      msg_lines <- c(msg_lines,
+        paste("\nDifferential Analysis (ref_group =", ref_group, "):"),
+        "------------------------------------------")
       other_groups <- unique(diff_analysis$group)
       for (grp in other_groups) {
         subset <- diff_analysis[diff_analysis$group == grp, ]
         n_up <- sum(subset$regulation == "Up", na.rm = TRUE)
         n_down <- sum(subset$regulation == "Down", na.rm = TRUE)
-        cat(sprintf("  %s vs %s: %d Up, %d Down, %d NS\n",
-          grp, ref_group, n_up, n_down, sum(subset$regulation == "NS", na.rm = TRUE)))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s vs %s: %d Up, %d Down, %d NS",
+            grp, ref_group, n_up, n_down, sum(subset$regulation == "NS", na.rm = TRUE)))
       }
     }
-    cat("\n")
+    msg_lines <- c(msg_lines, "")
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   results

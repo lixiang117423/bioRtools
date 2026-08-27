@@ -130,7 +130,7 @@ calc_assembly_process <- function(beta_nti, rc_bray,
                   dplyr::any_of("group"))
 
   if (verbose) {
-    cat("Assembly-process percentages:\n")
+    message("Assembly-process percentages:")
     print(as.data.frame(summary_df))
   }
 

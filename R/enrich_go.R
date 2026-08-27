@@ -361,25 +361,30 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Print summary if interactive
   if (interactive() && nrow(go_results) > 0) {
-    cat("GO Enrichment Analysis Summary:\n")
-    cat("Input genes:", length(gene), "\n")
-    cat("Genes found in database:", length(overlapping_genes), "\n")
-    cat("GO terms tested:", nrow(term_sizes), "\n")
-    cat("Significantly enriched terms:", nrow(go_results), "\n")
-    cat("Adjustment method:", p_adjust_method, "\n")
-    cat("Significance threshold:", p_adjust, "\n\n")
+    msg_lines <- c(
+      "GO Enrichment Analysis Summary:",
+      paste("Input genes:", length(gene)),
+      paste("Genes found in database:", length(overlapping_genes)),
+      paste("GO terms tested:", nrow(term_sizes)),
+      paste("Significantly enriched terms:", nrow(go_results)),
+      paste("Adjustment method:", p_adjust_method),
+      paste("Significance threshold:", p_adjust),
+      ""
+    )
 
     if (nrow(go_results) > 0) {
-      cat("Top 5 enriched terms:\n")
       top_terms <- head(go_results, 5)
+      msg_lines <- c(msg_lines, "Top 5 enriched terms:")
       for (i in seq_len(nrow(top_terms))) {
-        cat(sprintf("%s: %s (p.adj = %.2e, genes = %d)\n",
-          top_terms$id[i],
-          substr(top_terms$description[i], 1, 50),
-          top_terms$p_adjust[i],
-          top_terms$gene_count[i]))
+        msg_lines <- c(msg_lines,
+          sprintf("%s: %s (p.adj = %.2e, genes = %d)",
+            top_terms$id[i],
+            substr(top_terms$description[i], 1, 50),
+            top_terms$p_adjust[i],
+            top_terms$gene_count[i]))
       }
     }
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   go_results

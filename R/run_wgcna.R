@@ -187,17 +187,21 @@ run_wgcna_analysis <- function(
   # Create output directory
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
-    if (verbose) cat("Created output directory:", output_dir, "\n")
+    if (verbose) message(paste("Created output directory:", output_dir))
   }
 
   if (verbose) {
-    cat("=== WGCNA Analysis Started ===\n")
-    cat("Output directory:", output_dir, "\n")
-    cat("Trait columns:", paste(trait_columns, collapse = ", "), "\n\n")
+    message(paste(
+      "=== WGCNA Analysis Started ===",
+      paste("Output directory:", output_dir),
+      paste("Trait columns:", paste(trait_columns, collapse = ", ")),
+      "",
+      sep = "\n"
+    ))
   }
 
   # 1. Data loading and preprocessing
-  if (verbose) cat("1. Loading and preprocessing expression data...\n")
+  if (verbose) message("1. Loading and preprocessing expression data...")
 
   # Load expression data
   if (is.character(expression_data)) {
@@ -205,10 +209,10 @@ run_wgcna_analysis <- function(
       stop("Expression file not found: ", expression_data)
     }
     df <- readr::read_delim(expression_data, delim = "\t", show_col_types = FALSE)
-    if (verbose) cat("   Loaded expression data from file:", expression_data, "\n")
+    if (verbose) message(paste("   Loaded expression data from file:", expression_data))
   } else if (is.data.frame(expression_data)) {
     df <- expression_data
-    if (verbose) cat("   Using provided expression data frame\n")
+    if (verbose) message("   Using provided expression data frame")
   } else {
     stop("'expression_data' must be either a file path (character) or a data frame")
   }
@@ -237,13 +241,13 @@ run_wgcna_analysis <- function(
     dplyr::filter(!is.na(expression), is.finite(expression), expression >= 0)
 
   if (verbose) {
-    cat("   Processed expression data:", nrow(df), "entries for",
+    message(paste("   Processed expression data:", nrow(df), "entries for",
       length(unique(df$gene_id)), "genes and",
-      length(unique(df$sample)), "samples\n")
+      length(unique(df$sample)), "samples"))
   }
 
   # 2. Generate expression distribution plots
-  if (verbose) cat("\n2. Generating expression distribution plots...\n")
+  if (verbose) message("\n2. Generating expression distribution plots...")
 
   # Pre-transformation boxplot
   p1 <- df %>%
@@ -270,7 +274,7 @@ run_wgcna_analysis <- function(
     width = plot_width, height = plot_height, dpi = plot_dpi)
 
   # 3. Data filtering and quality control
-  if (verbose) cat("\n3. Performing quality control and gene filtering...\n")
+  if (verbose) message("\n3. Performing quality control and gene filtering...")
 
   # Apply log2 transformation and filter genes
   df_filtered <- df %>%
@@ -290,7 +294,7 @@ run_wgcna_analysis <- function(
     dplyr::select(-gene_sd, -gene_mean)
 
   if (verbose) {
-    cat("   After filtering: retained", length(unique(df_filtered$gene_id)), "genes\n")
+    message(paste("   After filtering: retained", length(unique(df_filtered$gene_id)), "genes"))
   }
 
   # Convert to matrix format
@@ -301,24 +305,24 @@ run_wgcna_analysis <- function(
   # Check data quality
   quality_check <- WGCNA::goodSamplesGenes(df_matrix, verbose = 0)
   if (verbose) {
-    cat("   Quality check - Good samples:", sum(quality_check$goodSamples),
-      "/ Good genes:", sum(quality_check$goodGenes), "\n")
+    message(paste("   Quality check - Good samples:", sum(quality_check$goodSamples),
+      "/ Good genes:", sum(quality_check$goodGenes)))
   }
 
   # Remove bad samples/genes if any
   if (!quality_check$allOK) {
     if (sum(!quality_check$goodSamples) > 0) {
       df_matrix <- df_matrix[quality_check$goodSamples, ]
-      if (verbose) cat("   Removed", sum(!quality_check$goodSamples), "problematic samples\n")
+      if (verbose) message(paste("   Removed", sum(!quality_check$goodSamples), "problematic samples"))
     }
     if (sum(!quality_check$goodGenes) > 0) {
       df_matrix <- df_matrix[, quality_check$goodGenes]
-      if (verbose) cat("   Removed", sum(!quality_check$goodGenes), "problematic genes\n")
+      if (verbose) message(paste("   Removed", sum(!quality_check$goodGenes), "problematic genes"))
     }
   }
 
   # 4. Soft threshold selection
-  if (verbose) cat("\n4. Selecting optimal soft threshold...\n")
+  if (verbose) message("\n4. Selecting optimal soft threshold...")
 
   soft_threshold <- WGCNA::pickSoftThreshold(
     df_matrix,
@@ -341,11 +345,14 @@ run_wgcna_analysis <- function(
     }
 
     if (verbose) {
-      cat("   Warning: Could not determine optimal power automatically.\n")
-      cat("   Using power =", selected_power, "\n")
+      message(paste(
+        "   Warning: Could not determine optimal power automatically.",
+        paste("   Using power =", selected_power),
+        sep = "\n"
+      ))
     }
   } else {
-    if (verbose) cat("   Selected soft threshold power:", selected_power, "\n")
+    if (verbose) message(paste("   Selected soft threshold power:", selected_power))
   }
 
   # Plot soft threshold selection
@@ -388,7 +395,7 @@ run_wgcna_analysis <- function(
     width = 10, height = 6, dpi = plot_dpi)
 
   # 5. Network construction
-  if (verbose) cat("\n5. Constructing co-expression network...\n")
+  if (verbose) message("\n5. Constructing co-expression network...")
 
   # Set max block size
   if (is.null(max_block_size)) {
@@ -415,8 +422,11 @@ run_wgcna_analysis <- function(
     )
 
     if (verbose) {
-      cat("   Network construction completed\n")
-      cat("   Number of modules identified:", length(unique(network$colors)) - 1, "\n")
+      message(paste(
+        "   Network construction completed",
+        paste("   Number of modules identified:", length(unique(network$colors)) - 1),
+        sep = "\n"
+      ))
     }
 
   }, error = function(e) {
@@ -429,11 +439,11 @@ run_wgcna_analysis <- function(
   # Save network object
   if (save_network) {
     save(network, file = file.path(output_dir, "04_wgcna_network.RData"))
-    if (verbose) cat("   Network object saved\n")
+    if (verbose) message("   Network object saved")
   }
 
   # Generate dynamic tree cut dendrogram
-  if (verbose) cat("   Generating dynamic tree cut dendrogram...\n")
+  if (verbose) message("   Generating dynamic tree cut dendrogram...")
 
   tryCatch(
     {
@@ -467,18 +477,18 @@ run_wgcna_analysis <- function(
 
         dev.off()
 
-        if (verbose) cat("   Dendrogram saved to:", basename(dendrogram_file), "\n")
+        if (verbose) message(paste("   Dendrogram saved to:", basename(dendrogram_file)))
 
       } else {
-        if (verbose) cat("   Warning: No dendrogram available for plotting\n")
+        if (verbose) message("   Warning: No dendrogram available for plotting")
       }
     },
     error = function(e) {
-      if (verbose) cat("   Warning: Could not generate dendrogram plot:", e$message, "\n")
+      if (verbose) message(paste("   Warning: Could not generate dendrogram plot:", e$message))
     })
 
   # 6. Module identification and gene assignment
-  if (verbose) cat("\n6. Processing modules and gene assignments...\n")
+  if (verbose) message("\n6. Processing modules and gene assignments...")
 
   module_colors <- WGCNA::labels2colors(network$colors)
 
@@ -506,13 +516,16 @@ run_wgcna_analysis <- function(
     sep = "\t", row.names = FALSE, quote = FALSE)
 
   if (verbose) {
-    cat("   Identified", nrow(module_summary), "modules (including grey)\n")
-    cat("   Module sizes range from", min(module_summary$gene_count),
-      "to", max(module_summary$gene_count), "genes\n")
+    message(paste(
+      paste("   Identified", nrow(module_summary), "modules (including grey)"),
+      paste("   Module sizes range from", min(module_summary$gene_count),
+        "to", max(module_summary$gene_count), "genes"),
+      sep = "\n"
+    ))
   }
 
   # 7. Module-trait association analysis
-  if (verbose) cat("\n7. Performing module-trait association analysis...\n")
+  if (verbose) message("\n7. Performing module-trait association analysis...")
 
   # Load sample information
   if (is.character(sample_info)) {
@@ -520,10 +533,10 @@ run_wgcna_analysis <- function(
       stop("Sample info file not found: ", sample_info)
     }
     sample_info_df <- readxl::read_excel(sample_info)
-    if (verbose) cat("   Loaded sample info from file:", sample_info, "\n")
+    if (verbose) message(paste("   Loaded sample info from file:", sample_info))
   } else if (is.data.frame(sample_info)) {
     sample_info_df <- sample_info
-    if (verbose) cat("   Using provided sample info data frame\n")
+    if (verbose) message("   Using provided sample info data frame")
   } else {
     stop("'sample_info' must be either a file path (character) or a data frame")
   }
@@ -587,12 +600,15 @@ run_wgcna_analysis <- function(
     sep = "\t", row.names = FALSE, quote = FALSE)
 
   if (verbose) {
-    cat("   Module-trait correlation analysis completed\n")
-    cat("   Analyzed", nrow(module_trait_cor), "modules against", ncol(module_trait_cor), "traits\n")
+    message(paste(
+      "   Module-trait correlation analysis completed",
+      paste("   Analyzed", nrow(module_trait_cor), "modules against", ncol(module_trait_cor), "traits"),
+      sep = "\n"
+    ))
   }
 
   # 8. Generate module-trait heatmap
-  if (verbose) cat("\n8. Generating module-trait association heatmap...\n")
+  if (verbose) message("\n8. Generating module-trait association heatmap...")
 
   # Prepare data for plotting
   cor_plot_data <- module_trait_cor %>%
@@ -646,26 +662,34 @@ run_wgcna_analysis <- function(
 
   # 9. Summary and completion
   if (verbose) {
-    cat("\n=== WGCNA Analysis Completed Successfully! ===\n")
-    cat("Results saved to:", output_dir, "\n")
-    cat("\nGenerated files:\n")
-    cat("- 01_expression_distribution_before_log.png\n")
-    cat("- 02_expression_distribution_after_log.png\n")
-    cat("- 03_soft_threshold_selection.png\n")
-    if (save_network) cat("- 04_wgcna_network.RData\n")
-    cat("- 04b_dynamic_tree_cut_dendrogram.png\n")
-    cat("- 05_gene_module_mapping.txt\n")
-    cat("- 06_module_size_summary.txt\n")
-    cat("- 07_module_trait_correlations.txt\n")
-    cat("- 08_module_trait_pvalues.txt\n")
-    cat("- 09_module_trait_heatmap.png\n")
+    msg_lines <- c(
+      "",
+      "=== WGCNA Analysis Completed Successfully! ===",
+      paste("Results saved to:", output_dir),
+      "",
+      "Generated files:",
+      "- 01_expression_distribution_before_log.png",
+      "- 02_expression_distribution_after_log.png",
+      "- 03_soft_threshold_selection.png"
+    )
+    if (save_network) msg_lines <- c(msg_lines, "- 04_wgcna_network.RData")
+    msg_lines <- c(msg_lines,
+      "- 04b_dynamic_tree_cut_dendrogram.png",
+      "- 05_gene_module_mapping.txt",
+      "- 06_module_size_summary.txt",
+      "- 07_module_trait_correlations.txt",
+      "- 08_module_trait_pvalues.txt",
+      "- 09_module_trait_heatmap.png")
 
     # Summary statistics
     sig_correlations <- sum(module_trait_pvalue < 0.05, na.rm = TRUE)
-    cat("\nSummary:\n")
-    cat("- Total modules:", nrow(module_summary), "\n")
-    cat("- Total genes:", length(unique(gene_module_mapping$gene_id)), "\n")
-    cat("- Significant module-trait correlations (p < 0.05):", sig_correlations, "\n")
+    msg_lines <- c(msg_lines,
+      "",
+      "Summary:",
+      paste("- Total modules:", nrow(module_summary)),
+      paste("- Total genes:", length(unique(gene_module_mapping$gene_id))),
+      paste("- Significant module-trait correlations (p < 0.05):", sig_correlations))
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   # Return comprehensive results

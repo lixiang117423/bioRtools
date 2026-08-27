@@ -435,19 +435,22 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
 
   # Print comprehensive summary if interactive
   if (interactive() && nrow(kegg_results) > 0) {
-    cat("KEGG Pathway Enrichment Analysis Summary:\n")
-    cat("=========================================\n")
-    cat("Input genes:", length(gene), "\n")
-    cat("Genes found in database:", length(overlapping_genes),
-      paste0("(", round(100 * length(overlapping_genes) / length(gene), 1), "%)"), "\n")
-    cat("Pathways tested:", n_pathways_to_test, "\n")
-    cat("Pathway size range:", min_pathway_size, "-", max_pathway_size, "genes\n")
-    cat("Significantly enriched pathways:", nrow(kegg_results), "\n")
-    cat("Adjustment method:", p_adjust_method, "\n")
-    cat("Significance threshold:", p_adjust, "\n\n")
+    msg_lines <- c(
+      "KEGG Pathway Enrichment Analysis Summary:",
+      "=========================================",
+      paste("Input genes:", length(gene)),
+      paste("Genes found in database:", length(overlapping_genes),
+        paste0("(", round(100 * length(overlapping_genes) / length(gene), 1), "%)")),
+      paste("Pathways tested:", n_pathways_to_test),
+      paste("Pathway size range:", min_pathway_size, "-", max_pathway_size, "genes"),
+      paste("Significantly enriched pathways:", nrow(kegg_results)),
+      paste("Adjustment method:", p_adjust_method),
+      paste("Significance threshold:", p_adjust),
+      "",
+      "Top enriched pathways:"
+    )
 
     # Show top pathways
-    cat("Top enriched pathways:\n")
     top_pathways <- head(kegg_results, 5)
     for (i in seq_len(nrow(top_pathways))) {
       pathway_name <- top_pathways$description[i]
@@ -456,14 +459,16 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
         pathway_name <- paste0(substr(pathway_name, 1, 47), "...")
       }
 
-      cat(sprintf("%d. %s: %s\n", i, top_pathways$id[i], pathway_name))
-      cat(sprintf("   p.adj = %.2e, genes = %d/%d, enrichment = %.1f\n",
-        top_pathways$p_adjust[i],
-        top_pathways$gene_count[i],
-        top_pathways$total_genes[i],
-        top_pathways$enrichment_score[i]))
+      msg_lines <- c(msg_lines,
+        sprintf("%d. %s: %s", i, top_pathways$id[i], pathway_name),
+        sprintf("   p.adj = %.2e, genes = %d/%d, enrichment = %.1f",
+          top_pathways$p_adjust[i],
+          top_pathways$gene_count[i],
+          top_pathways$total_genes[i],
+          top_pathways$enrichment_score[i]))
     }
-    cat("\n")
+    msg_lines <- c(msg_lines, "")
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   kegg_results

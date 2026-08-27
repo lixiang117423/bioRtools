@@ -523,16 +523,20 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
     combined <- combined[order(combined$comparison, combined$padj, -combined$abs_log2fc), ]
 
     if (interactive()) {
-      cat("edgeR Pairwise Differential Expression Summary:\n")
-      cat("==================================================\n")
-      cat("Comparisons:", length(pair_results), "\n")
+      msg_lines <- c(
+        "edgeR Pairwise Differential Expression Summary:",
+        "==================================================",
+        paste("Comparisons:", length(pair_results))
+      )
       for (comp in unique(combined$comparison)) {
         sub <- combined[combined$comparison == comp, ]
         n_up <- sum(sub$regulation == "Up")
         n_down <- sum(sub$regulation == "Down")
-        cat(sprintf("  %s: %d up, %d down, %d total DE\n", comp, n_up, n_down, n_up + n_down))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s: %d up, %d down, %d total DE", comp, n_up, n_down, n_up + n_down))
       }
-      cat("\n")
+      msg_lines <- c(msg_lines, "")
+      message(paste(msg_lines, collapse = "\n"))
     }
 
     return(combined)
@@ -658,57 +662,69 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
 
   # Interactive summary
   if (interactive()) {
-    cat("edgeR Differential Expression Analysis Summary:\n")
-    cat("================================================\n")
+    msg_lines <- c(
+      "edgeR Differential Expression Analysis Summary:",
+      "================================================"
+    )
 
     if (has_nonfinite && remove_problematic_genes) {
-      cat("Genes (original):", n_genes_original, "\n")
-      cat("Genes removed (non-finite values):", length(problematic_gene_names), "\n")
-      cat("Genes after CPM filter:", nrow(dge), "\n")
+      msg_lines <- c(msg_lines,
+        paste("Genes (original):", n_genes_original),
+        paste("Genes removed (non-finite values):", length(problematic_gene_names)),
+        paste("Genes after CPM filter:", nrow(dge)))
     } else {
-      cat("Genes input:", n_genes_original, "\n")
-      cat("Genes after CPM filter:", nrow(dge), "\n")
+      msg_lines <- c(msg_lines,
+        paste("Genes input:", n_genes_original),
+        paste("Genes after CPM filter:", nrow(dge)))
     }
-    cat("Genes tested:", n_tested, "\n")
-    cat("Samples analyzed:", ncol(data_matrix), "\n")
-    cat("Design formula:", deparse(formula), "\n")
-    cat("Normalization:", normalize_method, "\n")
-    cat("Log2FC threshold:", log2_fold_change, "(", round(2^log2_fold_change, 2), "-fold)\n")
-    cat("FDR threshold:", fdr, "\n")
-    cat("Robust estimation:", ifelse(robust, "Yes", "No"), "\n\n")
-
-    cat("Library size summary:\n")
-    cat("  Range:", min(lib_sizes), "to", max(lib_sizes), "counts\n")
-    cat("  Median:", median(lib_sizes), "counts\n")
+    msg_lines <- c(msg_lines,
+      paste("Genes tested:", n_tested),
+      paste("Samples analyzed:", ncol(data_matrix)),
+      paste("Design formula:", deparse(formula)),
+      paste("Normalization:", normalize_method),
+      paste("Log2FC threshold:", log2_fold_change, "(", round(2^log2_fold_change, 2), "-fold)"),
+      paste("FDR threshold:", fdr),
+      paste("Robust estimation:", ifelse(robust, "Yes", "No")),
+      "",
+      "Library size summary:",
+      paste("  Range:", min(lib_sizes), "to", max(lib_sizes), "counts"),
+      paste("  Median:", median(lib_sizes), "counts"))
 
     if (main_factor %in% names(sample_aligned)) {
-      cat("  Group sizes:", paste(names(group_counts), "=", group_counts, collapse = ", "), "\n\n")
+      msg_lines <- c(msg_lines,
+        paste("  Group sizes:", paste(names(group_counts), "=", group_counts, collapse = ", ")),
+        "")
     }
 
-    cat("Results:\n")
-    cat("  Up-regulated genes:", n_upregulated, "\n")
-    cat("  Down-regulated genes:", n_downregulated, "\n")
-    cat("  Not significant:", sum(results_processed$regulation == "Not significant"), "\n")
-    cat("  Total DE genes:", n_total_de,
-      paste0("(", round(100 * n_total_de / max(n_tested, 1), 1), "% of tested)"), "\n\n")
+    msg_lines <- c(msg_lines,
+      "Results:",
+      paste("  Up-regulated genes:", n_upregulated),
+      paste("  Down-regulated genes:", n_downregulated),
+      paste("  Not significant:", sum(results_processed$regulation == "Not significant")),
+      paste("  Total DE genes:", n_total_de,
+        paste0("(", round(100 * n_total_de / max(n_tested, 1), 1), "% of tested)")),
+      "")
 
     if (n_total_de > 0) {
-      cat("Top DE genes by significance:\n")
+      msg_lines <- c(msg_lines, "Top DE genes by significance:")
       top_genes <- results_processed %>%
         dplyr::filter(regulation != "Not significant") %>%
         head(5)
 
       for (i in seq_len(nrow(top_genes))) {
         direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "\u2191", "\u2193")
-        cat(sprintf("  %s %s: %s (log2FC = %.2f, padj = %.2e)\n",
-          direction_symbol,
-          top_genes$gene[i],
-          top_genes$regulation[i],
-          top_genes$log2FoldChange[i],
-          top_genes$padj[i]))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s %s: %s (log2FC = %.2f, padj = %.2e)",
+            direction_symbol,
+            top_genes$gene[i],
+            top_genes$regulation[i],
+            top_genes$log2FoldChange[i],
+            top_genes$padj[i]))
       }
 
-      cat("\nExpression change magnitude distribution:\n")
+      msg_lines <- c(msg_lines, "", "Expression change magnitude distribution:")
+      message(paste(msg_lines, collapse = "\n"))
+
       magnitude_summary <- results_processed %>%
         dplyr::filter(regulation != "Not significant") %>%
         dplyr::mutate(
@@ -723,8 +739,10 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
         tidyr::pivot_wider(names_from = regulation, values_from = n, values_fill = 0)
 
       print(magnitude_summary)
+    } else {
+      message(paste(msg_lines, collapse = "\n"))
     }
-    cat("\n")
+    message("")
   }
 
   results_processed

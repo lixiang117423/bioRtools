@@ -762,30 +762,34 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
 
   # Interactive summary
   if (interactive()) {
-    cat("Principal Component Analysis Summary:\n")
-    cat("====================================\n")
-    cat("Samples:", nrow(data), "\n")
-    cat("Variables:", ncol(data), "\n")
-    cat("Components calculated:", n_components, "\n")
-    cat("Data scaling:", ifelse(scale_data, "Applied", "Not applied"), "\n")
-    cat("Data centering:", ifelse(center_data, "Applied", "Not applied"), "\n\n")
-
-    cat("Variance Explanation:\n")
+    msg_lines <- c(
+      "Principal Component Analysis Summary:",
+      "====================================",
+      paste("Samples:", nrow(data)),
+      paste("Variables:", ncol(data)),
+      paste("Components calculated:", n_components),
+      paste("Data scaling:", ifelse(scale_data, "Applied", "Not applied")),
+      paste("Data centering:", ifelse(center_data, "Applied", "Not applied")),
+      "",
+      "Variance Explanation:"
+    )
     for (i in 1:min(3, nrow(eigenvalue_data))) {
-      cat(sprintf("  %s: %.1f%% (eigenvalue = %.2f)\n",
-        eigenvalue_data$component[i],
-        eigenvalue_data$variance_percent[i],
-        eigenvalue_data$eigenvalue[i]))
+      msg_lines <- c(msg_lines,
+        sprintf("  %s: %.1f%% (eigenvalue = %.2f)",
+          eigenvalue_data$component[i],
+          eigenvalue_data$variance_percent[i],
+          eigenvalue_data$eigenvalue[i]))
     }
 
-    cat(sprintf("  First %d components: %.1f%% total variance\n",
-      min(3, n_components),
-      eigenvalue_data$cumulative_percent[min(3, n_components)]))
-
-    cat("\nComponent Selection Criteria:\n")
-    cat("  Kaiser criterion (eigenvalue > 1):", length(summary_stats$kaiser_criterion), "components\n")
-    cat("  Broken stick model suggests:", length(summary_stats$broken_stick), "components\n")
-    cat("  Average variance per variable:", round(summary_stats$average_variance_per_variable, 1), "%\n")
+    msg_lines <- c(msg_lines,
+      sprintf("  First %d components: %.1f%% total variance",
+        min(3, n_components),
+        eigenvalue_data$cumulative_percent[min(3, n_components)]),
+      "",
+      "Component Selection Criteria:",
+      paste("  Kaiser criterion (eigenvalue > 1):", length(summary_stats$kaiser_criterion), "components"),
+      paste("  Broken stick model suggests:", length(summary_stats$broken_stick), "components"),
+      paste("  Average variance per variable:", round(summary_stats$average_variance_per_variable, 1), "%"))
 
     # Variable importance
     if (nrow(variable_loadings) > 0) {
@@ -793,25 +797,29 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
         dplyr::arrange(desc(abs(PC1))) %>%
         head(3)
 
-      cat("\nTop 3 variables contributing to PC1:\n")
+      msg_lines <- c(msg_lines, "", "Top 3 variables contributing to PC1:")
       for (i in seq_len(nrow(important_vars_pc1))) {
-        cat(sprintf("  %s (loading = %.3f)\n",
-          important_vars_pc1$variable[i],
-          important_vars_pc1$PC1[i]))
+        msg_lines <- c(msg_lines,
+          sprintf("  %s (loading = %.3f)",
+            important_vars_pc1$variable[i],
+            important_vars_pc1$PC1[i]))
       }
     }
 
     # Data quality assessment
     if (any(is.na(data_matrix))) {
-      cat("\nData Quality Notes:\n")
-      cat("  Missing values detected - handled via imputation\n")
+      msg_lines <- c(msg_lines,
+        "",
+        "Data Quality Notes:",
+        "  Missing values detected - handled via imputation")
     }
 
     if (zero_var_vars > 0) {
-      cat("  Zero variance variables detected - consider removal\n")
+      msg_lines <- c(msg_lines, "  Zero variance variables detected - consider removal")
     }
 
-    cat("\n")
+    msg_lines <- c(msg_lines, "")
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   results

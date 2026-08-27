@@ -355,19 +355,23 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
   attr(results, "perplexity") <- perplexity
 
   if (interactive()) {
-    cat("t-SNE Analysis Summary:\n")
-    cat("=======================\n")
-    cat("Samples:", n_samples, "\n")
-    cat("Variables:", ncol(data), "\n")
-    cat("Output dimensions:", dims, "\n")
-    cat("Perplexity:", perplexity, "\n")
-    cat("Iterations:", max_iter, "\n")
-    cat("PCA preprocessing:", if (pca) "Yes" else "No", "\n")
-    cat("Data scaling:", if (scale_data) "Yes" else "No", "\n")
+    msg_lines <- c(
+      "t-SNE Analysis Summary:",
+      "=======================",
+      paste("Samples:", n_samples),
+      paste("Variables:", ncol(data)),
+      paste("Output dimensions:", dims),
+      paste("Perplexity:", perplexity),
+      paste("Iterations:", max_iter),
+      paste("PCA preprocessing:", if (pca) "Yes" else "No"),
+      paste("Data scaling:", if (scale_data) "Yes" else "No")
+    )
     if (!is.na(summary_stats$final_cost)) {
-      cat("Final cost (KL divergence):", round(summary_stats$final_cost, 4), "\n")
+      msg_lines <- c(msg_lines,
+        paste("Final cost (KL divergence):", round(summary_stats$final_cost, 4)))
     }
-    cat("\n")
+    msg_lines <- c(msg_lines, "")
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   results

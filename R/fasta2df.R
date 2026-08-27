@@ -536,10 +536,14 @@ fasta2df <- function(fasta,
     stop("Benchmark file does not exist: ", fasta_file)
   }
 
-  cat("Benchmarking fasta2df performance...\n")
-  cat("File:", fasta_file, "\n")
-  cat("File size:", round(file.size(fasta_file) / 1024^2, 2), "MB\n")
-  cat("Iterations:", iterations, "\n\n")
+  message(paste(
+    "Benchmarking fasta2df performance...",
+    paste("File:", fasta_file),
+    paste("File size:", round(file.size(fasta_file) / 1024^2, 2), "MB"),
+    paste("Iterations:", iterations),
+    "",
+    sep = "\n"
+  ))
 
   # Warm-up run
   invisible(fasta2df(fasta_file, validate = FALSE))
@@ -558,10 +562,13 @@ fasta2df <- function(fasta,
     }
   })
 
-  cat("With validation:   ", round(time_with_validation["elapsed"] / iterations, 4), "seconds per run\n")
-  cat("Without validation:", round(time_without_validation["elapsed"] / iterations, 4), "seconds per run\n")
-  cat("Sequences processed:", nrow(result), "\n")
-  cat("Performance:", round(nrow(result) / (time_without_validation["elapsed"] / iterations)), "sequences/second\n")
+  message(paste(
+    paste("With validation:   ", round(time_with_validation["elapsed"] / iterations, 4), "seconds per run"),
+    paste("Without validation:", round(time_without_validation["elapsed"] / iterations, 4), "seconds per run"),
+    paste("Sequences processed:", nrow(result)),
+    paste("Performance:", round(nrow(result) / (time_without_validation["elapsed"] / iterations)), "sequences/second"),
+    sep = "\n"
+  ))
 
   invisible(result)
 }

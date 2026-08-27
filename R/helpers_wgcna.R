@@ -77,9 +77,13 @@ filter_wgcna_genes <- function(expression_data, min_sd = 0.1, verbose = TRUE) {
   n_kept <- sum(keep_genes)
 
   if (verbose) {
-    cat(sprintf("Filtering genes by standard deviation (min_sd = %.2f):\n", min_sd))
-    cat(sprintf("  Removed: %d genes\n", n_removed))
-    cat(sprintf("  Kept: %d genes\n\n", n_kept))
+    message(paste(
+      sprintf("Filtering genes by standard deviation (min_sd = %.2f):", min_sd),
+      sprintf("  Removed: %d genes", n_removed),
+      sprintf("  Kept: %d genes", n_kept),
+      "",
+      sep = "\n"
+    ))
   }
 
   if (n_kept == 0) {
@@ -113,9 +117,9 @@ prepare_wgcna_traits <- function(sample_info, trait_columns, verbose = TRUE) {
       ~ tryCatch(as.numeric(.), warning = function(w) .)))
 
   if (verbose) {
-    cat("Prepared trait data:\n")
+    message("Prepared trait data:")
     print(str(traits))
-    cat("\n")
+    message("")
   }
 
   traits
@@ -142,8 +146,12 @@ analyze_softthreshold_power <- function(expression_data, power_vector = 1:30,
                                         correlation_method = "pearson",
                                         tom_type = "signed", verbose = TRUE) {
   if (verbose) {
-    cat("Analyzing soft-thresholding powers for scale-free topology...\n")
-    cat("This may take a few minutes for large datasets.\n\n")
+    message(paste(
+      "Analyzing soft-thresholding powers for scale-free topology...",
+      "This may take a few minutes for large datasets.",
+      "",
+      sep = "\n"
+    ))
   }
 
   # Use WGCNA's built-in function
@@ -156,13 +164,17 @@ analyze_softthreshold_power <- function(expression_data, power_vector = 1:30,
   )
 
   if (verbose) {
-    cat("Soft-thresholding analysis complete.\n")
-    cat(sprintf("Recommended power: %d (R\u00b2 = %.3f)\n\n",
-      powers_analysis$powerEstimate,
-      powers_analysis$fitIndices[
-        which.min(abs(powers_analysis$fitIndices$SFT.R.sq - 0.9)),
-        "SFT.R.sq"
-      ]))
+    message(paste(
+      "Soft-thresholding analysis complete.",
+      sprintf("Recommended power: %d (R\u00b2 = %.3f)",
+        powers_analysis$powerEstimate,
+        powers_analysis$fitIndices[
+          which.min(abs(powers_analysis$fitIndices$SFT.R.sq - 0.9)),
+          "SFT.R.sq"
+        ]),
+      "",
+      sep = "\n"
+    ))
   }
 
   powers_analysis
@@ -189,7 +201,7 @@ build_correlation_network <- function(expression_data, soft_power = 6,
                                       tom_type = "signed",
                                       max_block_size = NULL, verbose = TRUE) {
   if (verbose) {
-    cat(sprintf("Building %s TOM network with power = %d...\n",
+    message(sprintf("Building %s TOM network with power = %d...",
       tom_type, soft_power))
   }
 
@@ -202,7 +214,7 @@ build_correlation_network <- function(expression_data, soft_power = 6,
   )
 
   if (verbose) {
-    cat(sprintf("Adjacency matrix created (%d x %d).\n",
+    message(sprintf("Adjacency matrix created (%d x %d).",
       nrow(adjacency), ncol(adjacency)))
   }
 
@@ -226,7 +238,7 @@ build_correlation_network <- function(expression_data, soft_power = 6,
 detect_modules <- function(tom_matrix, min_module_size = 50,
                           merge_cutoff = 0.25, verbose = TRUE) {
   if (verbose) {
-    cat(sprintf("Detecting modules with min_module_size = %d...\n",
+    message(sprintf("Detecting modules with min_module_size = %d...",
       min_module_size))
   }
 
@@ -247,7 +259,7 @@ detect_modules <- function(tom_matrix, min_module_size = 50,
 
   if (verbose) {
     n_modules <- length(unique(dynamic_colors[dynamic_colors != 0]))
-    cat(sprintf("Detected %d modules.\n\n", n_modules))
+    message(sprintf("Detected %d modules.\n", n_modules))
   }
 
   list(
@@ -276,7 +288,7 @@ calculate_module_trait_correlations <- function(expression_data, module_colors,
                                                  traits, correlation_method = "pearson",
                                                  verbose = TRUE) {
   if (verbose) {
-    cat("Calculating module-trait associations...\n")
+    message("Calculating module-trait associations...")
   }
 
   # Calculate module eigengenes
@@ -306,7 +318,7 @@ calculate_module_trait_correlations <- function(expression_data, module_colors,
   colnames(module_trait_pval) <- colnames(traits)
 
   if (verbose) {
-    cat("Module-trait correlations calculated.\n\n")
+    message("Module-trait correlations calculated.\n")
   }
 
   list(
@@ -337,7 +349,7 @@ export_wgcna_results <- function(results, output_dir, save_network = TRUE,
   }
 
   if (verbose) {
-    cat("Exporting WGCNA results to:", output_dir, "\n")
+    message(paste("Exporting WGCNA results to:", output_dir))
   }
 
   # Save module assignments
@@ -358,7 +370,7 @@ export_wgcna_results <- function(results, output_dir, save_network = TRUE,
   }
 
   if (verbose) {
-    cat("Results exported successfully.\n\n")
+    message("Results exported successfully.\n")
   }
 
   invisible(TRUE)

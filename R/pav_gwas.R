@@ -281,7 +281,7 @@ pav_gwas <- function(pav_data,
   # Check optional packages (warn but don't stop)
   missing_optional <- optional_packages[!sapply(optional_packages, requireNamespace, quietly = TRUE)]
   if (length(missing_optional) > 0 && verbose) {
-    cat("Optional packages missing (will use fallback methods):", paste(missing_optional, collapse = ", "), "\n")
+    message(paste("Optional packages missing (will use fallback methods):", paste(missing_optional, collapse = ", ")))
   }
 
   # Packages loaded via NAMESPACE imports; use pkg::fun() for non-imported functions
@@ -301,14 +301,17 @@ pav_gwas <- function(pav_data,
   }
 
   if (verbose) {
-    cat("=== Enhanced PAV GWAS Analysis Pipeline ===\n")
-    cat("Output directory:", output_dir, "\n")
-    cat("Analysis type:", analysis_type, "\n")
-    cat("Test type:", test_type, "\n")
+    message(paste(
+      "=== Enhanced PAV GWAS Analysis Pipeline ===",
+      paste("Output directory:", output_dir),
+      paste("Analysis type:", analysis_type),
+      paste("Test type:", test_type),
+      sep = "\n"
+    ))
   }
 
   # Step 1: Load PAV data (file or data frame) - UNCHANGED
-  if (verbose) cat("Loading PAV data...\n")
+  if (verbose) message("Loading PAV data...")
 
   if (is.character(pav_data) && length(pav_data) == 1) {
     # It's a file path
@@ -316,12 +319,12 @@ pav_gwas <- function(pav_data,
       stop("PAV file not found: ", pav_data)
     }
 
-    if (verbose) cat("Reading PAV data from file:", pav_data, "\n")
+    if (verbose) message(paste("Reading PAV data from file:", pav_data))
     pav_df <- fread(pav_data, header = TRUE)
 
   } else if (is.data.frame(pav_data)) {
     # It's a data frame
-    if (verbose) cat("Using provided PAV data frame\n")
+    if (verbose) message("Using provided PAV data frame")
     pav_df <- data.table::as.data.table(pav_data)
 
   } else {
@@ -345,13 +348,16 @@ pav_gwas <- function(pav_data,
   rownames(pav_matrix) <- feature_ids
 
   if (verbose) {
-    cat(sprintf("Loaded %d PAV features across %d chromosomes for %d samples\n",
-      nrow(pav_matrix), length(unique(pav_info$chr)), ncol(pav_matrix)))
-    cat("Chromosomes found:", paste(sort(unique(pav_info$chr)), collapse = ", "), "\n")
+    message(paste(
+      sprintf("Loaded %d PAV features across %d chromosomes for %d samples",
+        nrow(pav_matrix), length(unique(pav_info$chr)), ncol(pav_matrix)),
+      paste("Chromosomes found:", paste(sort(unique(pav_info$chr)), collapse = ", ")),
+      sep = "\n"
+    ))
   }
 
   # Step 2: Load phenotype data (file or data frame) - UNCHANGED
-  if (verbose) cat("Loading phenotype data...\n")
+  if (verbose) message("Loading phenotype data...")
 
   if (is.character(phenotype_data) && length(phenotype_data) == 1) {
     # It's a file path
@@ -359,12 +365,12 @@ pav_gwas <- function(pav_data,
       stop("Phenotype file not found: ", phenotype_data)
     }
 
-    if (verbose) cat("Reading phenotype data from file:", phenotype_data, "\n")
+    if (verbose) message(paste("Reading phenotype data from file:", phenotype_data))
     pheno_df <- fread(phenotype_data, header = TRUE)
 
   } else if (is.data.frame(phenotype_data)) {
     # It's a data frame
-    if (verbose) cat("Using provided phenotype data frame\n")
+    if (verbose) message("Using provided phenotype data frame")
     pheno_df <- data.table::as.data.table(phenotype_data)
 
   } else {
@@ -375,24 +381,27 @@ pav_gwas <- function(pav_data,
   names(pheno_df) <- c("SampleID", "Phenotype")
 
   if (verbose) {
-    cat(sprintf("Loaded phenotype data for %d samples\n", nrow(pheno_df)))
+    message(sprintf("Loaded phenotype data for %d samples", nrow(pheno_df)))
   }
 
   # Step 3: Match samples between PAV matrix and phenotype data - UNCHANGED
   common_samples <- intersect(colnames(pav_matrix), pheno_df$SampleID)
 
   if (length(common_samples) == 0) {
-    cat("\n=== DEBUGGING INFORMATION ===\n")
-    cat("PAV matrix sample names (first 10):\n")
+    message(paste(
+      "\n=== DEBUGGING INFORMATION ===",
+      "PAV matrix sample names (first 10):",
+      sep = "\n"
+    ))
     print(head(colnames(pav_matrix), 10))
-    cat("\nPhenotype sample names (first 10):\n")
+    message("\nPhenotype sample names (first 10):")
     print(head(pheno_df$SampleID, 10))
-    cat("=============================\n")
+    message("=============================")
     stop("No samples match between PAV matrix and phenotype data")
   }
 
   if (verbose) {
-    cat(sprintf("Found %d common samples\n", length(common_samples)))
+    message(sprintf("Found %d common samples", length(common_samples)))
   }
 
   # Reorder data to ensure consistency
@@ -406,11 +415,11 @@ pav_gwas <- function(pav_data,
   pheno_df <- pheno_df[complete_idx, ]
 
   if (verbose) {
-    cat(sprintf("Using %d samples with complete data\n", ncol(pav_matrix)))
+    message(sprintf("Using %d samples with complete data", ncol(pav_matrix)))
   }
 
   # Step 4: Enhanced phenotype distribution analysis
-  if (verbose) cat("Analyzing phenotype distribution...\n")
+  if (verbose) message("Analyzing phenotype distribution...")
 
   phenotype_values <- pheno_df$Phenotype
 
@@ -490,21 +499,25 @@ pav_gwas <- function(pav_data,
 
     # Enhanced verbose output
     if (verbose) {
-      cat(sprintf("  Numeric phenotype: %.3f \u00b1 %.3f (range: %.3f - %.3f)\n",
-        pheno_stats$mean, pheno_stats$sd, pheno_stats$min, pheno_stats$max))
-      cat(sprintf("  %d unique values (%.1f%% of samples)\n",
-        pheno_stats$n_unique, pheno_stats$n_unique / pheno_stats$n_samples * 100))
-      cat(sprintf("  CV = %.3f, IQR = %.3f\n", pheno_stats$cv, pheno_stats$iqr))
+      msg_lines <- c(
+        sprintf("  Numeric phenotype: %.3f \u00b1 %.3f (range: %.3f - %.3f)",
+          pheno_stats$mean, pheno_stats$sd, pheno_stats$min, pheno_stats$max),
+        sprintf("  %d unique values (%.1f%% of samples)",
+          pheno_stats$n_unique, pheno_stats$n_unique / pheno_stats$n_samples * 100),
+        sprintf("  CV = %.3f, IQR = %.3f", pheno_stats$cv, pheno_stats$iqr)
+      )
       if (!is.na(pheno_stats$normality_p)) {
-        cat(sprintf("  Normality test p-value: %.3f\n", pheno_stats$normality_p))
+        msg_lines <- c(msg_lines,
+          sprintf("  Normality test p-value: %.3f", pheno_stats$normality_p))
       }
       if (pheno_stats$is_truly_continuous) {
-        cat("  Detected as: CONTINUOUS phenotype\n")
+        msg_lines <- c(msg_lines, "  Detected as: CONTINUOUS phenotype")
       } else if (pheno_stats$is_binary_like) {
-        cat("  Detected as: BINARY-like phenotype\n")
+        msg_lines <- c(msg_lines, "  Detected as: BINARY-like phenotype")
       } else {
-        cat("  Detected as: DISCRETE phenotype\n")
+        msg_lines <- c(msg_lines, "  Detected as: DISCRETE phenotype")
       }
+      message(paste(msg_lines, collapse = "\n"))
     }
 
   } else {
@@ -527,13 +540,15 @@ pav_gwas <- function(pav_data,
     )
 
     if (verbose) {
-      cat("  Categorical phenotype:\n")
+      msg_lines <- "  Categorical phenotype:"
       for (i in seq_along(pheno_stats$categories)) {
-        cat(sprintf("    %s: %d samples (%.1f%%)\n",
-          pheno_stats$categories[i],
-          pheno_stats$category_counts[i],
-          pheno_stats$category_counts[i] / pheno_stats$n_samples * 100))
+        msg_lines <- c(msg_lines,
+          sprintf("    %s: %d samples (%.1f%%)",
+            pheno_stats$categories[i],
+            pheno_stats$category_counts[i],
+            pheno_stats$category_counts[i] / pheno_stats$n_samples * 100))
       }
+      message(paste(msg_lines, collapse = "\n"))
     }
   }
 
@@ -549,31 +564,31 @@ pav_gwas <- function(pav_data,
   if (analysis_type == "auto") {
     if (is_binary_like) {
       analysis_type <- "binary"
-      if (verbose) cat("Auto-detected: Binary phenotype\n")
+      if (verbose) message("Auto-detected: Binary phenotype")
     } else if (!is_numeric_phenotype) {
       analysis_type <- "categorical"
-      if (verbose) cat("Auto-detected: Categorical phenotype\n")
+      if (verbose) message("Auto-detected: Categorical phenotype")
     } else if (pheno_stats$is_truly_continuous) {
       # Enhanced detection for continuous phenotypes
       if (is_bimodal) {
         analysis_type <- "binary"
-        if (verbose) cat("Auto-detected: Bimodal bounded data, converting to binary\n")
+        if (verbose) message("Auto-detected: Bimodal bounded data, converting to binary")
       } else if (is_bounded) {
         analysis_type <- "logit"
-        if (verbose) cat("Auto-detected: Bounded continuous data [0,1], using logit transformation\n")
+        if (verbose) message("Auto-detected: Bounded continuous data [0,1], using logit transformation")
       } else if (pheno_stats$is_percentage_like) {
         analysis_type <- "arcsine"
-        if (verbose) cat("Auto-detected: Percentage-like data [0,100], using arcsine transformation\n")
+        if (verbose) message("Auto-detected: Percentage-like data [0,100], using arcsine transformation")
       } else {
         analysis_type <- "continuous"
-        if (verbose) cat("Auto-detected: Continuous phenotype, using continuous methods\n")
+        if (verbose) message("Auto-detected: Continuous phenotype, using continuous methods")
       }
     } else if (pheno_stats$n_unique <= 10) {
       analysis_type <- "categorical"
-      if (verbose) cat("Auto-detected: Discrete categorical phenotype\n")
+      if (verbose) message("Auto-detected: Discrete categorical phenotype")
     } else {
       analysis_type <- "continuous"
-      if (verbose) cat("Auto-detected: Treating as continuous phenotype\n")
+      if (verbose) message("Auto-detected: Treating as continuous phenotype")
     }
   }
 
@@ -581,26 +596,26 @@ pav_gwas <- function(pav_data,
   if (test_type == "auto") {
     if (analysis_type == "binary") {
       test_type <- "fisher"
-      if (verbose) cat("Auto-selected: Fisher's exact test\n")
+      if (verbose) message("Auto-selected: Fisher's exact test")
     } else if (analysis_type == "categorical") {
       test_type <- "logistic"
-      if (verbose) cat("Auto-selected: Logistic regression\n")
+      if (verbose) message("Auto-selected: Logistic regression")
     } else if (analysis_type %in% c("continuous", "continuous_raw")) {
       if (pheno_stats$is_normal && pheno_stats$n_samples >= 30) {
         test_type <- "welch_ttest"
-        if (verbose) cat("Auto-selected: Welch's t-test (normal distribution detected)\n")
+        if (verbose) message("Auto-selected: Welch's t-test (normal distribution detected)")
       } else {
         test_type <- "mannwhitney"
-        if (verbose) cat("Auto-selected: Mann-Whitney U test (non-parametric)\n")
+        if (verbose) message("Auto-selected: Mann-Whitney U test (non-parametric)")
       }
     } else {
       test_type <- "mannwhitney"
-      if (verbose) cat("Auto-selected: Mann-Whitney U test\n")
+      if (verbose) message("Auto-selected: Mann-Whitney U test")
     }
   }
 
   # Step 6: Enhanced phenotype transformation
-  if (verbose) cat("Transforming phenotype...\n")
+  if (verbose) message("Transforming phenotype...")
 
   transformed_phenotype <- switch(analysis_type,
     "binary" = {
@@ -667,15 +682,15 @@ pav_gwas <- function(pav_data,
         if (min(phenotype_values) > 0) {
           # Apply log transformation for positive skewed data
           log_transformed <- log(phenotype_values)
-          if (verbose) cat("  Applied log transformation for skewed positive data\n")
+          if (verbose) message("  Applied log transformation for skewed positive data")
           log_transformed
         } else {
           # Use rank transformation for non-normal data with zeros/negatives
-          if (verbose) cat("  Applied rank transformation for non-normal data\n")
+          if (verbose) message("  Applied rank transformation for non-normal data")
           rank(phenotype_values, ties.method = "average")
         }
       } else {
-        if (verbose) cat("  Using raw values (normal distribution detected)\n")
+        if (verbose) message("  Using raw values (normal distribution detected)")
         phenotype_values
       }
     },
@@ -683,23 +698,24 @@ pav_gwas <- function(pav_data,
       if (!pheno_stats$is_numeric) {
         stop("Continuous analysis requires numeric data")
       }
-      if (verbose) cat("  Using raw continuous values without transformation\n")
+      if (verbose) message("  Using raw continuous values without transformation")
       phenotype_values
     }
   )
 
   if (verbose) {
     if (analysis_type == "binary") {
-      cat(sprintf("Binary transformation: %d samples with value 0, %d samples with value 1\n",
+      message(sprintf("Binary transformation: %d samples with value 0, %d samples with value 1",
         sum(transformed_phenotype == 0), sum(transformed_phenotype == 1)))
     } else if (analysis_type == "categorical") {
       category_counts <- table(transformed_phenotype)
-      cat("Categorical transformation:\n")
+      msg_lines <- "Categorical transformation:"
       for (i in seq_along(category_counts)) {
-        cat(sprintf("  Category %d: %d samples\n", i, category_counts[i]))
+        msg_lines <- c(msg_lines, sprintf("  Category %d: %d samples", i, category_counts[i]))
       }
+      message(paste(msg_lines, collapse = "\n"))
     } else if (analysis_type %in% c("continuous", "continuous_raw")) {
-      cat(sprintf("Continuous transformation: %.3f \u00b1 %.3f (range: %.3f - %.3f)\n",
+      message(sprintf("Continuous transformation: %.3f \u00b1 %.3f (range: %.3f - %.3f)",
         mean(transformed_phenotype, na.rm = TRUE),
         sd(transformed_phenotype, na.rm = TRUE),
         min(transformed_phenotype, na.rm = TRUE),
@@ -708,7 +724,7 @@ pav_gwas <- function(pav_data,
   }
 
   # Step 7: Filter PAV matrix - UNCHANGED
-  if (verbose) cat("Filtering PAV matrix...\n")
+  if (verbose) message("Filtering PAV matrix...")
 
   # Convert to binary presence/absence
   binary_matrix <- (pav_matrix > 0) * 1
@@ -726,7 +742,7 @@ pav_gwas <- function(pav_data,
   filtered_matrix <- binary_matrix[keep_features, ]
 
   if (verbose) {
-    cat(sprintf("Filtered from %d to %d PAV features (present in %d-%d samples)\n",
+    message(sprintf("Filtered from %d to %d PAV features (present in %d-%d samples)",
       nrow(binary_matrix), nrow(filtered_matrix),
       min_sample_count, max_sample_count))
   }
@@ -743,12 +759,12 @@ pav_gwas <- function(pav_data,
   if (is.null(significance_threshold)) {
     significance_threshold <- 0.05 / nrow(filtered_matrix)
     if (verbose) {
-      cat(sprintf("Auto-calculated significance threshold: %.2e (0.05/%d features)\n",
+      message(sprintf("Auto-calculated significance threshold: %.2e (0.05/%d features)",
         significance_threshold, nrow(filtered_matrix)))
     }
   } else {
     if (verbose) {
-      cat(sprintf("Using provided significance threshold: %.2e\n", significance_threshold))
+      message(sprintf("Using provided significance threshold: %.2e", significance_threshold))
     }
   }
 
@@ -757,7 +773,7 @@ pav_gwas <- function(pav_data,
   covariates <- NULL
 
   if (use_population_structure) {
-    if (verbose) cat("Analyzing population structure...\n")
+    if (verbose) message("Analyzing population structure...")
 
     # Transpose matrix for PCA (samples as rows)
     sample_matrix <- t(filtered_matrix)
@@ -767,12 +783,12 @@ pav_gwas <- function(pav_data,
     non_constant_cols <- which(col_vars > 0)
 
     if (length(non_constant_cols) == 0) {
-      if (verbose) cat("Warning: All PAV features are constant after filtering. Skipping PCA.\n")
+      if (verbose) message("Warning: All PAV features are constant after filtering. Skipping PCA.")
       use_population_structure <- FALSE
     } else if (length(non_constant_cols) < ncol(sample_matrix)) {
       n_constant <- ncol(sample_matrix) - length(non_constant_cols)
       if (verbose) {
-        cat(sprintf("Removing %d constant PAV features for PCA (%d remaining)\n",
+        message(sprintf("Removing %d constant PAV features for PCA (%d remaining)",
           n_constant, length(non_constant_cols)))
       }
       sample_matrix <- sample_matrix[, non_constant_cols, drop = FALSE]
@@ -801,22 +817,28 @@ pav_gwas <- function(pav_data,
           covariates <- pcs
 
           if (verbose) {
-            cat(sprintf("Using %d principal components explaining %.1f%% of variance\n",
-              ncol(pcs), sum(var_explained) * 100))
-            cat(sprintf("PCA performed on %d non-constant PAV features\n", ncol(sample_matrix)))
+            message(paste(
+              sprintf("Using %d principal components explaining %.1f%% of variance",
+                ncol(pcs), sum(var_explained) * 100),
+              sprintf("PCA performed on %d non-constant PAV features", ncol(sample_matrix)),
+              sep = "\n"
+            ))
           }
         },
         error = function(e) {
           if (verbose) {
-            cat("Warning: PCA failed, proceeding without population structure correction\n")
-            cat("Error:", e$message, "\n")
+            message(paste(
+              "Warning: PCA failed, proceeding without population structure correction",
+              paste("Error:", e$message),
+              sep = "\n"
+            ))
           }
           use_population_structure <- FALSE
           pca_results <- NULL
           covariates <- NULL
         })
     } else if (use_population_structure) {
-      if (verbose) cat("Warning: Insufficient variable features for PCA. Skipping population structure correction.\n")
+      if (verbose) message("Warning: Insufficient variable features for PCA. Skipping population structure correction.")
       use_population_structure <- FALSE
     }
   }
@@ -1074,12 +1096,16 @@ pav_gwas <- function(pav_data,
 
   # Step 10: Run association analysis - Enhanced reporting
   if (verbose) {
-    cat(sprintf("Running PAV GWAS with %s test...\n", test_type))
-    cat(sprintf("Testing %d PAV features on %d samples\n",
-      nrow(filtered_matrix), ncol(filtered_matrix)))
+    msg_lines <- c(
+      sprintf("Running PAV GWAS with %s test...", test_type),
+      sprintf("Testing %d PAV features on %d samples",
+        nrow(filtered_matrix), ncol(filtered_matrix))
+    )
     if (analysis_type %in% c("continuous", "continuous_raw")) {
-      cat(sprintf("Enhanced continuous phenotype analysis: method=%s, test=%s\n", analysis_type, test_type))
+      msg_lines <- c(msg_lines,
+        sprintf("Enhanced continuous phenotype analysis: method=%s, test=%s", analysis_type, test_type))
     }
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   # Set up parallel processing (cluster cleaned up on exit, including errors)
@@ -1101,12 +1127,12 @@ pav_gwas <- function(pav_data,
 
   end_time <- Sys.time()
   if (verbose) {
-    cat(sprintf("Association testing completed in %.2f minutes\n",
+    message(sprintf("Association testing completed in %.2f minutes",
       as.numeric(difftime(end_time, start_time, units = "mins"))))
   }
 
   # Step 11: Organize results with position information (FIXED VERSION)
-  if (verbose) cat("Organizing results...\n")
+  if (verbose) message("Organizing results...")
 
   # First check the structure of the results list
   if (length(results) == 0) {
@@ -1223,7 +1249,7 @@ pav_gwas <- function(pav_data,
   }
 
   if (verbose) {
-    cat(sprintf("Successfully created results data frame with %d features\n", nrow(gwas_results)))
+    message(sprintf("Successfully created results data frame with %d features", nrow(gwas_results)))
   }
 
   # Handle invalid p-values
@@ -1293,44 +1319,53 @@ pav_gwas <- function(pav_data,
   )
 
   if (verbose) {
-    cat(sprintf("Analysis completed!\n"))
-    cat(sprintf("Method used: %s analysis with %s test\n", analysis_type, test_type))
-    cat(sprintf("Significance threshold (Bonferroni): %.2e\n", analysis_summary$significance_threshold))
-    cat("\n=== Significant associations at different thresholds ===\n")
+    msg_lines <- c(
+      sprintf("Analysis completed!"),
+      sprintf("Method used: %s analysis with %s test", analysis_type, test_type),
+      sprintf("Significance threshold (Bonferroni): %.2e", analysis_summary$significance_threshold),
+      "",
+      "=== Significant associations at different thresholds ==="
+    )
     for (i in seq_len(nrow(threshold_info))) {
-      cat(sprintf("p < %s: %d features\n",
-        threshold_info$threshold_label[i],
-        threshold_info$n_significant[i]))
+      msg_lines <- c(msg_lines,
+        sprintf("p < %s: %d features",
+          threshold_info$threshold_label[i],
+          threshold_info$n_significant[i]))
     }
-    cat(sprintf("\nAdditional statistics:\n"))
-    cat(sprintf("Significant associations (p < 0.05): %d\n", analysis_summary$n_significant_005))
-    cat(sprintf("Significant associations (FDR < 0.05): %d\n", analysis_summary$n_significant_fdr))
-    cat(sprintf("Most significant p-value: %.2e\n", analysis_summary$min_p_value))
+    msg_lines <- c(msg_lines,
+      "",
+      "Additional statistics:",
+      sprintf("Significant associations (p < 0.05): %d", analysis_summary$n_significant_005),
+      sprintf("Significant associations (FDR < 0.05): %d", analysis_summary$n_significant_fdr),
+      sprintf("Most significant p-value: %.2e", analysis_summary$min_p_value))
 
     # Enhanced reporting for continuous phenotypes
     if (analysis_type %in% c("continuous", "continuous_raw")) {
       n_sig <- sum(gwas_results$p_value < 0.05, na.rm = TRUE)
       if (n_sig > 0) {
-        cat(sprintf("Found %d significant associations for continuous phenotype\n", n_sig))
         top_hits <- head(gwas_results[order(gwas_results$p_value), ], 5)
-        cat("Top 5 associations:\n")
+        msg_lines <- c(msg_lines,
+          sprintf("Found %d significant associations for continuous phenotype", n_sig),
+          "Top 5 associations:")
         for (i in seq_len(nrow(top_hits))) {
-          cat(sprintf("  %s: p=%.2e, effect=%.3f\n",
-            top_hits$feature_id[i], top_hits$p_value[i], top_hits$effect_size[i]))
+          msg_lines <- c(msg_lines,
+            sprintf("  %s: p=%.2e, effect=%.3f",
+              top_hits$feature_id[i], top_hits$p_value[i], top_hits$effect_size[i]))
         }
       }
     }
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   # Step 13: Create visualizations and save results - UNCHANGED
-  if (verbose) cat("Creating visualizations and saving results...\n")
+  if (verbose) message("Creating visualizations and saving results...")
 
   # Save main results (without quotes)
   write.table(gwas_results, file.path(output_dir, "gwas_results.csv"),
     sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
   # Save results for each significance threshold
-  if (verbose) cat("Creating threshold-specific result files...\n")
+  if (verbose) message("Creating threshold-specific result files...")
 
   for (i in seq_len(nrow(threshold_info))) {
     thresh <- threshold_info$threshold[i]
@@ -1346,12 +1381,12 @@ pav_gwas <- function(pav_data,
         sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
       if (verbose) {
-        cat(sprintf("Saved %d significant features (p < %s) to: %s\n",
+        message(sprintf("Saved %d significant features (p < %s) to: %s",
           nrow(significant_results), thresh_label, basename(filename)))
       }
     } else {
       if (verbose) {
-        cat(sprintf("No significant features found for p < %s\n", thresh_label))
+        message(sprintf("No significant features found for p < %s", thresh_label))
       }
     }
   }
@@ -1362,7 +1397,7 @@ pav_gwas <- function(pav_data,
     write.table(fdr_significant, file.path(output_dir, "significant_fdr0.05.csv"),
       sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
     if (verbose) {
-      cat(sprintf("Saved %d FDR significant features to: significant_fdr0.05.csv\n",
+      message(sprintf("Saved %d FDR significant features to: significant_fdr0.05.csv",
         nrow(fdr_significant)))
     }
   }
@@ -1609,49 +1644,59 @@ pav_gwas <- function(pav_data,
     sep = "\t")
 
   if (verbose) {
-    cat("All results saved to:", output_dir, "\n")
-    cat("Main output files (both PDF and PNG formats):\n")
-    cat("  - gwas_results.csv: Complete association results\n")
-    cat("  - manhattan_plot.pdf/.png: Enhanced Manhattan plot with multiple threshold lines\n")
-    cat("  - qq_plot.pdf/.png: Q-Q plot\n")
-    cat("  - phenotype_distribution.pdf/.png: Enhanced phenotype analysis\n")
+    msg_lines <- c(
+      paste("All results saved to:", output_dir),
+      "Main output files (both PDF and PNG formats):",
+      "  - gwas_results.csv: Complete association results",
+      "  - manhattan_plot.pdf/.png: Enhanced Manhattan plot with multiple threshold lines",
+      "  - qq_plot.pdf/.png: Q-Q plot",
+      "  - phenotype_distribution.pdf/.png: Enhanced phenotype analysis"
+    )
     if (use_population_structure && !is.null(pca_results)) {
-      cat("  - population_structure.pdf/.png: PCA analysis\n")
+      msg_lines <- c(msg_lines, "  - population_structure.pdf/.png: PCA analysis")
     } else if (!use_population_structure) {
-      cat("  - Note: Population structure correction was disabled\n")
+      msg_lines <- c(msg_lines, "  - Note: Population structure correction was disabled")
     } else {
-      cat("  - Note: Population structure correction failed (skipped)\n")
+      msg_lines <- c(msg_lines, "  - Note: Population structure correction failed (skipped)")
     }
-    cat("  - analysis_summary.txt: Enhanced summary report\n")
-
-    cat("\nThreshold-specific output files:\n")
+    msg_lines <- c(msg_lines,
+      "  - analysis_summary.txt: Enhanced summary report",
+      "",
+      "Threshold-specific output files:")
     for (i in seq_len(nrow(threshold_info))) {
       thresh_label <- threshold_info$threshold_label[i]
       n_sig <- threshold_info$n_significant[i]
       filename <- paste0("significant_p", gsub("e-0?", "e-", thresh_label), ".csv")
       if (n_sig > 0) {
-        cat(sprintf("  - %s: %d significant features (p < %s)\n", filename, n_sig, thresh_label))
+        msg_lines <- c(msg_lines,
+          sprintf("  - %s: %d significant features (p < %s)", filename, n_sig, thresh_label))
       }
     }
 
     if (analysis_summary$n_significant_fdr > 0) {
-      cat(sprintf("  - significant_fdr0.05.csv: %d FDR significant features\n",
-        analysis_summary$n_significant_fdr))
+      msg_lines <- c(msg_lines,
+        sprintf("  - significant_fdr0.05.csv: %d FDR significant features",
+          analysis_summary$n_significant_fdr))
     }
 
-    cat("\nNote: All plots saved in both PDF (high quality) and PNG (fast loading) formats\n")
+    msg_lines <- c(msg_lines,
+      "",
+      "Note: All plots saved in both PDF (high quality) and PNG (fast loading) formats")
 
     if (analysis_type %in% c("continuous", "continuous_raw")) {
-      cat("\n=== Enhanced Continuous Phenotype Analysis ===\n")
-      cat("Effect size interpretation:\n")
+      msg_lines <- c(msg_lines,
+        "",
+        "=== Enhanced Continuous Phenotype Analysis ===",
+        "Effect size interpretation:")
       if (test_type == "welch_ttest") {
-        cat("  - Cohen's d: Small=0.2, Medium=0.5, Large=0.8\n")
+        msg_lines <- c(msg_lines, "  - Cohen's d: Small=0.2, Medium=0.5, Large=0.8")
       } else if (test_type == "linear") {
-        cat("  - Regression coefficient: Change in phenotype per PAV presence\n")
+        msg_lines <- c(msg_lines, "  - Regression coefficient: Change in phenotype per PAV presence")
       } else if (test_type == "mannwhitney") {
-        cat("  - Median difference: Difference in medians between groups\n")
+        msg_lines <- c(msg_lines, "  - Median difference: Difference in medians between groups")
       }
     }
+    message(paste(msg_lines, collapse = "\n"))
   }
 
   # Return enhanced results list
@@ -1666,18 +1711,21 @@ pav_gwas <- function(pav_data,
 }
 
 # Enhanced function information when loaded
-cat("Enhanced PAV GWAS analysis function loaded successfully!\n")
-cat("Use pav_gwas() to run the complete analysis.\n")
-cat("PAV matrix format: chr, start, end, sequence, sample1, sample2, ...\n")
-cat("Enhanced Features:\n")
-cat("  - Automatic continuous phenotype detection and analysis\n")
-cat("  - Welch's t-test for normal continuous data\n")
-cat("  - Linear regression with population structure covariates\n")
-cat("  - Enhanced effect size calculations (Cohen's d, regression coefficients)\n")
-cat("  - Multiple significance thresholds, threshold-specific output files\n")
-cat("  - Manhattan plot with threshold lines\n")
-cat("  - Both PDF (publication quality) and PNG (fast loading) for all plots\n")
-cat("Function supports both file paths and data frames as input.\n")
-cat("New analysis types: 'continuous', 'continuous_raw'\n")
-cat("New test types: 'welch_ttest', 'linear'\n")
-cat("Type ?pav_gwas for detailed help documentation.\n")
+message(paste(
+  "Enhanced PAV GWAS analysis function loaded successfully!",
+  "Use pav_gwas() to run the complete analysis.",
+  "PAV matrix format: chr, start, end, sequence, sample1, sample2, ...",
+  "Enhanced Features:",
+  "  - Automatic continuous phenotype detection and analysis",
+  "  - Welch's t-test for normal continuous data",
+  "  - Linear regression with population structure covariates",
+  "  - Enhanced effect size calculations (Cohen's d, regression coefficients)",
+  "  - Multiple significance thresholds, threshold-specific output files",
+  "  - Manhattan plot with threshold lines",
+  "  - Both PDF (publication quality) and PNG (fast loading) for all plots",
+  "Function supports both file paths and data frames as input.",
+  "New analysis types: 'continuous', 'continuous_raw'",
+  "New test types: 'welch_ttest', 'linear'",
+  "Type ?pav_gwas for detailed help documentation.",
+  sep = "\n"
+))

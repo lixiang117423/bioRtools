@@ -335,12 +335,15 @@ df2fasta <- function(df,
       {
         writeLines(fasta_lines, output_file, sep = "\n")
         if (validate) {
-          cat("FASTA file written successfully to '", output_file, "'\n", sep = "")
-          cat("Sequences written:", n_sequences, "\n")
-          cat("Total lines:", length(fasta_lines), "\n")
+          msg_lines <- c(
+            paste0("FASTA file written successfully to '", output_file, "'"),
+            paste("Sequences written:", n_sequences),
+            paste("Total lines:", length(fasta_lines))
+          )
           if (line_width > 0) {
-            cat("Line width:", line_width, "characters\n")
+            msg_lines <- c(msg_lines, paste("Line width:", line_width, "characters"))
           }
+          message(paste(msg_lines, collapse = "\n"))
         }
       },
       error = function(e) {
@@ -375,9 +378,13 @@ df2fasta <- function(df,
     stop("Benchmark requires a data frame input")
   }
 
-  cat("Benchmarking df2fasta performance...\n")
-  cat("Sequences:", nrow(df), "\n")
-  cat("Iterations:", iterations, "\n\n")
+  message(paste(
+    "Benchmarking df2fasta performance...",
+    paste("Sequences:", nrow(df)),
+    paste("Iterations:", iterations),
+    "",
+    sep = "\n"
+  ))
 
   # Warm-up run
   invisible(df2fasta(df, validate = FALSE))
@@ -390,6 +397,7 @@ df2fasta <- function(df,
     "With sequence processing" = list(validate = FALSE, remove_gaps = TRUE, to_upper = TRUE)
   )
 
+  msg_lines <- character(0)
   for (config_name in names(configs)) {
     config <- configs[[config_name]]
 
@@ -399,10 +407,13 @@ df2fasta <- function(df,
       }
     })
 
-    cat(config_name, ":", round(time_taken["elapsed"] / iterations, 4), "seconds per run\n")
+    msg_lines <- c(msg_lines,
+      paste(config_name, ":", round(time_taken["elapsed"] / iterations, 4), "seconds per run"))
   }
 
-  cat("\nPerformance:", round(nrow(df) / (time_taken["elapsed"] / iterations)), "sequences/second\n")
+  message(paste(c(msg_lines, "",
+    paste("Performance:", round(nrow(df) / (time_taken["elapsed"] / iterations)), "sequences/second")),
+    collapse = "\n"))
 
   invisible(result)
 }
