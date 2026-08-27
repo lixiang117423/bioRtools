@@ -217,7 +217,7 @@ clean_alluvium_data <- function(data, taxon_column, id_column) {
     names()
 
   df_clean <- df_clean %>%
-    dplyr::mutate(row_sum = rowSums(dplyr::pick(all_of(numeric_cols)), na.rm = TRUE))
+    dplyr::mutate(row_sum = rowSums(dplyr::pick(dplyr::all_of(numeric_cols)), na.rm = TRUE))
 
   # Order by row sum
   df_clean <- df_clean %>%

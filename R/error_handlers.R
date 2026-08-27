@@ -92,8 +92,8 @@ err_infinite_values <- function(genes, samples) {
   sprintf(
     "Found infinite values (Inf/-Inf) in %d genes and %d samples:\n%s\nConsider removing these genes or imputing values.",
     length(unique(genes)), length(unique(samples)),
-    paste(sprintf("  Gene %s in sample(s): %s", unique(genes), 
-                  sapply(unique(genes), function(g) paste(samples[genes == g], collapse = ", "))), 
+    paste(sprintf("  Gene %s in sample(s): %s", unique(genes),
+                  sapply(unique(genes), function(g) paste(samples[genes == g], collapse = ", "))),
           collapse = "\n")
   )
 }
@@ -107,7 +107,7 @@ err_infinite_values <- function(genes, samples) {
 err_missing_packages <- function(missing_pkgs, optional = FALSE) {
   type <- if (optional) "Optional" else "Required"
   sprintf(
-    "%s packages not installed: %s\nInstall with: install.packages(c(%s))",
+    "%s packages not installed: %s\nInstall with: utils::install.packages(c(%s))",
     type,
     paste(missing_pkgs, collapse = ", "),
     paste(sprintf('"%s"', missing_pkgs), collapse = ", ")

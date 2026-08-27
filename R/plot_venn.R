@@ -109,7 +109,7 @@ plot_venn <- function(data, group_col = "group", feature_col = "feature",
   if (type == "classic") {
     # Classic Venn using ggvenn
     if (!requireNamespace("ggvenn", quietly = TRUE)) {
-      stop("Package 'ggvenn' is required. Install with install.packages('ggvenn')")
+      stop("Package 'ggvenn' is required. Install with utils::install.packages('ggvenn')")
     }
 
     p <- ggvenn::ggvenn(
@@ -131,7 +131,7 @@ plot_venn <- function(data, group_col = "group", feature_col = "feature",
   } else {
     # Euler diagram using eulerr
     if (!requireNamespace("eulerr", quietly = TRUE)) {
-      stop("Package 'eulerr' is required. Install with install.packages('eulerr')")
+      stop("Package 'eulerr' is required. Install with utils::install.packages('eulerr')")
     }
 
     # Compute intersection counts
@@ -139,7 +139,7 @@ plot_venn <- function(data, group_col = "group", feature_col = "feature",
     set_names <- names(feature_list)
 
     for (k in seq_len(n_sets)) {
-      combos <- combn(set_names, k, simplify = FALSE)
+      combos <- utils::combn(set_names, k, simplify = FALSE)
       for (combo in combos) {
         if (k == n_sets) {
           # Full intersection

@@ -448,7 +448,7 @@ heatmap_annotations <- function(ann_df, ord, labels, orientation,
           palette = "Blues", direction = 1, name = var, na.value = na_col
         )
     } else {
-      uv <- unique(na.omit(vals))
+      uv <- unique(stats::na.omit(vals))
       clrs <- if (!is.null(user_colors[[var]])) {
         user_colors[[var]]
       } else {

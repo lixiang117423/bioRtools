@@ -53,7 +53,7 @@ read_many <- function(paths, id_col = "file",
   }
   missing_files <- paths[!file.exists(paths)]
   if (length(missing_files) > 0) {
-    stop("File(s) not found: ", paste(head(missing_files, 5), collapse = ", "))
+    stop("File(s) not found: ", paste(utils::head(missing_files, 5), collapse = ", "))
   }
 
   dots <- list(...)

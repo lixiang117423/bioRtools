@@ -99,7 +99,7 @@ validate_p_values <- function(p_values) {
     warning(
       "Some p-values are outside the valid range [0, 1]. ",
       "Found values: ",
-      paste(head(out_of_range, 3), collapse = ", "),
+      paste(utils::head(out_of_range, 3), collapse = ", "),
       if (length(out_of_range) > 3) "..." else "",
       call. = FALSE
     )

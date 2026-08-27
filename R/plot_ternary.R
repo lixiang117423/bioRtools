@@ -111,7 +111,7 @@ plot_ternary <- function(data,
   if (!requireNamespace("ggtern", quietly = TRUE)) {
     stop(
       "Package 'ggtern' is required for ternary plots. ",
-      "Install it with: install.packages('ggtern')",
+      "Install it with: utils::install.packages('ggtern')",
       call. = FALSE
     )
   }

@@ -1083,7 +1083,7 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
         paste0("(", round(100 * n_important_vars / ncol(data_matrix), 1), "%)")))
 
     if (n_important_vars > 0) {
-      top_vip <- head(vip_data[vip_data$important, ], 5)
+      top_vip <- utils::head(vip_data[vip_data$important, ], 5)
       msg_lines <- c(msg_lines, "", "Top 5 important variables:")
       for (i in seq_len(nrow(top_vip))) {
         msg_lines <- c(msg_lines,

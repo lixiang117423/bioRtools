@@ -431,7 +431,7 @@ top_tax_n <- function(data,
       # Alluvial / flow diagram
       if (!requireNamespace("ggalluvial", quietly = TRUE)) {
         stop("Package 'ggalluvial' is required for alluvial plots. ",
-             "Install with: install.packages('ggalluvial')")
+             "Install with: utils::install.packages('ggalluvial')")
       }
       abundance_plot <- data_processed %>%
         ggplot2::ggplot(ggplot2::aes(

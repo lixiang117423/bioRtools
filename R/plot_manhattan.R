@@ -125,7 +125,7 @@ plot_manhattan <- function(data = NULL,
   }
   if (show_density && !requireNamespace("patchwork", quietly = TRUE)) {
     stop("Package 'patchwork' is required for show_density = TRUE. ",
-         "Install it with: install.packages('patchwork')")
+         "Install it with: utils::install.packages('patchwork')")
   }
 
   # ── Data loading ─────────────────────────────────────────────────────────────

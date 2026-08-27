@@ -319,7 +319,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
                              ref_group = NULL) {
   # Resolve formula from group_col if provided
   if (!is.null(group_col)) {
-    formula <- as.formula(paste0("~", group_col))
+    formula <- stats::as.formula(paste0("~", group_col))
   }
   if (is.null(formula)) {
     formula <- ~group
@@ -409,7 +409,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
       }
     } else {
       # Stop with detailed error message
-      genes_str <- paste(head(problematic_gene_names, 5), collapse = ", ")
+      genes_str <- paste(utils::head(problematic_gene_names, 5), collapse = ", ")
       samples_str <- paste(problematic_sample_names, collapse = ", ")
       stop(err_infinite_values(problem_genes_idx, problem_samples_idx))
     }
@@ -571,7 +571,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
 
       if (any(table(s_sub[[main_factor]]) < 2)) return(NULL)
 
-      pair_formula <- as.formula(paste0("~", main_factor))
+      pair_formula <- stats::as.formula(paste0("~", main_factor))
       comp_label <- paste(pair[2], "vs", pair[1])
 
       dds <- tryCatch(
@@ -870,7 +870,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
       msg_lines <- c(msg_lines, "Top DE genes by significance:")
       top_genes <- results_processed %>%
         dplyr::filter(regulation != "Not significant") %>%
-        head(5)
+        utils::head(5)
 
       for (i in seq_len(nrow(top_genes))) {
         direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "\u2191", "\u2193")

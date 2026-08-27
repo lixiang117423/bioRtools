@@ -4,8 +4,7 @@
 #' These utilities ensure consistent styling and reduce code duplication in plotting code.
 #'
 #' @keywords internal
-#' @noRd
-
+#'
 # ============================================================================
 # Theme Application
 # ============================================================================
@@ -92,7 +91,7 @@ create_discrete_scale <- function(n_groups, palette = "Set1", aesthetic = "colou
 
     if (n_groups > length(colors)) {
       # Extend palette if needed
-      colors <- colorRampPalette(colors)(n_groups)
+      colors <- grDevices::colorRampPalette(colors)(n_groups)
     }
   }
 

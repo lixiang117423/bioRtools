@@ -127,10 +127,10 @@ plot_mantel <- function(data_spec,
                         verbose = TRUE) {
 
   if (!requireNamespace("linkET", quietly = TRUE)) {
-    stop("Package 'linkET' is required. Install with: install.packages('linkET')")
+    stop("Package 'linkET' is required. Install with: utils::install.packages('linkET')")
   }
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
-    stop("Package 'RColorBrewer' is required. Install with: install.packages('RColorBrewer')")
+    stop("Package 'RColorBrewer' is required. Install with: utils::install.packages('RColorBrewer')")
   }
 
   spec_select_method <- match.arg(spec_select_method)

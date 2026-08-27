@@ -700,7 +700,7 @@ fit_sloan_neutral_model <- function(otu_table,
         start = list(m = 0.1)
       )
 
-      m_ci <- confint(m_fit, "m", level = 0.95)
+      m_ci <- stats::confint(m_fit, "m", level = 0.95)
 
       # Maximum likelihood estimation
       sncm_ll <- function(m, sigma) {

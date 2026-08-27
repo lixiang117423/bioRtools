@@ -68,10 +68,10 @@ plot_upset <- function(data,
   }
 
   if (engine == "ggupset" && !requireNamespace("ggupset", quietly = TRUE)) {
-    stop("Package 'ggupset' is required. Install with: install.packages('ggupset')")
+    stop("Package 'ggupset' is required. Install with: utils::install.packages('ggupset')")
   }
   if (engine == "ggVennDiagram" && !requireNamespace("ggVennDiagram", quietly = TRUE)) {
-    stop("Package 'ggVennDiagram' is required. Install with: install.packages('ggVennDiagram')")
+    stop("Package 'ggVennDiagram' is required. Install with: utils::install.packages('ggVennDiagram')")
   }
 
   data <- as.data.frame(data)

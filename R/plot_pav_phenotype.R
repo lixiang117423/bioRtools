@@ -165,7 +165,7 @@ plot_pav_phenotype <- function(data_pav, data_phenotype,
   # --- Phenotype heatmap ---
   df_pheno <- data_phenotype %>%
     dplyr::filter(!!rlang::sym(pheno_sample_col) %in% common_samples) %>%
-    dplyr::mutate(across(dplyr::all_of(pheno_level_col), as.character))
+    dplyr::mutate(dplyr::across(dplyr::all_of(pheno_level_col), as.character))
 
   p_phenotype <- df_pheno %>%
     ggplot2::ggplot(ggplot2::aes(

@@ -154,7 +154,7 @@ plot_gene_features <- function(data,
   # Assign y-coordinates to genes
   gene_spans <- gene_spans %>%
     dplyr::arrange(.data$gene_id) %>%
-    dplyr::mutate(y_num = row_number()) %>%
+    dplyr::mutate(y_num = dplyr::row_number()) %>%
     dplyr::mutate(y = factor(.data$gene_id, levels = .data$gene_id))
 
   # Calculate relative coordinates for features

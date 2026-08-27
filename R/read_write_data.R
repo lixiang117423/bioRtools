@@ -332,7 +332,7 @@ write_data <- function(data, file, col = 1, col_names = TRUE,
               df2fasta(data, output_file = file, ...)
             },
     pdf = ggplot2::ggsave(filename = file, plot = data, width = dims$width, height = dims$height,
-              units = units, dpi = dpi, device = cairo_pdf, ...),
+              units = units, dpi = dpi, device = grDevices::cairo_pdf, ...),
     png = , svg = , tiff = , jpg = , jpeg = , eps =
       ggplot2::ggsave(filename = file, plot = data, width = dims$width, height = dims$height,
               units = units, dpi = dpi, ...),

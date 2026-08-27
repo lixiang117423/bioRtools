@@ -196,7 +196,7 @@ create_heatmap_trees <- function(data,
       } else {
         cor_matrix <- cor(x, method = "pearson", use = "complete.obs")
       }
-      as.dist(1 - abs(cor_matrix))
+      stats::as.dist(1 - abs(cor_matrix))
     }
 
     # Row clustering

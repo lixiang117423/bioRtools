@@ -34,6 +34,7 @@
 #'   rounded_corners = TRUE,
 #'   corner_radius = 0.15)
 #' }
+#'
 plot_pfam <- function(data,
                       tree_file = NULL,
                       tile_height = 0.8,
@@ -45,7 +46,7 @@ plot_pfam <- function(data,
                       corner_radius = 0.1) {
   # Check optional packages
   if (rounded_corners && !requireNamespace("ggforce", quietly = TRUE)) {
-    stop("Package 'ggforce' is required for rounded corners. Install with install.packages('ggforce')")
+    stop("Package 'ggforce' is required for rounded corners. Install with utils::install.packages('ggforce')")
   }
 
   # Read pfam data
@@ -64,13 +65,16 @@ plot_pfam <- function(data,
 
     # Add rectangles (rounded or regular)
     if (rounded_corners) {
-      p <- p + geom_rounded_rect(aes(xmin = start, xmax = end,
-        ymin = as.numeric(as.factor(id)) - tile_height / 2,
-        ymax = as.numeric(as.factor(id)) + tile_height / 2,
-        fill = domain),
-      radius = unit(corner_radius, "npc"))
+      rdf <- rounded_rect_data(
+        dplyr::mutate(pfam_data, y = as.numeric(as.factor(id))),
+        "y", tile_height, corner_radius
+      )
+      p <- p + ggforce::geom_shape(
+        ggplot2::aes(x = x, y = y, group = rect_id, fill = domain),
+        data = rdf, inherit.aes = FALSE
+      )
     } else {
-      p <- p + geom_tile(aes(x = (start + end) / 2, y = id, width = end - start, height = tile_height, fill = domain))
+      p <- p + ggplot2::geom_tile(aes(x = (start + end) / 2, y = id, width = end - start, height = tile_height, fill = domain))
     }
 
     p <- p + labs(x = "Position") +
@@ -87,7 +91,7 @@ plot_pfam <- function(data,
       stop("Package 'ggtree' is required for tree visualization. Install from Bioconductor.")
     }
     if (!requireNamespace("aplot", quietly = TRUE)) {
-      stop("Package 'aplot' is required. Install with install.packages('aplot')")
+      stop("Package 'aplot' is required. Install with utils::install.packages('aplot')")
     }
 
     # Read phylogenetic tree
@@ -107,15 +111,18 @@ plot_pfam <- function(data,
 
     # Add rectangles (rounded or regular)
     if (rounded_corners) {
+      rdf <- rounded_rect_data(
+        dplyr::left_join(pfam_data, tree_y, by = "id"),
+        "y", tile_height, corner_radius
+      )
       p_domain <- p_domain_base +
-        geom_rounded_rect(aes(xmin = start, xmax = end,
-          ymin = y - tile_height / 2,
-          ymax = y + tile_height / 2,
-          fill = domain),
-        radius = unit(corner_radius, "npc"))
+        ggforce::geom_shape(
+          ggplot2::aes(x = x, y = y, group = rect_id, fill = domain),
+          data = rdf, inherit.aes = FALSE
+        )
     } else {
       p_domain <- p_domain_base +
-        geom_tile(aes(x = (start + end) / 2, y = y, width = end - start, height = tile_height, fill = domain))
+        ggplot2::geom_tile(aes(x = (start + end) / 2, y = y, width = end - start, height = tile_height, fill = domain))
     }
 
     p_domain <- p_domain +
@@ -131,7 +138,7 @@ plot_pfam <- function(data,
       ggtree::geom_tiplab(align = TRUE)
 
     # Adjust phylogenetic tree x-axis range
-    p_tree_final <- p_tree + xlim(NA, max(p_tree$data$x) * tree_xlim_factor)
+    p_tree_final <- p_tree + ggplot2::xlim(NA, max(p_tree$data$x) * tree_xlim_factor)
 
     # Combine plots
     p_final <- aplot::insert_left(p_domain, p_tree_final, width = tree_width)
@@ -161,4 +168,35 @@ quick_pfam_plot <- function(data, tree_file = NULL, ...) {
   plot_pfam(data = data,
     tree_file = tree_file,
     ...)
+}
+
+#' Build rounded-rectangle vertices for one rectangle
+#'
+#' @keywords internal
+#' @noRd
+rounded_rect_vertices <- function(xmin, xmax, ymin, ymax, corner_radius = 0.1) {
+  r <- corner_radius * min(xmax - xmin, ymax - ymin)
+  r <- min(r, (xmax - xmin) / 2, (ymax - ymin) / 2)
+  data.frame(
+    x = c(xmin + r, xmax - r, xmax, xmax, xmax - r, xmin + r, xmin, xmin),
+    y = c(ymin, ymin, ymin + r, ymax - r, ymax, ymax, ymax - r, ymin + r)
+  )
+}
+
+#' Expand a domain data frame into rounded-rectangle vertex rows
+#'
+#' @keywords internal
+#' @noRd
+rounded_rect_data <- function(df, y_col, tile_height, corner_radius) {
+  out <- lapply(seq_len(nrow(df)), function(i) {
+    v <- rounded_rect_vertices(
+      df$start[i], df$end[i],
+      df[[y_col]][i] - tile_height / 2, df[[y_col]][i] + tile_height / 2,
+      corner_radius
+    )
+    v$domain <- df$domain[i]
+    v$rect_id <- i
+    v
+  })
+  do.call(rbind, out)
 }

@@ -21,7 +21,7 @@
 #' }
 net2ggnetview <- function(net_result, group) {
   if (!requireNamespace("tidygraph", quietly = TRUE)) {
-    stop("Package 'tidygraph' is required. Install with: install.packages('tidygraph')")
+    stop("Package 'tidygraph' is required. Install with: utils::install.packages('tidygraph')")
   }
 
   if (!group %in% names(net_result$networks)) {

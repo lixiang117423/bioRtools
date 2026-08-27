@@ -63,6 +63,7 @@ plot_pfam(data = "path/to/pfam.tsv",
   rounded_corners = TRUE,
   corner_radius = 0.15)
 }
+
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -154,7 +154,7 @@ ideo_synteny_row_layout <- function(chr_ends, widths_total) {
   widths <- chr_ends * widths_total / total_len
   # 0.1 cm gap between chromosomes; start at 3.5 cm
   gaps <- c(0, rep(0.1 * ideo_cm_px, n - 1))
-  starts <- 3.5 * ideo_cm_px + cumsum(c(0, head(widths, -1))) + cumsum(gaps)
+  starts <- 3.5 * ideo_cm_px + cumsum(c(0, utils::head(widths, -1))) + cumsum(gaps)
   list(starts = starts, widths = widths, total_len = total_len)
 }
 
@@ -201,7 +201,7 @@ ideo_ternary_species <- function(kat) {
   total <- sum(kat$End)
   widths <- kat$End * scale / total
   starts <- 3 * ideo_cm_px +
-    cumsum(c(0, head(widths, -1))) +
+    cumsum(c(0, utils::head(widths, -1))) +
     cumsum(c(0, rep(0.04 * ideo_cm_px, n - 1)))
   list(starts = starts, widths = widths, scale = scale, total = total)
 }

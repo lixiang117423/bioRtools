@@ -250,7 +250,7 @@ plot_ld_decay <- function(data, pop_col = "population", dist_col = "dist",
   fitted_pops <- names(models_list)
   if (is.character(palette) && length(palette) == 1 && palette %in% c("turbo", "viridis", "plasma", "inferno", "magma", "cividis")) {
     p <- p + ggplot2::scale_color_viridis_d(option = palette)
-  } else if (is.named(palette)) {
+  } else if (rlang::is_named(palette)) {
     p <- p + ggplot2::scale_color_manual(values = palette)
   }
 

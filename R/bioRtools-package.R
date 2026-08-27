@@ -1,6 +1,38 @@
 #' @keywords internal
 "_PACKAGE"
 
+# NSE column names / globals used by dplyr/ggplot2 expressions - declared so
+# R CMD check does not flag them as "no visible binding for global variable".
+utils::globalVariables(c(
+  "..count..",   "..scaled..",   ".pair",   "abs_log2fc",   "abs_pos",   "anova_signif",
+  "beta_mntd",   "beta_nti",   "bg",   "BgRatio",   "bin",   "BioRep",
+  "chr_color",   "chr_factor",   "ci_lower",   "ci_upper",   "col_var",   "Correlation",
+  "Cq",   "cum_pos_end",   "cum_pos_start",   "Description",   "dist_bin_kb",   "dist_kb",
+  "domain",   "Eff",   "enrichment_score",   "eq.label",   "gene_id",   "gene_length",
+  "gene_mean",   "gene_ratio",   "gene_sd",   "geneID",   "group_anova",   "group_biorep",
+  "group.x",   "group.y",   "groups",   "half_decay_kb",   "ID",   "indicator",
+  "isTip",   "max_coord",   "max_pos",   "mean_abundance",   "mean_connectivity",   "mean_r2",
+  "mean_r2_bin",   "mean_r2_fitted",   "mean_sample",   "mean_val",   "mean_value",   "mean.k.",
+  "metric",   "min_coord",   "module",   "Module",   "module_color",   "module_number",
+  "N",   "n_obs",   "n_samples",   "n_snp",   "neg_log10_p",   "no visible binding for global variable",
+  "overall_pvalue",   "overall_pvalue_formatted",   "p_adj",   "p_adjust",   "p_value",   "path_length",
+  "path_string",   "path_to_root",   "pathway_size",   "PC",   "pd",   "peak_count",
+  "percentage",   "percentage_label",   "phenotype",   "plot_label",   "pos",   "pos_cum",
+  "Power",   "Pr(>F)",   "process",   "proportion",   "r",   "r_squared",
+  "r2",   "r2_fit",   "rd",   "RDA1_scaled",   "RDA2_scaled",   "recommendation",
+  "rect_id",   "relative_abundance",   "relative_eig",   "row_order",   "row_sum",   "row_var",
+  "rr.label",   "run",   "sample_id",   "scale_free_r2",   "sd_abundance",   "SFT.R.sq",
+  "stats",   "sum_value",   "tax",   "tax_group",   "taxon",   "TechRep",
+  "term_size",   "trait",   "tukey_signif",   "V3",   "V4",   "V5",
+  "V7",   "val",   "value_var",   "variable",   "variance_percent",   "vip",
+  "x_end",   "x_start",   "x_var",   "y_end",   "y_max",   "y_min",
+  "y_num",   "y_start",   "y_var"
+))
+
+
+
+
+
 ## usethis namespace: start
 #' @importFrom agricolae duncan.test
 #' @importFrom ape pcoa

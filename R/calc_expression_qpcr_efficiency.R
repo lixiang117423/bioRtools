@@ -110,8 +110,8 @@ calc_expression_qpcr_efficiency <- function(cq_table,
       .data$mean_expression, .data$sd_expression, .data$se_expression, .data$significance,
       dplyr::everything()) %>%
     dplyr::mutate(
-      across(c(.data$expression_value, .data$mean_expression, .data$sd_expression, .data$se_expression), ~ round(.x, 4)),
-      across(matches("p_value|statistic"), ~ round(.x, 6))
+      dplyr::across(c(.data$expression_value, .data$mean_expression, .data$sd_expression, .data$se_expression), ~ round(.x, 4)),
+      dplyr::across(dplyr::matches("p_value|statistic"), ~ round(.x, 6))
     )
 
   list(table = final_results, figure = plot_result)

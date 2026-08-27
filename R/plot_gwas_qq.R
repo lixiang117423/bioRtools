@@ -138,12 +138,12 @@ plot_gwas_qq <- function(df,
   qq_df <- data.frame(
     expected = -log10(exp),
     observed = -log10(obs),
-    ci_upper = -log10(qbeta(0.025, 1:n, n - 1:n + 1)),
-    ci_lower = -log10(qbeta(0.975, 1:n, n - 1:n + 1))
+    ci_upper = -log10(stats::qbeta(0.025, 1:n, n - 1:n + 1)),
+    ci_lower = -log10(stats::qbeta(0.975, 1:n, n - 1:n + 1))
   )
 
   # Calculate genomic inflation factor (lambda)
-  lambda <- median(qchisq(1 - obs, 1)) / qchisq(0.5, 1)
+  lambda <- median(stats::qchisq(1 - obs, 1)) / stats::qchisq(0.5, 1)
 
   # Create the plot
   p <- ggplot2::ggplot(qq_df, ggplot2::aes(x = expected, y = observed)) +

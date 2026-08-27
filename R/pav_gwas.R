@@ -393,9 +393,9 @@ pav_gwas <- function(pav_data,
       "PAV matrix sample names (first 10):",
       sep = "\n"
     ))
-    print(head(colnames(pav_matrix), 10))
+    print(utils::head(colnames(pav_matrix), 10))
     message("\nPhenotype sample names (first 10):")
-    print(head(pheno_df$SampleID, 10))
+    print(utils::head(pheno_df$SampleID, 10))
     message("=============================")
     stop("No samples match between PAV matrix and phenotype data")
   }
@@ -455,7 +455,7 @@ pav_gwas <- function(pav_data,
     if (pheno_stats$n_samples <= 5000) {
       tryCatch(
         {
-          shapiro_test <- shapiro.test(phenotype_values)
+          shapiro_test <- stats::shapiro.test(phenotype_values)
           pheno_stats$normality_p <- shapiro_test$p.value
           pheno_stats$is_normal <- shapiro_test$p.value > 0.05
         },
@@ -480,7 +480,7 @@ pav_gwas <- function(pav_data,
     if (pheno_stats$is_bounded_01) {
       tryCatch(
         {
-          density_result <- density(phenotype_values)
+          density_result <- stats::density(phenotype_values)
           peaks <- which(diff(sign(diff(density_result$y))) == -2) + 1
           pheno_stats$is_bimodal <- length(peaks) >= 2
 
@@ -798,7 +798,7 @@ pav_gwas <- function(pav_data,
       tryCatch(
         {
           # Perform PCA
-          pca_result <- prcomp(sample_matrix, scale. = TRUE, center = TRUE)
+          pca_result <- stats::prcomp(sample_matrix, scale. = TRUE, center = TRUE)
 
           # Extract principal components
           n_pcs_available <- min(n_pcs, ncol(pca_result$x), nrow(pca_result$x) - 1)
@@ -874,7 +874,7 @@ pav_gwas <- function(pav_data,
     gwas_df$chr_num <- as.numeric(gwas_df$chr_factor)
 
     # Calculate cumulative positions for Manhattan plot
-    chr_lengths <- aggregate(end ~ chr_num, gwas_df, max)
+    chr_lengths <- stats::aggregate(end ~ chr_num, gwas_df, max)
     chr_lengths <- chr_lengths[order(chr_lengths$chr_num), ]
     chr_lengths$cum_length <- cumsum(c(0, chr_lengths$end[-nrow(chr_lengths)]))
 
@@ -885,7 +885,7 @@ pav_gwas <- function(pav_data,
     gwas_df$abs_pos <- gwas_df$start + gwas_df$cum_length
 
     # Calculate chromosome midpoints for labeling
-    chr_midpoints <- aggregate(abs_pos ~ chr_num + chr_clean, gwas_df, function(x) {
+    chr_midpoints <- stats::aggregate(abs_pos ~ chr_num + chr_clean, gwas_df, function(x) {
       (min(x) + max(x)) / 2
     })
 
@@ -899,9 +899,9 @@ pav_gwas <- function(pav_data,
   # ENHANCED: Association testing function with new continuous methods
   test_feature_association <- function(feature_presence, phenotype, test_method, covariates = NULL) {
     # Remove missing values
-    complete_idx <- complete.cases(feature_presence, phenotype)
+    complete_idx <- stats::complete.cases(feature_presence, phenotype)
     if (!is.null(covariates)) {
-      complete_idx <- complete_idx & complete.cases(covariates)
+      complete_idx <- complete_idx & stats::complete.cases(covariates)
     }
 
     feature_clean <- feature_presence[complete_idx]
@@ -920,7 +920,7 @@ pav_gwas <- function(pav_data,
         if (any(dim(contingency_table) < 2)) {
           list(p_value = 1, effect_size = 0, test_stat = 0)
         } else {
-          test_result <- fisher.test(contingency_table)
+          test_result <- stats::fisher.test(contingency_table)
           list(
             p_value = test_result$p.value,
             effect_size = log(as.numeric(test_result$estimate)),
@@ -936,7 +936,7 @@ pav_gwas <- function(pav_data,
         if (length(group0) < 2 || length(group1) < 2) {
           list(p_value = 1, effect_size = 0, test_stat = 0)
         } else {
-          test_result <- wilcox.test(group1, group0)
+          test_result <- stats::wilcox.test(group1, group0)
           effect_size <- median(group1, na.rm = TRUE) - median(group0, na.rm = TRUE)
           list(
             p_value = test_result$p.value,
@@ -953,7 +953,7 @@ pav_gwas <- function(pav_data,
         if (length(group0) < 2 || length(group1) < 2) {
           list(p_value = 1, effect_size = 0, test_stat = 0)
         } else {
-          test_result <- t.test(group1, group0, var.equal = FALSE)
+          test_result <- stats::t.test(group1, group0, var.equal = FALSE)
           mean_diff <- mean(group1, na.rm = TRUE) - mean(group0, na.rm = TRUE)
 
           # Calculate Cohen's d (standardized effect size)
@@ -1012,10 +1012,10 @@ pav_gwas <- function(pav_data,
 
               if (is.null(cov_clean)) {
                 model_data <- data.frame(phenotype = pheno_binary, feature = feature_clean)
-                model <- glm(phenotype ~ feature, data = model_data, family = binomial())
+                model <- stats::glm(phenotype ~ feature, data = model_data, family = stats::binomial())
               } else {
                 model_data <- data.frame(phenotype = pheno_binary, feature = feature_clean, cov_clean)
-                model <- glm(phenotype ~ ., data = model_data, family = binomial())
+                model <- stats::glm(phenotype ~ ., data = model_data, family = stats::binomial())
               }
 
               summary_model <- summary(model)
@@ -1058,7 +1058,7 @@ pav_gwas <- function(pav_data,
                   if (any(dim(contingency_table) < 2)) {
                     list(p_value = 1, effect_size = 0, test_stat = 0)
                   } else {
-                    test_result <- chisq.test(contingency_table)
+                    test_result <- stats::chisq.test(contingency_table)
                     list(
                       p_value = test_result$p.value,
                       effect_size = sqrt(test_result$statistic / sum(contingency_table)),  # Cramer's V
@@ -1078,7 +1078,7 @@ pav_gwas <- function(pav_data,
               if (any(dim(contingency_table) < 2)) {
                 list(p_value = 1, effect_size = 0, test_stat = 0)
               } else {
-                test_result <- chisq.test(contingency_table)
+                test_result <- stats::chisq.test(contingency_table)
                 list(
                   p_value = test_result$p.value,
                   effect_size = sqrt(test_result$statistic / sum(contingency_table)),  # Cramer's V
@@ -1343,7 +1343,7 @@ pav_gwas <- function(pav_data,
     if (analysis_type %in% c("continuous", "continuous_raw")) {
       n_sig <- sum(gwas_results$p_value < 0.05, na.rm = TRUE)
       if (n_sig > 0) {
-        top_hits <- head(gwas_results[order(gwas_results$p_value), ], 5)
+        top_hits <- utils::head(gwas_results[order(gwas_results$p_value), ], 5)
         msg_lines <- c(msg_lines,
           sprintf("Found %d significant associations for continuous phenotype", n_sig),
           "Top 5 associations:")
@@ -1361,7 +1361,7 @@ pav_gwas <- function(pav_data,
   if (verbose) message("Creating visualizations and saving results...")
 
   # Save main results (without quotes)
-  write.table(gwas_results, file.path(output_dir, "gwas_results.csv"),
+  utils::write.table(gwas_results, file.path(output_dir, "gwas_results.csv"),
     sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
   # Save results for each significance threshold
@@ -1377,7 +1377,7 @@ pav_gwas <- function(pav_data,
     if (nrow(significant_results) > 0) {
       # Save threshold-specific results
       filename <- file.path(output_dir, paste0("significant_p", gsub("e-0?", "e-", thresh_label), ".csv"))
-      write.table(significant_results, filename,
+      utils::write.table(significant_results, filename,
         sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
 
       if (verbose) {
@@ -1394,7 +1394,7 @@ pav_gwas <- function(pav_data,
   # Also save FDR significant results
   fdr_significant <- gwas_results[gwas_results$p_fdr < 0.05, ]
   if (nrow(fdr_significant) > 0) {
-    write.table(fdr_significant, file.path(output_dir, "significant_fdr0.05.csv"),
+    utils::write.table(fdr_significant, file.path(output_dir, "significant_fdr0.05.csv"),
       sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
     if (verbose) {
       message(sprintf("Saved %d FDR significant features to: significant_fdr0.05.csv",
@@ -1632,14 +1632,14 @@ pav_gwas <- function(pav_data,
   )
 
   # Add top results table with position information
-  top_results <- head(gwas_results[, c("chr", "start", "end", "feature_id", "p_value", "effect_size", "p_fdr", "feature_frequency")], 10)
+  top_results <- utils::head(gwas_results[, c("chr", "start", "end", "feature_id", "p_value", "effect_size", "p_fdr", "feature_frequency")], 10)
   top_results$p_value <- sprintf("%.2e", top_results$p_value)
   top_results$p_fdr <- sprintf("%.2e", top_results$p_fdr)
   top_results$effect_size <- sprintf("%.3f", top_results$effect_size)
 
   # Write summary to file
   writeLines(summary_text, file.path(output_dir, "analysis_summary.txt"))
-  write.table(top_results, file.path(output_dir, "analysis_summary.txt"),
+  utils::write.table(top_results, file.path(output_dir, "analysis_summary.txt"),
     append = TRUE, quote = FALSE, row.names = FALSE, col.names = TRUE,
     sep = "\t")
 

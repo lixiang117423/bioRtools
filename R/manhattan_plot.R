@@ -345,7 +345,7 @@ manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
   }
 
   # Remove rows with missing essential data
-  complete_rows <- complete.cases(standardized_df[, c("chr", "posi", "p")])
+  complete_rows <- stats::complete.cases(standardized_df[, c("chr", "posi", "p")])
   if (sum(complete_rows) < nrow(standardized_df)) {
     warning(paste("Removing", nrow(standardized_df) - sum(complete_rows),
       "rows with missing chromosome, position, or p-value data"))
@@ -525,7 +525,7 @@ manhattan_plot <- function(df, p_threshold = NA, highlight_threshold = NULL,
         dplyr::filter(p < highlight_threshold) %>%
         dplyr::arrange(p) %>%
         dplyr::select(chr, posi, p, dplyr::any_of(c("snp", "plot_label"))) %>%
-        head(5)
+        utils::head(5)
 
       print(top_hits)
     } else {

@@ -422,7 +422,7 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
   # Check sample matching between data and metadata
   if (!all(data_samples %in% sample$sample_id)) {
     missing_samples <- setdiff(data_samples, sample$sample_id)
-    stop(paste("Samples missing from metadata:", paste(head(missing_samples, 5), collapse = ", ")))
+    stop(paste("Samples missing from metadata:", paste(utils::head(missing_samples, 5), collapse = ", ")))
   }
 
   # Align sample metadata with data
@@ -795,7 +795,7 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
     if (nrow(variable_loadings) > 0) {
       important_vars_pc1 <- variable_loadings %>%
         dplyr::arrange(desc(abs(PC1))) %>%
-        head(3)
+        utils::head(3)
 
       msg_lines <- c(msg_lines, "", "Top 3 variables contributing to PC1:")
       for (i in seq_len(nrow(important_vars_pc1))) {

@@ -168,7 +168,7 @@ run_wgcna_analysis <- function(
 
   # Load required packages
   required_packages <- c("tidyverse", "WGCNA", "patchwork", "readxl", "pheatmap")
-  missing_packages <- setdiff(required_packages, rownames(installed.packages()))
+  missing_packages <- setdiff(required_packages, rownames(utils::installed.packages()))
 
   if (length(missing_packages) > 0) {
     stop("Required packages missing: ", paste(missing_packages, collapse = ", "),
@@ -179,7 +179,7 @@ run_wgcna_analysis <- function(
   pkgs <- c("WGCNA", "patchwork", "readxl", "pheatmap")
   for (pkg in pkgs) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop(sprintf("Package '%s' is required. Install it with install.packages('%s')", pkg, pkg))
+      stop(sprintf("Package '%s' is required. Install it with utils::install.packages('%s')", pkg, pkg))
     }
   }
   # Packages accessed via pkg::fun() namespace
@@ -226,7 +226,7 @@ run_wgcna_analysis <- function(
 
   # Process expression data
   df <- df %>%
-    dplyr::select(all_of(c(sample_col, gene_id_col, expression_col))) %>%
+    dplyr::select(dplyr::all_of(c(sample_col, gene_id_col, expression_col))) %>%
     dplyr::rename(sample = !!sym(sample_col),
       gene_id = !!sym(gene_id_col),
       expression = !!sym(expression_col)) %>%
@@ -253,24 +253,24 @@ run_wgcna_analysis <- function(
   p1 <- df %>%
     ggplot(aes(x = sample, y = expression)) +
     geom_boxplot(fill = "lightblue", alpha = 0.7) +
-    theme_minimal() +
+    ggplot2::theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
     labs(title = "Expression Distribution (Before Log2 Transformation)",
       x = "Sample", y = "Expression Value")
 
-  ggsave(p1, file = file.path(output_dir, "01_expression_distribution_before_log.png"),
+  ggplot2::ggsave(p1, file = file.path(output_dir, "01_expression_distribution_before_log.png"),
     width = plot_width, height = plot_height, dpi = plot_dpi)
 
   # Post-transformation boxplot
   p2 <- df %>%
     ggplot(aes(x = sample, y = log2(expression + 1))) +
     geom_boxplot(fill = "lightcoral", alpha = 0.7) +
-    theme_minimal() +
+    ggplot2::theme_minimal() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8)) +
     labs(title = "Expression Distribution (After Log2 Transformation)",
       x = "Sample", y = "Log2(Expression + 1)")
 
-  ggsave(p2, file = file.path(output_dir, "02_expression_distribution_after_log.png"),
+  ggplot2::ggsave(p2, file = file.path(output_dir, "02_expression_distribution_after_log.png"),
     width = plot_width, height = plot_height, dpi = plot_dpi)
 
   # 3. Data filtering and quality control
@@ -372,8 +372,8 @@ run_wgcna_analysis <- function(
     labs(x = "Soft Threshold (power)",
       y = expression("Scale Free Topology Model Fit, signed R"^2),
       title = "Scale Independence") +
-    theme_minimal() +
-    ylim(0, 1)
+    ggplot2::theme_minimal() +
+    ggplot2::ylim(0, 1)
 
   p4 <- soft_plot_data %>%
     ggplot(aes(x = Power, y = mean_connectivity)) +
@@ -383,7 +383,7 @@ run_wgcna_analysis <- function(
     labs(x = "Soft Threshold (power)",
       y = "Mean Connectivity",
       title = "Mean Connectivity") +
-    theme_minimal()
+    ggplot2::theme_minimal()
 
   p_combined <- (p3 | p4) +
     patchwork::plot_annotation(
@@ -391,7 +391,7 @@ run_wgcna_analysis <- function(
       tag_levels = "A"
     )
 
-  ggsave(p_combined, file = file.path(output_dir, "03_soft_threshold_selection.png"),
+  ggplot2::ggsave(p_combined, file = file.path(output_dir, "03_soft_threshold_selection.png"),
     width = 10, height = 6, dpi = plot_dpi)
 
   # 5. Network construction
@@ -451,7 +451,7 @@ run_wgcna_analysis <- function(
         # Create the dendrogram plot
         dendrogram_file <- file.path(output_dir, "04b_dynamic_tree_cut_dendrogram.png")
 
-        png(filename = dendrogram_file,
+        grDevices::png(filename = dendrogram_file,
           width = max(1000, ncol(df_matrix) * 2),
           height = 600,
           res = 150)
@@ -475,7 +475,7 @@ run_wgcna_analysis <- function(
           main = "Gene Clustering and Module Assignment"
         )
 
-        dev.off()
+        grDevices::dev.off()
 
         if (verbose) message(paste("   Dendrogram saved to:", basename(dendrogram_file)))
 
@@ -501,7 +501,7 @@ run_wgcna_analysis <- function(
   )
 
   # Save gene-module mapping
-  write.table(gene_module_mapping,
+  utils::write.table(gene_module_mapping,
     file = file.path(output_dir, "05_gene_module_mapping.txt"),
     sep = "\t", row.names = FALSE, quote = FALSE)
 
@@ -511,7 +511,7 @@ run_wgcna_analysis <- function(
     dplyr::summarise(gene_count = n(), .groups = "drop") %>%
     dplyr::arrange(desc(gene_count))
 
-  write.table(module_summary,
+  utils::write.table(module_summary,
     file = file.path(output_dir, "06_module_size_summary.txt"),
     sep = "\t", row.names = FALSE, quote = FALSE)
 
@@ -550,7 +550,7 @@ run_wgcna_analysis <- function(
 
   # Process sample information
   sample_info_processed <- sample_info_df %>%
-    dplyr::select(all_of(c(sample_id_col, trait_columns))) %>%
+    dplyr::select(dplyr::all_of(c(sample_id_col, trait_columns))) %>%
     dplyr::rename(sample = !!sym(sample_id_col)) %>%
     dplyr::distinct_all() %>%
     dplyr::filter(sample %in% rownames(df_matrix))
@@ -564,7 +564,7 @@ run_wgcna_analysis <- function(
 
   tryCatch(
     {
-      trait_matrix <- model.matrix(as.formula(trait_formula), data = sample_info_processed) %>%
+      trait_matrix <- stats::model.matrix(stats::as.formula(trait_formula), data = sample_info_processed) %>%
         as.data.frame()
       rownames(trait_matrix) <- sample_info_processed$sample
     },
@@ -591,11 +591,11 @@ run_wgcna_analysis <- function(
   module_trait_pvalue <- WGCNA::corPvalueStudent(module_trait_cor, length(common_samples))
 
   # Save correlation results
-  write.table(cbind(Module = rownames(module_trait_cor), as.data.frame(module_trait_cor)),
+  utils::write.table(cbind(Module = rownames(module_trait_cor), as.data.frame(module_trait_cor)),
     file = file.path(output_dir, "07_module_trait_correlations.txt"),
     sep = "\t", row.names = FALSE, quote = FALSE)
 
-  write.table(cbind(Module = rownames(module_trait_pvalue), as.data.frame(module_trait_pvalue)),
+  utils::write.table(cbind(Module = rownames(module_trait_pvalue), as.data.frame(module_trait_pvalue)),
     file = file.path(output_dir, "08_module_trait_pvalues.txt"),
     sep = "\t", row.names = FALSE, quote = FALSE)
 
@@ -636,15 +636,15 @@ run_wgcna_analysis <- function(
   # Create heatmap
   p5 <- plot_data %>%
     ggplot(aes(x = module, y = trait, fill = correlation)) +
-    geom_tile(color = "white", size = 0.1) +
-    scale_fill_gradient2(
+    ggplot2::geom_tile(color = "white", size = 0.1) +
+    ggplot2::scale_fill_gradient2(
       low = "blue", mid = "white", high = "red",
       midpoint = 0,
       name = "Correlation",
       limits = c(-1, 1)
     ) +
     geom_text(aes(label = significance), size = 4, vjust = 0.7, fontface = "bold") +
-    theme_minimal() +
+    ggplot2::theme_minimal() +
     theme(
       axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
       axis.text.y = element_text(size = 10),
@@ -655,9 +655,9 @@ run_wgcna_analysis <- function(
     ) +
     labs(title = "Module-Trait Associations",
       caption = "* p < 0.05, ** p < 0.01, *** p < 0.001") +
-    coord_fixed()
+    ggplot2::coord_fixed()
 
-  ggsave(p5, file = file.path(output_dir, "09_module_trait_heatmap.png"),
+  ggplot2::ggsave(p5, file = file.path(output_dir, "09_module_trait_heatmap.png"),
     width = plot_width, height = plot_height, dpi = plot_dpi)
 
   # 9. Summary and completion

@@ -4,8 +4,7 @@
 #' These functions break down the complex WGCNA analysis into manageable steps.
 #'
 #' @keywords internal
-#' @noRd
-
+#'
 # ============================================================================
 # WGCNA Input Validation
 # ============================================================================
@@ -118,7 +117,7 @@ prepare_wgcna_traits <- function(sample_info, trait_columns, verbose = TRUE) {
 
   if (verbose) {
     message("Prepared trait data:")
-    print(str(traits))
+    print(utils::str(traits))
     message("")
   }
 

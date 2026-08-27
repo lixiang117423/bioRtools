@@ -189,7 +189,7 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
 
   if (!all(data_samples %in% sample$sample_id)) {
     missing_samples <- setdiff(data_samples, sample$sample_id)
-    stop("Samples missing from metadata: ", paste(head(missing_samples, 5), collapse = ", "))
+    stop("Samples missing from metadata: ", paste(utils::head(missing_samples, 5), collapse = ", "))
   }
 
   sample_aligned <- sample[match(data_samples, sample$sample_id), ]
@@ -337,7 +337,7 @@ tsne_analysis <- function(data, sample, dims = 2, perplexity = 30,
     scaled = scale_data,
     seed = seed,
     final_cost = if (!is.null(tsne_model$itercosts)) {
-      tail(tsne_model$itercosts, 1)
+      utils::tail(tsne_model$itercosts, 1)
     } else NA
   )
 

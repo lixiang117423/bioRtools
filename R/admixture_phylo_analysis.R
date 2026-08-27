@@ -327,19 +327,19 @@ admixture_phylo_analysis <- function(admixture_path,
     if (length(matched_samples) == 0L) {
       stop("No samples match between .Q files and phylogenetic tree.\n",
            "  .Q/.fam samples (first 10): ",
-           paste(head(unique(df_admixture$sample), 10), collapse = ", "), "\n",
+           paste(utils::head(unique(df_admixture$sample), 10), collapse = ", "), "\n",
            "  Tree samples (first 10): ",
-           paste(head(df_order_tree$sample, 10), collapse = ", "))
+           paste(utils::head(df_order_tree$sample, 10), collapse = ", "))
     }
     only_q <- setdiff(df_admixture$sample, df_order_tree$sample)
     only_tree <- setdiff(df_order_tree$sample, df_admixture$sample)
     if (length(only_q) > 0L) {
       warning(length(only_q), " sample(s) in .Q but not in the tree; dropped from the plot: ",
-              paste(head(only_q, 10), collapse = ", "))
+              paste(utils::head(only_q, 10), collapse = ", "))
     }
     if (length(only_tree) > 0L) {
       warning(length(only_tree), " sample(s) in the tree but not in .Q; shown as blank rows: ",
-              paste(head(only_tree, 10), collapse = ", "))
+              paste(utils::head(only_tree, 10), collapse = ", "))
     }
     if (verbose) message("Successfully matched ", length(matched_samples), " samples with tree")
   } else if (verbose) {

@@ -104,7 +104,7 @@ rf_taxa_classification <- function(data,
   missing <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
   if (length(missing) > 0) {
     stop("Required packages not installed: ", paste(missing, collapse = ", "),
-         "\nInstall with: install.packages(c('",
+         "\nInstall with: utils::install.packages(c('",
          paste(missing, collapse = "', '"), "'))")
   }
 

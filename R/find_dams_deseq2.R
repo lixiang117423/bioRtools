@@ -144,7 +144,7 @@ find_dams_deseq2 <- function(data, sample, group_col = "group",
     if (nrow(data_sub) == 0) return(NULL)
 
     # Build formula
-    fmla <- as.formula(paste0("~", group_col))
+    fmla <- stats::as.formula(paste0("~", group_col))
 
     dds <- tryCatch(
       DESeq2::DESeqDataSetFromMatrix(

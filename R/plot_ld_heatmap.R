@@ -224,7 +224,7 @@ plot_ld_heatmap <- function(vcf_file,
   if (!requireNamespace("LDheatmap", quietly = TRUE)) {
     if (verbose) message("Installing LDheatmap from Bioconductor...")
     if (!requireNamespace("BiocManager", quietly = TRUE)) {
-      install.packages("BiocManager")
+      utils::install.packages("BiocManager")
     }
     BiocManager::install("LDheatmap", quiet = !verbose)
   }

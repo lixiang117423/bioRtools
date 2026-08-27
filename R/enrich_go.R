@@ -373,7 +373,7 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
     )
 
     if (nrow(go_results) > 0) {
-      top_terms <- head(go_results, 5)
+      top_terms <- utils::head(go_results, 5)
       msg_lines <- c(msg_lines, "Top 5 enriched terms:")
       for (i in seq_len(nrow(top_terms))) {
         msg_lines <- c(msg_lines,

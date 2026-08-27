@@ -227,7 +227,7 @@ fetch_kegg_table <- function(species) {
 warn_unmatched <- function(ids, terms) {
   missing_ids <- unique(ids[is.na(terms)])
   if (length(missing_ids)) {
-    preview <- paste(head(missing_ids, 10), collapse = ", ")
+    preview <- paste(utils::head(missing_ids, 10), collapse = ", ")
     warning("No description found for ", length(missing_ids), " id(s): ",
             preview, if (length(missing_ids) > 10) " ...", call. = FALSE)
   }

@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.94.3] - 2026-08-27
+
+### Changed
+- Migrated the remaining 15 legacy bare test scripts to testthat 3e cases
+  (`tests/testthat/test-*.R`); the old `tests/test_*.R` scripts are removed.
+  Migrated: read_data, orientation, plot_ideogram (+synteny/ternary),
+  plot_metab_volcano, plot_multi_volcano, plot_composition_alluvium,
+  predict_func, save_fig, spls_analysis, synteny, theme_prism, wong_palette,
+  write_data_by_group.
+- R CMD check "possible problems" cleaned up: 488 findings reduced to 0.
+  - ~110 NSE column names/globals declared via `utils::globalVariables()`
+    in `R/bioRtools-package.R` (dplyr/ggplot2 expression columns, e.g.
+    `mean_val`, `p_value`, `..count..`).
+  - ~110 unqualified function calls namespaced (`utils::head`/`tail`/`str`,
+    `stats::*`, `ggplot2::*`, `dplyr::*`, `grDevices::*`, `rlang::is_named`,
+    etc.).
+
+### Fixed
+- `plot_pfam(rounded_corners = TRUE)` called `ggforce::geom_rounded_rect()`,
+  which does not exist in current ggforce (removed; `geom_shape` is the
+  replacement). The function now builds 8-point rounded-rectangle vertices
+  internally and draws them with `ggforce::geom_shape()`; the tree branch
+  works too.
+- `utils_validation.R`/`utils_plotting.R`/`helpers_wgcna.R`: the file-level
+  roxygen blocks ended with `@noRd`, which made roxygen2 warn "@noRd must
+  not be followed by any text" (the toggle tag's raw value spilled into
+  following blocks). The file-level `@noRd` is removed (the per-function
+  `@noRd` tags remain).
+- Trailing whitespace stripped from all `R/*.R` and `tests/testthat/*.R`
+  files (was breaking roxygen2's `@noRd` tag parsing).
+
 ## [1.94.2] - 2026-08-27
 
 ### Changed

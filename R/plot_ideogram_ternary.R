@@ -184,7 +184,7 @@ build_ternary_species_labels <- function(species, kats, layouts, params) {
   bl <- params$baseline
   lab <- data.frame(label = species, size_pt = sapply(kats, function(k) k$size[1]),
                     color = paste0("#", sapply(kats, function(k) k$color[1])))
-  mid <- function(lay) (lay$starts[1] + tail(lay$starts, 1) + tail(lay$widths, 1)) / 2
+  mid <- function(lay) (lay$starts[1] + utils::tail(lay$starts, 1) + utils::tail(lay$widths, 1)) / 2
   pts <- list(
     c(mid(layouts[[1]]), bl + 8 + 0.8 * ideo_cm_px),                                  # species 1 below
     ideo_rotate(cbind(mid(layouts[[2]]), bl + 8 + 0.4 * ideo_cm_px), -60, params$pivot2),

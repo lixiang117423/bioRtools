@@ -91,7 +91,7 @@ plot_ocbsa <- function(data,
     dplyr::mutate(chr_order = match(.data$Chr, chr_levels)) %>%
     dplyr::arrange(.data$chr_order) %>%
     dplyr::mutate(
-      cum_start = c(0, head(cumsum(.data$chrlen), -1)),
+      cum_start = c(0, utils::head(cumsum(.data$chrlen), -1)),
       mid = .data$cum_start + .data$chrlen / 2
     )
 

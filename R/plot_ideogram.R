@@ -154,7 +154,7 @@ merge_validate <- function(df, layout_cols_df, arg_name, by) {
   dropped <- setdiff(unique(df[[by]]), unique(layout_cols_df[[by]]))
   if (length(dropped)) {
     warning("'", arg_name, "' contains chromosome(s) not in 'karyotype$Chr': ",
-            paste(head(dropped, 10), collapse = ", "),
+            paste(utils::head(dropped, 10), collapse = ", "),
             if (length(dropped) > 10) " ...",
             " (these rows are dropped)", call. = FALSE)
   }

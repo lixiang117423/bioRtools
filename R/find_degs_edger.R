@@ -454,7 +454,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
 
       # Estimate dispersion
       dge <- tryCatch(
-        edgeR::estimateDisp(dge, design = model.matrix(~group_factor), robust = robust),
+        edgeR::estimateDisp(dge, design = stats::model.matrix(~group_factor), robust = robust),
         error = function(e) NULL
       )
       if (is.null(dge)) return(NULL)
@@ -545,7 +545,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
   # --- Single comparison (GLM approach) ---------------------------------------
 
   group_factor <- sample_aligned[[main_factor]]
-  design_mat <- model.matrix(formula, data = sample_aligned)
+  design_mat <- stats::model.matrix(formula, data = sample_aligned)
 
   # Create DGEList
   dge <- tryCatch(
@@ -709,7 +709,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
       msg_lines <- c(msg_lines, "Top DE genes by significance:")
       top_genes <- results_processed %>%
         dplyr::filter(regulation != "Not significant") %>%
-        head(5)
+        utils::head(5)
 
       for (i in seq_len(nrow(top_genes))) {
         direction_symbol <- ifelse(top_genes$log2FoldChange[i] > 0, "\u2191", "\u2193")

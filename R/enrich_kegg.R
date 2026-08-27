@@ -451,7 +451,7 @@ enrich_kegg <- function(gene, kegg_db, p_adjust_method = "BH", p_adjust = 0.05,
     )
 
     # Show top pathways
-    top_pathways <- head(kegg_results, 5)
+    top_pathways <- utils::head(kegg_results, 5)
     for (i in seq_len(nrow(top_pathways))) {
       pathway_name <- top_pathways$description[i]
       # Truncate long pathway names for display

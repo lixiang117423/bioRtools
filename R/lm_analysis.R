@@ -231,10 +231,10 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
       {
         fit_summary <- summary(fit)
         anova_result <- stats::anova(fit)
-        confint_result <- confint(fit, level = conf_level)
+        confint_result <- stats::confint(fit, level = conf_level)
 
         data.frame(
-          n_observations = nobs(fit),
+          n_observations = stats::nobs(fit),
           r_squared = round(fit_summary$r.squared, 4),
           adj_r_squared = round(fit_summary$adj.r.squared, 4),
           slope = round(coef(fit)[2], 4),
@@ -265,7 +265,7 @@ lm_analysis <- function(data, x, y, group, color, alpha = 0.05, conf_level = 0.9
       model = purrr::map(data, ~ {
         tryCatch(
           {
-            lm(as.formula(paste(y, "~", x)), data = .x)
+            lm(stats::as.formula(paste(y, "~", x)), data = .x)
           },
           error = function(e) {
             warning(paste("Model fitting failed for group",

@@ -427,12 +427,12 @@ validate_synteny_inputs <- function(gene_data, syntenic_data, ...) {
 
   # Check if required packages are available
   if (!requireNamespace("gggenes", quietly = TRUE)) {
-    stop("Package 'gggenes' is required. Please install it using: install.packages('gggenes')",
+    stop("Package 'gggenes' is required. Please install it using: utils::install.packages('gggenes')",
       call. = FALSE)
   }
 
   if (!requireNamespace("ggforce", quietly = TRUE)) {
-    stop("Package 'ggforce' is required. Please install it using: install.packages('ggforce')",
+    stop("Package 'ggforce' is required. Please install it using: utils::install.packages('ggforce')",
       call. = FALSE)
   }
 

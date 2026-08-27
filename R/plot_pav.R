@@ -41,7 +41,7 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
                      category_height = 0.05, annotate_axes = FALSE) {
 
   if (!requireNamespace("aplot", quietly = TRUE)) {
-    stop("Package 'aplot' is required. Install with install.packages('aplot')")
+    stop("Package 'aplot' is required. Install with utils::install.packages('aplot')")
   }
 
   # Validate inputs
@@ -86,7 +86,7 @@ plot_pav <- function(data, group_col = "group", sample_col = "sample",
       fill = !!rlang::sym(group_col))) +
     ggplot2::geom_tile() +
     scale_fill_research() +
-    scale_x_discrete(limits = df_x_order[[feature_col]]) +
+    ggplot2::scale_x_discrete(limits = df_x_order[[feature_col]]) +
     axis_theme
 
   # PAV heatmap
