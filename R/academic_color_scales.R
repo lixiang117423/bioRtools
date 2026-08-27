@@ -152,6 +152,16 @@ pal_sci <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_nature("default")(9))
+#' head(pal_nature("materials")(4))
+#' }
 pal_nature <- function(palette = c("default", "materials"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -168,6 +178,15 @@ pal_nature <- function(palette = c("default", "materials"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_science("default")(9))
+#' }
 pal_science <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -184,6 +203,15 @@ pal_science <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_cell("default")(9))
+#' }
 pal_cell <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -200,6 +228,15 @@ pal_cell <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_jacs("default")(9))
+#' }
 pal_jacs <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -216,6 +253,15 @@ pal_jacs <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_fuel("default")(9))
+#' }
 pal_fuel <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -232,6 +278,15 @@ pal_fuel <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_chem_eng("default")(9))
+#' }
 pal_chem_eng <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -248,6 +303,15 @@ pal_chem_eng <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_nat_comm("default")(9))
+#' }
 pal_nat_comm <- function(palette = c("default"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -264,6 +328,16 @@ pal_nat_comm <- function(palette = c("default"), alpha = 1) {
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_shinkai("default")(9))
+#' head(pal_shinkai("blue_tones")(6))
+#' }
 pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -280,6 +354,16 @@ pal_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha
 #' @rdname pal_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A function that takes an integer argument \code{n} and returns a
+#'   character vector of \code{n} hexadecimal color codes. Compatible with
+#'   \code{ggplot2} color/fill scales.
+#'
+#' @examples
+#' \dontrun{
+#' head(pal_research("default")(9))
+#' head(pal_research("coral_teal")(4))
+#' }
 pal_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1) {
   palette <- match.arg(palette)
   if (alpha > 1L || alpha <= 0L) stop("alpha must be in (0, 1]")
@@ -307,6 +391,8 @@ pal_research <- function(palette = c("default", "nature_genomics", "earth", "coo
 #'
 #' @importFrom ggplot2 discrete_scale
 #'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
 #' @examples
 #' library("ggplot2")
 #' data("iris")
@@ -333,12 +419,40 @@ scale_color_sci <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_sci
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_sci()
+#' }
 scale_colour_sci <- scale_color_sci
 
 #' @export scale_fill_sci
 #' @importFrom ggplot2 discrete_scale
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_sci()
+#' }
 scale_fill_sci <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -352,6 +466,20 @@ scale_fill_sci <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_nature
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_nature()
+#' }
 scale_color_nature <- function(palette = c("default", "materials"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -364,11 +492,39 @@ scale_color_nature <- function(palette = c("default", "materials"), alpha = 1, .
 #' @export scale_colour_nature
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_nature()
+#' }
 scale_colour_nature <- scale_color_nature
 
 #' @export scale_fill_nature
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_nature()
+#' }
 scale_fill_nature <- function(palette = c("default", "materials"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -382,6 +538,20 @@ scale_fill_nature <- function(palette = c("default", "materials"), alpha = 1, ..
 #' @export scale_color_science
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_science()
+#' }
 scale_color_science <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -394,11 +564,39 @@ scale_color_science <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_science
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_science()
+#' }
 scale_colour_science <- scale_color_science
 
 #' @export scale_fill_science
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_science()
+#' }
 scale_fill_science <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -412,6 +610,20 @@ scale_fill_science <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_cell
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_cell()
+#' }
 scale_color_cell <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -424,11 +636,39 @@ scale_color_cell <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_cell
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_cell()
+#' }
 scale_colour_cell <- scale_color_cell
 
 #' @export scale_fill_cell
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_cell()
+#' }
 scale_fill_cell <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -442,6 +682,20 @@ scale_fill_cell <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_jacs
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_jacs()
+#' }
 scale_color_jacs <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -454,11 +708,39 @@ scale_color_jacs <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_jacs
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_jacs()
+#' }
 scale_colour_jacs <- scale_color_jacs
 
 #' @export scale_fill_jacs
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_jacs()
+#' }
 scale_fill_jacs <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -472,6 +754,20 @@ scale_fill_jacs <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_fuel
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_fuel()
+#' }
 scale_color_fuel <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -484,11 +780,39 @@ scale_color_fuel <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_fuel
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_fuel()
+#' }
 scale_colour_fuel <- scale_color_fuel
 
 #' @export scale_fill_fuel
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_fuel()
+#' }
 scale_fill_fuel <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -502,6 +826,20 @@ scale_fill_fuel <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_chem_eng
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chem_eng()
+#' }
 scale_color_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -514,11 +852,39 @@ scale_color_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_chem_eng
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_chem_eng()
+#' }
 scale_colour_chem_eng <- scale_color_chem_eng
 
 #' @export scale_fill_chem_eng
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_chem_eng()
+#' }
 scale_fill_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -532,6 +898,20 @@ scale_fill_chem_eng <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_nat_comm
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_nat_comm()
+#' }
 scale_color_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -544,11 +924,39 @@ scale_color_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_colour_nat_comm
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_nat_comm()
+#' }
 scale_colour_nat_comm <- scale_color_nat_comm
 
 #' @export scale_fill_nat_comm
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_nat_comm()
+#' }
 scale_fill_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -562,6 +970,20 @@ scale_fill_nat_comm <- function(palette = c("default"), alpha = 1, ...) {
 #' @export scale_color_shinkai
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_shinkai()
+#' }
 scale_color_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -574,10 +996,38 @@ scale_color_shinkai <- function(palette = c("default", "blue_tones", "red_tones"
 #' @export scale_colour_shinkai
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_shinkai()
+#' }
 scale_colour_shinkai <- scale_color_shinkai
 
 #' @export scale_fill_shinkai
 #' @rdname scale_color_sci
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_shinkai()
+#' }
 scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -591,6 +1041,20 @@ scale_fill_shinkai <- function(palette = c("default", "blue_tones", "red_tones")
 #' @export scale_color_research
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_research()
+#' }
 scale_color_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -603,11 +1067,39 @@ scale_color_research <- function(palette = c("default", "nature_genomics", "eart
 #' @export scale_colour_research
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_research()
+#' }
 scale_colour_research <- scale_color_research
 
 #' @export scale_fill_research
 #' @rdname scale_color_sci
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_research()
+#' }
 scale_fill_research <- function(palette = c("default", "nature_genomics", "earth", "cool_spectrum", "coral_teal", "purple_amber", "blue_coral", "pink_teal"), alpha = 1, ...) {
   palette <- match.arg(palette)
   if (is_ggplot2_350()) {
@@ -652,6 +1144,8 @@ scale_fill_research <- function(palette = c("default", "nature_genomics", "earth
 #'
 #' @importFrom ggplot2 scale_color_gradientn scale_fill_gradientn
 #' @importFrom grDevices colorRamp rgb
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
 #'
 #' @examples
 #' library("ggplot2")
@@ -700,11 +1194,38 @@ scale_color_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sc
 #' @export scale_colour_sci_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_sci_c()
+#' }
 scale_colour_sci_c <- scale_color_sci_c
 
 #' @export scale_fill_sci_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_sci_c()
+#' }
 scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "science_gradient", "cell_gradient", "jacs_gradient", "fuel_gradient", "chem_eng_gradient", "nat_comm_gradient", "shinkai_gradient", "research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                              alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
@@ -728,6 +1249,19 @@ scale_fill_sci_c <- function(palette = c("sci_gradient", "nature_gradient", "sci
 #' @export scale_color_nature_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_nature_c()
+#' }
 scale_color_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "nature_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -735,11 +1269,38 @@ scale_color_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_nature_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_nature_c()
+#' }
 scale_colour_nature_c <- scale_color_nature_c
 
 #' @export scale_fill_nature_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_nature_c()
+#' }
 scale_fill_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "nature_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -747,6 +1308,19 @@ scale_fill_nature_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_cell_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_cell_c()
+#' }
 scale_color_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "cell_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -754,11 +1328,38 @@ scale_color_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_cell_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_cell_c()
+#' }
 scale_colour_cell_c <- scale_color_cell_c
 
 #' @export scale_fill_cell_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_cell_c()
+#' }
 scale_fill_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "cell_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -766,6 +1367,19 @@ scale_fill_cell_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_jacs_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_jacs_c()
+#' }
 scale_color_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "jacs_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -773,11 +1387,38 @@ scale_color_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_jacs_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_jacs_c()
+#' }
 scale_colour_jacs_c <- scale_color_jacs_c
 
 #' @export scale_fill_jacs_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_jacs_c()
+#' }
 scale_fill_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "jacs_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -786,6 +1427,19 @@ scale_fill_jacs_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_science_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_science_c()
+#' }
 scale_color_science_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "science_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -793,11 +1447,38 @@ scale_color_science_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_science_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_science_c()
+#' }
 scale_colour_science_c <- scale_color_science_c
 
 #' @export scale_fill_science_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_science_c()
+#' }
 scale_fill_science_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "science_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -806,6 +1487,19 @@ scale_fill_science_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_fuel_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_fuel_c()
+#' }
 scale_color_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "fuel_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -813,11 +1507,38 @@ scale_color_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_fuel_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_fuel_c()
+#' }
 scale_colour_fuel_c <- scale_color_fuel_c
 
 #' @export scale_fill_fuel_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_fuel_c()
+#' }
 scale_fill_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "fuel_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -826,6 +1547,19 @@ scale_fill_fuel_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_chem_eng_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_chem_eng_c()
+#' }
 scale_color_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "chem_eng_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -833,11 +1567,38 @@ scale_color_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_chem_eng_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_chem_eng_c()
+#' }
 scale_colour_chem_eng_c <- scale_color_chem_eng_c
 
 #' @export scale_fill_chem_eng_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_chem_eng_c()
+#' }
 scale_fill_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "chem_eng_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -846,6 +1607,19 @@ scale_fill_chem_eng_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_nat_comm_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_nat_comm_c()
+#' }
 scale_color_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "nat_comm_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -853,11 +1627,38 @@ scale_color_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_nat_comm_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_nat_comm_c()
+#' }
 scale_colour_nat_comm_c <- scale_color_nat_comm_c
 
 #' @export scale_fill_nat_comm_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_nat_comm_c()
+#' }
 scale_fill_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "nat_comm_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -866,6 +1667,19 @@ scale_fill_nat_comm_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_shinkai_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_shinkai_c()
+#' }
 scale_color_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_color_sci_c(palette = "shinkai_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -873,10 +1687,37 @@ scale_color_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_colour_shinkai_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_shinkai_c()
+#' }
 scale_colour_shinkai_c <- scale_color_shinkai_c
 
 #' @export scale_fill_shinkai_c
 #' @rdname scale_color_sci_c
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_shinkai_c()
+#' }
 scale_fill_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
   scale_fill_sci_c(palette = "shinkai_gradient", alpha = alpha, reverse = reverse, ...)
 }
@@ -885,6 +1726,19 @@ scale_fill_shinkai_c <- function(alpha = 1, reverse = FALSE, ...) {
 #' @export scale_color_research_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_research_c()
+#' }
 scale_color_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                                    alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
@@ -894,11 +1748,38 @@ scale_color_research_c <- function(palette = c("research_teal_sequential", "rese
 #' @export scale_colour_research_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = 1:20,
+#'   y = stats::rnorm(20)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_research_c()
+#' }
 scale_colour_research_c <- scale_color_research_c
 
 #' @export scale_fill_research_c
 #' @rdname scale_color_sci_c
 #' @author Xiang LI <lixiang117423@gmail.com>
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   x = rep(1:10, times = 10),
+#'   y = rep(1:10, each = 10),
+#'   z = stats::rnorm(100)
+#' )
+#' ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_research_c()
+#' }
 scale_fill_research_c <- function(palette = c("research_teal_sequential", "research_purple_sequential", "research_amber_coral_sequential", "research_blue_coral_diverging", "research_teal_pink_diverging", "research_purple_amber_diverging"),
                                   alpha = 1, reverse = FALSE, ...) {
   palette <- match.arg(palette)
