@@ -396,6 +396,9 @@ on.exit(parallel::stopCluster(cl), add = TRUE)
 - **`Depends: R (>= x.y.z)` 必须真实**：下限不低于代码实际使用的语法/API
   （如使用 `\(x)` 匿名函数则下限至少 R 4.1.0）
 - README 及文档中的版本徽章与 `DESCRIPTION` 保持一致
+- git tag 惯例：仅在 minor 版本（`X.Y.0`，新增能力）时打 annotated tag
+  （`git tag -a vX.Y.Z -m "vX.Y.Z: <一句话>"` 并推送 `git push origin vX.Y.Z`）；
+  patch 版本不打 tag
 - 开发中功能（2.4）合并前由作者确认，未完成功能不进入发布
 
 ---
