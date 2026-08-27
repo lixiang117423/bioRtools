@@ -349,4 +349,14 @@ format_lm_stats <- function(model,
 #' @rdname get_lm_stats
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return A data frame (tibble) with one row and two columns:
+#'   \item{r_squared}{Adjusted (or multiple) R-squared value, optionally rounded}
+#'   \item{p_value}{Overall model p-value from F-test}
+#'
+#' @examples
+#' \dontrun{
+#' model_fit <- stats::lm(mpg ~ wt, data = mtcars)
+#' extract_lm_stats(model_fit)
+#' }
 extract_lm_stats <- get_lm_stats

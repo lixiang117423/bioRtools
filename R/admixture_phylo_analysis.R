@@ -528,6 +528,12 @@ admixture_phylo_analysis <- function(admixture_path,
 #'
 #' @return Invisibly returns \code{x}.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' res <- admixture_phylo_analysis("path/to/admixture/results/")
+#' res   # auto-prints via print.admixture_phylo_results
+#' }
 print.admixture_phylo_results <- function(x, ...) {
   cat("ADMIXTURE phylogenetic analysis\n")
   cat("  Samples:    ", length(x$samples), "\n")

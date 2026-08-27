@@ -42,6 +42,14 @@ wong_colors <- c(
 
 #' @rdname wong_palette
 #' @export
+#'
+#' @return A character vector of hexadecimal color codes.
+#'
+#' @examples
+#' \dontrun{
+#' head(wong_palette(3))
+#' wong_palette(12)  # recycled beyond the 8 base colours
+#' }
 wong_palette <- function(n = NULL) {
   if (is.null(n)) return(wong_colors)
   if (n <= 0) return(character(0))
@@ -50,16 +58,58 @@ wong_palette <- function(n = NULL) {
 
 #' @rdname wong_palette
 #' @export
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df_wong <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("A", "B", "C"), each = 3)
+#' )
+#' ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_wong()
+#' }
 scale_colour_wong <- function(...) {
   ggplot2::discrete_scale("colour", palette = wong_palette, ...)
 }
 
 #' @rdname wong_palette
 #' @export
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df_wong <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("A", "B", "C"), each = 3)
+#' )
+#' ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, color = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_color_wong()
+#' }
 scale_color_wong <- scale_colour_wong
 
 #' @rdname wong_palette
 #' @export
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df_wong <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("A", "B", "C"), each = 3)
+#' )
+#' ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_wong()
+#' }
 scale_fill_wong <- function(...) {
   ggplot2::discrete_scale("fill", palette = wong_palette, ...)
 }

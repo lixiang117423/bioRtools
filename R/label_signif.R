@@ -188,4 +188,13 @@ apply_labels_to_p_values <- function(p_values, ns, thresholds) {
 
 #' @rdname label_signif
 #' @export
+#'
+#' @return A character vector of the same length as \code{p_values} containing
+#'   significance labels. NA values in input are preserved as NA in output.
+#'
+#' @examples
+#' \dontrun{
+#' p_vals <- c(0.0001, 0.03, 0.5)
+#' label_significance(p_vals)
+#' }
 label_significance <- label_signif

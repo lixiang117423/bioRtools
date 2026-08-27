@@ -733,6 +733,21 @@ run_wgcna_analysis <- function(
 #' @param ... Additional arguments (not used)
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return Called for its side effect of printing an overview of the analysis
+#'   parameters and the available result components. Returns \code{NULL}
+#'   invisibly.
+#'
+#' @examples
+#' \dontrun{
+#' wgcna_res <- run_wgcna_analysis(
+#'   expression_data = "expression_data.txt",
+#'   sample_info = "sample_info.xlsx",
+#'   output_dir = "wgcna_results",
+#'   trait_columns = c("time", "treatment")
+#' )
+#' wgcna_res   # auto-prints via print.wgcna_results
+#' }
 print.wgcna_results <- function(x, ...) {
   cat("WGCNA Analysis Results\n")
   cat("======================\n\n")
@@ -770,6 +785,21 @@ print.wgcna_results <- function(x, ...) {
 #' @param ... Additional arguments (not used)
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return Called for its side effect of printing the module size summary and
+#'   the top 10 module-trait correlations. Invisibly returns the printed
+#'   correlation table.
+#'
+#' @examples
+#' \dontrun{
+#' wgcna_res <- run_wgcna_analysis(
+#'   expression_data = "expression_data.txt",
+#'   sample_info = "sample_info.xlsx",
+#'   output_dir = "wgcna_results",
+#'   trait_columns = c("time", "treatment")
+#' )
+#' summary(wgcna_res)   # summary.wgcna_results
+#' }
 summary.wgcna_results <- function(object, ...) {
   cat("WGCNA Analysis Summary\n")
   cat("======================\n\n")

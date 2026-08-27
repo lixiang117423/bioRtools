@@ -239,6 +239,16 @@ find_admixture_k <- function(data, k_col = "K", cv_col = "CV_error",
 #'
 #' @return Invisibly returns \code{x}.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' cv_df <- data.frame(
+#'   K = 2:6,
+#'   CV_error = c(0.52, 0.50, 0.49, 0.485, 0.482)
+#' )
+#' res <- find_admixture_k(cv_df)
+#' res   # auto-prints via print.admixture_k_results
+#' }
 print.admixture_k_results <- function(x, ...) {
   cat("ADMIXTURE CV-error K selection
 ")

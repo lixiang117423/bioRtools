@@ -114,6 +114,22 @@ calc_func_fr <- function(asv_func, abundance, abundance_weighted = FALSE,
 #' @return Data.frame: `sample`, `fr_comm`.
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' asv_func <- matrix(
+#'   c(1, 1, 0, 0, 1, 0),
+#'   nrow = 3,
+#'   dimnames = list(paste0("ASV", 1:3), c("carbon", "nitrogen"))
+#' )
+#' abundance <- matrix(
+#'   c(10, 5, 2, 8, 4, 1),
+#'   nrow = 3,
+#'   dimnames = list(paste0("ASV", 1:3), c("S1", "S2"))
+#' )
+#' func_fr <- calc_func_fr(asv_func, abundance)
+#' calc_func_fr_comm(func_fr)
+#' }
 calc_func_fr_comm <- function(func_fr, floor_val = 1e-6) {
   if (!all(c("sample", "function", "fr") %in% names(func_fr))) {
     stop("func_fr must have columns: sample, function, fr")

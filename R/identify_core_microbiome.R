@@ -546,6 +546,30 @@ plot_neutral_model <- function(fitting_results, neutral_results) {
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
+#'
+#' @return Called for its side effect of printing a summary of the core
+#'   microbiome results. Returns \code{x} invisibly.
+#'
+#' @examples
+#' \dontrun{
+#' otu_data <- matrix(stats::rpois(200, 10), nrow = 20, ncol = 10)
+#' rownames(otu_data) <- paste0("OTU", 1:20)
+#' colnames(otu_data) <- paste0("Sample", 1:10)
+#'
+#' metadata <- data.frame(
+#'   sample_id = paste0("Sample", 1:10),
+#'   group = rep(c("A", "B"), each = 5)
+#' )
+#'
+#' core_result <- identify_core_microbiome(
+#'   otu_table = otu_data,
+#'   metadata = metadata,
+#'   sample_col = "sample_id",
+#'   group_col = "group",
+#'   n_ranked = 10
+#' )
+#' core_result   # auto-prints via print.core_microbiome
+#' }
 print.core_microbiome <- function(x, ...) {
   cat("Core Microbiome Analysis Results\n")
   cat("=================================\n\n")

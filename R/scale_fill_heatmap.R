@@ -89,6 +89,19 @@ scale_fill_heatmap <- function(n = 100L, alpha = 1, reverse = FALSE,
 
 #' @rdname scale_fill_heatmap
 #' @export
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_heatmap <- expand.grid(x = 1:5, y = 1:5)
+#' df_heatmap$z <- stats::rnorm(25)
+#'
+#' # The colour aliases map the fill aesthetic, like scale_fill_heatmap()
+#' ggplot2::ggplot(df_heatmap, ggplot2::aes(x, y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_color_heatmap()
+#' }
 scale_color_heatmap <- function(n = 100L, alpha = 1, reverse = FALSE,
                                 mid_color = "#F0F0F0", ...) {
   scale_fill_heatmap(n = n, alpha = alpha, reverse = reverse,
@@ -97,4 +110,16 @@ scale_color_heatmap <- function(n = 100L, alpha = 1, reverse = FALSE,
 
 #' @rdname scale_fill_heatmap
 #' @export
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_heatmap <- expand.grid(x = 1:5, y = 1:5)
+#' df_heatmap$z <- stats::rnorm(25)
+#'
+#' ggplot2::ggplot(df_heatmap, ggplot2::aes(x, y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_colour_heatmap()
+#' }
 scale_colour_heatmap <- scale_color_heatmap

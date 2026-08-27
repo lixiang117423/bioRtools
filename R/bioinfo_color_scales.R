@@ -122,6 +122,13 @@ NULL
 
 #' @rdname bioinfo_colors
 #' @export
+#'
+#' @return A character vector of hexadecimal color codes.
+#'
+#' @examples
+#' \dontrun{
+#' head(get_cat_colors(3))
+#' }
 get_cat_colors <- function(n) {
   if (!is.numeric(n) || length(n) != 1L || is.na(n)) {
     stop("'n' must be a single number, got: ", paste(class(n), collapse = "/"))
@@ -139,6 +146,13 @@ get_cat_colors <- function(n) {
 
 #' @rdname bioinfo_colors
 #' @export
+#'
+#' @return A character vector of hexadecimal color codes.
+#'
+#' @examples
+#' \dontrun{
+#' head(get_seq_colors("teal", 5))
+#' }
 get_seq_colors <- function(name = "blue", n = 100) {
   choices <- names(bioinfo_seq_anchors)
   if (!name %in% choices) {
@@ -150,6 +164,13 @@ get_seq_colors <- function(name = "blue", n = 100) {
 
 #' @rdname bioinfo_colors
 #' @export
+#'
+#' @return A character vector of hexadecimal color codes.
+#'
+#' @examples
+#' \dontrun{
+#' head(get_div_colors(5))
+#' }
 get_div_colors <- function(n = 100, palette = c("soft", "strong")) {
   palette <- match.arg(palette)
   bioinfo_check_n(n)
@@ -158,6 +179,13 @@ get_div_colors <- function(n = 100, palette = c("soft", "strong")) {
 
 #' @rdname bioinfo_colors
 #' @export
+#'
+#' @return A character vector of hexadecimal color codes.
+#'
+#' @examples
+#' \dontrun{
+#' head(get_multiseq_colors(4))
+#' }
 get_multiseq_colors <- function(n = 100) {
   bioinfo_check_n(n)
   grDevices::colorRampPalette(bioinfo_multiseq_anchors, space = "Lab")(n)
@@ -194,10 +222,38 @@ scale_color_bioinfo <- function(alpha = 1, ...) {
 
 #' @rdname scale_color_bioinfo
 #' @export scale_colour_bioinfo
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df_bioinfo <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("A", "B", "C"), each = 3)
+#' )
+#' ggplot2::ggplot(df_bioinfo, ggplot2::aes(x = x, y = y, colour = group)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_bioinfo()
+#' }
 scale_colour_bioinfo <- scale_color_bioinfo
 
 #' @rdname scale_color_bioinfo
 #' @export scale_fill_bioinfo
+#'
+#' @return A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+#'
+#' @examples
+#' \dontrun{
+#' df_bioinfo <- data.frame(
+#'   x = rep(1:3, times = 3),
+#'   y = stats::rnorm(9),
+#'   group = rep(c("A", "B", "C"), each = 3)
+#' )
+#' ggplot2::ggplot(df_bioinfo, ggplot2::aes(x = x, y = y, fill = group)) +
+#'   ggplot2::geom_col() +
+#'   scale_fill_bioinfo()
+#' }
 scale_fill_bioinfo <- function(alpha = 1, ...) {
   bioinfo_check_alpha(alpha)
   bioinfo_discrete_scale("fill", alpha, ...)
@@ -240,10 +296,31 @@ scale_color_bioinfo_seq <- function(name = "blue", alpha = 1, reverse = FALSE, .
 
 #' @rdname scale_color_bioinfo_seq
 #' @export scale_colour_bioinfo_seq
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_seq <- data.frame(x = 1:20, y = stats::rnorm(20))
+#' ggplot2::ggplot(df_seq, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_bioinfo_seq("teal")
+#' }
 scale_colour_bioinfo_seq <- scale_color_bioinfo_seq
 
 #' @rdname scale_color_bioinfo_seq
 #' @export scale_fill_bioinfo_seq
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_seq <- expand.grid(x = 1:5, y = 1:5)
+#' df_seq$z <- stats::rnorm(25)
+#' ggplot2::ggplot(df_seq, ggplot2::aes(x, y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_bioinfo_seq("blue")
+#' }
 scale_fill_bioinfo_seq <- function(name = "blue", alpha = 1, reverse = FALSE, ...) {
   bioinfo_check_alpha(alpha)
   cols <- bioinfo_style_cols(
@@ -301,10 +378,31 @@ scale_color_bioinfo_div <- function(palette = c("soft", "strong"), alpha = 1,
 
 #' @rdname scale_color_bioinfo_div
 #' @export scale_colour_bioinfo_div
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_div <- data.frame(x = 1:20, y = stats::rnorm(20))
+#' ggplot2::ggplot(df_div, ggplot2::aes(x = x, y = y, colour = y)) +
+#'   ggplot2::geom_point(size = 3) +
+#'   scale_colour_bioinfo_div()
+#' }
 scale_colour_bioinfo_div <- scale_color_bioinfo_div
 
 #' @rdname scale_color_bioinfo_div
 #' @export scale_fill_bioinfo_div
+#'
+#' @return A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+#'
+#' @examples
+#' \dontrun{
+#' df_div <- expand.grid(x = 1:5, y = 1:5)
+#' df_div$z <- stats::rnorm(25)
+#' ggplot2::ggplot(df_div, ggplot2::aes(x, y, fill = z)) +
+#'   ggplot2::geom_tile() +
+#'   scale_fill_bioinfo_div()
+#' }
 scale_fill_bioinfo_div <- function(palette = c("soft", "strong"), alpha = 1,
                                    reverse = FALSE, ...) {
   palette <- match.arg(palette)
