@@ -162,7 +162,7 @@ mat <- matrix(rnorm(60), nrow = 6,
 
 # Basic usage
 if (interactive()) {
-  bioRtools::gg_heatmap(mat)
+  gg_heatmap(mat)
 }
 }
 \author{

@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.94.2] - 2026-08-27
+
+### Changed
+- Progress/summary output switched from `cat()` to `message()` across 16
+  analysis functions (fasta2df, find_degs_deseq2/edger, helpers_wgcna,
+  lm_analysis, manhattan_plot, opls_analysis, pav_gwas, pca_analysis,
+  run_wgcna, tsne_analysis, ...), per §6.4 — `suppressMessages()` now
+  captures them. `cat()` retained only in `print.*()`/`summary.*()` methods.
+- Completed `@return`/`@examples` coverage for remaining exported functions
+  (academic_color_scales, bioinfo_color_scales, wong_palette, get_lm_stats,
+  identify_core_microbiome, run_wgcna, scale_fill_heatmap, label_signif,
+  find_admixture_k, calc_func_fr, admixture_phylo_analysis, ...). New
+  examples are self-contained, explicitly namespaced and wrapped in
+  `\dontrun{}`.
+- Roxygen self-references cleaned: `bioRtools::`/`bioRtools:::` calls in
+  examples replaced with direct calls (theme_bio, theme_nature, save_pub,
+  save_fig, theme_prism, wong_palette, gg_heatmap, plot_pav_phenotype,
+  plot_ld_decay) per §2.4/§4.2.
+- Added `@noRd` to 29 `@keywords internal` blocks that lacked it, removing
+  their generated man pages (reconcile_db_columns, theme_nature,
+  utils_ideogram, etc.).
+
+### Dependencies
+- DESCRIPTION Imports: added `grid`, `parallel`, `tools` (used by existing
+  code but previously undeclared).
+
+### Fixed
+- 16 legacy bare test scripts migrated to testthat 3e cases
+  (`tests/testthat/test-*.R`); the old `tests/test_*.R` scripts are removed.
+  Migrated: add_origin_lines, calc_assembly_process, calc_beta_nri,
+  calc_beta_nti_regression, calc_func_fr, calc_rc_bray, cor2gephi,
+  enrich_batch/columns/summary, find_hub_nodes, get_id_description, gmpr,
+  normalize_abund, opls_analysis, opls_diff_method.
+- `test-opls-diff-method.R`: fixed an unclosed parenthesis in the
+  `suppressWarnings()` call.
+
 ## [1.94.1] - 2026-08-26
 
 ### Changed

@@ -11,8 +11,24 @@
 
 \item{...}{Additional arguments (not used)}
 }
+\value{
+Called for its side effect of printing the module size summary and
+  the top 10 module-trait correlations. Invisibly returns the printed
+  correlation table.
+}
 \description{
 Summary method for WGCNA results
+}
+\examples{
+\dontrun{
+wgcna_res <- run_wgcna_analysis(
+  expression_data = "expression_data.txt",
+  sample_info = "sample_info.xlsx",
+  output_dir = "wgcna_results",
+  trait_columns = c("time", "treatment")
+)
+summary(wgcna_res)   # summary.wgcna_results
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -59,6 +59,42 @@ See `alpha` in [grDevices::rgb()] for details.}
 \value{
 A function that takes an integer argument and returns a vector of colors.
   Compatible with \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
+
+A function that takes an integer argument \code{n} and returns a
+  character vector of \code{n} hexadecimal color codes. Compatible with
+  \code{ggplot2} color/fill scales.
 }
 \description{
 Color palettes inspired by plots in academic journals.
@@ -69,6 +105,36 @@ that work well for both print and digital formats.
 library("scales")
 show_col(pal_sci("default")(10))
 show_col(pal_sci("default", alpha = 0.6)(10))
+\dontrun{
+head(pal_nature("default")(9))
+head(pal_nature("materials")(4))
+}
+\dontrun{
+head(pal_science("default")(9))
+}
+\dontrun{
+head(pal_cell("default")(9))
+}
+\dontrun{
+head(pal_jacs("default")(9))
+}
+\dontrun{
+head(pal_fuel("default")(9))
+}
+\dontrun{
+head(pal_chem_eng("default")(9))
+}
+\dontrun{
+head(pal_nat_comm("default")(9))
+}
+\dontrun{
+head(pal_shinkai("default")(9))
+head(pal_shinkai("blue_tones")(6))
+}
+\dontrun{
+head(pal_research("default")(9))
+head(pal_research("coral_teal")(4))
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -18,3 +18,9 @@ Invisibly returns \code{x}.
 \description{
 Print ADMIXTURE Phylogenetic Analysis Results
 }
+\examples{
+\dontrun{
+res <- admixture_phylo_analysis("path/to/admixture/results/")
+res   # auto-prints via print.admixture_phylo_results
+}
+}

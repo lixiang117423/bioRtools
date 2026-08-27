@@ -30,6 +30,9 @@ Default is \code{c("***" = 0.001, "**" = 0.01, "*" = 0.05)}.}
 \value{
 A character vector of the same length as \code{p_values} containing
   significance labels. NA values in input are preserved as NA in output.
+
+A character vector of the same length as \code{p_values} containing
+  significance labels. NA values in input are preserved as NA in output.
 }
 \description{
 Convert numeric p-values to significance labels using standard statistical
@@ -80,6 +83,10 @@ data.frame(
 ) \%>\%
   mutate(significance = label_signif(p_value))
 
+\dontrun{
+p_vals <- c(0.0001, 0.03, 0.5)
+label_significance(p_vals)
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -11,8 +11,24 @@
 
 \item{...}{Additional arguments (not used)}
 }
+\value{
+Called for its side effect of printing an overview of the analysis
+  parameters and the available result components. Returns \code{NULL}
+  invisibly.
+}
 \description{
 Print method for WGCNA results
+}
+\examples{
+\dontrun{
+wgcna_res <- run_wgcna_analysis(
+  expression_data = "expression_data.txt",
+  sample_info = "sample_info.xlsx",
+  output_dir = "wgcna_results",
+  trait_columns = c("time", "treatment")
+)
+wgcna_res   # auto-prints via print.wgcna_results
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

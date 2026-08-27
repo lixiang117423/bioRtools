@@ -48,6 +48,10 @@ or any other color (e.g., \code{"yellow"} for RdYlBu style).}
 }
 \value{
 A ggplot scale object.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
 }
 \description{
 Discrete-tile heatmap fill scale using a blue-red diverging palette
@@ -90,6 +94,23 @@ ggplot(df, aes(x, y, fill = z)) +
   scale_fill_heatmap(values = scales::rescale(c(min(df$z), 0, max(df$z))))
 }
 
+\dontrun{
+df_heatmap <- expand.grid(x = 1:5, y = 1:5)
+df_heatmap$z <- stats::rnorm(25)
+
+# The colour aliases map the fill aesthetic, like scale_fill_heatmap()
+ggplot2::ggplot(df_heatmap, ggplot2::aes(x, y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_color_heatmap()
+}
+\dontrun{
+df_heatmap <- expand.grid(x = 1:5, y = 1:5)
+df_heatmap$z <- stats::rnorm(25)
+
+ggplot2::ggplot(df_heatmap, ggplot2::aes(x, y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_colour_heatmap()
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

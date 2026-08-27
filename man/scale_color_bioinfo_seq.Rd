@@ -24,6 +24,10 @@ scale_fill_bioinfo_seq(name = "blue", alpha = 1, reverse = FALSE, ...)
 }
 \value{
 A ggplot2 continuous scale object.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
 }
 \description{
 Continuous gradient in one of the ten bioinfo hue families
@@ -36,6 +40,19 @@ library(ggplot2)
 
 ggplot(faithfuld, aes(waiting, eruptions, fill = density)) +
   geom_tile() +
+  scale_fill_bioinfo_seq("blue")
+}
+\dontrun{
+df_seq <- data.frame(x = 1:20, y = stats::rnorm(20))
+ggplot2::ggplot(df_seq, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_bioinfo_seq("teal")
+}
+\dontrun{
+df_seq <- expand.grid(x = 1:5, y = 1:5)
+df_seq$z <- stats::rnorm(25)
+ggplot2::ggplot(df_seq, ggplot2::aes(x, y, fill = z)) +
+  ggplot2::geom_tile() +
   scale_fill_bioinfo_seq("blue")
 }
 }

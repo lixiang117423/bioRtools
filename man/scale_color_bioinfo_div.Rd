@@ -39,6 +39,10 @@ scale_fill_bioinfo_div(
 }
 \value{
 A ggplot2 continuous scale object.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
 }
 \description{
 Continuous gradient through a near-white midpoint ([get_div_colors()]),
@@ -62,6 +66,19 @@ ggplot(df, aes(x, y, fill = z)) +
 ggplot(df, aes(x, y, fill = z)) +
   geom_tile() +
   scale_fill_bioinfo_div(values = scales::rescale(c(min(df$z), 0, max(df$z))))
+}
+\dontrun{
+df_div <- data.frame(x = 1:20, y = stats::rnorm(20))
+ggplot2::ggplot(df_div, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_bioinfo_div()
+}
+\dontrun{
+df_div <- expand.grid(x = 1:5, y = 1:5)
+df_div$z <- stats::rnorm(25)
+ggplot2::ggplot(df_div, ggplot2::aes(x, y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_bioinfo_div()
 }
 }
 \author{

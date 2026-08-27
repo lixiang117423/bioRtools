@@ -27,6 +27,14 @@ produce colours outside the colourblind-safe set). `n <= 0` returns
 \value{
 `wong_palette()` returns a character vector of hex colours. The
   `scale_*_wong()` functions return a ggplot2 discrete scale object.
+
+A character vector of hexadecimal color codes.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
 }
 \description{
 Qualitative 8-colour palette from Wong, B. (2011) *Points of
@@ -46,8 +54,42 @@ wong_palette(3)
 
 ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  bioRtools::scale_fill_wong() +
-  bioRtools::theme_prism()
+  scale_fill_wong() +
+  theme_prism()
+\dontrun{
+head(wong_palette(3))
+wong_palette(12)  # recycled beyond the 8 base colours
+}
+\dontrun{
+df_wong <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("A", "B", "C"), each = 3)
+)
+ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_wong()
+}
+\dontrun{
+df_wong <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("A", "B", "C"), each = 3)
+)
+ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_wong()
+}
+\dontrun{
+df_wong <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("A", "B", "C"), each = 3)
+)
+ggplot2::ggplot(df_wong, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_wong()
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

@@ -18,3 +18,13 @@ Invisibly returns \code{x}.
 \description{
 Print ADMIXTURE K Selection Results
 }
+\examples{
+\dontrun{
+cv_df <- data.frame(
+  K = 2:6,
+  CV_error = c(0.52, 0.50, 0.49, 0.485, 0.482)
+)
+res <- find_admixture_k(cv_df)
+res   # auto-prints via print.admixture_k_results
+}
+}

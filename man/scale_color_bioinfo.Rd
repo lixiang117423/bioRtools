@@ -19,6 +19,10 @@ scale_fill_bioinfo(alpha = 1, ...)
 }
 \value{
 A ggplot2 discrete scale object.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
 }
 \description{
 Maps discrete groups onto the bioinfo categorical palette via
@@ -32,6 +36,26 @@ library(ggplot2)
 ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
   geom_point(size = 2) +
   scale_color_bioinfo()
+}
+\dontrun{
+df_bioinfo <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("A", "B", "C"), each = 3)
+)
+ggplot2::ggplot(df_bioinfo, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_bioinfo()
+}
+\dontrun{
+df_bioinfo <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("A", "B", "C"), each = 3)
+)
+ggplot2::ggplot(df_bioinfo, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_bioinfo()
 }
 }
 \author{

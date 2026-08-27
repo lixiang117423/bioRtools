@@ -24,6 +24,10 @@ Default is 3. Use NULL for no rounding.}
 A data frame (tibble) with one row and two columns:
   \item{r_squared}{Adjusted (or multiple) R-squared value, optionally rounded}
   \item{p_value}{Overall model p-value from F-test}
+
+A data frame (tibble) with one row and two columns:
+  \item{r_squared}{Adjusted (or multiple) R-squared value, optionally rounded}
+  \item{p_value}{Overall model p-value from F-test}
 }
 \description{
 Extract adjusted R-squared and overall model p-value from a fitted linear
@@ -89,6 +93,10 @@ models <- list(
 
 map_dfr(models, get_lm_stats, .id = "model")
 
+\dontrun{
+model_fit <- stats::lm(mpg ~ wt, data = mtcars)
+extract_lm_stats(model_fit)
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

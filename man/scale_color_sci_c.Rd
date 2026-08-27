@@ -168,6 +168,67 @@ scale_fill_research_c(
 \item{...}{Additional parameters for [ggplot2::scale_color_gradientn()] or
 [ggplot2::scale_fill_gradientn()].}
 }
+\value{
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+
+A ggplot2 Scale object (continuous) for gradient color/fill mappings.
+}
 \description{
 Continuous color scales inspired by academic journals, designed for
 heatmaps, continuous data visualization, and gradient mapping.
@@ -196,6 +257,277 @@ ggplot(data, aes(x = x, y = y, fill = z)) +
   geom_tile() +
   scale_fill_science_c() +
   theme_minimal()
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_sci_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_sci_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_nature_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_nature_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_nature_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_cell_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_cell_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_cell_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_jacs_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_jacs_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_jacs_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_science_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_science_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_science_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_fuel_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_fuel_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_fuel_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_chem_eng_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_chem_eng_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_chem_eng_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_nat_comm_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_nat_comm_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_nat_comm_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_shinkai_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_shinkai_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_shinkai_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_research_c()
+}
+\dontrun{
+df <- data.frame(
+  x = 1:20,
+  y = stats::rnorm(20)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = y)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_research_c()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:10, times = 10),
+  y = rep(1:10, each = 10),
+  z = stats::rnorm(100)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = z)) +
+  ggplot2::geom_tile() +
+  scale_fill_research_c()
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

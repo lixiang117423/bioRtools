@@ -19,6 +19,22 @@ Geometric mean of per-function FR across functions, for each sample (zeros
 floored at `floor_val` before logging). Ported from microeco's
 `trans_func$cal_func_FR_comm`.
 }
+\examples{
+\dontrun{
+asv_func <- matrix(
+  c(1, 1, 0, 0, 1, 0),
+  nrow = 3,
+  dimnames = list(paste0("ASV", 1:3), c("carbon", "nitrogen"))
+)
+abundance <- matrix(
+  c(10, 5, 2, 8, 4, 1),
+  nrow = 3,
+  dimnames = list(paste0("ASV", 1:3), c("S1", "S2"))
+)
+func_fr <- calc_func_fr(asv_func, abundance)
+calc_func_fr_comm(func_fr)
+}
+}
 \author{
 Xiang LI <lixiang117423@gmail.com>
 }

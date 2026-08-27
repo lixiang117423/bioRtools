@@ -69,17 +69,17 @@ library(ggplot2)
 
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  bioRtools::theme_prism()
+  theme_prism()
 
 # theme_gray()-style grey panel with white grid lines
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  bioRtools::theme_prism(gray_background = TRUE)
+  theme_prism(gray_background = TRUE)
 
 # original bold Prism look (plain text + thinner lines is the default)
 ggplot(iris, aes(x = Species, y = Sepal.Length, fill = Species)) +
   geom_boxplot() +
-  bioRtools::theme_prism(light = FALSE)
+  theme_prism(light = FALSE)
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

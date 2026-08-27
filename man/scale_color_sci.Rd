@@ -141,6 +141,67 @@ See `alpha` in [grDevices::rgb()] for details.}
 
 \item{...}{Additional parameters for [ggplot2::discrete_scale()].}
 }
+\value{
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+
+A ggplot2 Scale object (discrete) that can be added to a ggplot with \code{+}.
+}
 \description{
 See [pal_sci()] and related palette functions for details.
 }
@@ -157,6 +218,296 @@ ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
 ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
   geom_point(size = 2) +
   scale_color_sci(alpha = 0.7)
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_sci()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_sci()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_nature()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_nature()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_nature()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_science()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_science()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_science()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_cell()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_cell()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_cell()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_jacs()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_jacs()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_jacs()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_fuel()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_fuel()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_fuel()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_chem_eng()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_chem_eng()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_chem_eng()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_nat_comm()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_nat_comm()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_nat_comm()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_shinkai()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_shinkai()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_shinkai()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_color_research()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, colour = group)) +
+  ggplot2::geom_point(size = 3) +
+  scale_colour_research()
+}
+\dontrun{
+df <- data.frame(
+  x = rep(1:3, times = 3),
+  y = stats::rnorm(9),
+  group = rep(c("setosa", "versicolor", "virginica"), each = 3)
+)
+ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, fill = group)) +
+  ggplot2::geom_col() +
+  scale_fill_research()
+}
 }
 \author{
 Xiang LI <lixiang117423@gmail.com>

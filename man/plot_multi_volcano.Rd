@@ -2,7 +2,6 @@
 % Please edit documentation in R/plot_multi_volcano.R
 \name{plot_multi_volcano}
 \alias{plot_multi_volcano}
-\alias{detect_volcano_cols}
 \title{Multi-Group Volcano Plot (Manhattan Style)}
 \usage{
 plot_multi_volcano(
@@ -23,8 +22,6 @@ plot_multi_volcano(
   y_breaks = NULL,
   legend_position = c(0.08, 0.9)
 )
-
-detect_volcano_cols(data, group_col, feature_col, log2fc_col, padj_col)
 }
 \arguments{
 \item{data}{A data frame. Two formats are auto-detected:
@@ -99,4 +96,3 @@ plot_multi_volcano(res)
 \author{
 Xiang LI <lixiang117423@gmail.com>
 }
-\keyword{internal}

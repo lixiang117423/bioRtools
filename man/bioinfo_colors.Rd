@@ -32,6 +32,14 @@ hue names used by the categorical palette.}
 An unnamed character vector of hex colours. The diverging ramps
   have a near-white midpoint, suited to z-scores, log2 fold changes, and
   correlation matrices; the multi-hue ramp is for intensity-only heatmaps.
+
+A character vector of hexadecimal color codes.
+
+A character vector of hexadecimal color codes.
+
+A character vector of hexadecimal color codes.
+
+A character vector of hexadecimal color codes.
 }
 \description{
 Colour schemes distilled from Nature / Science / Nature Communications
@@ -53,6 +61,18 @@ pheatmap::pheatmap(mat, color = get_div_colors(100),
 
 # Single-hue ramp matching a group's categorical colour
 pheatmap::pheatmap(mat, color = get_seq_colors("teal", 100))
+}
+\dontrun{
+head(get_cat_colors(3))
+}
+\dontrun{
+head(get_seq_colors("teal", 5))
+}
+\dontrun{
+head(get_div_colors(5))
+}
+\dontrun{
+head(get_multiseq_colors(4))
 }
 }
 \author{

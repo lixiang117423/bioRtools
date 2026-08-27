@@ -61,7 +61,7 @@ Thin wrapper around [ggplot2::ggsave()] with publication-sensible
 \dontrun{
 library(ggplot2)
 p <- ggplot(iris, aes(Sepal.Length, Sepal.Width, colour = Species)) +
-  geom_point() + bioRtools::theme_prism()
+  geom_point() + theme_prism()
 
 # single vector PDF (fonts embedded, not outlined)
 save_fig(p, "fig1.pdf")
