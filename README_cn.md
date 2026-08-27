@@ -1,7 +1,7 @@
 # bioRtools
 
 [![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.94.1-green)](https://github.com/lixiang117423/bioRtools)
+[![Version](https://img.shields.io/badge/version-1.94.3-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
 `bioRtools` 是一个面向生物数据分析、统计和发表级可视化的 R 工具包。它整合了转录组、微生物组、代谢组、群体遗传、基因结构可视化、qPCR 分析以及常用绘图主题等工作流中的便利函数。
