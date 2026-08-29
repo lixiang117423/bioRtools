@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.95.0] - 2026-08-27
+
+### Added
+- `cor2ggnetview()`: convert a `cor_analysis()` edge-list data frame into a
+  `tidygraph::tbl_graph` compatible with `ggNetView::ggNetView()`. Reciprocal
+  edges (A-B and B-A) from within-dataset correlations are de-duplicated;
+  nodes carry degree, strength and modularity (community) membership; edges
+  carry the signed correlation, an absolute or signed `weight` column, a
+  direction label, and the p-value when present. Community detection via
+  Louvain / fast-greedy, top-15 modules collapsed into "Others".
+
+## [1.95.0] - 2026-08-27
+
+### Added
+- `cor2ggnetview()`: convert a `cor_analysis()` edge-list data frame into a
+  `tidygraph::tbl_graph` compatible with `ggNetView::ggNetView()`. Reciprocal
+  edges (A-B and B-A) from within-dataset correlations are de-duplicated;
+  nodes carry degree, strength and modularity (community) membership; edges
+  carry the signed correlation, an absolute or signed `weight` column, a
+  direction label, and the p-value when present. Community detection via
+  Louvain / fast-greedy, top-15 modules collapsed into "Others".
+
 ## [1.94.3] - 2026-08-27
 
 ### Changed
