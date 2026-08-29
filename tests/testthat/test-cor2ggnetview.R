@@ -27,6 +27,18 @@ test_that("returns a tbl_graph with ggNetView node/edge schema", {
                     "pvalue") %in% names(edges)))
 })
 
+test_that("nodes carry capitalized Degree/Strength/Modularity for ggNetView layouts", {
+  # ggNetView(layout = "gephi") internally calls arrange(modularity3, desc(Degree))
+  # and maps size = Degree, group.by = "Modularity" — lowercase-only columns
+  # make ggNetView fail with "object 'Degree' not found".
+  tg <- cor2ggnetview(make_cor_input())
+  nodes <- as.data.frame(igraph::as_data_frame(tg, what = "vertices"))
+
+  expect_true(all(c("Modularity", "Degree", "Strength") %in% names(nodes)))
+  expect_equal(nodes$Degree, nodes$degree)
+  expect_equal(nodes$Strength, nodes$strength)
+})
+
 test_that("dedup removes reciprocal edges", {
   tg <- cor2ggnetview(make_cor_input())
   edges <- as.data.frame(igraph::as_data_frame(tg, what = "edges"))

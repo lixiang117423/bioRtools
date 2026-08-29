@@ -19,8 +19,9 @@
 #'
 #' @return A \code{tidygraph::tbl_graph} object with node attributes
 #'   (name, degree, strength, modularity_factor, modularity, modularity2,
-#'   modularity3) and edge attributes (from, to, correlation, weight,
-#'   corr_direction, pvalue when present in the input).
+#'   modularity3, and the capitalized Modularity/Degree/Strength aliases
+#'   required by \code{ggNetView}) and edge attributes (from, to, correlation,
+#'   weight, corr_direction, pvalue when present in the input).
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{cor_analysis}}, \code{\link{cor2gephi}},
@@ -77,6 +78,13 @@ cor2ggnetview <- function(cor_result,
   nodes$modularity <- membership
   nodes$modularity2 <- nodes$modularity_factor
   nodes$modularity3 <- as.character(nodes$modularity_factor)
+
+  # ggNetView 0.1.0 的 layout = "gephi" 路径 arrange(modularity3, desc(Degree))、
+  # 绘图用 size = Degree / group.by = "Modularity"，要求大写列（与其
+  # build_graph_from_* 构建器输出一致），小写列会触发 "object 'Degree' not found"。
+  nodes$Modularity <- nodes$modularity2
+  nodes$Degree <- nodes$degree
+  nodes$Strength <- nodes$strength
 
   # --- Edge attributes ----------------------------------------------------
   edges_raw <- igraph::as_data_frame(g, what = "edges")

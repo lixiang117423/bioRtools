@@ -5,16 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.95.0] - 2026-08-27
+## [1.95.1] - 2026-08-29
 
-### Added
-- `cor2ggnetview()`: convert a `cor_analysis()` edge-list data frame into a
-  `tidygraph::tbl_graph` compatible with `ggNetView::ggNetView()`. Reciprocal
-  edges (A-B and B-A) from within-dataset correlations are de-duplicated;
-  nodes carry degree, strength and modularity (community) membership; edges
-  carry the signed correlation, an absolute or signed `weight` column, a
-  direction label, and the p-value when present. Community detection via
-  Louvain / fast-greedy, top-15 modules collapsed into "Others".
+### Fixed
+- `cor2ggnetview()` / `net2ggnetview()`: nodes now carry capitalized
+  `Modularity` / `Degree` / `Strength` columns (aliases of the lowercase
+  ones). ggNetView 0.1.0's `layout = "gephi"` path calls
+  `arrange(modularity3, desc(Degree))` and maps `size = Degree`,
+  `group.by = "Modularity"`, so lowercase-only columns failed with
+  "object 'Degree' not found".
 
 ## [1.95.0] - 2026-08-27
 

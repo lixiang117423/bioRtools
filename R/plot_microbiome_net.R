@@ -7,8 +7,9 @@
 #' @param group Character string specifying which group to convert.
 #'
 #' @return A \code{tidygraph::tbl_graph} object with node attributes
-#'   (name, modularity, degree, strength) and edge attributes
-#'   (correlation, weight, corr_direction).
+#'   (name, modularity, degree, strength, and the capitalized
+#'   Modularity/Degree/Strength aliases required by \code{ggNetView}) and
+#'   edge attributes (correlation, weight, corr_direction).
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
 #' @seealso \code{\link{microbiome_net}}
@@ -51,6 +52,13 @@ net2ggnetview <- function(net_result, group) {
   nodes$modularity <- membership
   nodes$modularity2 <- nodes$modularity_factor
   nodes$modularity3 <- as.character(nodes$modularity_factor)
+
+  # ggNetView 0.1.0 的 layout = "gephi" 路径 arrange(modularity3, desc(Degree))、
+  # 绘图用 size = Degree / group.by = "Modularity"，要求大写列（与其
+  # build_graph_from_* 构建器输出一致），小写列会触发 "object 'Degree' not found"。
+  nodes$Modularity <- nodes$modularity2
+  nodes$Degree <- nodes$degree
+  nodes$Strength <- nodes$strength
 
   # Edge attributes from igraph directly (weight + sign)
   edges_raw <- igraph::as_data_frame(g, what = "edges")

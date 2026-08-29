@@ -26,8 +26,9 @@ Modules beyond the top 15 by size are collapsed into \code{"Others"}.}
 \value{
 A \code{tidygraph::tbl_graph} object with node attributes
   (name, degree, strength, modularity_factor, modularity, modularity2,
-  modularity3) and edge attributes (from, to, correlation, weight,
-  corr_direction, pvalue when present in the input).
+  modularity3, and the capitalized Modularity/Degree/Strength aliases
+  required by \code{ggNetView}) and edge attributes (from, to, correlation,
+  weight, corr_direction, pvalue when present in the input).
 }
 \description{
 Converts the edge-list data frame returned by \code{\link{cor_analysis}} into

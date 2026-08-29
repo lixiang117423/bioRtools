@@ -13,8 +13,9 @@ net2ggnetview(net_result, group)
 }
 \value{
 A \code{tidygraph::tbl_graph} object with node attributes
-  (name, modularity, degree, strength) and edge attributes
-  (correlation, weight, corr_direction).
+  (name, modularity, degree, strength, and the capitalized
+  Modularity/Degree/Strength aliases required by \code{ggNetView}) and
+  edge attributes (correlation, weight, corr_direction).
 }
 \description{
 Converts the output of \code{\link{microbiome_net}} for a specified group
