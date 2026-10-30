@@ -62,10 +62,10 @@ coefficients, p-values, and allows filtering based on correlation strength and
 statistical significance thresholds.
 }
 \details{
-The function uses WGCNA::corAndPvalue() for efficient correlation calculation
-with significance testing. When data_2 is NULL, it performs within-dataset
-correlations and excludes self-correlations (from != to). When data_2 is
-provided, it performs between-dataset correlations.
+The function uses WGCNA::corAndPvalue() when available and falls back to
+base R correlation tests otherwise. When data_2 is NULL, it performs
+within-dataset correlations and excludes self-correlations (from != to).
+When data_2 is provided, it performs between-dataset correlations.
 
 The results are filtered to include only correlations that meet both the
 correlation strength threshold (|cor| >= cor) and significance threshold

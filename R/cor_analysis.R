@@ -41,10 +41,10 @@
 #'   }
 #'
 #' @details
-#' The function uses WGCNA::corAndPvalue() for efficient correlation calculation
-#' with significance testing. When data_2 is NULL, it performs within-dataset
-#' correlations and excludes self-correlations (from != to). When data_2 is
-#' provided, it performs between-dataset correlations.
+#' The function uses WGCNA::corAndPvalue() when available and falls back to
+#' base R correlation tests otherwise. When data_2 is NULL, it performs
+#' within-dataset correlations and excludes self-correlations (from != to).
+#' When data_2 is provided, it performs between-dataset correlations.
 #'
 #' The results are filtered to include only correlations that meet both the
 #' correlation strength threshold (|cor| >= cor) and significance threshold
@@ -178,7 +178,11 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
   # Calculate correlations based on whether data_2 is provided
   if (is.null(data_2)) {
     # Within-dataset correlation
-    cor_result <- WGCNA::corAndPvalue(x = data_1, method = method)
+    cor_result <- if (requireNamespace("WGCNA", quietly = TRUE)) {
+      WGCNA::corAndPvalue(x = data_1, method = method)
+    } else {
+      base_cor_and_pvalue(data_1, method = method)
+    }
 
     # Convert correlation matrix to long format
     df_cor <- cor_result$cor %>%
@@ -215,7 +219,11 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
       stop("'data_1' and 'data_2' must have the same number of rows for between-dataset correlation")
     }
 
-    cor_result <- WGCNA::corAndPvalue(x = data_1, y = data_2, method = method)
+    cor_result <- if (requireNamespace("WGCNA", quietly = TRUE)) {
+      WGCNA::corAndPvalue(x = data_1, y = data_2, method = method)
+    } else {
+      base_cor_and_pvalue(data_1, data_2, method = method)
+    }
 
     # Convert correlation matrix to long format
     df_cor <- cor_result$cor %>%
@@ -318,4 +326,68 @@ cor_analysis <- function(data_1, data_2 = NULL, method = "pearson", cor = 0.6, p
   }
 
   result_cor
+}
+
+# Base-R fallback used when WGCNA is not installed. It evaluates each pair on
+# its complete observations and uses the same Student-t p-value approximation
+# as WGCNA::corPvalueStudent().
+base_cor_and_pvalue <- function(x, y = NULL, method = "pearson") {
+  if (is.null(y)) {
+    x <- as.data.frame(x)
+    feature_x <- names(x)
+    cor_mat <- stats::cor(x, method = method, use = "pairwise.complete.obs")
+    pair_n <- matrix(
+      0L,
+      nrow = ncol(x),
+      ncol = ncol(x),
+      dimnames = list(feature_x, feature_x)
+    )
+
+    for (i in seq_along(feature_x)) {
+      for (j in seq_along(feature_x)) {
+        pair_n[i, j] <- sum(stats::complete.cases(x[[i]], x[[j]]))
+      }
+    }
+  } else {
+    x <- as.data.frame(x)
+    y <- as.data.frame(y)
+    feature_x <- names(x)
+    feature_y <- names(y)
+    cor_mat <- stats::cor(
+      x,
+      y,
+      method = method,
+      use = "pairwise.complete.obs"
+    )
+    pair_n <- matrix(
+      0L,
+      nrow = ncol(x),
+      ncol = ncol(y),
+      dimnames = list(feature_x, feature_y)
+    )
+
+    for (i in seq_along(feature_x)) {
+      for (j in seq_along(feature_y)) {
+        pair_n[i, j] <- sum(stats::complete.cases(x[[i]], y[[j]]))
+      }
+    }
+  }
+
+  cor_mat <- as.matrix(cor_mat)
+  p_mat <- matrix(
+    NA_real_,
+    nrow = nrow(cor_mat),
+    ncol = ncol(cor_mat),
+    dimnames = dimnames(cor_mat)
+  )
+  valid <- !is.na(cor_mat) & pair_n >= 3L
+  t_stat <- cor_mat[valid] * sqrt(
+    (pair_n[valid] - 2) / (1 - cor_mat[valid]^2)
+  )
+  p_mat[valid] <- 2 * stats::pt(
+    -abs(t_stat),
+    df = pair_n[valid] - 2
+  )
+
+  list(cor = cor_mat, p = p_mat)
 }
