@@ -74,7 +74,28 @@ save_fig <- function(plot = ggplot2::last_plot(),
 
   # Vector formats use Cairo where available; base R devices keep the function
   # usable on headless systems without a Cairo DLL.
-  cairo_available <- isTRUE(capabilities("cairo"))
+  cairo_available <- local({
+    if (!isTRUE(capabilities("cairo"))) {
+      return(FALSE)
+    }
+    probe <- tempfile(fileext = ".pdf")
+    before <- grDevices::dev.cur()
+    opened <- FALSE
+    ok <- tryCatch(
+      {
+        suppressWarnings(grDevices::cairo_pdf(probe))
+        opened <- grDevices::dev.cur() != before
+        TRUE
+      },
+      error = function(e) FALSE
+    )
+    if (opened && grDevices::dev.cur() != before) {
+      grDevices::dev.off()
+    }
+    file_ok <- file.exists(probe) && file.info(probe)$size > 0
+    unlink(probe)
+    isTRUE(ok && file_ok)
+  })
   devices <- list(
     pdf   = if (cairo_available) grDevices::cairo_pdf else grDevices::pdf,
     png   = ragg::agg_png,
