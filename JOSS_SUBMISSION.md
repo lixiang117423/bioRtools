@@ -26,8 +26,8 @@ Official guidance checked on 30 October 2026:
 - Developer adoption: 944 R, R Markdown, and Quarto files across 22 active
   research projects call exported `bioRtools` functions.
 - Documentation: README, roxygen reference, pkgdown site, and workflow vignettes.
-- Test gate: 0 errors, 0 failures, 0 warnings; 6 tests skip because the optional
-  `gggenes` package is unavailable.
+- Test gate: 0 errors, 0 failures, 0 warnings; optional-engine tests skip when
+  their Suggests namespaces are unavailable.
 - Package check: `R CMD check --no-manual` completed with `Status: OK`; missing
   optional Suggests produced INFO entries only.
 - JOSS paper: the official `openjournals/inara` container compiled a 4-page

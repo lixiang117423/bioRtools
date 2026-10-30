@@ -39,6 +39,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   longer requires the column to be literally named `sample`.
 - Synteny examples and tests now skip cleanly when optional dependencies are
   unavailable.
+- Beta-NTI regression tests now compare numeric outputs with an explicit
+  tolerance, avoiding false failures from platform-specific floating-point
+  differences while retaining structural equality checks.
 
 ### Dependencies
 - Moved non-core engines and optional visualizations from Imports to Suggests,
