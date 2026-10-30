@@ -83,6 +83,8 @@ test_that("rda_analysis: feature-row reproduces sample-row", {
 })
 
 test_that("tsne_analysis: feature-row reproduces sample-row", {
+  skip_if_namespace_unavailable("Rtsne")
+
   ref <- quiet(tsne_analysis(X, sample_meta, perplexity = 3, pca_dims = 10,
                              plot_type = "none"))
   auto <- quiet(tsne_analysis(Xf, sample_meta, perplexity = 3, pca_dims = 10,

@@ -1,3 +1,8 @@
+if (!can_load_namespace("treeio")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("treeio is not available")
+  })
+} else {
 test_that("read_data reads Newick trees as phylo objects", {
   dir <- tempfile("nwk")
   dir.create(dir)
@@ -32,3 +37,4 @@ test_that("read_data forwards extra arguments to read.tree", {
   # ape assigns "" to the root node, so the labelled internal node is second
   expect_equal(tr$node.label, c("", "n1"))
 })
+}

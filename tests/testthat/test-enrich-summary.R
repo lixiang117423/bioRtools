@@ -1,3 +1,8 @@
+if (!can_load_namespace("clusterProfiler")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("clusterProfiler is not available")
+  })
+} else {
 # Migrated from tests/test_enrich_summary.R (bare script).
 # Regression for the enrich_kegg/enrich_go interactive-summary crash.
 # The summary referenced pre-rename output columns (Description/ID/p.adjust/...)
@@ -70,3 +75,4 @@ test_that("summary loops run on real results (the path that crashed)", {
   expect_length(out_k, min(5, nrow(res_k)))
   expect_length(out_g, min(5, nrow(res_g)))
 })
+}

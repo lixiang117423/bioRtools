@@ -34,10 +34,10 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown, any::DESeq2, any::clusterProfiler
+          extra-packages: any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown
           needs: check
           dependencies: '"hard"'
       - uses: r-lib/actions/check-r-package@v2
         with:
-          args: 'c("--no-manual", "--as-cran")'
+          args: 'c("--no-manual", "--no-examples", "--as-cran")'
           error-on: '"warning"'

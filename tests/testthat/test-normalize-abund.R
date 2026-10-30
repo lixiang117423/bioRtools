@@ -32,6 +32,8 @@ test_that("hellinger — values in [0,1]", {
 })
 
 test_that("tmm + rle — positive size_factor attr", {
+  skip_if_namespace_unavailable("edgeR")
+
   for (mm in c("tmm", "rle")) {
     out <- normalize_abund(otu, method = mm)
     expect_true(all(dim(out) == dim(otu)))

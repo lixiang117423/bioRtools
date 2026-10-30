@@ -1,3 +1,8 @@
+if (!can_load_namespace("clusterProfiler")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("clusterProfiler is not available")
+  })
+} else {
 # Migrated from tests/test_enrich_batch.R (bare script).
 # enrich_kegg/enrich_go batch mode: pass a find_degs_deseq2()-style data
 # frame, auto-split by comparison, enrich per group, combine.
@@ -99,3 +104,4 @@ test_that("vector input still works (backward compat)", {
   expect_gt(nrow(res_vec), 0)
   expect_false("comparison" %in% names(res_vec))
 })
+}

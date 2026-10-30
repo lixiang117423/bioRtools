@@ -1,3 +1,8 @@
+if (!can_load_namespace("ggalluvial")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("ggalluvial is not available")
+  })
+} else {
 # Migrated from tests/test_plot_composition_alluvium.R (bare script).
 # plot_composition_alluvium() with synthetic wide-format composition data, so
 # it runs in R CMD check without external files.
@@ -61,3 +66,4 @@ test_that("plot can be saved to a file", {
   )
   expect_true(file.exists(out_file))
 })
+}

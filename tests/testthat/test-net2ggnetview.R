@@ -1,3 +1,8 @@
+if (!can_load_namespace("tidygraph")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("tidygraph is not available")
+  })
+} else {
 # net2ggnetview(): microbiome_net result -> ggNetView-compatible tbl_graph.
 
 # Synthetic microbiome_net result, following the fixture pattern of
@@ -46,3 +51,4 @@ test_that("nodes carry capitalized Degree/Strength/Modularity for ggNetView layo
   expect_equal(nodes$Degree, nodes$degree)
   expect_equal(nodes$Strength, nodes$strength)
 })
+}

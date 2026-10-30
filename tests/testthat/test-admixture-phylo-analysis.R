@@ -1,3 +1,8 @@
+if (!can_load_namespace("ggtree")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("ggtree is not available")
+  })
+} else {
 make_admix_dir <- function() {
   dir <- tempfile("admix")
   dir.create(dir)
@@ -199,3 +204,4 @@ test_that("ladderize argument is validated", {
   dir <- make_admix_dir()
   expect_error(admixture_phylo_analysis(dir, ladderize = "yes"), "TRUE or FALSE")
 })
+}

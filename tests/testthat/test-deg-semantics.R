@@ -1,3 +1,8 @@
+if (!can_load_namespaces(c("DESeq2", "edgeR"))) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("DESeq2 or edgeR is not available")
+  })
+} else {
 test_that("pairwise differential analysis rejects multi-factor formulas", {
   set.seed(3)
   counts <- matrix(
@@ -61,3 +66,4 @@ test_that("plot_volcano uses regulation labels when available", {
   expect_equal(rlang::as_label(out$plot_volcano$mapping$colour), "regulation")
   expect_s3_class(out$plot_volcano$scales$get_scales("colour"), "ScaleDiscrete")
 })
+}

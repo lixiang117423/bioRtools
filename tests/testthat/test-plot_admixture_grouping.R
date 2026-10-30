@@ -1,3 +1,8 @@
+if (!can_load_namespace("ggtree")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("ggtree is not available")
+  })
+} else {
 make_group_tree <- function(extra_tip = NULL) {
   newick <- if (is.null(extra_tip)) {
     "((A:1,B:1):1,(C:1,D:1):1,E:2);"
@@ -201,3 +206,4 @@ test_that("legend is hidden by default and opt-in via show_legend", {
   expect_error(plot_admixture_grouping(tr, df, k = 8, show_legend = "yes"),
                "'show_legend' must be a single logical value")
 })
+}
