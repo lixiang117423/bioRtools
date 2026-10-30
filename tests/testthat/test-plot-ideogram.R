@@ -13,6 +13,8 @@ test_that("karyotype-only returns a ggplot", {
 })
 
 test_that("overlaid heatmap + marker + heatmap/line/polygon all run", {
+  skip_if_namespace_unavailable("ggnewscale")
+
   expect_true(is_ggplot(plot_ideogram(df.ideo.karyotype, overlaid = df.ideo.gene_density)))
   expect_true(is_ggplot(plot_ideogram(df.ideo.karyotype, overlaid = df.ideo.gene_density,
                                       label = df.ideo.rna_marker, label_type = "marker")))

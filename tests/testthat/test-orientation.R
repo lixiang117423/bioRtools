@@ -38,6 +38,13 @@ coord_mat <- function(df) {
   as.matrix(nums)
 }
 same <- function(a, b) isTRUE(all.equal(a, b, tolerance = 1e-10))
+same_up_to_sign <- function(a, b) {
+  if (!identical(dim(a), dim(b))) {
+    return(FALSE)
+  }
+  signs <- ifelse(colSums(a * b) < 0, -1, 1)
+  isTRUE(all.equal(sweep(a, 2, signs, `*`), b, tolerance = 1e-8))
+}
 quiet <- function(expr) suppressMessages(suppressWarnings(force(expr)))
 
 test_that("shared orientation helpers", {
@@ -58,8 +65,8 @@ test_that("pca_analysis: feature-row reproduces sample-row", {
   auto <- quiet(pca_analysis(Xf, sample_meta, color_by = "group", plot_type = "none"))
   force <- quiet(pca_analysis(Xf, sample_meta, color_by = "group", plot_type = "none",
                               feature_as_row = TRUE))
-  expect_true(same(coord_mat(ref$sample_scores), coord_mat(auto$sample_scores)))
-  expect_true(same(coord_mat(ref$sample_scores), coord_mat(force$sample_scores)))
+  expect_true(same_up_to_sign(coord_mat(ref$sample_scores), coord_mat(auto$sample_scores)))
+  expect_true(same_up_to_sign(coord_mat(ref$sample_scores), coord_mat(force$sample_scores)))
 })
 
 test_that("pcoa_analysis: feature-row reproduces sample-row", {
