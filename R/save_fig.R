@@ -12,6 +12,9 @@
 #'   - `eps` via [grDevices::cairo_ps] (font-embedded PostScript).
 #'   - `svg` via the ggsave default device.
 #'
+#'   When Cairo is unavailable, `pdf` and `eps` fall back to the base R
+#'   devices so the function remains usable on headless systems.
+#'
 #'   Pass `formats = c("pdf", "png")` to emit both a vector (for editing) and a
 #'   raster (for preview) copy in one call.
 #'
@@ -69,14 +72,36 @@ save_fig <- function(plot = ggplot2::last_plot(),
 
   base <- sub("\\.[^.]*$", "", filename)
 
-  # Vector formats use font-embedding devices (text stays editable, not outlined);
-  # raster formats use ragg for high-quality anti-aliasing.
+  # Vector formats use Cairo where available; base R devices keep the function
+  # usable on headless systems without a Cairo DLL.
+  cairo_available <- local({
+    if (!isTRUE(capabilities("cairo"))) {
+      return(FALSE)
+    }
+    probe <- tempfile(fileext = ".pdf")
+    before <- grDevices::dev.cur()
+    opened <- FALSE
+    ok <- tryCatch(
+      {
+        suppressWarnings(grDevices::cairo_pdf(probe))
+        opened <- grDevices::dev.cur() != before
+        TRUE
+      },
+      error = function(e) FALSE
+    )
+    if (opened && grDevices::dev.cur() != before) {
+      grDevices::dev.off()
+    }
+    file_ok <- file.exists(probe) && file.info(probe)$size > 0
+    unlink(probe)
+    isTRUE(ok && file_ok)
+  })
   devices <- list(
-    pdf   = grDevices::cairo_pdf,
+    pdf   = if (cairo_available) grDevices::cairo_pdf else grDevices::pdf,
     png   = ragg::agg_png,
     tiff  = ragg::agg_tiff,
     jpeg  = ragg::agg_jpeg,
-    eps   = grDevices::cairo_ps
+    eps   = if (cairo_available) grDevices::cairo_ps else grDevices::postscript
   )
   default_device_fmts <- "svg"
 

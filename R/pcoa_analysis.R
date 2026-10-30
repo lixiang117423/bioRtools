@@ -72,17 +72,12 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
     dplyr::select(pcoa, relative_eig, percentage, label) -> eigenvalue_pcoa
 
   # Step 3: Extract coordinate data and merge with sample information
-  pcoa_res$vectors %>%
-    as.data.frame() %>%
-    dplyr::select(1:5) %>%
-    {
-      df <- .
-      pco_labels <- paste0("PCo", seq_len(ncol(df)), " (",
-        eigenvalue_pcoa$percentage[seq_len(ncol(df))], ")")
-      magrittr::set_names(df, pco_labels)
-    } %>%
-    tibble::rownames_to_column(var = "sample") %>%
-    dplyr::left_join(sample, by = "sample") -> point_data
+  pcoa_vectors <- as.data.frame(pcoa_res$vectors)
+  n_axes <- min(5L, ncol(pcoa_vectors))
+  pcoa_scores <- pcoa_vectors[, seq_len(n_axes), drop = FALSE]
+  names(pcoa_scores) <- paste0("PCo", seq_len(n_axes))
+  pcoa_scores <- tibble::rownames_to_column(pcoa_scores, var = "sample")
+  dplyr::left_join(pcoa_scores, sample, by = "sample") -> point_data
 
   # Step 4: Create axis labels with explained variance
   x_label <- eigenvalue_pcoa %>%
@@ -117,11 +112,34 @@ pcoa_analysis <- function(data, sample, method = "bray", x = "PCo1", y = "PCo2",
     ggsci::scale_color_d3() +
     ggplot2::theme_bw()
 
-  # Step 6: Return results as a list following project conventions
-  list(
+  # Step 6: Return results using the shared bioRtools result contract
+  results <- list(
     result_pcoa = pcoa_res,
     plot_pcoa = plot_pcoa,
     point_data = point_data,
     eigenvalue_pcoa = eigenvalue_pcoa
+  )
+
+  new_bioRtools_fit(
+    results,
+    model = pcoa_res,
+    tables = list(
+      scores = point_data,
+      eigenvalues = eigenvalue_pcoa
+    ),
+    plots = list(score_plot = plot_pcoa),
+    analysis_type = "PCoA",
+    engine = "vegan::vegdist + ape::pcoa",
+    engine_versions = c(
+      vegan = as.character(utils::packageVersion("vegan")),
+      ape = as.character(utils::packageVersion("ape"))
+    ),
+    data_info = list(
+      n_samples = nrow(point_data),
+      n_features = ncol(as.matrix(data)),
+      feature_as_row = feature_as_row,
+      distance = method
+    ),
+    call = match.call()
   )
 }

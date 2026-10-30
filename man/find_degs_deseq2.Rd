@@ -73,7 +73,9 @@ If TRUE, problematic genes are removed with a warning. If FALSE, the function
 will stop with an error message detailing which genes and samples have issues}
 
 \item{pairwise}{Logical indicating whether to perform pairwise comparisons
-between groups (default: TRUE). When FALSE, runs a single overall comparison.}
+between groups (default: TRUE). When FALSE, runs a single overall comparison.
+Pairwise mode requires a single-factor formula; use \code{pairwise = FALSE}
+to retain covariates such as batch.}
 
 \item{ref_group}{Optional reference group for pairwise comparisons. If NULL,
 every group is tested against every other; otherwise each group is tested
@@ -90,7 +92,8 @@ A data frame of differential expression results. Column set depends on
     \item \code{stat}: Wald statistic. Absent when \code{shrink_lfc = TRUE}
       and apeglm shrinkage succeeds (DESeq2 drops it during lfcShrink)
     \item \code{pvalue}: Raw p-value from the Wald test
-    \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
+    \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR). Unavailable
+      values remain \code{NA} and are classified as non-significant.
     \item \code{regulation}: Regulation class. Pairwise mode (default) uses
       "Up" / "Down" / "NS"; single mode uses "Up-regulated" /
       "Down-regulated" / "Not significant"

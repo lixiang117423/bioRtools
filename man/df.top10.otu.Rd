@@ -6,8 +6,10 @@
 \title{Test data.}
 \format{
 ## `df.top10.otu`
-A data frame with 9 rows and 2 columns:
+A data frame with 9 rows and 11,267 columns:
 \describe{
+  \item{rownames}{sample identifiers}
+  \item{OTU columns}{OTU abundance values}
 }
 }
 \source{

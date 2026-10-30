@@ -1,4 +1,23 @@
 url: https://lixiang117423.github.io/bioRtools/
 template:
   bootstrap: 5
+exclude:
+  - AGENTS.md
+  - CHANGELOG.md
+  - CLAUDE.md
+  - INSTALL_SYNTENY.md
+  - LICENSE
+  - LICENSE.md
+  - README_cn.md
+  - README_en.md
+  - SETUP.md
+  - bioRtools_review_agent.md
+  - CITATION.cff
+  - journal.md
+  - paper.md
+  - paper.bib
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - SUPPORT.md
+  - JOSS_SUBMISSION.md
 

@@ -760,6 +760,29 @@ pca_analysis <- function(data, sample, n_components = 5, scale_data = TRUE,
   attr(results, "scaled") <- scale_data
   attr(results, "centered") <- center_data
 
+  results <- new_bioRtools_fit(
+    results,
+    model = pca_model,
+    tables = list(
+      eigenvalues = eigenvalue_data,
+      sample_scores = sample_scores,
+      variable_loadings = variable_loadings
+    ),
+    plots = if (is.null(plots)) list() else plots,
+    analysis_type = "PCA",
+    engine = "FactoMineR::PCA",
+    engine_versions = c(
+      FactoMineR = as.character(utils::packageVersion("FactoMineR")),
+      factoextra = as.character(utils::packageVersion("factoextra"))
+    ),
+    data_info = list(
+      n_samples = nrow(data),
+      n_features = ncol(data),
+      feature_as_row = feature_as_row
+    ),
+    call = match.call()
+  )
+
   # Interactive summary
   if (interactive()) {
     msg_lines <- c(

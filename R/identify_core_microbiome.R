@@ -622,8 +622,6 @@ print.core_microbiome <- function(x, ...) {
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #'
-#' @importFrom minpack.lm nlsLM
-#' @importFrom Hmisc binconf
 #' @importFrom stats4 mle AIC BIC
 #' @importFrom stats pbeta pbinom ppois dnorm
 #'

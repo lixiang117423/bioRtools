@@ -43,6 +43,8 @@ PERMANOVA tests the null hypothesis that the centroids and dispersion of groups
 as defined by the explanatory variables are equivalent for all groups. It is a
 non-parametric method suitable for ecological community data. The function uses
 \code{vegan::adonis2()} which is the updated version of \code{vegan::adonis()}.
+Response row names and metadata sample IDs must identify the same complete,
+unique sample set; metadata are reordered automatically before fitting.
 }
 \note{
 This function uses \code{vegan::adonis2()} instead of the deprecated

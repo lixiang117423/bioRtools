@@ -1,3 +1,8 @@
+if (!can_load_namespace("ggtree")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("ggtree is not available")
+  })
+} else {
 make_group_tree <- function(extra_tip = NULL) {
   newick <- if (is.null(extra_tip)) {
     "((A:1,B:1):1,(C:1,D:1):1,E:2);"
@@ -82,14 +87,16 @@ test_that("unmatched samples raise warnings, not silence", {
   tr <- make_group_tree(extra_tip = "X5")
   df <- make_group_df(extra_sample = "F")
 
-  expect_warning(
-    p <- plot_admixture_grouping(tr, df, k = 8),
-    "in data but not in the tree"
+  warnings <- character()
+  p <- withCallingHandlers(
+    plot_admixture_grouping(tr, df, k = 8),
+    warning = function(w) {
+      warnings <<- c(warnings, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
   )
-  expect_warning(
-    p <- plot_admixture_grouping(tr, df, k = 8),
-    "in the tree but not in data"
-  )
+  expect_true(any(grepl("in data but not in the tree", warnings)))
+  expect_true(any(grepl("in the tree but not in data", warnings)))
   x_limits <- p$scales$get_scales("x")$limits
   expect_true("X5" %in% x_limits)  # tree-only sample keeps an empty slot
   expect_false("F" %in% x_limits)  # data-only sample is dropped
@@ -100,8 +107,15 @@ test_that("NA cluster values are dropped with a warning", {
   df <- make_group_df()
   df$K8[1] <- NA
 
-  expect_warning(p <- plot_admixture_grouping(tr, df, k = 8),
-                 "no cluster value")
+  warnings <- character()
+  p <- withCallingHandlers(
+    plot_admixture_grouping(tr, df, k = 8),
+    warning = function(w) {
+      warnings <<- c(warnings, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
+  )
+  expect_true(any(grepl("no cluster value", warnings)))
   # A stays as an empty slot on the axis
   expect_true("A" %in% p$scales$get_scales("x")$limits)
 })
@@ -192,3 +206,4 @@ test_that("legend is hidden by default and opt-in via show_legend", {
   expect_error(plot_admixture_grouping(tr, df, k = 8, show_legend = "yes"),
                "'show_legend' must be a single logical value")
 })
+}

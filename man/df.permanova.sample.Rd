@@ -6,8 +6,10 @@
 \title{Test data.}
 \format{
 ## `df.permanova.sample`
-A data frame with 9 rows and 2 columns:
+A data frame with 30 rows and 7 columns:
 \describe{
+  \item{sample, location, variety, variety.chinese, group}{sample and design variables}
+  \item{Latitude, Longitude}{sampling coordinates}
 }
 }
 \source{

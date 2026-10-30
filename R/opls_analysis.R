@@ -714,27 +714,35 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
           "\nTry reducing the number of components or checking data quality."))
       })
 
-    # Extract scores for visualization
-    tryCatch(
+    # Extract scores using the public ropls accessor. The fallback returns the
+    # native score slots and keeps the historical t1/to1 column names.
+    scores_data <- tryCatch(
       {
-        scores_data <- chemhelper::get_scores(opls_model) %>%
-          as.data.frame() %>%
-          dplyr::mutate(
-            sample_id = sample_names,
-            group = group
-          )
+        predictive <- as.data.frame(ropls::getScoreMN(opls_model))
+        names(predictive) <- sub("^p", "t", names(predictive))
+
+        orthogonal <- as.data.frame(ropls::getScoreMN(opls_model, orthoL = TRUE))
+        if (ncol(orthogonal) > 0L) {
+          names(orthogonal) <- sub("^o", "to", names(orthogonal))
+          predictive <- cbind(predictive, orthogonal)
+        }
+
+        predictive$sample_id <- sample_names
+        predictive$group <- group
+        predictive
       },
       error = function(e) {
-        warning(paste("Error extracting scores with chemhelper:", e$message))
-        scores_data <- data.frame(
+        warning(paste("Error extracting scores with ropls:", e$message))
+        fallback_scores <- data.frame(
           t1 = opls_model@scoreMN[, 1],
           sample_id = sample_names,
           group = group
         )
 
         if (!is.null(opls_model@orthoScoreMN) && ncol(opls_model@orthoScoreMN) > 0) {
-          scores_data$to1 <- opls_model@orthoScoreMN[, 1]
+          fallback_scores$to1 <- opls_model@orthoScoreMN[, 1]
         }
+        fallback_scores
       })
 
     # Merge sample metadata into scores if available
@@ -1044,6 +1052,30 @@ opls_analysis <- function(data, sample = NULL, sample_col = "sample",
   attr(results, "n_important_vars") <- n_important_vars
   attr(results, "vip_threshold") <- vip_threshold
   attr(results, "scaling_method") <- scaling
+
+  results <- new_bioRtools_fit(
+    results,
+    model = if (is.null(pairwise_models)) opls_model else pairwise_models,
+    tables = list(
+      scores = scores_data,
+      vip_scores = vip_data,
+      loadings = loadings_data,
+      differential = diff_analysis
+    ),
+    plots = list(),
+    analysis_type = "OPLS-DA",
+    engine = "ropls::opls",
+    engine_versions = c(ropls = as.character(utils::packageVersion("ropls"))),
+    data_info = list(
+      n_samples = nrow(data_matrix),
+      n_features = ncol(data_matrix),
+      feature_as_row = feature_as_row,
+      n_groups = n_groups,
+      validation = validation,
+      pairwise = !is.null(pairwise_models)
+    ),
+    call = match.call()
+  )
 
   # Print summary if interactive
   if (interactive()) {

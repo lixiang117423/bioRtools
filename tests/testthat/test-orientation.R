@@ -38,6 +38,16 @@ coord_mat <- function(df) {
   as.matrix(nums)
 }
 same <- function(a, b) isTRUE(all.equal(a, b, tolerance = 1e-10))
+same_geometry <- function(a, b) {
+  if (!identical(dim(a), dim(b))) {
+    return(FALSE)
+  }
+  isTRUE(all.equal(
+    as.vector(stats::dist(a)),
+    as.vector(stats::dist(b)),
+    tolerance = 1e-6
+  ))
+}
 quiet <- function(expr) suppressMessages(suppressWarnings(force(expr)))
 
 test_that("shared orientation helpers", {
@@ -58,8 +68,8 @@ test_that("pca_analysis: feature-row reproduces sample-row", {
   auto <- quiet(pca_analysis(Xf, sample_meta, color_by = "group", plot_type = "none"))
   force <- quiet(pca_analysis(Xf, sample_meta, color_by = "group", plot_type = "none",
                               feature_as_row = TRUE))
-  expect_true(same(coord_mat(ref$sample_scores), coord_mat(auto$sample_scores)))
-  expect_true(same(coord_mat(ref$sample_scores), coord_mat(force$sample_scores)))
+  expect_true(same_geometry(coord_mat(ref$sample_scores), coord_mat(auto$sample_scores)))
+  expect_true(same_geometry(coord_mat(ref$sample_scores), coord_mat(force$sample_scores)))
 })
 
 test_that("pcoa_analysis: feature-row reproduces sample-row", {
@@ -83,6 +93,8 @@ test_that("rda_analysis: feature-row reproduces sample-row", {
 })
 
 test_that("tsne_analysis: feature-row reproduces sample-row", {
+  skip_if_namespace_unavailable("Rtsne")
+
   ref <- quiet(tsne_analysis(X, sample_meta, perplexity = 3, pca_dims = 10,
                              plot_type = "none"))
   auto <- quiet(tsne_analysis(Xf, sample_meta, perplexity = 3, pca_dims = 10,

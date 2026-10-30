@@ -1,3 +1,8 @@
+if (!can_load_namespace("tidygraph")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("tidygraph is not available")
+  })
+} else {
 # cor2ggnetview(): cor_analysis edge list -> ggNetView-compatible tbl_graph.
 
 make_cor_input <- function() {
@@ -88,3 +93,4 @@ test_that("cross-dataset result (no reciprocal edges) round-trips", {
   expect_true(all(edges$from %in% c("a", "b")))
   expect_true(all(edges$to %in% c("x", "y")))
 })
+}

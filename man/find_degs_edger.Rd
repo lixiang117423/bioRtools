@@ -77,7 +77,8 @@ will stop with an error message}
 
 \item{pairwise}{Logical indicating whether to perform pairwise comparisons
 between groups (default: TRUE). If TRUE, all pairs of groups are compared.
-If FALSE, uses the full design formula}
+Pairwise mode requires a single-factor formula; use \code{pairwise = FALSE}
+to retain covariates. If FALSE, uses the full design formula}
 
 \item{ref_group}{Optional character string specifying the reference group
 for pairwise comparisons. If NULL (default), all pairwise comparisons
@@ -92,7 +93,8 @@ A data frame containing differential expression results. In pairwise
     \item \code{log2FoldChange}: Log2 fold change between conditions
     \item \code{logCPM}: Average log2 counts per million
     \item \code{pvalue}: Raw p-value from the statistical test
-    \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
+    \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR). Unavailable
+      values remain \code{NA} and are classified as non-significant.
     \item \code{regulation}: Gene regulation classification. Pairwise mode
       (default): "Up" / "Down" / "NS". Single mode: "Up-regulated" /
       "Down-regulated" / "Not significant"

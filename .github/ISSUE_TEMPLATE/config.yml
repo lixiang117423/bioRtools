@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage and documentation
+    url: https://lixiang117423.github.io/bioRtools/
+    about: Read the reference site and vignettes before opening an issue.
+  - name: Private security report
+    url: mailto:lixiang117423@gmail.com
+    about: Report credentials, private data, or exploitable security issues privately.

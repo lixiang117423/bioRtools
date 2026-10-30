@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(bioRtools)
+has_ggnewscale <- requireNamespace("ggnewscale", quietly = TRUE)
 ```
 
 `bioRtools` provides three ggplot2-based idiogram functions, reimplemented from
@@ -63,7 +64,7 @@ The `label` argument adds a track to the right of the chromosomes. Four
 - **`"line"`** / **`"polygon"`** — line or filled-area tracks along the
   chromosomes.
 
-```{r marker}
+```{r marker, eval = has_ggnewscale}
 data(df.ideo.rna_marker)
 plot_ideogram(df.ideo.karyotype,
               overlaid = df.ideo.gene_density,
@@ -74,7 +75,7 @@ plot_ideogram(df.ideo.karyotype,
 Two heatmaps at once (overlaid + a heatmap label track) use independent colour
 scales:
 
-```{r two-heatmap}
+```{r two-heatmap, eval = has_ggnewscale}
 data(df.ideo.ltr_density)
 plot_ideogram(df.ideo.karyotype,
               overlaid = df.ideo.gene_density,

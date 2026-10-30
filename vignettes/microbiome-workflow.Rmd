@@ -1,0 +1,89 @@
+---
+title: "A reproducible microbiome workflow with bioRtools"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A reproducible microbiome workflow with bioRtools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+```{r setup}
+library(bioRtools)
+library(ggplot2)
+```
+
+This workflow uses the public `GlobalPatterns` dataset distributed with the
+Bioconductor package `mia` (Caporaso et al., 2011; DOI
+10.1073/pnas.1000080107).
+
+```{r data, eval = requireNamespace("mia", quietly = TRUE)}
+data(GlobalPatterns, package = "mia")
+
+X <- t(as.matrix(SummarizedExperiment::assay(GlobalPatterns)))
+meta <- as.data.frame(SummarizedExperiment::colData(GlobalPatterns))
+rownames(X) <- meta$X.SampleID
+meta$sample <- meta$X.SampleID
+rownames(meta) <- meta$X.SampleID
+taxo <- as.data.frame(SummarizedExperiment::rowData(GlobalPatterns))
+
+dim(X)
+head(meta[, c("sample", "SampleType")])
+```
+
+## Alpha diversity
+
+```{r alpha, eval = requireNamespace("mia", quietly = TRUE)}
+alpha <- calc_alpha_diversity(
+  X,
+  sample = meta,
+  index = c("shannon", "observed", "chao1"),
+  verbose = FALSE
+)
+
+head(alpha)
+```
+
+## Bray-Curtis PCoA and PERMANOVA
+
+```{r ordination, eval = requireNamespace("mia", quietly = TRUE)}
+ordination <- pcoa_analysis(X, sample = meta, color = "SampleType")
+ordination$plots$score_plot
+
+set.seed(1)
+permanova <- permanova_test(
+  X ~ SampleType,
+  sample = meta,
+  permutations = 999
+)
+permanova$tables$permanova
+```
+
+## Taxonomic composition
+
+```{r composition, eval = requireNamespace("mia", quietly = TRUE)}
+composition <- top_tax_n(
+  data = X,
+  sample = meta,
+  taxo = taxo,
+  which = "Phylum",
+  group_col = "SampleType",
+  plot_by = "group",
+  plot_type = "stacked_bar",
+  ref = "Feces",
+  verbose = FALSE
+)
+
+composition$plot_abundance
+```
+
+The result objects retain their native ordination or model content, while the
+`tables` and `plots` components follow the shared `bioRtools_fit` contract.

@@ -1,0 +1,33 @@
+name: Feature request
+description: Propose a reusable research capability
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Research problem
+      description: What analysis task is difficult or error-prone today?
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Intended users
+      description: Who would use this feature, and in what workflow?
+    validations:
+      required: true
+  - type: textarea
+    id: interface
+    attributes:
+      label: Proposed input and output
+      description: Describe data structures, required packages, and expected outputs.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Existing alternatives
+      description: Describe related functions or packages and why they are insufficient.
+    validations:
+      required: true

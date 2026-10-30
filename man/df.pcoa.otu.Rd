@@ -8,6 +8,8 @@
 ## `df.pcoa.otu`
 A data frame with 9 rows and 11,267 columns:
 \describe{
+  \item{rownames}{sample identifiers}
+  \item{OTU columns}{OTU abundance values}
 }
 }
 \source{

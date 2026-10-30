@@ -1,22 +1,17 @@
 Type: Package
 Package: bioRtools
-Title: Convenience Functions for Biological Data Processing
-Version: 1.95.1
+Title: Reproducible Analysis-to-Figure Workflows for Omics Data
+Version: 2.0.0
 Authors@R: 
     person("Xiang", "LI", , "lixiang117423@gmail.com", role = c("aut", "cre"))
-Description: This package provides a comprehensive suite of convenience
-    functions for biological data analysis and visualization. It includes
-    tools for multivariate analysis (PCA, PCoA, RDA, sPLS-DA, OPLS-DA),
-    statistical testing (ANOVA with post-hoc tests, correlation analysis,
-    linear regression, PERMANOVA), differential analysis (DESeq2-based
-    differential expression and abundance analysis, LEfSe), data
-    preprocessing (rarefaction, outlier detection, heatmap reordering),
-    genomics visualization (Manhattan plots, volcano plots), microbiome
-    analysis (taxonomic composition, diversity analysis), metabolomics
-    workflows, and publication-ready plotting themes. The package
-    standardizes complex analytical workflows across omics data types and
-    provides consistent, publication-quality visualization outputs with
-    minimal code requirements.
+Description: Provides a reproducible analysis-to-figure contract for
+    multivariate omics workflows. Core methods preserve native statistical
+    model objects while returning validated score, loading, diversity, VIP,
+    and differential-result tables together with composable 'ggplot2'
+    figures. The package includes microbiome ordination and diversity
+    workflows, metabolomics multivariate models, transcriptomic and
+    microbiome differential analysis, functional enrichment, and reusable
+    publication-oriented plotting helpers.
 License: MIT + file LICENSE
 URL: https://github.com/lixiang117423/bioRtools,
     https://lixiang117423.github.io/bioRtools/
@@ -24,51 +19,25 @@ BugReports: https://github.com/lixiang117423/bioRtools/issues
 Depends: 
     R (>= 4.1.0)
 Imports:
-    agricolae,
-    AnnotationDbi,
     ape,
-    aplot,
-    Biobase,
-    broom,
-    clusterProfiler,
     data.table,
-    DESeq2,
     dplyr,
-    dynamicTreeCut,
-    edgeR,
     factoextra,
     FactoMineR,
     forcats,
-    ggalluvial,
-    ggnewscale,
     ggplot2 (>= 3.5.0),
     ggprism,
     ggrepel,
     ggsci,
-    ggtext,
     ggthemes,
-    ggtree,
-    glue,
-    GO.db,
     graphics,
     grDevices,
     grid,
-    Hmisc,
-    huge,
-    igraph,
-    janitor,
-    KEGGREST,
-    lefser,
-    linkET,
     magrittr,
     methods,
-    minpack.lm,
     mixOmics,
-    multcomp,
     parallel,
-    patchwork,
     picante,
-    pulsar,
     purrr,
     ragg,
     RColorBrewer,
@@ -77,56 +46,82 @@ Imports:
     rlang,
     ropls,
     rstatix,
-    Rtsne,
     scales,
     stats,
     stats4,
     stringr,
-    SummarizedExperiment,
     tibble,
     tidyr,
     tidyselect,
     tools,
-    treeio,
     utils,
     vegan,
-    viridis,
-    WGCNA,
-    writexl,
-    XML
+    writexl
 Suggests:
+    agricolae,
+    AnnotationDbi,
+    aplot,
     BiocManager,
-    chemhelper,
+    Biobase,
+    broom,
+    clusterProfiler,
+    DESeq2,
+    dynamicTreeCut,
+    edgeR,
     eulerr,
+    ggalluvial,
     ggforce,
     gggenes,
+    ggnewscale,
     ggpmisc,
+    ggtext,
+    ggtree,
     ggupset,
     ggtern,
     ggvenn,
     ggVennDiagram,
+    glue,
+    GO.db,
     gridExtra,
     gtools,
+    Hmisc,
+    huge,
+    igraph,
     itol.toolkit,
+    janitor,
+    KEGGREST,
     knitr,
     LDheatmap,
+    lefser,
+    linkET,
     metagenomeSeq,
     methylKit,
+    mia,
+    minpack.lm,
     mlr3,
     mlr3tuning,
     moments,
+    multcomp,
     nnet,
     normentR,
     paradox,
+    patchwork,
+    pulsar,
     rmarkdown,
+    Rtsne,
+    SummarizedExperiment,
     svglite,
     testthat (>= 3.2.0),
     tidygraph,
-    ttplot
+    treeio,
+    ttplot,
+    viridis,
+    WGCNA,
+    XML
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: gzip
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0

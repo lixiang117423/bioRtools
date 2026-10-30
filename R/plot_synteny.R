@@ -126,51 +126,55 @@
 #' data(df.synteny.gene)
 #' data(df.synteny.link)
 #'
-#' # Create basic synteny plot (df.synteny.link carries curve-style links)
-#' synteny_result <- plot_synteny(
-#'   gene_data = df.synteny.gene,
-#'   syntenic_data = df.synteny.link,
-#'   species_labels = c("A", "B", "C", "D"),
-#'   link_type = "curve"
-#' )
+#' # The optional gggenes and ggforce packages are required.
+#' if (requireNamespace("gggenes", quietly = TRUE) &&
+#'     requireNamespace("ggforce", quietly = TRUE)) {
+#'   # Basic synteny plot (df.synteny.link carries curve-style links)
+#'   synteny_result <- plot_synteny(
+#'     gene_data = df.synteny.gene,
+#'     syntenic_data = df.synteny.link,
+#'     species_labels = c("A", "B", "C", "D"),
+#'     link_type = "curve"
+#'   )
 #'
-#' # Display the plot
-#' synteny_result$plot_synteny
+#'   # Display the plot
+#'   print(synteny_result$plot_synteny)
 #'
-#' # View summary statistics
-#' synteny_result$data_summary
+#'   # View summary statistics
+#'   print(synteny_result$data_summary)
 #'
-#' # Customized plot with different colors
-#' plot_synteny(
-#'   gene_data = df.synteny.gene,
-#'   syntenic_data = df.synteny.link,
-#'   species_labels = c("Sp1", "Sp2", "Sp3", "Sp4"),
-#'   link_type = "curve",
-#'   fill_colors = c("#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"),
-#'   link_color = "grey50",
-#'   link_alpha = 0.3,
-#'   title = "Gene Synteny Analysis",
-#'   subtitle = "Cross-species comparison"
-#' )$plot_synteny
+#'   # Customized plot with different colors
+#'   print(plot_synteny(
+#'     gene_data = df.synteny.gene,
+#'     syntenic_data = df.synteny.link,
+#'     species_labels = c("Sp1", "Sp2", "Sp3", "Sp4"),
+#'     link_type = "curve",
+#'     fill_colors = c("#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A"),
+#'     link_color = "grey50",
+#'     link_alpha = 0.3,
+#'     title = "Gene Synteny Analysis",
+#'     subtitle = "Cross-species comparison"
+#'   )$plot_synteny)
 #'
-#' # Automatic syntenic data generation using synteny_groups
-#' plot_synteny(
-#'   gene_data = df.synteny.gene,
-#'   synteny_groups = list(
-#'     group1 = c("Gene03", "Gene06", "Gene09", "Gene12"),
-#'     group2 = c("Gene04", "Gene07", "Gene10", "Gene13"),
-#'     group3 = c("Gene02", "Gene05", "Gene11", "Gene14")
-#'   ),
-#'   species_labels = c("A", "B", "C", "D")
-#' )$plot_synteny
+#'   # Automatic syntenic data generation using synteny_groups
+#'   print(plot_synteny(
+#'     gene_data = df.synteny.gene,
+#'     synteny_groups = list(
+#'       group1 = c("Gene03", "Gene06", "Gene09", "Gene12"),
+#'       group2 = c("Gene04", "Gene07", "Gene10", "Gene13"),
+#'       group3 = c("Gene02", "Gene05", "Gene11", "Gene14")
+#'     ),
+#'     species_labels = c("A", "B", "C", "D")
+#'   )$plot_synteny)
 #'
-#' # Easiest method: use syn_group column from gene_data
-#' # If your data has a "syn_group" column, simply call:
-#' plot_synteny(
-#'   gene_data = df.synteny.gene
-#'   # syntenic_data is auto-generated from syn_group column
-#'   # species_labels are auto-generated from species column
-#' )$plot_synteny
+#'   # Easiest method: use syn_group column from gene_data
+#'   # If your data has a "syn_group" column, simply call:
+#'   print(plot_synteny(
+#'     gene_data = df.synteny.gene
+#'     # syntenic_data is auto-generated from syn_group column
+#'     # species_labels are auto-generated from species column
+#'   )$plot_synteny)
+#' }
 #'
 #' @export
 #' @author Xiang LI <lixiang117423@gmail.com>

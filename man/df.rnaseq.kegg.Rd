@@ -6,7 +6,7 @@
 \title{Test data.}
 \format{
 ## `df.rnaseq.kegg`
-A data frame with 6 rows and 1 columns:
+A data frame with 63,742 rows and 3 columns:
 \describe{
   \item{gene}{gene name}
   \item{kegg_id}{KEGG term id}

@@ -16,4 +16,17 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(bioRtools)
+library(ggplot2)
+```
+
+`theme_prism()` provides a publication-oriented base theme that remains
+composable with ordinary `ggplot2` theme elements.
+
+```{r}
+p <- ggplot(iris, aes(Species, Sepal.Length, fill = Species)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_wong() +
+  theme_prism()
+
+p
 ```

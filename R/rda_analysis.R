@@ -363,11 +363,32 @@ rda_analysis <- function(data,
       warning("Environmental fitting failed: ", e$message)
     })
 
-  list(
+  results <- list(
     result_rda = rda_result,
     plot_rda = rda_plot,
     sample_scores = sample_coords,
     environmental_scores = environmental_coords,
     environmental_fit = environmental_significance
+  )
+
+  new_bioRtools_fit(
+    results,
+    model = rda_result,
+    tables = list(
+      sample_scores = sample_coords,
+      environmental_scores = environmental_coords,
+      environmental_fit = environmental_significance
+    ),
+    plots = list(ordination = rda_plot),
+    analysis_type = "RDA",
+    engine = "vegan::rda",
+    engine_versions = c(vegan = as.character(utils::packageVersion("vegan"))),
+    data_info = list(
+      n_samples = nrow(sample_coords),
+      n_features = ncol(as.matrix(data)),
+      feature_as_row = feature_as_row,
+      transformation = method_decostand
+    ),
+    call = match.call()
   )
 }

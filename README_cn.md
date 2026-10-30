@@ -1,10 +1,10 @@
 # bioRtools
 
-[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.95.1-green)](https://github.com/lixiang117423/bioRtools)
+[![R](https://img.shields.io/badge/R-%3E%3D4.1.0-blue)](https://www.r-project.org/)
+[![Version](https://img.shields.io/badge/version-2.0.0-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
-`bioRtools` 是一个面向生物数据分析、统计和发表级可视化的 R 工具包。它整合了转录组、微生物组、代谢组、群体遗传、基因结构可视化、qPCR 分析以及常用绘图主题等工作流中的便利函数。
+`bioRtools` 为组学分析提供可复现的 analysis-to-figure 契约：核心多变量流程保留原生模型对象，同时返回经过校验的结果表和可编辑的 `ggplot2` 图形；另提供差异分析、富集和基因组可视化辅助函数。
 
 ## 主要特性
 
@@ -17,19 +17,18 @@
 
 ## 系统要求
 
-- `DESCRIPTION` 声明的最低版本为 R >= 2.10
-- 推荐使用 R >= 4.0.0，以获得更顺畅的依赖安装体验
+- `DESCRIPTION` 声明的最低版本为 R >= 4.1.0
 
 ## 安装
 
-从 GitHub 安装开发版本：
+使用 `pak` 安装当前 GitHub 版本：
 
 ```r
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+  install.packages("pak")
 }
 
-devtools::install_github("lixiang117423/bioRtools")
+pak::pak("lixiang117423/bioRtools")
 ```
 
 如果依赖安装失败，可先手动安装主要 Bioconductor 和 CRAN 依赖：
@@ -39,21 +38,24 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
-BiocManager::install(c(
-  "clusterProfiler", "DESeq2", "ggtree", "lefser",
-  "SummarizedExperiment", "WGCNA"
-))
+BiocManager::install(c("mixOmics", "ropls"))
 
 install.packages(c(
-  "agricolae", "ape", "broom", "data.table", "dplyr",
-  "factoextra", "FactoMineR", "forcats", "ggplot2", "ggprism",
-  "ggrepel", "ggsci", "ggtext", "ggthemes", "janitor", "magrittr",
-  "mixOmics", "multcomp", "patchwork", "purrr", "rlang", "ropls",
-  "rstatix", "scales", "stringr", "tibble", "tidyr", "vegan"
+  "ape", "data.table", "dplyr", "factoextra", "FactoMineR",
+  "forcats", "ggplot2", "ggprism", "ggrepel", "ggsci", "ggthemes",
+  "magrittr", "picante", "purrr", "ragg", "RColorBrewer", "readr",
+  "readxl", "rlang", "rstatix", "scales", "stringr", "tibble",
+  "tidyr", "tidyselect", "vegan", "writexl"
+))
+
+# 可选模块
+BiocManager::install(c(
+  "clusterProfiler", "DESeq2", "edgeR", "ggtree", "GO.db",
+  "KEGGREST", "lefser", "SummarizedExperiment", "WGCNA"
 ))
 ```
 
-可选建议包包括 `chemhelper`、`ggpmisc`、`knitr`、`normentR`、`rmarkdown` 和 `testthat`。
+可选建议包包括 `ggpmisc`、`knitr`、`normentR`、`rmarkdown` 和 `testthat`。
 
 ## 功能模块
 
@@ -75,7 +77,7 @@ install.packages(c(
 - `find_dams_deseq2()` - 基于 DESeq2 的差异丰度分析
 - `find_dams_lefse()` - LEfSe 差异丰度分析
 - `rarefy_table()` - 稀释抽样
-- `top_taxa()` - 主要分类群提取
+- `top_tax_n()` - 主要分类群提取
 - `identify_core_microbiome()`、`fit_sloan_neutral_model()` - 核心微生物组和中性模型分析
 
 ### 转录组与富集分析
@@ -103,7 +105,7 @@ install.packages(c(
 
 - `manhattan_plot()`、`plot_manhattan()` - 曼哈顿图
 - `plot_gwas_qq()` - GWAS QQ 图
-- `plot_LDheatmap()` - LD 热图
+- `plot_ld_heatmap()` - LD 热图
 - `ld_decay_threshold()` - LD 衰减阈值计算
 - `admixture_phylo_analysis()`、`extract_tree_hierarchy()` - 群体结构和系统树辅助函数
 - `pav_gwas()` - PAV-GWAS 辅助函数
@@ -119,7 +121,7 @@ install.packages(c(
 
 ### 数据转换和行统计工具
 
-- `df_to_list()` - 数据框转列表
+- `df2list()` - 数据框转列表
 - `df2fasta()`、`fasta2df()` - FASTA 和数据框互转
 - `get_methylkit_data()` - 提取 methylKit 数据
 - `normalize_int()`、`scale01()`、`scale01_rows()`、`scale01_groups()`、`mutate_scale01()`、`mutate_scale01_named()` - 标准化辅助函数
@@ -283,24 +285,28 @@ theme_prism(base_family = "Arial")
 
 ## 版本历史
 
-完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`1.77.0`。
+完整发布记录见 [CHANGELOG.md](CHANGELOG.md)。当前包版本：`2.0.0`。
 
 ## 引用
 
 如果你在研究中使用了 `bioRtools`，请引用：
 
 ```text
-Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.16.1. https://github.com/lixiang117423/bioRtools
+Li, X. (2026). bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data.
+R package version 2.0.0. https://github.com/lixiang117423/bioRtools
 ```
 
 ## 贡献
 
-欢迎参与贡献：
+欢迎参与贡献。提交 issue 或 pull request 前请阅读
+[CONTRIBUTING.md](CONTRIBUTING.md)，并遵守
+[Code of Conduct](CODE_OF_CONDUCT.md)。
 
 1. 在 [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues) 中报告问题
 2. 通过 Issues 提出功能建议
 3. Fork 仓库，创建功能分支，提交修改，推送分支并发起 Pull Request
+
+支持渠道和维护预期见 [SUPPORT.md](SUPPORT.md)。
 
 ## 许可证
 

@@ -9,7 +9,7 @@
 A data frame with 57,359 rows and 8 columns:
 \describe{
   \item{gene}{gene name}
-  \item{baseMea}{baseMea}
+  \item{baseMean}{mean normalized count}
   \item{log2FoldChange}{log2FoldChange}
   \item{lfcSE}{lfcSE}
   \item{stat}{stat}
@@ -26,5 +26,10 @@ df.rnaseq.plot.volcano
 }
 \description{
 Test data.
+}
+\details{
+\code{group} stores the regulation class
+  (\code{Down_regulated}, \code{NS}, or \code{Up_regulated}) in this legacy
+  volcano-plot fixture.
 }
 \keyword{datasets}

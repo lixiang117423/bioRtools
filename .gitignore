@@ -6,6 +6,7 @@
 # Package build artifacts
 *.tar.gz
 *.Rcheck/
+paper.pdf
 
 # IDE files
 *.Rproj
@@ -30,6 +31,7 @@ Rplots.rdx
 
 # Documentation build
 docs/
+jats/
 
 # Temporary files
 *.tmp

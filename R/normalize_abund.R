@@ -98,7 +98,7 @@ normalize_abund <- function(data,
     p <- tryCatch(metagenomeSeq::cumNormStatFast(obj), error = function(e) 0.5)
     obj <- metagenomeSeq::cumNorm(obj, p = p)
     out <- metagenomeSeq::MRcounts(obj, norm = TRUE)
-    sf <- exp(metagenomeSeq::pData(obj)$normFactors)   # metagenomeSeq stores log factors
+    sf <- exp(metagenomeSeq::normFactors(obj))   # metagenomeSeq stores log factors
     attr(out, "size_factor") <- sf
     return(out)
   }

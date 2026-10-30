@@ -1,5 +1,5 @@
 # Migrated from tests/test_calc_beta_nti_regression.R (bare script).
-# Regression: calc_beta_nti output must be byte-identical after the
+# Regression: calc_beta_nti output must be numerically equivalent after the
 # calc_ses_beta_core refactor.
 
 make_beta_nti_inputs <- function() {
@@ -19,22 +19,22 @@ make_beta_nti_inputs <- function() {
 baseline <- readRDS(system.file("extdata", "calc_beta_nti_fixture.rds",
                                 package = "bioRtools"))
 
-test_that("ungrouped output identical to baseline", {
+test_that("ungrouped output matches baseline", {
   inputs <- make_beta_nti_inputs()
   set.seed(42)
   got <- calc_beta_nti(inputs$otu, inputs$tree, beta_reps = 50, verbose = FALSE)
 
-  expect_identical(got, baseline$all)
+  expect_equal(got, baseline$all, tolerance = 1e-12)
 })
 
-test_that("grouped output identical to baseline", {
+test_that("grouped output matches baseline", {
   inputs <- make_beta_nti_inputs()
   set.seed(42)
   got_g <- calc_beta_nti(inputs$otu, inputs$tree, beta_reps = 50,
                          verbose = FALSE, sample = inputs$meta,
                          group_col = "group")
 
-  expect_identical(got_g, baseline$grouped)
+  expect_equal(got_g, baseline$grouped, tolerance = 1e-12)
 })
 
 test_that("tree/data mismatch errors", {

@@ -23,7 +23,6 @@
 #'
 #' @importFrom dplyr left_join filter group_by mutate ungroup summarise
 #' @importFrom stats lm
-#' @importFrom broom glance
 #' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs theme_bw
 #'
 #' @export

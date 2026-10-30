@@ -21,7 +21,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr rename mutate filter select left_join
 #' @importFrom stringr str_sub str_split str_trim
-#' @importFrom XML xmlParse xmlRoot xmlSize xmlToList
 #' @importFrom tibble tibble as_tibble
 #' @importFrom purrr map_dfr
 #' @importFrom rlang .data

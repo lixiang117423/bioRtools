@@ -23,11 +23,8 @@
 #' @importFrom dplyr select mutate rename filter arrange left_join
 #' @importFrom ggplot2 ggplot aes geom_segment geom_rect scale_x_continuous
 #'   labs theme theme_classic element_blank
-#' @importFrom ggtree ggtree geom_tippoint
 #' @importFrom ape read.tree
 #' @importFrom grid unit
-#' @importFrom patchwork plot_layout
-#' @importFrom treeio as_tibble as.treedata
 #' @importFrom rlang .data
 #'
 #' @examples

@@ -6,8 +6,10 @@
 \title{Test data.}
 \format{
 ## `df.permanova.otu`
-A data frame with 9 rows and 2 columns:
+A data frame with 30 rows and 1,758 columns:
 \describe{
+  \item{rownames}{sample identifiers matching \code{df.permanova.sample$sample}}
+  \item{ASV columns}{ASV abundance values}
 }
 }
 \source{

@@ -54,6 +54,9 @@ Thin wrapper around [ggplot2::ggsave()] with publication-sensible
   - `eps` via [grDevices::cairo_ps] (font-embedded PostScript).
   - `svg` via the ggsave default device.
 
+  When Cairo is unavailable, `pdf` and `eps` fall back to the base R
+  devices so the function remains usable on headless systems.
+
   Pass `formats = c("pdf", "png")` to emit both a vector (for editing) and a
   raster (for preview) copy in one call.
 }

@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-10-30
+
+### Added
+- Shared `bioRtools_fit` result contract for PCA, PCoA, RDA, sPLS-DA,
+  OPLS-DA, and PERMANOVA. Results retain their historical list fields and add
+  native `model`, named `tables`, named `plots`, and `provenance` components.
+- `print()`, `summary()`, and `as_tibble()` methods for `bioRtools_fit`.
+- Metadata-alignment helpers that require complete, unique sample IDs and
+  reorder metadata by ID rather than row position.
+- End-to-end tests using `mia::GlobalPatterns` and `mixOmics::nutrimouse`.
+- A JOSS manuscript (`paper.md`) and verified bibliography (`paper.bib`).
+- Contribution, support, and Code of Conduct documents.
+- GitHub issue templates and a JOSS draft-PDF workflow.
+
+### Changed
+- `plot_volcano()` now automatically colors by `regulation` when available and
+  reports Up/Down/NS counts instead of grouping by the comparison label.
+- Pairwise DESeq2 and edgeR analyses now reject multi-factor formulas instead
+  of silently dropping covariates.
+- DESeq2 and edgeR results preserve unavailable adjusted p-values as `NA`.
+- Test and example coverage now handles optional `gggenes`/`ggforce`
+  dependencies without hard failures.
+- Recommended `pak` for the one-command GitHub installation path.
+
+### Fixed
+- Removed the invalid `metagenomeSeq::pData` call from CSS normalization.
+- Fixed the single-model OPLS score fallback so missing `chemhelper` no longer
+  leaves `scores_data` undefined.
+- PERMANOVA now aligns metadata by sample ID and evaluates the response safely
+  when the formula was created in a caller-local environment.
+- `calc_alpha_diversity()` accepts any explicit/common sample-ID column and no
+  longer requires the column to be literally named `sample`.
+- Synteny examples and tests now skip cleanly when optional dependencies are
+  unavailable.
+- Beta-NTI regression tests now compare numeric outputs with an explicit
+  tolerance, avoiding false failures from platform-specific floating-point
+  differences while retaining structural equality checks.
+
+### Dependencies
+- Moved non-core engines and optional visualizations from Imports to Suggests,
+  reducing direct hard dependencies from 70 to a smaller core set.
+
+### Documentation
+- Synchronized package version and citation metadata across README files.
+- Added documentation for the shared result contract and S3 methods.
+- Activated JOSS as the target venue and archived the previous Bioinformatics
+  Application Note requirements in `journal.md`.
+
 ## [1.95.1] - 2026-08-29
 
 ### Fixed

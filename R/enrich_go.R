@@ -166,6 +166,14 @@ enrich_go <- function(gene, go_db, p_adjust_method = "BH", p_adjust = 0.05,
                       min_gene_set = 3, max_gene_set = NULL,
                       comparison_col = "comparison", gene_col = "gene",
                       regulation_col = "regulation", keep_regulation = NULL) {
+  if (!requireNamespace("clusterProfiler", quietly = TRUE)) {
+    stop(
+      "Package 'clusterProfiler' is required for this function; ",
+      "install it with BiocManager::install('clusterProfiler').",
+      call. = FALSE
+    )
+  }
+
   # Batch mode: a DEG result data frame (e.g. find_degs_deseq2() output) is
   # split by comparison and enriched per group.
   if (is.data.frame(gene)) {

@@ -46,7 +46,6 @@
 #'   \item Missing node labels will be preserved as NA values
 #' }
 #'
-#' @importFrom ggtree read.tree ggtree
 #' @importFrom dplyr rowwise mutate ungroup select filter group_by
 #' @importFrom stringr str_split
 #' @importFrom tidyr unnest pivot_wider

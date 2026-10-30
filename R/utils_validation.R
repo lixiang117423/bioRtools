@@ -1,10 +1,6 @@
-#' Data Validation Utility Functions
-#'
-#' Helper functions for common validation checks used across bioRtools functions.
-#' These utilities improve code consistency and reduce duplication.
-#'
-#' @keywords internal
-#'
+# Data Validation Utility Functions
+#
+# Helpers for common validation checks used across bioRtools functions.
 # ============================================================================
 # Matrix/Data Frame Validation
 # ============================================================================

@@ -1709,23 +1709,3 @@ pav_gwas <- function(pav_data,
     threshold_results = threshold_info
   )
 }
-
-# Enhanced function information when loaded
-message(paste(
-  "Enhanced PAV GWAS analysis function loaded successfully!",
-  "Use pav_gwas() to run the complete analysis.",
-  "PAV matrix format: chr, start, end, sequence, sample1, sample2, ...",
-  "Enhanced Features:",
-  "  - Automatic continuous phenotype detection and analysis",
-  "  - Welch's t-test for normal continuous data",
-  "  - Linear regression with population structure covariates",
-  "  - Enhanced effect size calculations (Cohen's d, regression coefficients)",
-  "  - Multiple significance thresholds, threshold-specific output files",
-  "  - Manhattan plot with threshold lines",
-  "  - Both PDF (publication quality) and PNG (fast loading) for all plots",
-  "Function supports both file paths and data frames as input.",
-  "New analysis types: 'continuous', 'continuous_raw'",
-  "New test types: 'welch_ttest', 'linear'",
-  "Type ?pav_gwas for detailed help documentation.",
-  sep = "\n"
-))

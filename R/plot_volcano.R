@@ -13,8 +13,10 @@
 #'   (p-values or adjusted p-values). Default is "padj".
 #' @param size Character string specifying the column name used to map the
 #'   size of points. Default is "baseMean".
-#' @param color Character string specifying the column name used to map the
-#'   color of points (typically grouping variable). Default is "group".
+#' @param color Character string specifying the column used to color points.
+#'   The default \code{"auto"} uses \code{"regulation"} when present and
+#'   otherwise falls back to \code{"group"}. Set \code{NULL} for a single
+#'   color.
 #' @param xintercept_abs Numeric value for the absolute fold change threshold.
 #'   Vertical lines will be drawn at +/- this value. Default is 1.
 #' @param yintercept Numeric value for the significance threshold (before -log10
@@ -98,7 +100,7 @@ plot_volcano <- function(data,
                          x = "log2FoldChange",
                          y = "padj",
                          size = "baseMean",
-                         color = "group",
+                         color = "auto",
                          xintercept_abs = 1,
                          yintercept = 0.05,
                          point_alpha = 0.8,
@@ -113,9 +115,22 @@ plot_volcano <- function(data,
     stop("'data' must be a data frame")
   }
 
+  if (identical(color, "auto")) {
+    color <- if ("regulation" %in% names(data)) {
+      "regulation"
+    } else if ("group" %in% names(data)) {
+      "group"
+    } else {
+      NULL
+    }
+  }
+
   # Check required columns
-  required_cols <- c(x, y, size, color)
+  required_cols <- c(x, y, size)
   missing_cols <- required_cols[!required_cols %in% colnames(data)]
+  if (!is.null(color) && !color %in% colnames(data)) {
+    missing_cols <- c(missing_cols, color)
+  }
 
   if (length(missing_cols) > 0) {
     stop("Required columns missing from data: ", paste(missing_cols, collapse = ", "))
@@ -140,9 +155,12 @@ plot_volcano <- function(data,
       !is.na(!!rlang::sym(x)),
       !is.na(!!rlang::sym(y)),
       !is.na(!!rlang::sym(size)),
-      !is.na(!!rlang::sym(color)),
       !!rlang::sym(y) > 0  # Ensure positive p-values for log transformation
     )
+  if (!is.null(color)) {
+    data_processed <- data_processed %>%
+      dplyr::filter(!is.na(!!rlang::sym(color)))
+  }
 
   # Check if data remains after filtering
   if (nrow(data_processed) == 0) {
@@ -150,7 +168,7 @@ plot_volcano <- function(data,
   }
 
   # Create summary statistics
-  if (color %in% colnames(data_processed)) {
+  if (!is.null(color) && color %in% colnames(data_processed)) {
     data_summary <- data_processed %>%
       dplyr::group_by(!!rlang::sym(color)) %>%
       dplyr::summarise(
@@ -169,13 +187,43 @@ plot_volcano <- function(data,
   }
 
   # Create the volcano plot
-  plot_volcano <- data_processed %>%
-    ggplot2::ggplot(ggplot2::aes(
+  mapping <- if (is.null(color)) {
+    ggplot2::aes(
+      x = !!rlang::sym(x),
+      y = -log10(!!rlang::sym(y)),
+      size = !!rlang::sym(size)
+    )
+  } else {
+    ggplot2::aes(
       x = !!rlang::sym(x),
       y = -log10(!!rlang::sym(y)),
       color = !!rlang::sym(color),
       size = !!rlang::sym(size)
-    )) +
+    )
+  }
+
+  x_label <- if (x == "log2FoldChange") {
+    expression(log[2]("Fold Change"))
+  } else {
+    x
+  }
+  y_label <- if (y == "padj") {
+    expression(-log[10](italic(P)[adj]))
+  } else if (y == "pvalue") {
+    expression(-log[10](italic(P)))
+  } else {
+    paste0("-log10(", y, ")")
+  }
+  color_label <- if (is.null(color)) {
+    NULL
+  } else if (color == "group") {
+    "Group"
+  } else {
+    color
+  }
+
+  plot_volcano <- data_processed %>%
+    ggplot2::ggplot(mapping) +
     # Add threshold lines
     ggplot2::geom_hline(
       yintercept = -log10(yintercept),
@@ -196,19 +244,14 @@ plot_volcano <- function(data,
       range = point_size_range,
       guide = ggplot2::guide_legend(override.aes = list(alpha = 1))
     ) +
-    ggsci::scale_color_d3() +
     # Add labels
     ggplot2::labs(
-      x = ifelse(x == "log2FoldChange",
-        expression(log[2]("Fold Change")),
-        x),
-      y = ifelse(y %in% c("padj", "pvalue"),
-        expression(-log[10]("p-value")),
-        paste0("-log10(", y, ")")),
+      x = x_label,
+      y = y_label,
       title = title,
       subtitle = subtitle,
       size = ifelse(size == "baseMean", "Base Mean", size),
-      color = ifelse(color == "group", "Group", color)
+      color = color_label
     ) +
     # Apply custom theme (theme_bio is internal; call directly, not via ::)
     theme_bio() +
@@ -217,6 +260,25 @@ plot_volcano <- function(data,
       plot.subtitle = ggplot2::element_text(hjust = 0.5, size = 12),
       legend.position = "right"
     )
+
+  if (!is.null(color) && identical(color, "regulation")) {
+    reg_colors <- c(
+      "Up" = "#D55E00",
+      "Up-regulated" = "#D55E00",
+      "Up_regulated" = "#D55E00",
+      "Down" = "#56B4E9",
+      "Down-regulated" = "#56B4E9",
+      "Down_regulated" = "#56B4E9",
+      "NS" = "#999999",
+      "Not significant" = "#999999"
+    )
+    observed <- unique(as.character(data_processed$regulation))
+    reg_colors <- reg_colors[intersect(names(reg_colors), observed)]
+    plot_volcano <- plot_volcano +
+      ggplot2::scale_color_manual(values = reg_colors, drop = FALSE)
+  } else if (!is.null(color)) {
+    plot_volcano <- plot_volcano + ggsci::scale_color_d3()
+  }
 
   # Return comprehensive results
   list(

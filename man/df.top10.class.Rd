@@ -6,8 +6,10 @@
 \title{Test data.}
 \format{
 ## `df.top10.class`
-A data frame with 9 rows and 2 columns:
+A data frame with 11,267 rows and 7 columns:
 \describe{
+  \item{OTU}{OTU identifier}
+  \item{phylum, class, order, family, genus, species}{taxonomic assignments}
 }
 }
 \source{

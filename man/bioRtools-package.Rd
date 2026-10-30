@@ -4,9 +4,9 @@
 \name{bioRtools-package}
 \alias{bioRtools}
 \alias{bioRtools-package}
-\title{bioRtools: Convenience Functions for Biological Data Processing}
+\title{bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data}
 \description{
-This package provides a comprehensive suite of convenience functions for biological data analysis and visualization. It includes tools for multivariate analysis (PCA, PCoA, RDA, sPLS-DA, OPLS-DA), statistical testing (ANOVA with post-hoc tests, correlation analysis, linear regression, PERMANOVA), differential analysis (DESeq2-based differential expression and abundance analysis, LEfSe), data preprocessing (rarefaction, outlier detection, heatmap reordering), genomics visualization (Manhattan plots, volcano plots), microbiome analysis (taxonomic composition, diversity analysis), metabolomics workflows, and publication-ready plotting themes. The package standardizes complex analytical workflows across omics data types and provides consistent, publication-quality visualization outputs with minimal code requirements.
+Provides a reproducible analysis-to-figure contract for multivariate omics workflows. Core methods preserve native statistical model objects while returning validated score, loading, diversity, VIP, and differential-result tables together with composable 'ggplot2' figures. The package includes microbiome ordination and diversity workflows, metabolomics multivariate models, transcriptomic and microbiome differential analysis, functional enrichment, and reusable publication-oriented plotting helpers.
 }
 \seealso{
 Useful links:
@@ -19,6 +19,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: Xiang LI \email{lixiang117423@gmail.com}
+
+Authors:
+\itemize{
+  \item Xiang LI \email{lixiang117423@gmail.com}
+}
 
 }
 \keyword{internal}

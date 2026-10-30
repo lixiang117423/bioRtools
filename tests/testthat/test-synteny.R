@@ -5,7 +5,13 @@
 df.synteny.gene <- bioRtools::df.synteny.gene
 df.synteny.link <- bioRtools::df.synteny.link
 
+skip_if_missing_synteny_deps <- function() {
+  testthat::skip_if_not_installed("gggenes")
+  testthat::skip_if_not_installed("ggforce")
+}
+
 test_that("basic usage returns the synteny plot and its summary", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,
@@ -22,6 +28,7 @@ test_that("basic usage returns the synteny plot and its summary", {
 })
 
 test_that("custom species labels replace the y-axis labels", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,
@@ -35,6 +42,7 @@ test_that("custom species labels replace the y-axis labels", {
 })
 
 test_that("custom fill colors reach the gene fill scale", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,
@@ -48,6 +56,7 @@ test_that("custom fill colors reach the gene fill scale", {
 })
 
 test_that("title and subtitle are attached to the plot", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,
@@ -64,6 +73,7 @@ test_that("title and subtitle are attached to the plot", {
 })
 
 test_that("show_gene_labels = FALSE drops the gene-name text layer", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,
@@ -78,6 +88,7 @@ test_that("show_gene_labels = FALSE drops the gene-name text layer", {
 })
 
 test_that("link_alpha controls the curve link transparency", {
+  skip_if_missing_synteny_deps()
   result <- plot_synteny(
     gene_data = df.synteny.gene,
     syntenic_data = df.synteny.link,

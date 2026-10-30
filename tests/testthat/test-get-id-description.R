@@ -1,3 +1,9 @@
+if (!can_load_namespaces(c("AnnotationDbi", "GO.db", "KEGGREST"))) {
+  test_that("GO/KEGG annotation integration tests are skipped", {
+    testthat::skip("AnnotationDbi, GO.db, or KEGGREST is not available")
+  })
+} else {
+
 # Migrated from tests/test_get_id_description.R (bare script).
 # get_id_description(): GO/KEGG id -> description (+ GO ontology).
 # GO branch is offline (local GO.db). KEGG branch needs network and is
@@ -88,3 +94,4 @@ test_that("error — mixed KEGG organism prefixes", {
   expect_error(get_id_description(c("hsa04110", "ath00010")),
                "mixed prefixes")
 })
+}

@@ -34,15 +34,9 @@ utils::globalVariables(c(
 
 
 ## usethis namespace: start
-#' @importFrom agricolae duncan.test
 #' @importFrom ape pcoa
 #' @importFrom ape read.tree
-#' @importFrom broom tidy
-#' @importFrom clusterProfiler enricher
 #' @importFrom data.table fread
-#' @importFrom DESeq2 DESeq
-#' @importFrom DESeq2 DESeqDataSetFromMatrix
-#' @importFrom DESeq2 results
 #' @importFrom dplyr %>%
 #' @importFrom dplyr arrange
 #' @importFrom dplyr count
@@ -74,20 +68,11 @@ utils::globalVariables(c(
 #' @importFrom ggplot2 rel
 #' @importFrom ggplot2 theme
 #' @importFrom ggplot2 unit
-#' @importFrom ggprism guide_prism_offset_minor
 #' @importFrom ggrepel geom_label_repel
 #' @importFrom ggsci scale_color_d3
-#' @importFrom ggtext element_markdown
 #' @importFrom ggthemes theme_foundation
-#' @importFrom ggtree geom_tiplab
-#' @importFrom ggtree ggtree
-#' @importFrom janitor clean_names
-#' @importFrom lefser lefser
 #' @importFrom magrittr set_names
 #' @importFrom mixOmics splsda
-#' @importFrom multcomp cld
-#' @importFrom multcomp glht
-#' @importFrom multcomp mcp
 #' @importFrom purrr map
 #' @importFrom purrr map_dbl
 #' @importFrom rlang sym
@@ -105,7 +90,6 @@ utils::globalVariables(c(
 #' @importFrom stats reorder
 #' @importFrom stringr str_replace
 #' @importFrom stringr str_split
-#' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom tibble column_to_rownames
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr nest
@@ -117,6 +101,5 @@ utils::globalVariables(c(
 #' @importFrom vegan rda
 #' @importFrom vegan scores
 #' @importFrom vegan vegdist
-#' @importFrom WGCNA corAndPvalue
 ## usethis namespace: end
 NULL

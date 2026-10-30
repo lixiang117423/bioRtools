@@ -1,4 +1,8 @@
 ^README\.md$
+^\.git$
+^\.zenodo\.json$
+^CITATION\.cff$
+^journal\.md$
 ^deve\.log\.R$
 ^test_function\.R$
 ^.*\.Rproj$
@@ -17,6 +21,12 @@
 ^LICENSE\.md$
 ^README_cn\.md$
 ^README_en\.md$
+^paper\.md$
+^paper\.bib$
+^CONTRIBUTING\.md$
+^CODE_OF_CONDUCT\.md$
+^SUPPORT\.md$
+^JOSS_SUBMISSION\.md$
 ^Rplots\.pdf$
 ^SETUP\.md$
 ^_pkgdown\.yml$

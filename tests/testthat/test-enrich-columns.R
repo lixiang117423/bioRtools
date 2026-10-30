@@ -1,3 +1,8 @@
+if (!can_load_namespace("clusterProfiler")) {
+  test_that("optional dependency integration tests are skipped", {
+    testthat::skip("clusterProfiler is not available")
+  })
+} else {
 # Migrated from tests/test_enrich_columns.R (bare script).
 # enrich_kegg / enrich_go db column rename (snake_case) with a
 # backward-compat shim that still accepts legacy dot.case names.
@@ -92,3 +97,4 @@ test_that("enrich_go accepts legacy dot.case via shim", {
   expect_match(warn2, "deprecated")
   expect_identical(res_go$id, res_go_old$id)
 })
+}

@@ -61,8 +61,8 @@ calc_alpha_diversity <- function(data,
   # ── Auto-detect orientation and prepare matrix ────────────────────────────
   data <- as.data.frame(data)
 
-  # Determine sample column for matching
-  sample_names <- if (!is.null(sample)) as.character(sample[[1]]) else NULL
+  # Determine sample IDs from an explicit/common ID column or row names.
+  sample_names <- if (!is.null(sample)) resolve_sample_ids(sample) else NULL
 
   if (!is.null(sample_names)) {
     data_colnames <- colnames(data)
@@ -179,8 +179,17 @@ calc_alpha_diversity <- function(data,
 
   # ── Join sample metadata ──────────────────────────────────────────────────
   if (!is.null(sample)) {
+    metadata <- align_sample_metadata(sample, samples_vec)
+    metadata_join <- metadata$sample
+    metadata_join$.bio_sample_id <- metadata$sample_ids
+    if ("sample" %in% names(metadata_join)) {
+      metadata_join$sample <- NULL
+    }
     df_result <- df_result %>%
-      dplyr::left_join(sample, by = "sample")
+      dplyr::left_join(
+        metadata_join,
+        by = c("sample" = ".bio_sample_id")
+      )
   }
 
   if (verbose) {
