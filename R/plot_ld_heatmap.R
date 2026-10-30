@@ -73,7 +73,8 @@
 #'
 #' @note
 #' This function requires the LDheatmap package and ttplot package for VCF file processing.
-#' If LDheatmap is not installed, it will be installed automatically from Bioconductor.
+#' If LDheatmap is not installed, the function stops with an installation
+#' instruction; it never modifies the user's R library implicitly.
 #'
 #' @author Xiang LI <lixiang117423@gmail.com>
 #' @export
@@ -220,13 +221,13 @@ plot_ld_heatmap <- function(vcf_file,
 
   if (verbose) message("Checking package dependencies...")
 
-  # Check and install LDheatmap if needed
+  # Check LDheatmap if needed; never modify the user's R library implicitly.
   if (!requireNamespace("LDheatmap", quietly = TRUE)) {
-    if (verbose) message("Installing LDheatmap from Bioconductor...")
-    if (!requireNamespace("BiocManager", quietly = TRUE)) {
-      utils::install.packages("BiocManager")
-    }
-    BiocManager::install("LDheatmap", quiet = !verbose)
+    stop(
+      "Package 'LDheatmap' is required for this function; ",
+      "install it with BiocManager::install('LDheatmap').",
+      call. = FALSE
+    )
   }
 
   # Check ttplot package

@@ -6,8 +6,9 @@
 \title{Test data.}
 \format{
 ## `df.rda.chem`
-A data frame with 9 rows and 2 columns:
+A data frame with 9 rows and 8 columns:
 \describe{
+  \item{pH, OM, EC, TN, AHN, AP, RAP, CNR}{soil chemical variables}
 }
 }
 \source{

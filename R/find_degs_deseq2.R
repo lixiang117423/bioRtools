@@ -50,6 +50,8 @@
 #'   will stop with an error message detailing which genes and samples have issues
 #' @param pairwise Logical indicating whether to perform pairwise comparisons
 #'   between groups (default: TRUE). When FALSE, runs a single overall comparison.
+#'   Pairwise mode requires a single-factor formula; use \code{pairwise = FALSE}
+#'   to retain covariates such as batch.
 #' @param ref_group Optional reference group for pairwise comparisons. If NULL,
 #'   every group is tested against every other; otherwise each group is tested
 #'   against \code{ref_group}.
@@ -64,7 +66,8 @@
 #'     \item \code{stat}: Wald statistic. Absent when \code{shrink_lfc = TRUE}
 #'       and apeglm shrinkage succeeds (DESeq2 drops it during lfcShrink)
 #'     \item \code{pvalue}: Raw p-value from the Wald test
-#'     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
+#'     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR). Unavailable
+#'       values remain \code{NA} and are classified as non-significant.
 #'     \item \code{regulation}: Regulation class. Pairwise mode (default) uses
 #'       "Up" / "Down" / "NS"; single mode uses "Up-regulated" /
 #'       "Down-regulated" / "Not significant"
@@ -317,6 +320,14 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
                              shrink_lfc = TRUE, independent_filtering = TRUE, alpha = 0.1,
                              remove_problematic_genes = TRUE, pairwise = TRUE,
                              ref_group = NULL) {
+  if (!requireNamespace("DESeq2", quietly = TRUE)) {
+    stop(
+      "Package 'DESeq2' is required for this function; ",
+      "install it with BiocManager::install('DESeq2').",
+      call. = FALSE
+    )
+  }
+
   # Resolve formula from group_col if provided
   if (!is.null(group_col)) {
     formula <- stats::as.formula(paste0("~", group_col))
@@ -469,6 +480,14 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
   if (length(formula_vars) == 0) {
     stop(err_invalid_input("formula", "at least one variable"))
   }
+  formula_terms <- attr(stats::terms(formula), "term.labels")
+  if (pairwise && length(formula_terms) != 1L) {
+    stop(
+      "Pairwise mode supports a single-factor formula; ",
+      "set pairwise = FALSE to retain covariates.",
+      call. = FALSE
+    )
+  }
 
   # Check for missing values in design variables
   for (var in formula_vars) {
@@ -499,7 +518,7 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
   }
 
   # Check experimental design adequacy
-  main_factor <- formula_vars[length(formula_vars)]  # Usually the last term is main effect
+  main_factor <- formula_terms[1]
   if (main_factor %in% names(sample_aligned)) {
     group_counts <- table(sample_aligned[[main_factor]])
     n_groups <- length(group_counts)
@@ -600,9 +619,15 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
       if (is.null(res)) return(NULL)
 
       res <- tibble::rownames_to_column(res, "gene")
-      res$padj <- ifelse(is.na(res$padj), 1, res$padj)
-      res$regulation <- ifelse(res$log2FoldChange > log2_fold_change & res$padj < padj, "Up",
-                        ifelse(res$log2FoldChange < -log2_fold_change & res$padj < padj, "Down", "NS"))
+      res$regulation <- ifelse(
+        !is.na(res$padj) & res$log2FoldChange > log2_fold_change & res$padj < padj,
+        "Up",
+        ifelse(
+          !is.na(res$padj) & res$log2FoldChange < -log2_fold_change & res$padj < padj,
+          "Down",
+          "NS"
+        )
+      )
       res$fold_change <- 2^res$log2FoldChange
       res$abs_log2fc <- abs(res$log2FoldChange)
       res$comparison <- comp_label
@@ -770,17 +795,16 @@ find_degs_deseq2 <- function(data, sample, formula = NULL, group_col = NULL,
     dplyr::mutate(
       # Main classification
       regulation = dplyr::case_when(
-        log2FoldChange > !!log2_fold_change & padj < !!padj ~ "Up-regulated",
-        log2FoldChange < -!!log2_fold_change & padj < !!padj ~ "Down-regulated",
+        !is.na(padj) & log2FoldChange > !!log2_fold_change & padj < !!padj ~ "Up-regulated",
+        !is.na(padj) & log2FoldChange < -!!log2_fold_change & padj < !!padj ~ "Down-regulated",
         TRUE ~ "Not significant"
       ),
       # Additional useful columns
       fold_change = 2^log2FoldChange,
       abs_log2fc = abs(log2FoldChange),
-      # Handle missing padj values
-      padj = ifelse(is.na(padj), 1, padj),
       # Detailed significance levels
       significance_level = dplyr::case_when(
+        is.na(padj) ~ "NS (padj unavailable)",
         padj >= 0.05 ~ "NS (p\u22650.05)",
         padj >= 0.01 ~ "* (p<0.05)",
         padj >= 0.001 ~ "** (p<0.01)",

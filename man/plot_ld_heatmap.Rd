@@ -111,7 +111,8 @@ The function automatically handles:
 }
 \note{
 This function requires the LDheatmap package and ttplot package for VCF file processing.
-If LDheatmap is not installed, it will be installed automatically from Bioconductor.
+If LDheatmap is not installed, the function stops with an installation
+instruction; it never modifies the user's R library implicitly.
 }
 \examples{
 library(bioRtools)

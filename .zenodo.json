@@ -1,0 +1,28 @@
+{
+  "title": "bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data",
+  "description": "<p>bioRtools provides a reproducible analysis-to-figure contract for multivariate omics workflows. Core methods preserve native statistical model objects while returning validated result tables, composable ggplot2 figures, and provenance metadata.</p>",
+  "creators": [
+    {
+      "name": "LI, Xiang"
+    }
+  ],
+  "upload_type": "software",
+  "license": "MIT",
+  "version": "2.0.0",
+  "language": "eng",
+  "keywords": [
+    "R",
+    "bioinformatics",
+    "microbiome",
+    "metabolomics",
+    "multivariate analysis",
+    "reproducible research"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/lixiang117423/bioRtools",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

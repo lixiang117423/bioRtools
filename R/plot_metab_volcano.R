@@ -305,8 +305,7 @@ plot_metab_volcano <- function(data,
       size = 3, color = "white", show.legend = FALSE
     ) +
     ggplot2::scale_y_continuous(
-      limits = y_limits, breaks = y_breaks,
-      guide = ggprism::guide_prism_offset_minor()
+      limits = y_limits, breaks = y_breaks
     ) +
     ggplot2::labs(x = NULL, y = "log2FC") +
     ggplot2::guides(

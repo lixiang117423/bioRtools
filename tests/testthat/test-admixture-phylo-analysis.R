@@ -76,10 +76,16 @@ test_that("save writes the main plot to disk", {
 test_that("partial sample overlap raises warnings, not silence", {
   dir <- make_admix_dir()
   tr <- ape::read.tree(text = "((S1:1,S2:1):1,(S3:1,S4:1):1,X5:2);")
-  expect_warning(
+  warnings <- character()
+  withCallingHandlers(
     admixture_phylo_analysis(dir, tree_file = tr),
-    "in the tree but not in .Q"
+    warning = function(w) {
+      warnings <<- c(warnings, conditionMessage(w))
+      invokeRestart("muffleWarning")
+    }
   )
+  expect_true(any(grepl("in the tree but not in \\.Q", warnings)))
+  expect_true(any(grepl("in \\.Q but not in the tree", warnings)))
 })
 
 test_that("zero sample overlap stops with both sample lists", {

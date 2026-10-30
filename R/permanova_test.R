@@ -29,6 +29,8 @@
 #' as defined by the explanatory variables are equivalent for all groups. It is a
 #' non-parametric method suitable for ecological community data. The function uses
 #' \code{vegan::adonis2()} which is the updated version of \code{vegan::adonis()}.
+#' Response row names and metadata sample IDs must identify the same complete,
+#' unique sample set; metadata are reordered automatically before fitting.
 #'
 #' @note
 #' This function uses \code{vegan::adonis2()} instead of the deprecated
@@ -84,11 +86,38 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     }
   }
 
+  # The response is supplied through the formula. Align metadata by row names
+  # before fitting so a reordered metadata table cannot silently change results.
+  response <- tryCatch(
+    eval(formula[[2]], envir = environment(formula)),
+    error = function(e) {
+      stop("Could not evaluate the response in 'formula': ", e$message, call. = FALSE)
+    }
+  )
+  response_ids <- rownames(response)
+  if (is.null(response_ids) || has_default_rownames(response)) {
+    stop(
+      "The response in 'formula' must have non-default sample IDs in row names",
+      call. = FALSE
+    )
+  }
+  sample <- align_sample_metadata(sample, response_ids)$sample
+
+  # Rebuild the formula around the evaluated response. This keeps adonis2 from
+  # re-evaluating a caller-local expression such as `dataset$matrix` inside the
+  # metadata data frame.
+  fit_formula <- formula
+  fit_formula[[2]] <- as.name(".bioRtools_response")
+  fit_environment <- new.env(parent = environment(formula))
+  fit_environment$.bioRtools_response <- response
+  environment(fit_formula) <- fit_environment
+  .bioRtools_response <- response
+
   # Perform PERMANOVA using the updated adonis2 function
   tryCatch(
     {
       permanova_result <- vegan::adonis2(
-        formula = formula,
+        formula = fit_formula,
         data = sample,
         permutations = permutations,
         method = method,
@@ -134,10 +163,29 @@ permanova_test <- function(formula, sample, method = "bray", permutations = 999)
     ) %>%
     dplyr::arrange(p_value)
 
-  # Return comprehensive results following project conventions
-  list(
+  # Return comprehensive results using the shared result contract
+  results <- list(
     result_permanova = result_permanova,
     raw_result = permanova_result,
     summary_stats = summary_stats
+  )
+
+  new_bioRtools_fit(
+    results,
+    model = permanova_result,
+    tables = list(
+      permanova = result_permanova,
+      summary = summary_stats
+    ),
+    plots = list(),
+    analysis_type = "PERMANOVA",
+    engine = "vegan::adonis2",
+    engine_versions = c(vegan = as.character(utils::packageVersion("vegan"))),
+    data_info = list(
+      n_samples = nrow(sample),
+      distance = method,
+      permutations = permutations
+    ),
+    call = match.call()
   )
 }

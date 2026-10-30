@@ -1,0 +1,89 @@
+---
+title: "A reproducible metabolomics workflow with bioRtools"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A reproducible metabolomics workflow with bioRtools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+```{r setup}
+library(bioRtools)
+library(ggplot2)
+```
+
+This workflow uses the public `nutrimouse` lipid dataset distributed with
+`mixOmics` (Martin et al., 2007; DOI 10.1002/hep.21510).
+
+```{r data}
+data(nutrimouse, package = "mixOmics")
+
+X <- as.data.frame(nutrimouse$lipid)
+meta <- data.frame(
+  sample = rownames(X),
+  diet = nutrimouse$diet,
+  genotype = nutrimouse$genotype,
+  row.names = rownames(X),
+  stringsAsFactors = FALSE
+)
+
+dim(X)
+table(meta$diet)
+```
+
+## Pairwise OPLS-DA
+
+```{r opls}
+set.seed(4)
+opls <- suppressWarnings(opls_analysis(
+  X,
+  sample = meta,
+  sample_col = "sample",
+  group_col = "diet",
+  pairwise = TRUE,
+  validation = "CV",
+  cv_folds = 4,
+  verbose = FALSE
+))
+
+class(opls)
+head(opls$tables$differential)
+```
+
+## Differential metabolite display
+
+```{r volcano}
+volcano <- plot_metab_volcano(opls$tables$differential)
+volcano
+```
+
+## Sparse PLS-DA
+
+```{r spls}
+set.seed(9)
+fit <- spls_analysis(
+  X,
+  sample = meta,
+  sample_col = "sample",
+  group_col = "diet",
+  ncomp = 2,
+  keep_x = c(10, 5),
+  verbose = FALSE
+)
+
+fit$tables$variance_explained
+fit$plots
+```
+
+The native `ropls` and `mixOmics` objects are retained in the `model`
+component; the normalized tables and plots are available through the same
+`bioRtools_fit` interface.

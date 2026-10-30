@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use bioRtools, please cite this software and the archived release."
+type: software
+title: "bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data"
+abstract: >-
+  bioRtools provides a reproducible analysis-to-figure contract for multivariate
+  omics workflows. Core methods preserve native statistical model objects while
+  returning validated result tables, composable ggplot2 figures, and provenance
+  metadata.
+authors:
+  - family-names: LI
+    given-names: Xiang
+    email: lixiang117423@gmail.com
+repository-code: "https://github.com/lixiang117423/bioRtools"
+url: "https://lixiang117423.github.io/bioRtools/"
+license: MIT
+version: "2.0.0"
+date-released: "2026-10-30"
+keywords:
+  - R
+  - bioinformatics
+  - microbiome
+  - metabolomics
+  - multivariate analysis
+  - reproducible research

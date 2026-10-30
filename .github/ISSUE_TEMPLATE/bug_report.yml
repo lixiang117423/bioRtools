@@ -1,0 +1,45 @@
+name: Bug report
+description: Report a reproducible error in bioRtools
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve bioRtools. Do not include private data,
+        credentials, or personal information.
+  - type: input
+    id: version
+    attributes:
+      label: bioRtools version
+      description: Run packageVersion("bioRtools")
+      placeholder: 2.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproducible example
+      description: Use public or synthetic data where possible.
+      render: r
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior and error message
+    validations:
+      required: true
+  - type: textarea
+    id: session
+    attributes:
+      label: sessionInfo()
+      render: r
+    validations:
+      required: true

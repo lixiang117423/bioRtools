@@ -6,7 +6,7 @@
 \title{Test data.}
 \format{
 ## `df.rnaseq.degs`
-A data frame with 6 rows and 1 columns:
+A data frame with 500 rows and 1 column:
 \describe{
   \item{gene}{gene name}
 }
@@ -19,5 +19,11 @@ df.rnaseq.degs
 }
 \description{
 Test data.
+}
+\details{
+This is a legacy differential-expression fixture. Its gene IDs are
+  not guaranteed to match `df.rnaseq.gene`; the GO and KEGG fixtures are
+  likewise independent historical examples rather than a rebuilt end-to-end
+  annotation of the count matrix.
 }
 \keyword{datasets}

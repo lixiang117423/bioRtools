@@ -1,10 +1,10 @@
 # bioRtools
 
 [![R](https://img.shields.io/badge/R-%3E%3D4.1.0-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.95.1-green)](https://github.com/lixiang117423/bioRtools)
+[![Version](https://img.shields.io/badge/version-2.0.0-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
-`bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
+`bioRtools` provides a reproducible analysis-to-figure contract for omics data. Core multivariate workflows preserve native model objects while returning validated result tables and editable `ggplot2` figures, with additional helpers for differential analysis, enrichment, and genomics visualization.
 
 ## Key Features
 
@@ -18,18 +18,17 @@
 ## Requirements
 
 - R >= 4.1.0, as declared in `DESCRIPTION`
-- R >= 4.0.0 is recommended for a smoother dependency experience
 
 ## Installation
 
-Install the development version from GitHub:
+Install the current GitHub version with `pak`:
 
 ```r
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+  install.packages("pak")
 }
 
-devtools::install_github("lixiang117423/bioRtools")
+pak::pak("lixiang117423/bioRtools")
 ```
 
 If dependency installation needs to be handled manually, install the main Bioconductor and CRAN dependencies first:
@@ -39,21 +38,24 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
-BiocManager::install(c(
-  "clusterProfiler", "DESeq2", "edgeR", "ggtree", "lefser",
-  "SummarizedExperiment", "WGCNA"
-))
+BiocManager::install(c("mixOmics", "ropls"))
 
 install.packages(c(
-  "agricolae", "ape", "broom", "data.table", "dplyr",
-  "factoextra", "FactoMineR", "forcats", "ggplot2", "ggprism",
-  "ggrepel", "ggsci", "ggtext", "ggthemes", "janitor", "magrittr",
-  "mixOmics", "multcomp", "patchwork", "purrr", "rlang", "ropls",
-  "rstatix", "scales", "stringr", "tibble", "tidyr", "vegan"
+  "ape", "data.table", "dplyr", "factoextra", "FactoMineR",
+  "forcats", "ggplot2", "ggprism", "ggrepel", "ggsci", "ggthemes",
+  "magrittr", "picante", "purrr", "ragg", "RColorBrewer", "readr",
+  "readxl", "rlang", "rstatix", "scales", "stringr", "tibble",
+  "tidyr", "tidyselect", "vegan", "writexl"
+))
+
+# Optional:
+BiocManager::install(c(
+  "clusterProfiler", "DESeq2", "edgeR", "ggtree", "GO.db",
+  "KEGGREST", "lefser", "SummarizedExperiment", "WGCNA"
 ))
 ```
 
-Optional suggested packages include `chemhelper`, `ggpmisc`, `ggtern`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
+Optional suggested packages include `ggpmisc`, `ggtern`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
 
 ## Function Modules
 
@@ -363,24 +365,29 @@ Check with `pdffonts file.pdf` (each font should show `emb yes`).
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.95.0`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `2.0.0`.
 
 ## Citation
 
 If you use `bioRtools` in your research, please cite:
 
 ```text
-Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.71.0. https://github.com/lixiang117423/bioRtools
+Li, X. (2026). bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data.
+R package version 2.0.0. https://github.com/lixiang117423/bioRtools
 ```
 
 ## Contributing
 
-Contributions are welcome:
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before
+opening an issue or pull request, and follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 1. Report bugs in [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues)
 2. Suggest features through Issues
 3. Fork the repository, create a feature branch, commit your changes, push the branch, and open a pull request
+
+Support channels and maintenance expectations are documented in
+[SUPPORT.md](SUPPORT.md).
 
 ## License
 

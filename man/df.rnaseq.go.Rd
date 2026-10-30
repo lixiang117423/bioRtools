@@ -6,7 +6,7 @@
 \title{Test data.}
 \format{
 ## `df.rnaseq.go`
-A data frame with 6 rows and 1 columns:
+A data frame with 651,151 rows and 4 columns:
 \describe{
   \item{gene}{gene name}
   \item{go_id}{GO term id}

@@ -73,7 +73,7 @@
 #' Test data.
 #'
 #' @format ## `df.rnaseq.go`
-#' A data frame with 6 rows and 1 columns:
+#' A data frame with 651,151 rows and 4 columns:
 #' \describe{
 #'   \item{gene}{gene name}
 #'   \item{go_id}{GO term id}
@@ -86,17 +86,21 @@
 #' Test data.
 #'
 #' @format ## `df.rnaseq.degs`
-#' A data frame with 6 rows and 1 columns:
+#' A data frame with 500 rows and 1 column:
 #' \describe{
 #'   \item{gene}{gene name}
 #' }
+#' @details This is a legacy differential-expression fixture. Its gene IDs are
+#'   not guaranteed to match `df.rnaseq.gene`; the GO and KEGG fixtures are
+#'   likewise independent historical examples rather than a rebuilt end-to-end
+#'   annotation of the count matrix.
 #' @source Xiang Li
 "df.rnaseq.degs"
 
 #' Test data.
 #'
 #' @format ## `df.rnaseq.kegg`
-#' A data frame with 6 rows and 1 columns:
+#' A data frame with 63,742 rows and 3 columns:
 #' \describe{
 #'   \item{gene}{gene name}
 #'   \item{kegg_id}{KEGG term id}
@@ -111,7 +115,7 @@
 #' A data frame with 57,359 rows and 8 columns:
 #' \describe{
 #'   \item{gene}{gene name}
-#'   \item{baseMea}{baseMea}
+#'   \item{baseMean}{mean normalized count}
 #'   \item{log2FoldChange}{log2FoldChange}
 #'   \item{lfcSE}{lfcSE}
 #'   \item{stat}{stat}
@@ -119,6 +123,9 @@
 #'   \item{padj}{padj}
 #'   \item{group}{group}
 #' }
+#' @details \code{group} stores the regulation class
+#'   (\code{Down_regulated}, \code{NS}, or \code{Up_regulated}) in this legacy
+#'   volcano-plot fixture.
 #' @source Xiang Li
 "df.rnaseq.plot.volcano"
 
@@ -127,6 +134,8 @@
 #' @format ## `df.pcoa.otu`
 #' A data frame with 9 rows and 11,267 columns:
 #' \describe{
+#'   \item{rownames}{sample identifiers}
+#'   \item{OTU columns}{OTU abundance values}
 #' }
 #' @source Xiang Li
 "df.pcoa.otu"
@@ -145,8 +154,10 @@
 #' Test data.
 #'
 #' @format ## `df.top10.otu`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 9 rows and 11,267 columns:
 #' \describe{
+#'   \item{rownames}{sample identifiers}
+#'   \item{OTU columns}{OTU abundance values}
 #' }
 #' @source Xiang Li
 "df.top10.otu"
@@ -165,26 +176,35 @@
 #' Test data.
 #'
 #' @format ## `df.top10.class`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 11,267 rows and 7 columns:
 #' \describe{
+#'   \item{OTU}{OTU identifier}
+#'   \item{phylum, class, order, family, genus, species}{taxonomic assignments}
 #' }
 #' @source Xiang Li
 "df.top10.class"
 
 #' Test data.
 #'
+#' @name df.call_DAMs_LEfSe.otu
+#' @aliases df.call_dams_lefse.otu
 #' @format ## `df.call_dams_lefse.otu`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 5,335 rows and 6 columns:
 #' \describe{
+#'   \item{rownames}{OTU identifiers}
+#'   \item{Cover1, Cover2, Cover3, CK1, CK2, CK3}{abundance values}
 #' }
 #' @source Xiang Li
 "df.call_dams_lefse.otu"
 
 #' Test data.
 #'
+#' @name df.call_DAMs_LEfSe.sample
+#' @aliases df.call_dams_lefse.sample
 #' @format ## `df.call_dams_lefse.sample`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 6 rows and 1 column:
 #' \describe{
+#'   \item{group}{experimental group}
 #' }
 #' @source Xiang Li
 "df.call_dams_lefse.sample"
@@ -192,8 +212,9 @@
 #' Test data.
 #'
 #' @format ## `df.rda.chem`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 9 rows and 8 columns:
 #' \describe{
+#'   \item{pH, OM, EC, TN, AHN, AP, RAP, CNR}{soil chemical variables}
 #' }
 #' @source Xiang Li
 "df.rda.chem"
@@ -201,8 +222,10 @@
 #' Test data.
 #'
 #' @format ## `df.rda.otu`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 9 rows and 11,267 columns:
 #' \describe{
+#'   \item{rownames}{sample identifiers}
+#'   \item{OTU columns}{OTU abundance values}
 #' }
 #' @source Xiang Li
 "df.rda.otu"
@@ -210,8 +233,10 @@
 #' Test data.
 #'
 #' @format ## `df.permanova.sample`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 30 rows and 7 columns:
 #' \describe{
+#'   \item{sample, location, variety, variety.chinese, group}{sample and design variables}
+#'   \item{Latitude, Longitude}{sampling coordinates}
 #' }
 #' @source Xiang Li
 "df.permanova.sample"
@@ -219,8 +244,10 @@
 #' Test data.
 #'
 #' @format ## `df.permanova.otu`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 30 rows and 1,758 columns:
 #' \describe{
+#'   \item{rownames}{sample identifiers matching \code{df.permanova.sample$sample}}
+#'   \item{ASV columns}{ASV abundance values}
 #' }
 #' @source Xiang Li
 "df.permanova.otu"
@@ -228,8 +255,10 @@
 #' Test data.
 #'
 #' @format ## `df.splsda.meta`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 54 rows and 148 columns:
 #' \describe{
+#'   \item{rownames}{sample identifiers}
+#'   \item{metabolite columns}{metabolite abundance values}
 #' }
 #' @source Xiang Li
 "df.splsda.meta"
@@ -237,8 +266,9 @@
 #' Test data.
 #'
 #' @format ## `df.splsda.sample`
-#' A data frame with 9 rows and 2 columns:
+#' A data frame with 54 rows and 4 columns:
 #' \describe{
+#'   \item{sample, day, treatment, group}{sample identifiers and experimental design}
 #' }
 #' @source Xiang Li
 "df.splsda.sample"

@@ -17,3 +17,20 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(bioRtools)
 ```
+
+`lm_analysis()` fits a linear model and provides a reusable plot object.
+
+```{r}
+data(test_data)
+
+lm_result <- lm_analysis(
+  data = test_data,
+  x = "Sepal.Length",
+  y = "Sepal.Width",
+  group = "Species",
+  color = "Species"
+)
+
+names(lm_result)
+lm_result$plot
+```

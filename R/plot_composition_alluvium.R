@@ -105,6 +105,14 @@ plot_composition_alluvium <- function(data,
                                       legend_key_height = 0.4,
                                       legend_key_width = 0.6,
                                       base_size = 11) {
+  if (!requireNamespace("ggalluvial", quietly = TRUE)) {
+    stop(
+      "Package 'ggalluvial' is required for alluvial plots; ",
+      "install it with utils::install.packages('ggalluvial')",
+      call. = FALSE
+    )
+  }
+
   # Input validation
   validate_alluvium_input(data, taxon_column, id_column, palette, alpha)
 

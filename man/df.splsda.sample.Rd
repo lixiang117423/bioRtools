@@ -6,8 +6,9 @@
 \title{Test data.}
 \format{
 ## `df.splsda.sample`
-A data frame with 9 rows and 2 columns:
+A data frame with 54 rows and 4 columns:
 \describe{
+  \item{sample, day, treatment, group}{sample identifiers and experimental design}
 }
 }
 \source{

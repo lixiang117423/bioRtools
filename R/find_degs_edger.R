@@ -1,3 +1,19 @@
+#' Normalize edgeR library sizes across edgeR API versions
+#'
+#' @param dge A DGEList object.
+#' @param method Normalization method.
+#'
+#' @return A normalized DGEList object.
+#' @keywords internal
+#' @noRd
+edgeR_normalize_lib_sizes <- function(dge, method) {
+  if ("normLibSizes" %in% getNamespaceExports("edgeR")) {
+    edgeR::normLibSizes(dge, method = method)
+  } else {
+    edgeR::calcNormFactors(dge, method = method)
+  }
+}
+
 #' Identify Differentially Expressed Genes Using edgeR
 #'
 #' This function performs differential gene expression analysis using edgeR's
@@ -51,7 +67,8 @@
 #'   will stop with an error message
 #' @param pairwise Logical indicating whether to perform pairwise comparisons
 #'   between groups (default: TRUE). If TRUE, all pairs of groups are compared.
-#'   If FALSE, uses the full design formula
+#'   Pairwise mode requires a single-factor formula; use \code{pairwise = FALSE}
+#'   to retain covariates. If FALSE, uses the full design formula
 #' @param ref_group Optional character string specifying the reference group
 #'   for pairwise comparisons. If NULL (default), all pairwise comparisons
 #'   are made. If specified, only comparisons against this reference group
@@ -64,7 +81,8 @@
 #'     \item \code{log2FoldChange}: Log2 fold change between conditions
 #'     \item \code{logCPM}: Average log2 counts per million
 #'     \item \code{pvalue}: Raw p-value from the statistical test
-#'     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR)
+#'     \item \code{padj}: Benjamini-Hochberg adjusted p-value (FDR). Unavailable
+#'       values remain \code{NA} and are classified as non-significant.
 #'     \item \code{regulation}: Gene regulation classification. Pairwise mode
 #'       (default): "Up" / "Down" / "NS". Single mode: "Up-regulated" /
 #'       "Down-regulated" / "Not significant"
@@ -198,6 +216,13 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
                             filter_min_samples = NULL, trend_method = "loess",
                             robust = TRUE, remove_problematic_genes = TRUE,
                             pairwise = TRUE, ref_group = NULL) {
+  if (!requireNamespace("edgeR", quietly = TRUE)) {
+    stop(
+      "Package 'edgeR' is required for this function; ",
+      "install it with BiocManager::install('edgeR').",
+      call. = FALSE
+    )
+  }
 
   # --- Input validation -------------------------------------------------------
 
@@ -326,6 +351,14 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
   if (length(formula_vars) == 0) {
     stop(err_invalid_input("formula", "at least one variable"))
   }
+  formula_terms <- attr(stats::terms(formula), "term.labels")
+  if (pairwise && length(formula_terms) != 1L) {
+    stop(
+      "Pairwise mode supports a single-factor formula; ",
+      "set pairwise = FALSE to retain covariates.",
+      call. = FALSE
+    )
+  }
 
   for (var in formula_vars) {
     if (any(is.na(sample_aligned[[var]]))) {
@@ -363,7 +396,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
 
   # --- Check experimental design ----------------------------------------------
 
-  main_factor <- formula_vars[length(formula_vars)]
+  main_factor <- formula_terms[1]
   if (main_factor %in% names(sample_aligned)) {
     group_counts <- table(sample_aligned[[main_factor]])
     n_groups <- length(group_counts)
@@ -445,7 +478,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
 
       # Normalize
       dge <- tryCatch(
-        edgeR::calcNormFactors(dge, method = normalize_method),
+        edgeR_normalize_lib_sizes(dge, method = normalize_method),
         error = function(e) {
           warning(paste("Normalization failed for", comp_label, ":", e$message))
           dge
@@ -474,9 +507,15 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
       colnames(res)[colnames(res) == "PValue"] <- "pvalue"
       colnames(res)[colnames(res) == "FDR"] <- "padj"
 
-      res$padj <- ifelse(is.na(res$padj), 1, res$padj)
-      res$regulation <- ifelse(res$log2FoldChange > log2_fold_change & res$padj < fdr, "Up",
-                        ifelse(res$log2FoldChange < -log2_fold_change & res$padj < fdr, "Down", "NS"))
+      res$regulation <- ifelse(
+        !is.na(res$padj) & res$log2FoldChange > log2_fold_change & res$padj < fdr,
+        "Up",
+        ifelse(
+          !is.na(res$padj) & res$log2FoldChange < -log2_fold_change & res$padj < fdr,
+          "Down",
+          "NS"
+        )
+      )
       res$fold_change <- 2^res$log2FoldChange
       res$abs_log2fc <- abs(res$log2FoldChange)
       res$comparison <- comp_label
@@ -571,7 +610,7 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
 
   # Normalize
   dge <- tryCatch(
-    edgeR::calcNormFactors(dge, method = normalize_method),
+    edgeR_normalize_lib_sizes(dge, method = normalize_method),
     error = function(e) {
       warning(paste("Normalization failed:", e$message, "Proceeding without normalization factors."))
       dge
@@ -618,14 +657,14 @@ find_degs_edger <- function(data, sample, formula = ~group, log2_fold_change = 1
     tibble::rownames_to_column(var = "gene") %>%
     dplyr::mutate(
       regulation = dplyr::case_when(
-        log2FoldChange > !!log2_fold_change & padj < !!fdr ~ "Up-regulated",
-        log2FoldChange < -!!log2_fold_change & padj < !!fdr ~ "Down-regulated",
+        !is.na(padj) & log2FoldChange > !!log2_fold_change & padj < !!fdr ~ "Up-regulated",
+        !is.na(padj) & log2FoldChange < -!!log2_fold_change & padj < !!fdr ~ "Down-regulated",
         TRUE ~ "Not significant"
       ),
       fold_change = 2^log2FoldChange,
       abs_log2fc = abs(log2FoldChange),
-      padj = ifelse(is.na(padj), 1, padj),
       significance_level = dplyr::case_when(
+        is.na(padj) ~ "NS (padj unavailable)",
         padj >= 0.05 ~ "NS (p\u22650.05)",
         padj >= 0.01 ~ "* (p<0.05)",
         padj >= 0.001 ~ "** (p<0.01)",

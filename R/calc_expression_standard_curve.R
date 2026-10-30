@@ -33,9 +33,7 @@
 #'   case_when n rename
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_bar geom_errorbar geom_jitter
 #'   geom_text geom_hline facet_wrap labs theme element_text
-#' @importFrom ggthemes theme_pander
 #' @importFrom rstatix t_test wilcox_test
-#' @importFrom multcomp glht mcp cld
 #' @importFrom stats aov sd
 #' @importFrom magrittr set_colnames
 #' @importFrom tibble rownames_to_column

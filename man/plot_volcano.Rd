@@ -9,7 +9,7 @@ plot_volcano(
   x = "log2FoldChange",
   y = "padj",
   size = "baseMean",
-  color = "group",
+  color = "auto",
   xintercept_abs = 1,
   yintercept = 0.05,
   point_alpha = 0.8,
@@ -34,8 +34,10 @@ output from DESeq2 analysis or \code{RNASeq.call_DEGs_DESeq2}.}
 \item{size}{Character string specifying the column name used to map the
 size of points. Default is "baseMean".}
 
-\item{color}{Character string specifying the column name used to map the
-color of points (typically grouping variable). Default is "group".}
+\item{color}{Character string specifying the column used to color points.
+The default \code{"auto"} uses \code{"regulation"} when present and
+otherwise falls back to \code{"group"}. Set \code{NULL} for a single
+color.}
 
 \item{xintercept_abs}{Numeric value for the absolute fold change threshold.
 Vertical lines will be drawn at +/- this value. Default is 1.}

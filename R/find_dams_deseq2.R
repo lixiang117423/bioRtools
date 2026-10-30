@@ -72,6 +72,14 @@ find_dams_deseq2 <- function(data, sample, group_col = "group",
                              min_count = 1, min_samples = 2,
                              shrink_lfc = TRUE,
                              ref_group = NULL) {
+  if (!requireNamespace("DESeq2", quietly = TRUE)) {
+    stop(
+      "Package 'DESeq2' is required for this function; ",
+      "install it with BiocManager::install('DESeq2').",
+      call. = FALSE
+    )
+  }
+
   # --- Prepare data ----------------------------------------------------------
   data <- as.data.frame(data)
   if (ncol(data) > 1 && !is.numeric(data[[1]])) {

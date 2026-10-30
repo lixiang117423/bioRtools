@@ -1,10 +1,10 @@
 # bioRtools
 
-[![R](https://img.shields.io/badge/R-%3E%3D2.10-blue)](https://www.r-project.org/)
-[![Version](https://img.shields.io/badge/version-1.16.1-green)](https://github.com/lixiang117423/bioRtools)
+[![R](https://img.shields.io/badge/R-%3E%3D4.1.0-blue)](https://www.r-project.org/)
+[![Version](https://img.shields.io/badge/version-2.0.0-green)](https://github.com/lixiang117423/bioRtools)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE.md)
 
-`bioRtools` is an R package that collects convenience functions for biological data analysis, statistics, and publication-oriented visualization. It covers common workflows for transcriptomics, microbiome analysis, metabolomics, population genetics, gene structure visualization, qPCR analysis, and reusable plotting themes.
+`bioRtools` provides a reproducible analysis-to-figure contract for omics data. Core multivariate workflows preserve native model objects while returning validated result tables and editable `ggplot2` figures, with additional helpers for differential analysis, enrichment, and genomics visualization.
 
 ## Key Features
 
@@ -17,19 +17,18 @@
 
 ## Requirements
 
-- R >= 2.10, as declared in `DESCRIPTION`
-- R >= 4.0.0 is recommended for a smoother dependency experience
+- R >= 4.1.0, as declared in `DESCRIPTION`
 
 ## Installation
 
-Install the development version from GitHub:
+Install the current GitHub version with `pak`:
 
 ```r
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
+if (!requireNamespace("pak", quietly = TRUE)) {
+  install.packages("pak")
 }
 
-devtools::install_github("lixiang117423/bioRtools")
+pak::pak("lixiang117423/bioRtools")
 ```
 
 If dependency installation needs to be handled manually, install the main Bioconductor and CRAN dependencies first:
@@ -39,21 +38,24 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
   install.packages("BiocManager")
 }
 
-BiocManager::install(c(
-  "clusterProfiler", "DESeq2", "ggtree", "lefser",
-  "SummarizedExperiment", "WGCNA"
-))
+BiocManager::install(c("mixOmics", "ropls"))
 
 install.packages(c(
-  "agricolae", "ape", "broom", "data.table", "dplyr",
-  "factoextra", "FactoMineR", "forcats", "ggplot2", "ggprism",
-  "ggrepel", "ggsci", "ggtext", "ggthemes", "janitor", "magrittr",
-  "mixOmics", "multcomp", "patchwork", "purrr", "rlang", "ropls",
-  "rstatix", "scales", "stringr", "tibble", "tidyr", "vegan"
+  "ape", "data.table", "dplyr", "factoextra", "FactoMineR",
+  "forcats", "ggplot2", "ggprism", "ggrepel", "ggsci", "ggthemes",
+  "magrittr", "picante", "purrr", "ragg", "RColorBrewer", "readr",
+  "readxl", "rlang", "rstatix", "scales", "stringr", "tibble",
+  "tidyr", "tidyselect", "vegan", "writexl"
+))
+
+# Optional:
+BiocManager::install(c(
+  "clusterProfiler", "DESeq2", "edgeR", "ggtree", "GO.db",
+  "KEGGREST", "lefser", "SummarizedExperiment", "WGCNA"
 ))
 ```
 
-Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
+Optional suggested packages include `ggpmisc`, `knitr`, `normentR`, `rmarkdown`, and `testthat`.
 
 ## Function Modules
 
@@ -75,7 +77,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 - `find_dams_deseq2()` - DESeq2-based differential abundance analysis
 - `find_dams_lefse()` - LEfSe differential abundance analysis
 - `rarefy_table()` - Rarefaction
-- `top_taxa()` - Top taxa extraction
+- `top_tax_n()` - Top taxa extraction
 - `identify_core_microbiome()`, `fit_sloan_neutral_model()` - Core microbiome and neutral model analysis
 
 ### Transcriptomics and Enrichment
@@ -103,7 +105,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 
 - `manhattan_plot()`, `plot_manhattan()` - Manhattan plots
 - `plot_gwas_qq()` - GWAS QQ plot
-- `plot_LDheatmap()` - LD heatmap
+- `plot_ld_heatmap()` - LD heatmap
 - `ld_decay_threshold()` - LD decay threshold calculation
 - `admixture_phylo_analysis()`, `extract_tree_hierarchy()` - Population structure and tree helpers
 - `pav_gwas()` - PAV-GWAS helper
@@ -119,7 +121,7 @@ Optional suggested packages include `chemhelper`, `ggpmisc`, `knitr`, `normentR`
 
 ### Data Conversion and Row Utilities
 
-- `df_to_list()` - Convert data frame to list
+- `df2list()` - Convert data frame to list
 - `df2fasta()`, `fasta2df()` - FASTA/data-frame conversion
 - `get_methylkit_data()` - Extract methylKit data
 - `normalize_int()`, `scale01()`, `scale01_rows()`, `scale01_groups()`, `mutate_scale01()`, `mutate_scale01_named()` - Normalization helpers
@@ -283,24 +285,29 @@ theme_prism(base_family = "Arial")
 
 ## Version History
 
-See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `1.77.0`.
+See [CHANGELOG.md](CHANGELOG.md) for the full release history. Current package version: `2.0.0`.
 
 ## Citation
 
 If you use `bioRtools` in your research, please cite:
 
 ```text
-Li, X. (2026). bioRtools: Convenience Functions for Biological Data Processing.
-R package version 1.16.1. https://github.com/lixiang117423/bioRtools
+Li, X. (2026). bioRtools: Reproducible Analysis-to-Figure Workflows for Omics Data.
+R package version 2.0.0. https://github.com/lixiang117423/bioRtools
 ```
 
 ## Contributing
 
-Contributions are welcome:
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before
+opening an issue or pull request, and follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 1. Report bugs in [GitHub Issues](https://github.com/lixiang117423/bioRtools/issues)
 2. Suggest features through Issues
 3. Fork the repository, create a feature branch, commit your changes, push the branch, and open a pull request
+
+Support channels and maintenance expectations are documented in
+[SUPPORT.md](SUPPORT.md).
 
 ## License
 

@@ -6,6 +6,7 @@
 # Package build artifacts
 *.tar.gz
 *.Rcheck/
+paper.pdf
 
 # IDE files
 *.Rproj

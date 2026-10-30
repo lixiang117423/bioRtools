@@ -1,10 +1,6 @@
-#' WGCNA Helper Functions
-#'
-#' Internal helper functions to support modular WGCNA workflow.
-#' These functions break down the complex WGCNA analysis into manageable steps.
-#'
-#' @keywords internal
-#'
+# WGCNA Helper Functions
+#
+# Internal helper functions to support the modular WGCNA workflow.
 # ============================================================================
 # WGCNA Input Validation
 # ============================================================================

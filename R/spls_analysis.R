@@ -432,13 +432,37 @@ spls_analysis <- function(data,
       round(sum(variance_explained$percentage), 2), "%")
   }
 
-  # Return comprehensive results following project conventions
-  list(
+  # Return comprehensive results using the shared result contract
+  results <- list(
     result_splsda = splsda_result,
     sample_scores = sample_scores,
     variance_explained = variance_explained,
     variable_loadings = variable_loadings,
     classification_performance = classification_performance,
     model_parameters = model_parameters
+  )
+
+  new_bioRtools_fit(
+    results,
+    model = splsda_result,
+    tables = list(
+      sample_scores = sample_scores,
+      variance_explained = variance_explained,
+      variable_loadings = variable_loadings,
+      classification_performance = classification_performance,
+      model_parameters = model_parameters
+    ),
+    plots = list(),
+    analysis_type = "sPLS-DA",
+    engine = "mixOmics::splsda",
+    engine_versions = c(mixOmics = as.character(utils::packageVersion("mixOmics"))),
+    data_info = list(
+      n_samples = nrow(data),
+      n_features = ncol(data),
+      feature_as_row = feature_as_row,
+      n_components = ncomp,
+      validation = validation
+    ),
+    call = match.call()
   )
 }

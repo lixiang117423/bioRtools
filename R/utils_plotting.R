@@ -1,10 +1,7 @@
-#' Plotting Utility Functions
-#'
-#' Helper functions for common plotting operations across bioRtools visualization functions.
-#' These utilities ensure consistent styling and reduce code duplication in plotting code.
-#'
-#' @keywords internal
-#'
+# Plotting Utility Functions
+#
+# Helpers for common plotting operations across bioRtools visualization
+# functions.
 # ============================================================================
 # Theme Application
 # ============================================================================

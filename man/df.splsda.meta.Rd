@@ -6,8 +6,10 @@
 \title{Test data.}
 \format{
 ## `df.splsda.meta`
-A data frame with 9 rows and 2 columns:
+A data frame with 54 rows and 148 columns:
 \describe{
+  \item{rownames}{sample identifiers}
+  \item{metabolite columns}{metabolite abundance values}
 }
 }
 \source{

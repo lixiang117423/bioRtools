@@ -1,0 +1,47 @@
+---
+title: "bioRtools analysis-to-figure workflows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{bioRtools analysis-to-figure workflows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(bioRtools)
+library(ggplot2)
+```
+
+`bioRtools` keeps the native statistical model available while adding a
+consistent result contract for tables, plots, and provenance. The common
+components are:
+
+- `model`: the object returned by the underlying statistical engine;
+- `tables`: named analysis-ready data frames;
+- `plots`: named, editable `ggplot` objects;
+- `provenance`: engine, package/R versions, validated input dimensions, call,
+  and optional seed.
+
+All existing list names remain available for backward compatibility.
+
+```{r contract}
+data(df.pcoa.otu)
+data(df.pcoa.sample)
+
+fit <- pcoa_analysis(df.pcoa.otu, df.pcoa.sample)
+class(fit)
+names(fit$tables)
+names(fit$plots)
+fit
+summary(fit)
+
+head(tibble::as_tibble(fit, which = "scores"))
+```
+
+The same contract is returned by PCA, PCoA, RDA, sPLS-DA, OPLS-DA, and
+PERMANOVA. See the microbiome and metabolomics vignettes for complete public
+data workflows.

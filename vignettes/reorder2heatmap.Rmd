@@ -17,3 +17,20 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(bioRtools)
 ```
+
+`reorder_heatmap()` returns a heatmap-ready object with row and column ordering
+derived from clustering, means, or peak positions.
+
+```{r}
+data(df.reorder2heatmap)
+
+ordered <- reorder_heatmap(
+  data = df.reorder2heatmap,
+  col = "sample",
+  row = "meta",
+  value = "value",
+  method = "hierarchical"
+)
+
+names(ordered)
+```
